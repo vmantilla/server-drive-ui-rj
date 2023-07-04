@@ -1,5 +1,5 @@
 .simulator {
-  border: 1px solid #ccc;
+  border: 20px solid #000;
   width: 375px; /* Ancho de un iPhone 8 */
   height: 667px; /* Altura de un iPhone 8 */
   margin: 0 auto;
