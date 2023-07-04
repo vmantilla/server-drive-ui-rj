@@ -1,22 +1,30 @@
 // VStack.js
-import React from 'react';
+import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
 import ItemTypes from './ItemTypes';
+import DropArea from './DropArea';
 
-const VStack = ({ children, onDropItem }) => {
+const VStack = () => {
+  const [childComponents, setChildComponents] = useState([]);
+
   const [, drop] = useDrop({
     accept: Object.values(ItemTypes),
     drop: (item, monitor) => {
-      if (onDropItem) {
-        onDropItem(item);
+      if (!monitor.didDrop()) {
+        setChildComponents(prev => [...prev, item]);
       }
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
+      canDrop: monitor.canDrop(),
     }),
   });
 
-  return <div ref={drop} className="vstack componentDroptable">{children}</div>;
+  return (
+    <div ref={drop} className="vstack drop-area">
+      <DropArea items={childComponents} />
+    </div>
+  );
 };
 
 export default VStack;

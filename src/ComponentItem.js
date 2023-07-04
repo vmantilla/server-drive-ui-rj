@@ -31,17 +31,19 @@ const ComponentItem = ({ id, type, content, onMoveItem }) => {
       component = <img src={content} alt="Draggable element" />;
       break;
     case 'text':
+      component = <p>Text</p>;
+      break;
     case 'paragraph':
-      component = <p>{content}</p>;
+      component = <p>Paragraph</p>;
       break;
     case 'vstack':
-      component = <p>Placeholder VStack</p>;
+      component = <p>VStack</p>;
       break;
     case 'hstack':
-      component = <p>Placeholder HStack</p>;
+      component = <p>HStack</p>;
       break;
     case 'zstack':
-      component = <p>Placeholder ZStack</p>;
+      component = <p>ZStack</p>;
       break;
     default:
       component = null;

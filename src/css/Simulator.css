@@ -14,12 +14,14 @@
   background-color: #ddd;
 }
 
-.componentDroptable {
-  height: 40px;
+.drop-area {
+  min-height: 40px;
+  height: auto;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   border: 1px solid #000;
   padding: 0px;
 }
+
 
 
 /* en tu archivo de estilos */
