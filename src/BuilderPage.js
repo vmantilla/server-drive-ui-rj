@@ -3,6 +3,7 @@ import { DndProvider, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Button } from 'framework7-react';
 import ComponentItem from './ComponentItem';
+import Simulator from './Simulator';
 
 const ItemTypes = {
   BUTTON: 'button',
@@ -10,27 +11,12 @@ const ItemTypes = {
   TEXT: 'text',
 };
 
-const Simulator = ({ accept, onDrop, items }) => {
-  const [, drop] = useDrop({
-    accept,
-    drop: () => ({ name: accept }),
-  });
-
-  return (
-    <div ref={drop} style={{ height: '100%', width: '100%' }}>
-      {items.map((item, index) => (
-        item.type === 'button' ? <Button key={index}>Button</Button> : null
-      ))}
-    </div>
-  );
-};
-
 const BuilderPage = () => {
   const [components, setComponents] = useState([
-	  { id: 1, type: 'button' },
-	  { id: 2, type: 'image' },
-	  { id: 3, type: 'text' },
-	]);
+  { id: 1, type: 'button' },
+  { id: 2, type: 'image' },
+  { id: 3, type: 'text' },
+]);
 
   const [simulationComponents, setSimulationComponents] = useState([]);
 

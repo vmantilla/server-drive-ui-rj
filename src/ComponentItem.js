@@ -41,4 +41,4 @@ const ComponentItem = ({ name, type, id, onMoveItem }) => {
   );
 };
 
-export default ComponentItem;
+export { ItemTypes, ComponentItem as default };
