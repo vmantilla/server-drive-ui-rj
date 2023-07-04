@@ -20,7 +20,11 @@ const Simulator = ({ onDrop, items }) => {
   });
 
   const handleDrop = (item) => {
-    setSimulationComponents((prev) => [...prev, item]);
+    // Verificar si el componente ya existe en el simulador
+    const isComponentAlreadyAdded = simulationComponents.some((component) => component.id === item.id);
+    if (!isComponentAlreadyAdded) {
+      setSimulationComponents((prev) => [...prev, item]);
+    }
   };
 
   return (
@@ -43,13 +47,13 @@ const Simulator = ({ onDrop, items }) => {
                 componentToRender = <p key={index}>{component.content}</p>;
                 break;
               case 'vstack':
-                componentToRender = <VStack key={index}>Placeholder VStack</VStack>;
+                componentToRender = <VStack key={index}></VStack>;
                 break;
               case 'hstack':
-                componentToRender = <HStack key={index}>Placeholder HStack</HStack>;
+                componentToRender = <HStack key={index}></HStack>;
                 break;
               case 'zstack':
-                componentToRender = <ZStack key={index}>Placeholder ZStack</ZStack>;
+                componentToRender = <ZStack key={index}></ZStack>;
                 break;
               default:
                 componentToRender = null;

@@ -21,7 +21,7 @@ const ZStack = () => {
   });
 
   return (
-    <div ref={drop} className="zstack drop-area">
+    <div ref={drop} className="zstack dropArea">
       <DropArea items={childComponents} />
     </div>
   );

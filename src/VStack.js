@@ -21,7 +21,7 @@ const VStack = () => {
   });
 
   return (
-    <div ref={drop} className="vstack drop-area">
+    <div ref={drop} className="vstack dropArea">
       <DropArea items={childComponents} />
     </div>
   );

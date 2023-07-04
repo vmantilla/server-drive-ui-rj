@@ -21,7 +21,7 @@ const HStack = () => {
   });
 
   return (
-    <div ref={drop} className="hstack drop-area">
+    <div ref={drop} className="hstack dropArea">
       <DropArea items={childComponents} />
     </div>
   );

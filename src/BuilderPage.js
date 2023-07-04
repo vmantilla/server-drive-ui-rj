@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { DndProvider, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import ComponentItem from './ComponentItem';
+import { v4 as uuidv4 } from 'uuid';
 import Simulator from './Simulator';
 import ItemTypes from './ItemTypes';
 
@@ -18,10 +19,15 @@ const BuilderPage = () => {
 
   const [simulationComponents, setSimulationComponents] = useState([]);
 
-  const moveComponent = useCallback((id) => {
-    const component = components.find((component) => component.id === id);
-    setSimulationComponents((components) => [...components, component]);
-  }, [components]);
+  const moveComponent = useCallback((type) => {
+  const component = components.find((component) => component.type === type);
+  const newComponent = {
+    ...component,
+    id: uuidv4(),
+  };
+  setSimulationComponents((components) => [...components, newComponent]);
+}, [components]);
+
 
   return (
     <DndProvider backend={HTML5Backend}>

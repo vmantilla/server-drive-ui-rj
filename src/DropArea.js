@@ -10,7 +10,7 @@ import { Button } from 'framework7-react';
 
 const DropArea = ({ items }) => {
   return (
-    <div className="dropArea">
+    <>
       {items.map((component, index) => {
         let componentToRender;
         switch (component.type) {
@@ -38,7 +38,7 @@ const DropArea = ({ items }) => {
         }
         return componentToRender;
       })}
-    </div>
+    </>
   );
 };
 

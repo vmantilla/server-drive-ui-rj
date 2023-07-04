@@ -11,18 +11,16 @@
 }
 
 .over {
-  background-color: #ddd;
+  background-color: #f0f0f0;
 }
 
-.drop-area {
+.dropArea {
   min-height: 40px;
   height: auto;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  border: 1px solid #000;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
   padding: 0px;
 }
-
-
 
 /* en tu archivo de estilos */
 .vstack {
@@ -30,10 +28,28 @@
   flex-direction: column;
 }
 
-.hstack {
+.vstack.dropArea {
   display: flex;
-  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
+
+.vstack.dropArea > * {
+  flex: 1;
+  margin-bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px dotted rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  padding: 0px;
+}
+
+.vstack.dropArea > *:last-child {
+  margin-right: 0;
+}
+
 
 .zstack {
   position: relative;
@@ -41,3 +57,35 @@
 .zstack > * {
   position: absolute;
 }
+
+
+.hstack {
+  display: flex;
+  flex-direction: row;
+}
+
+.hstack.dropArea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.hstack.dropArea > * {
+  flex: 1;
+  margin-bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px dotted rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  padding: 0px;
+}
+
+.hstack.dropArea > *:last-child {
+  margin-right: 0;
+}
+
+
+
+
