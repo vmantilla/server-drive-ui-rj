@@ -1,30 +1,52 @@
 import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
-import { ItemTypes } from './ComponentItem';
-import { Button } from 'framework7-react';
-import './css/Simulator.css'; // Importa los estilos de tu simulador
+import ItemTypes from './ItemTypes';
 
-const Simulator = ({ components }) => {
+import { App, View, Button } from 'framework7-react';
+import './css/Simulator.css';
+
+const Simulator = ({ onDrop, items }) => {
   const [simulationComponents, setSimulationComponents] = useState([]);
 
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: [ItemTypes.BUTTON, ItemTypes.IMAGE, ItemTypes.TEXT],
+  const [, drop] = useDrop({
+    accept: Object.values(ItemTypes),
     drop: (item, monitor) => handleDrop(item),
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
-  }));
+  });
 
   const handleDrop = (item) => {
     setSimulationComponents((prev) => [...prev, item]);
   };
 
   return (
-    <div className={`simulator ${isOver ? 'over' : ''}`} ref={drop}>
-      {simulationComponents.map((component, index) => (
-        <Button key={index}>{component.name}</Button>
-      ))}
-    </div>
+    <App>
+      <View main>
+        <div className="simulator" ref={drop}>
+          {simulationComponents.map((component, index) => {
+            let componentToRender;
+            switch (component.type) {
+              case 'button':
+                componentToRender = <Button key={index}>{component.content}</Button>;
+                break;
+              case 'image':
+                componentToRender = <img src={component.content} alt="Dropped element" key={index} />;
+                break;
+              case 'text':
+                componentToRender = <p key={index}>{component.content}</p>;
+                break;
+              case 'paragraph':
+                componentToRender = <p key={index}>{component.content}</p>;
+                break;
+              default:
+                componentToRender = null;
+            }
+            return componentToRender;
+          })}
+        </div>
+      </View>
+    </App>
   );
 };
 

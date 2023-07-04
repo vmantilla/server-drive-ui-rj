@@ -1,29 +1,24 @@
 import React, { useState, useCallback } from 'react';
 import { DndProvider, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Button } from 'framework7-react';
 import ComponentItem from './ComponentItem';
 import Simulator from './Simulator';
-
-const ItemTypes = {
-  BUTTON: 'button',
-  IMAGE: 'image',
-  TEXT: 'text',
-};
+import ItemTypes from './ItemTypes';
 
 const BuilderPage = () => {
   const [components, setComponents] = useState([
-  { id: 1, type: 'button' },
-  { id: 2, type: 'image' },
-  { id: 3, type: 'text' },
-]);
+    { id: 1, type: 'button', content: 'Botón' },
+    { id: 2, type: 'image', content: 'URL de tu imagen' },
+    { id: 3, type: 'text', content: 'Texto' },
+    { id: 4, type: 'paragraph', content: 'Párrafo' },
+  ]);
 
   const [simulationComponents, setSimulationComponents] = useState([]);
 
-  const moveComponent = useCallback((fromId, toId) => {
-    setComponents((components) => components.filter((component) => component.id !== fromId));
-    setSimulationComponents((components) => [...components, components.find((component) => component.id === fromId)]);
-  }, []);
+  const moveComponent = useCallback((id) => {
+    const component = components.find((component) => component.id === id);
+    setSimulationComponents((components) => [...components, component]);
+  }, [components]);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -36,13 +31,14 @@ const BuilderPage = () => {
           <h3>Componentes</h3>
           <div className="component-list">
             {components.map((component) => (
-			  <ComponentItem
-			    key={component.id}
-			    id={component.id}
-			    type={component.type}
-			    onMoveItem={moveComponent}
-			  />
-			))}
+              <ComponentItem
+                key={component.id}
+                id={component.id}
+                type={component.type}
+                content={component.content}
+                onMoveItem={moveComponent}
+              />
+            ))}
           </div>
         </div>
       </div>

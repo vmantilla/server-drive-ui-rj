@@ -1,21 +1,17 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
-import { Button } from 'framework7-react'; 
+import ItemTypes from './ItemTypes';
 
-const ItemTypes = {
-  BUTTON: 'button',
-  IMAGE: 'image',
-  TEXT: 'text',
-};
+import { Button } from 'framework7-react';
 
-const ComponentItem = ({ name, type, id, onMoveItem }) => {
+const ComponentItem = ({ id, type, content, onMoveItem }) => {
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes[type.toUpperCase()],
-    item: { id },
+    item: { id, type, content },
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult();
       if (item && dropResult) {
-        onMoveItem(item.id, dropResult.id);
+        onMoveItem(item.id);
       }
     },
     collect: (monitor) => ({
@@ -28,7 +24,16 @@ const ComponentItem = ({ name, type, id, onMoveItem }) => {
   let component;
   switch (type) {
     case 'button':
-      component = <Button>Button</Button>;
+      component = <Button>{content}</Button>;
+      break;
+    case 'image':
+      component = <img src={content} alt="Draggable element" />;
+      break;
+    case 'text':
+      component = <p>{content}</p>;
+      break;
+    case 'paragraph':
+      component = <p>{content}</p>;
       break;
     default:
       component = null;
@@ -41,4 +46,4 @@ const ComponentItem = ({ name, type, id, onMoveItem }) => {
   );
 };
 
-export { ItemTypes, ComponentItem as default };
+export default ComponentItem;
