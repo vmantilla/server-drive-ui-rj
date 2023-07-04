@@ -22,8 +22,20 @@ const Simulator = ({ onDrop, items }) => {
   const handleDrop = (item) => {
     // Verificar si el componente ya existe en el simulador
     const isComponentAlreadyAdded = simulationComponents.some((component) => component.id === item.id);
-    if (!isComponentAlreadyAdded) {
-      setSimulationComponents((prev) => [...prev, item]);
+    if (isComponentAlreadyAdded) {
+      return;
+    }
+
+    if (['vstack', 'hstack', 'zstack'].includes(item.type)) {
+      setSimulationComponents((prev) => [...prev, { ...item, children: [] }]);
+    } else {
+      setSimulationComponents((prev) => {
+        const lastStackIndex = prev.length - 1;
+        if (lastStackIndex >= 0 && ['vstack', 'hstack', 'zstack'].includes(prev[lastStackIndex].type)) {
+          prev[lastStackIndex].children.push(item);
+        }
+        return [...prev];
+      });
     }
   };
 
@@ -34,26 +46,14 @@ const Simulator = ({ onDrop, items }) => {
           {simulationComponents.map((component, index) => {
             let componentToRender;
             switch (component.type) {
-              case 'button':
-                componentToRender = <Button key={index}>{component.content}</Button>;
-                break;
-              case 'image':
-                componentToRender = <img src={component.content} alt="Dropped element" key={index} />;
-                break;
-              case 'text':
-                componentToRender = <p key={index}>{component.content}</p>;
-                break;
-              case 'paragraph':
-                componentToRender = <p key={index}>{component.content}</p>;
-                break;
               case 'vstack':
-                componentToRender = <VStack key={index}></VStack>;
+                componentToRender = <VStack key={index}>{component.children.map((child, i) => createChildComponent(child, i))}</VStack>;
                 break;
               case 'hstack':
-                componentToRender = <HStack key={index}></HStack>;
+                componentToRender = <HStack key={index}>{component.children.map((child, i) => createChildComponent(child, i))}</HStack>;
                 break;
               case 'zstack':
-                componentToRender = <ZStack key={index}></ZStack>;
+                componentToRender = <ZStack key={index}>{component.children.map((child, i) => createChildComponent(child, i))}</ZStack>;
                 break;
               default:
                 componentToRender = null;
@@ -64,6 +64,20 @@ const Simulator = ({ onDrop, items }) => {
       </View>
     </App>
   );
+  
+  function createChildComponent(child, index) {
+    switch (child.type) {
+      case 'button':
+        return <Button key={index}>{child.content}</Button>;
+      case 'image':
+        return <img src={child.content} alt="Dropped element" key={index} />;
+      case 'text':
+      case 'paragraph':
+        return <p key={index}>{child.content}</p>;
+      default:
+        return null;
+    }
+  }
 };
 
 export default Simulator;
