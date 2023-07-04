@@ -4,7 +4,7 @@
   height: 667px; /* Altura de un iPhone 8 */
   margin: 0 auto;
   border-radius: 30px;
-  padding: 20px;
+  padding: 0px;
   box-sizing: border-box;
   background-color: #f0f0f0;
   overflow-y: auto;
@@ -12,4 +12,30 @@
 
 .over {
   background-color: #ddd;
+}
+
+.componentDroptable {
+  height: 40px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid #000;
+  padding: 0px;
+}
+
+
+/* en tu archivo de estilos */
+.vstack {
+  display: flex;
+  flex-direction: column;
+}
+
+.hstack {
+  display: flex;
+  flex-direction: row;
+}
+
+.zstack {
+  position: relative;
+}
+.zstack > * {
+  position: absolute;
 }

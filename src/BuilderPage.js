@@ -11,6 +11,9 @@ const BuilderPage = () => {
     { id: 2, type: 'image', content: 'URL de tu imagen' },
     { id: 3, type: 'text', content: 'Texto' },
     { id: 4, type: 'paragraph', content: 'Párrafo' },
+    { id: 5, type: 'vstack', content: 'vstack' },
+    { id: 6, type: 'hstack', content: 'hstack' },
+    { id: 7, type: 'zstack', content: 'zstack' },
   ]);
 
   const [simulationComponents, setSimulationComponents] = useState([]);
