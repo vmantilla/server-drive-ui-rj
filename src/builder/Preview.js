@@ -4,13 +4,22 @@ import '../css/Simulator.css'
 import SDComponentType from '../enums/SDComponentType';
 import SDComponent from '../components/SDComponent/SDComponent';
 import SDProperties from '../components/SDProperties/SDProperties';
+import SDFont from '../components/SDProperties/SDFont';
+
+import SDVStackView from '../components/SDComponents/SDVStackView';
+import SDHStackView from '../components/SDComponents/SDHStackView';
+import SDZStackView from '../components/SDComponents/SDZStackView';
+import SDTextView from '../components/SDComponents/SDTextView';
+
+
+import { fetchJsonFile } from '../utils/utils';
 
 const BuilderPreview = () => {
   const [sdComponents, setSdComponents] = useState([]);
 
   useEffect(() => {
-    fetchJsonFile().then(data => {
-      const components = data.map((componentData) => {
+    fetchJsonFile('./file.json').then(data => {
+    	const components = data.map((componentData) => {
         return createSDComponent(componentData);
       });
       setSdComponents(components);
@@ -19,13 +28,47 @@ const BuilderPreview = () => {
 
 	// Función para renderizar los componentes de forma recursiva
 	const renderComponentTree = (component) => {
-	  return (
-	    <div key={component.id}>
-	      {component.type}
-	      {component.childrens && component.childrens.length > 0 && component.childrens.map(renderComponentTree)}
-	    </div>
-	  );
-	};
+  let Component;
+
+  switch (component.type) {
+    case "VStack":
+      Component = SDVStackView
+      break;
+    case "HStack":
+      Component = SDHStackView;
+      break;
+    case "ZStack":
+      Component = SDZStackView;
+      break;
+    case "Text":
+      Component = SDTextView; // Use a paragraph for Text components
+      break;
+    case "Button":
+      Component = 'div'; // Use a button element for Button components
+      break;
+    case "Image":
+      Component = 'div'; // Use an img element for Image components
+      break;
+    case "TextField":
+      Component = 'div'; // Use an input element for TextField components
+      break;
+    case "ScrollView":
+      Component = 'div'; // Use a div for ScrollView components
+      break;
+    default:
+     console.log(' Default to a div:', component.type); // Agrega un registro para indicar el componente actual
+
+  
+      Component = 'div'; // Default to a div
+  }
+
+  return (
+    <Component key={component.id} component={component}>
+      {component.childrens && component.childrens.length > 0 && component.childrens.map(renderComponentTree)}
+    </Component>
+  );
+};
+
 
   return (
     <App>
@@ -38,17 +81,12 @@ const BuilderPreview = () => {
   );
 };
 
-function fetchJsonFile() {
-  return fetch('./file.json')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("HTTP error " + response.status);
-      }
-      return response.json();
-    });
-}
-
 function createSDComponent(componentData) {
+
+const sdFont = componentData.properties.font
+  ? new SDFont(componentData.properties.font.font, componentData.properties.font.color)
+  : null;
+
   // Creamos las propiedades del componente
   const properties = new SDProperties(
 	  componentData.properties.frame,
@@ -59,6 +97,7 @@ function createSDComponent(componentData) {
 	  componentData.properties.isEnabled,
 	  componentData.properties.contentInset,
 	  componentData.properties.text,
+	  sdFont,
 	  componentData.properties.font,
 	  componentData.properties.textAlignment,
 	  componentData.properties.action,
