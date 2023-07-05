@@ -1,0 +1,191 @@
+{
+  "colors": {
+    "primary": {
+      "value": "#97BA86",
+      "opacity": 1
+    },
+    "onPrimary": {
+      "value": "#DEEAD8",
+      "opacity": 1
+    },
+    "primaryContainer": {
+      "value": "#F4F8F2",
+      "opacity": 1
+    },
+    "onPrimaryContainer": {
+      "value": "#FFFFFF",
+      "opacity": 1
+    },
+    "secondary": {
+      "value": "#FFFFFF",
+      "opacity": 1
+    },
+    "onSecondary": {
+      "value": "#51674",
+      "opacity": 1
+    },
+    "secondaryContainer": {
+      "value": "#FF80AB",
+      "opacity": 1
+    },
+    "onSecondaryContainer": {
+      "value": "#000000",
+      "opacity": 1
+    },
+    "tertiary": {
+      "value": "#516746",
+      "opacity": 1
+    },
+    "onTertiary": {
+      "value": "#516746",
+      "opacity": 0.7
+    },
+    "tertiaryContainer": {
+      "value": "#A5D6A7",
+      "opacity": 1
+    },
+    "onTertiaryContainer": {
+      "value": "#000000",
+      "opacity": 1
+    },
+    "surface": {
+      "value": "#FFFFFF",
+      "opacity": 1
+    },
+    "onSurface": {
+      "value": "#000000",
+      "opacity": 1
+    },
+    "onBackground": {
+      "value": "#000000",
+      "opacity": 1
+    },
+    "outline": {
+      "value": "#000000",
+      "opacity": 1
+    },
+    "error": {
+      "value": "#B00020",
+      "opacity": 1
+    },
+    "onError": {
+      "value": "#FFFFFF",
+      "opacity": 1
+    },
+    "errorContainer": {
+      "value": "#EF9A9A",
+      "opacity": 1
+    },
+    "onErrorContainer": {
+      "value": "#000000",
+      "opacity": 1
+    }
+  },
+  "fonts": {
+    "displayLarge": {
+      "name": "Roboto",
+      "size": 57,
+      "lineHeight": 64,
+      "letterSpacing": -0.25,
+      "weight": 400
+    },
+    "displayMedium": {
+      "name": "Roboto",
+      "size": 45,
+      "lineHeight": 30,
+      "letterSpacing": 0,
+      "weight": 400
+    },
+    "displaySmall": {
+      "name": "Roboto",
+      "size": 36,
+      "lineHeight": 44,
+      "letterSpacing": 0,
+      "weight": 400
+    },
+    "headlineLarge": {
+      "name": "Roboto",
+      "size": 32,
+      "lineHeight": 40,
+      "letterSpacing": 0,
+      "weight": 400
+    },
+    "headlineMedium": {
+      "name": "Roboto",
+      "size": 28,
+      "lineHeight": 36,
+      "letterSpacing": 0,
+      "weight": 400
+    },
+    "headlineSmall": {
+      "name": "Roboto",
+      "size": 24,
+      "lineHeight": 32,
+      "letterSpacing": 0,
+      "weight": 400
+    },
+    "titleLarge": {
+      "name": "Roboto",
+      "size": 22,
+      "lineHeight": 28,
+      "letterSpacing": 0,
+      "weight": 400
+    },
+    "titleMedium": {
+      "name": "Roboto",
+      "size": 16,
+      "lineHeight": 24,
+      "letterSpacing": 0.15,
+      "weight": 500
+    },
+    "titleSmall": {
+      "name": "Roboto",
+      "size": 14,
+      "lineHeight": 20,
+      "letterSpacing": 0.1,
+      "weight": 500
+    },
+    "labelLarge": {
+      "name": "Roboto",
+      "size": 14,
+      "lineHeight": 20,
+      "letterSpacing": 0.1,
+      "weight": 500
+    },
+    "labelMedium": {
+      "name": "Roboto",
+      "size": 12,
+      "lineHeight": 16,
+      "letterSpacing": 0.5,
+      "weight": 500
+    },
+    "labelSmall": {
+      "name": "Roboto",
+      "size": 9,
+      "lineHeight": 16,
+      "letterSpacing": 0.5,
+      "weight": 500
+    },
+    "bodyLarge": {
+      "name": "Roboto",
+      "size": 16,
+      "lineHeight": 24,
+      "letterSpacing": 0.5,
+      "weight": 400
+    },
+    "bodyMedium": {
+      "name": "Roboto",
+      "size": 14,
+      "lineHeight": 20,
+      "letterSpacing": 0.25,
+      "weight": 400
+    },
+    "bodySmall": {
+      "name": "Roboto",
+      "size": 12,
+      "lineHeight": 16,
+      "letterSpacing": 0.4,
+      "weight": 400
+    }
+  }
+}

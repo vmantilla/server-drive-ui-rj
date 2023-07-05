@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import DashboardPage from './DashboardPage';
 import BuilderPage from './BuilderPage';
+import BuilderPreview from './builder/Preview';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/builder" element={<BuilderPage />} />
+          <Route path="/preview" element={<BuilderPreview />} />
         </Routes>
       </div>
     </Router>

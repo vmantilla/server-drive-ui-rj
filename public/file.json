@@ -1,0 +1,1075 @@
+[
+    {
+        "id": 1,
+        "type": "ScrollView",
+        "properties": {
+            "backgroundColor": "onPrimaryContainer",
+            "cornerRadius": "none",
+            "axis" : "Vertical",
+            "padding": {
+                "top": 0,
+                "bottom": 0,
+                "left": 0,
+                "right": 0
+            },
+            "isEnabled": true,
+            "showsIndicators": true,
+            "contentInset": {
+                "top": 0,
+                "bottom": 10,
+                "left": 10,
+                "right": 10
+            },
+            "frame": {
+                "alignment": "TopCenter"
+            },
+            "horizontalAlignment": "Center"
+        },
+        "childrens": [
+            {
+                "id": 2,
+                "type": "HStack",
+                "properties": {
+                    "backgroundColor": "primaryContainer",
+                    "cornerRadius": "none",
+                    "axis" : "Vertical",
+                    "padding": {
+                        "top": 0,
+                        "bottom": 0,
+                        "left": 0,
+                        "right": 0
+                    },
+                    "isEnabled": true,
+                    "showsIndicators": true,
+                    "frame": {
+                        "height": 40,
+                        "alignment": "TopCenter"
+                    },
+                    "horizontalAlignment": "Start"
+                },
+                "childrens": [
+                    {
+                        "id": 3,
+                        "type": "Button",
+                        "properties": {
+                            "frame": {
+                                "height": 25,
+                                "width": 25,
+                                "alignment": "CenterStart"
+                            },
+                            "padding": {
+                                "top": 0,
+                                "bottom": 0,
+                                "left": 20,
+                                "right": 0
+                            },
+                            "isEnabled": true,
+                            "textAlignment": "End",
+                            "action": {
+                                "type": "Alert",
+                                "title": "Alerta",
+                                "message": "Haz hecho clic en el botón",
+                                "destination": null
+                            }
+                        },
+                        "childrens": [
+                            {
+                                "id": 4,
+                                "type": "Image",
+                                "properties": {
+                                    "source": {
+                                        "src": "backArrow",
+                                        "origin": "Assets"
+                                    },
+                                    "frame": {
+                                        "height": 20,
+                                        "width": 20
+                                    },
+                                    "padding": {
+                                        "top": 0,
+                                        "bottom": 0,
+                                        "left": 0,
+                                        "right": 0
+                                    },
+                                    "isEnabled": true,
+                                    "name": "example",
+                                    "contentMode": "Fit"
+                                },
+                                "childrens": [],
+                                "states": []
+                            }
+                        ],
+                        "states": []
+                    },
+                    {
+                        "id": 5,
+                        "type": "HStack",
+                        "properties": {
+                            "cornerRadius": "none",
+                            "axis" : "Vertical",
+                            "padding": {
+                                "top": 0,
+                                "bottom": 0,
+                                "left": 20,
+                                "right": 0
+                            },
+                            "isEnabled": true,
+                            "showsIndicators": true,
+                            "frame": {
+                                "alignment": "CenterEnd"
+                            },
+                            "horizontalAlignment": "Start"
+                        },
+                        "childrens": [
+                            {
+                                "id": 6,
+                                "type": "Button",
+                                "properties": {
+                                    "frame": {
+                                        "height": 20,
+                                        "width": 20
+                                    },
+                                    "padding": {
+                                        "top": 0,
+                                        "bottom": 0,
+                                        "left": 0,
+                                        "right": 20
+                                    },
+                                    "isEnabled": true,
+                                    "textAlignment": "Center",
+                                    "action": {
+                                        "type": "Alert",
+                                        "title": "Alerta",
+                                        "message": "Haz hecho clic en el botón",
+                                        "destination": null
+                                    }
+                                },
+                                "childrens": [
+                                    {
+                                        "id": 7,
+                                        "type": "Image",
+                                        "properties": {
+                                            "source": {
+                                                "src": "search",
+                                                "origin": "Assets"
+                                            },
+                                            "padding": {
+                                                "top": 0,
+                                                "bottom": 0,
+                                                "left": 0,
+                                                "right": 0
+                                            },
+                                            "isEnabled": true,
+                                            "name": "example",
+                                            "contentMode": "Fit"
+                                        },
+                                        "childrens": [],
+                                        "states": []
+                                    }
+                                ],
+                                "states": []
+                            },
+                            {
+                                "id": 8,
+                                "type": "Button",
+                                "properties": {
+                                    "frame": {
+                                        "height": 20,
+                                        "width": 20
+                                    },
+                                    "padding": {
+                                        "top": 0,
+                                        "bottom": 0,
+                                        "left": 0,
+                                        "right": 20
+                                    },
+                                    "isEnabled": true,
+                                    "textAlignment": "Center",
+                                    "action": {
+                                        "type": "Alert",
+                                        "title": "Alerta",
+                                        "message": "Haz hecho clic en el botón",
+                                        "destination": null
+                                    }
+                                },
+                                "childrens": [
+                                    {
+                                        "id": 9,
+                                        "type": "Image",
+                                        "properties": {
+                                            "source": {
+                                                "src": "upload",
+                                                "origin": "Assets"
+                                            },
+                                            "padding": {
+                                                "top": 0,
+                                                "bottom": 0,
+                                                "left": 0,
+                                                "right": 0
+                                            },
+                                            "isEnabled": true,
+                                            "name": "example",
+                                            "contentMode": "Fit"
+                                        },
+                                        "childrens": [],
+                                        "states": []
+                                    }
+                                ],
+                                "states": []
+                            }
+                        ],
+                        "states": []
+                    }
+                ],
+                "states": []
+            },
+            {
+                "id": 10,
+                "type": "VStack",
+                "properties": {
+                    "frame": {
+                        "height": 350,
+                        "alignment": "TopCenter"
+                    },
+                    "axis" : "Vertical",
+                    "padding": {
+                        "top": 0,
+                        "bottom": 0,
+                        "left": 0,
+                        "right": 0
+                    },
+                    "isEnabled": true,
+                    "showsIndicators": true,
+                    "contentInset": {
+                        "top": 50,
+                        "bottom": 0,
+                        "left": 0,
+                        "right": 0
+                    },
+                    "horizontalAlignment": "Center"
+                },
+                "childrens": [
+                    {
+                        "id": 11,
+                        "type": "HStack",
+                        "properties": {
+                            "frame": {
+                                "height": 30
+                            },
+                            "backgroundColor": "primaryContainer",
+                            "padding": {
+                                "top": 0,
+                                "bottom": 0,
+                                "left": 0,
+                                "right": 0
+                            },
+                            "isEnabled": true,
+                            "horizontalAlignment": "Center"
+                        },
+                        "childrens": [
+                            {
+                                "id": 12,
+                                "type": "Text",
+                                "properties": {
+                                    "frame": {
+                                        "width": 50,
+                                        "alignment": "Center"
+                                    },
+                                    "padding": {
+                                        "top": 0,
+                                        "bottom": 0,
+                                        "left": 20,
+                                        "right": 0
+                                    },
+                                    "isEnabled": true,
+                                    "text": "Indoor",
+                                    "font": {
+                                        "font": "titleMedium",
+                                        "color": "tertiary"
+                                    },
+                                    "textAlignment": "Start"
+                                }
+                            },
+                            {
+                                "id": 13,
+                                "type": "HStack",
+                                "properties": {
+                                    "padding": {
+                                        "top": 0,
+                                        "bottom": 0,
+                                        "left": 0,
+                                        "right": 0
+                                    }
+                                }
+                            },
+                            {
+                                "id": 14,
+                                "type": "HStack",
+                                "properties": {
+                                    "backgroundColor": "primary",
+                                    "frame": {
+                                        "height": 20,
+                                        "width": 40
+                                    },
+                                    "padding": {
+                                        "right": 20
+                                    },
+                                    "cornerRadius": "small",
+                                    "isEnabled": true,
+                                    "horizontalAlignment": "Center"
+                                },
+                                "childrens": [
+                                    {
+                                        "id": 15,
+                                        "type": "Image",
+                                        "properties": {
+                                            "source": {
+                                                "src": "star",
+                                                "origin": "Assets"
+                                            },
+                                            "padding": {
+                                                "left": 5
+                                            },
+                                            "frame": {
+                                                "height": 10,
+                                                "width": 10
+                                            },
+                                            "isEnabled": true,
+                                            "name": "example",
+                                            "contentMode": "Fit"
+                                        }
+                                    },
+                                    {
+                                        "id": 16,
+                                        "type": "Text",
+                                        "properties": {
+                                            "frame": {
+                                                "height": 20,
+                                                "width": 25,
+                                                "alignment": "Center"
+                                            },
+
+                                            "cornerRadius": "small",
+                                            "isEnabled": true,
+                                            "text": "4.8",
+                                            "font": {
+                                                "font": "labelSmall",
+                                                "color": "onPrimaryContainer"
+                                            },
+                                            "textAlignment": "Center"
+                                        }
+                                    }
+
+                                ]
+
+                            }
+                        ]
+                    },
+                    {
+                        "id": 17,
+                        "type": "VStack",
+                        "properties": {
+                            "frame": {
+                                "height": 140,
+                                "alignment": "TopCenter"
+                            },
+                            "padding": {
+                                "bottom": 10
+                            },
+                            "backgroundColor": "primaryContainer"
+                        },
+                        "childrens": [
+                            {
+                                "id": 18,
+                                "type": "Text",
+                                "properties": {
+                                    "frame": {
+                                        "height": 120,
+                                        "alignment": "CenterStart"
+                                    },
+                                    "backgroundColor": "primaryContainer",
+                                    "padding": {
+                                        "top": 0,
+                                        "bottom": 0,
+                                        "left": 20,
+                                        "right": 0
+                                    },
+                                    "isEnabled": true,
+                                    "text": "Monstera \nAdansonii",
+                                    "font": {
+                                        "font": "displayMedium",
+                                        "color": "tertiary"
+                                    },
+                                    "textAlignment": "Center"
+                                },
+                                "childrens": [],
+                                "states": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": 19,
+                        "type": "HStack",
+                        "properties": {
+                            "backgroundColor": "primaryContainer",
+                            "cornerRadius": "large",
+                            "padding": {
+                                "top": -30,
+                                "bottom": 0,
+                                "left": 0,
+                                "right": -30
+                            },
+                            "isEnabled": true
+                        },
+                        "childrens": [
+                            {
+                                "id": 20,
+                                "type": "VStack",
+                                "properties": {
+                                    "frame": {
+                                        "alignment": "TopCenter",
+                                        "width": 160
+                                    },
+                                    "backgroundColor": "primaryContainer",
+                                    "padding": {
+                                        "top": 10,
+                                        "bottom": 0,
+                                        "left": 0,
+                                        "right": 0
+                                    },
+                                    "isEnabled": true
+                                },
+                                "childrens": [
+                                    {
+                                        "id":21,
+                                        "type": "Text",
+                                        "properties": {
+                                            "frame": {
+                                                "height": 40,
+                                                "width": 50
+                                            },
+                                            "backgroundColor": "primaryContainer",
+                                            "padding": {
+                                                "top": 20,
+                                                "bottom": 0,
+                                                "left": 0,
+                                                "right": 70
+                                            },
+                                            "isEnabled": true,
+                                            "text": "PRICE\n$ 400",
+                                            "font": {
+                                                "font": "bodyMedium",
+                                                "color": "tertiary"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "id": 22,
+                                        "type": "Text",
+                                        "properties": {
+                                            "frame": {
+                                                "height": 40,
+                                                "width": 50,
+                                                "aligment": "TopStart"
+                                            },
+                                            "backgroundColor": "primaryContainer",
+                                            "padding": {
+                                                "top": 5,
+                                                "bottom": 0,
+                                                "left": 0,
+                                                "right": 70
+                                            },
+                                            "isEnabled": true,
+                                            "text": "SIZE   \n5¨h",
+                                            "font": {
+                                                "font": "bodyMedium",
+                                                "color": "tertiary"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "id": 23,
+                                        "type": "HStack",
+                                        "properties": {
+                                            "cornerRadius": "medium",
+                                            "frame": {
+                                                "width": 100
+                                            },
+                                            "padding": {
+                                                "top": 10,
+                                                "bottom": 0,
+                                                "left": 0,
+                                                "right": 20
+                                            },
+                                            "isEnabled": true,
+                                            "spacing": 10,
+                                            "horizontalAlignment": "Center"
+                                        },
+                                        "childrens": [
+                                            {
+                                                "id": 24,
+                                                "type": "Image",
+                                                "properties": {
+                                                    "frame": {
+                                                        "height": 45,
+                                                        "width": 45
+                                                    },
+                                                    "source": {
+                                                        "src": "heart",
+                                                        "origin": "Assets"
+                                                    },
+                                                    "padding": {
+                                                        "top": 0,
+                                                        "bottom": 0,
+                                                        "left": 0,
+                                                        "right": 0
+                                                    },
+                                                    "isEnabled": true,
+                                                    "name": "example",
+                                                    "contentMode": "FillBounds"
+                                                },
+                                                "childrens": [],
+                                                "states": []
+                                            },
+                                            {
+                                                "id": 25,
+                                                "type": "Image",
+                                                "properties": {
+                                                    "frame": {
+                                                        "height": 45,
+                                                        "width": 45
+                                                    },
+                                                    "source": {
+                                                        "src": "shoping",
+                                                        "origin": "Assets"
+                                                    },
+                                                    "padding": {
+                                                        "top": 0,
+                                                        "bottom": 0,
+                                                        "left": 0,
+                                                        "right": 0
+                                                    },
+                                                    "isEnabled": true,
+                                                    "name": "example",
+                                                    "contentMode": "FillBounds"
+                                                },
+                                                "childrens": [],
+                                                "states": []
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 26,
+                                "type": "HStack",
+                                "properties": {
+                                    "backgroundColor": "onPrimary",
+                                    "cornerRadius": "medium",
+                                    "padding": {
+                                        "top": 10,
+                                        "bottom": 0,
+                                        "left": 0,
+                                        "right": 0
+                                    },
+                                    "isEnabled": true,
+                                    "spacing": 10,
+                                    "horizontalAlignment": "Center"
+                                },
+                                "childrens": [
+                                    {
+                                        "id": 27,
+                                        "type": "Image",
+                                        "properties": {
+                                            "frame": {
+                                            },
+                                            "source": {
+                                                "src": "https://img1.wsimg.com/isteam/ip/39a5b780-cafd-4a46-b655-b64c84ff6342/Matas-grandes-06-Ref-AC394-estados.jpg/:/",
+                                                "origin": "Url"
+                                            },
+                                            "backgroundColor": "onPrimary",
+                                            "padding": {
+                                                "top": 0,
+                                                "bottom": 0,
+                                                "left": 0,
+                                                "right": 0
+                                            },
+                                            "isEnabled": true,
+                                            "name": "example",
+                                            "contentMode": "Fit"
+                                        },
+                                        "childrens": [],
+                                        "states": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": 28,
+                "type": "HStack",
+                "properties": {
+                    "frame": {
+                        "height": 30
+                    },
+                    "cornerRadius": "small",
+                    "border": {
+                        "color": "primary",
+                        "width": 1
+                    },
+                    "padding": {
+                        "top": 10,
+                        "left": 15,
+                        "right": 15
+                    },
+                    "isEnabled": true,
+                    "spacing": 10,
+                    "horizontalAlignment": "Center"
+                },
+                "childrens": [
+                    {
+                        "id": 29,
+                        "type": "Image",
+                        "properties": {
+                            "frame": {
+                                "height": 15,
+                                "width": 15
+                            },
+                            "source": {
+                                "src": "search",
+                                "origin": "Assets"
+                            },
+                            "padding": {
+                                "top": 10,
+                                "bottom": 10,
+                                "left": 10
+                            },
+                            "isEnabled": true,
+                            "name": "example",
+                            "contentMode": "Fit"
+                        }
+                    },
+                    {
+                        "id": 30,
+                        "type": "TextField",
+                        "properties": {
+                            "padding": {
+                                "top": 5,
+                                "bottom": 5
+                            },
+                            "isEnabled": true,
+                            "font": {
+                                "font": "displaySmall",
+                                "color": "tertiary"
+                            },
+                            "placeholder": {
+                                "text": "Search",
+                                "font": {
+                                    "font": "displaySmall",
+                                    "color": "primary"
+                                }
+                            },
+                            "text": "Default text",
+                            "textAlignment": "Center",
+                            "keyboardType": "default"
+                        },
+                        "childrens": [],
+                        "states": []
+                    },
+                    {
+                        "id": 31,
+                        "type": "Button",
+                        "properties": {
+                            "padding": {
+                                "left": 10,
+                                "right": 10
+                            },
+                            "frame": {
+                                "width": 20
+                            },
+                            "isEnabled": true,
+                            "textAlignment": "Center",
+                            "action": {
+                                "type": "Alert",
+                                "title": "Alerta",
+                                "message": "Haz hecho clic en el botón",
+                                "destination": null
+                            }
+                        },
+                        "childrens": [
+                            {
+                                "id": 32,
+                                "type": "Image",
+                                "properties": {
+                                    "frame": {
+                                        "height": 15,
+                                        "width": 15
+                                    },
+                                    "source": {
+                                        "src": "scan",
+                                        "origin": "Assets"
+                                    },
+                                    "padding": {
+                                        "top": 10,
+                                        "bottom": 10,
+                                        "left": 10,
+                                        "right": 10
+                                    },
+                                    "isEnabled": true,
+                                    "name": "example",
+                                    "contentMode": "Fit"
+                                },
+                                "childrens": [],
+                                "states": []
+                            }
+                        ],
+                        "states": []
+                    }
+                ]
+            },
+            {
+                "id": 33,
+                "type": "Text",
+                "properties": {
+                    "frame": {
+                        "height": 40,
+                        "alignment": "CenterStart"
+                    },
+                    "padding": {
+                        "top": 0,
+                        "bottom": 0,
+                        "left": 20,
+                        "right": 0
+                    },
+                    "isEnabled": true,
+                    "text": "Overview",
+                    "font": {
+                        "font": "bodyLarge",
+                        "color": "tertiary"
+                    },
+                    "textAlignment": "Start"
+                },
+                "childrens": [],
+                "states": []
+            },
+            {
+                "id": 34,
+                "type": "HStack",
+                "properties": {
+                    "frame": {
+                        "height": 70,
+                        "width": 260
+                    },
+                    "isEnabled": true,
+                    "spacing": 30,
+                    "horizontalAlignment": "Center"
+                },
+                "childrens": [
+                    {
+                        "id": 35,
+                        "type": "VStack",
+                        "properties": {
+                            "isEnabled": true,
+                            "verticalAlignment": "Center"
+                        },
+                        "childrens": [
+                            {
+                                "id": 36,
+                                "type": "Image",
+                                "properties": {
+                                    "frame": {
+                                        "height": 25,
+                                        "width": 25
+                                    },
+                                    "source": {
+                                        "src": "sunAndMoon",
+                                        "origin": "Assets"
+                                    },
+                                    "isEnabled": true,
+                                    "name": "example",
+                                    "contentMode": "FillBounds"
+                                }
+                            },
+                            {
+                                "id": 37,
+                                "type": "Text",
+                                "properties": {
+                                    "isEnabled": true,
+                                    "text": "LIGHT",
+                                    "font": {
+                                        "font": "labelSmall",
+                                        "color": "tertiary"
+                                    },
+                                    "textAlignment": "Center"
+                                }
+                            },
+                            {
+                                "id": 38,
+                                "type": "Text",
+                                "properties": {
+                                    "isEnabled": true,
+                                    "text": "35-40%",
+                                    "font": {
+                                        "font": "bodySmall",
+                                        "color": "tertiary"
+                                    },
+                                    "textAlignment": "Center"
+                                }
+                            }
+                        ],
+                        "states": []
+                    },
+                    {
+                        "id": 39,
+                        "type": "VStack",
+                        "properties": {
+                            "isEnabled": true,
+                            "verticalAlignment": "Center"
+                        },
+                        "childrens": [
+                            {
+                                "id": 40,
+                                "type": "Image",
+                                "properties": {
+                                    "frame": {
+                                        "height": 26,
+                                        "width": 26
+                                    },
+                                    "source": {
+                                        "src": "temperature",
+                                        "origin": "Assets"
+                                    },
+                                    "isEnabled": true,
+                                    "name": "example",
+                                    "contentMode": "FillBounds"
+                                }
+                            },
+                            {
+                                "id": 41,
+                                "type": "Text",
+                                "properties": {
+                                    "frame": {
+                                        "width": 70
+                                    },
+                                    "isEnabled": true,
+                                    "text": "TEMPERATURE",
+                                    "font": {
+                                        "font": "labelSmall",
+                                        "color": "tertiary"
+                                    },
+                                    "textAlignment": "Center"
+                                }
+                            },
+                            {
+                                "id": 42,
+                                "type": "Text",
+                                "properties": {
+                                    "isEnabled": true,
+                                    "text": "70-75 °F",
+                                    "font": {
+                                        "font": "bodySmall",
+                                        "color": "tertiary"
+                                    },
+                                    "textAlignment": "Center"
+                                }
+                            }
+                        ],
+                        "states": []
+                    },{
+                        "id": 43,
+                        "type": "VStack",
+                        "properties": {
+                            "isEnabled": true,
+                            "verticalAlignment": "Center"
+                        },
+                        "childrens": [
+                            {
+                                "id": 44,
+                                "type": "Image",
+                                "properties": {
+                                    "frame": {
+                                        "height": 25,
+                                        "width": 25
+                                    },
+                                    "source": {
+                                        "src": "waterIcon",
+                                        "origin": "Assets"
+                                    },
+                                    "isEnabled": true,
+                                    "name": "example",
+                                    "contentMode": "Fit"
+                                }
+                            },
+                            {
+                                "id": 45,
+                                "type": "Text",
+                                "properties": {
+                                    "isEnabled": true,
+                                    "text": "WATER",
+                                    "padding": {
+                                        "top": 7
+                                    },
+                                    "font": {
+                                        "font": "labelSmall",
+                                        "color": "tertiary"
+                                    },
+                                    "textAlignment": "Center"
+                                }
+                            },
+                            {
+                                "id": 46,
+                                "type": "Text",
+                                "properties": {
+                                    "padding": {
+                                        "left": 2
+                                    },
+                                    "isEnabled": true,
+                                    "text": "250ml",
+                                    "font": {
+                                        "font": "bodySmall",
+                                        "color": "tertiary"
+                                    },
+                                    "textAlignment": "Center"
+                                }
+                            }
+                        ],
+                        "states": []
+                    }
+                ]
+            },
+            {
+                "id": 47,
+                "type": "Text",
+                "properties": {
+                    "frame": {
+                        "height": 30,
+                        "alignment": "CenterStart"
+                    },
+                    "padding": {
+                        "top": 10,
+                        "bottom": 0,
+                        "left": 20,
+                        "right": 0
+                    },
+                    "isEnabled": true,
+                    "text": "About",
+                    "font": {
+                        "font": "bodyLarge",
+                        "color": "tertiary"
+                    },
+                    "textAlignment": "Start"
+                },
+                "childrens": [],
+                "states": []
+            },
+            {
+                "id": 48,
+                "type": "Text",
+                "properties": {
+                    "frame": {
+                        "alignment": "CenterStart"
+                    },
+                    "padding": {
+                        "left": 20,
+                        "right": 20
+                    },
+                    "isEnabled": true,
+                    "text": "The Monstera Adansonii grows best in a well-draining Aroid mix using bark, perlite, peat moss, and charcoal. Keep your plant in bright indirect light and humidity above 60%. When watering, make sure that the potting mix of your Adansonii remains slightly moist",
+                    "font": {
+                        "font": "bodySmall",
+                        "color": "onTertiary"
+                    },
+                    "textAlignment": "Start"
+                },
+                "childrens": [],
+                "states": []
+            },
+            {
+                "id": 49,
+                "type": "HStack",
+                "properties": {
+                    "frame": {
+                        "height": 54,
+                        "alignment": "CenterStart"
+                    },
+                    "backgroundColor": "onPrimary",
+                    "cornerRadius": "small",
+                    "padding": {
+                        "top": 20,
+                        "left": 20,
+                        "right": 20
+                    },
+                    "isEnabled": true,
+                    "horizontalAlignment": "Center"
+                },
+                "childrens": [
+                    {
+                        "id": 50,
+                        "type": "Image",
+                        "properties": {
+                            "frame": {
+                                "height": 25,
+                                "width": 25
+                            },
+                            "padding": {
+                                "left": 20,
+                                "right": 20
+                            },
+                            "source": {
+                                "src": "shoppingIcon",
+                                "origin": "Assets"
+                            },
+                            "isEnabled": true,
+                            "name": "example",
+                            "contentMode": "Fit"
+                        },
+                        "childrens": [],
+                        "states": []
+                    },
+                    {
+                        "id": 51,
+                        "type": "Text",
+                        "properties": {
+                            "frame": {
+                                "alignment": "CenterStart"
+                            },
+                            "isEnabled": true,
+                            "text": "View 3 items",
+                            "font": {
+                                "font": "bodyLarge",
+                                "color": "tertiary"
+                            }
+                        },
+                        "childrens": [],
+                        "states": []
+                    },
+                    {
+                        "id": 52,
+                        "type": "Text",
+                        "properties": {
+                            "frame": {
+                                "alignment": "CenterEnd"
+                            },
+                            "isEnabled": true,
+                            "text": "$ 400",
+                            "font": {
+                                "font": "bodyLarge",
+                                "color": "tertiary"
+                            },
+                            "padding": {
+                                "left": 20,
+                                "right": 20
+                            }
+                        },
+                        "childrens": [],
+                        "states": []
+                    }
+                ],
+                "states": []
+            }
+        ],
+        "states": []
+    }
+]
