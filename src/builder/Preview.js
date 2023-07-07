@@ -10,6 +10,10 @@ import SDVStackView from '../components/SDComponents/SDVStackView';
 import SDHStackView from '../components/SDComponents/SDHStackView';
 import SDZStackView from '../components/SDComponents/SDZStackView';
 import SDTextView from '../components/SDComponents/SDTextView';
+import SDImageView from '../components/SDComponents/SDImageView';
+import SDButtonView from '../components/SDComponents/SDButtonView';
+import SDScrollView from '../components/SDComponents/SDScrollView';
+
 
 
 import { fetchJsonFile } from '../utils/utils';
@@ -44,16 +48,16 @@ const BuilderPreview = () => {
       Component = SDTextView; // Use a paragraph for Text components
       break;
     case "Button":
-      Component = 'div'; // Use a button element for Button components
+      Component = SDButtonView; // Use a button element for Button components
       break;
     case "Image":
-      Component = 'div'; // Use an img element for Image components
+      Component = SDImageView; // Use an img element for Image components
       break;
     case "TextField":
       Component = 'div'; // Use an input element for TextField components
       break;
     case "ScrollView":
-      Component = 'div'; // Use a div for ScrollView components
+      Component = SDScrollView; // Use a div for ScrollView components
       break;
     default:
      console.log(' Default to a div:', component.type); // Agrega un registro para indicar el componente actual
@@ -98,7 +102,6 @@ const sdFont = componentData.properties.font
 	  componentData.properties.contentInset,
 	  componentData.properties.text,
 	  sdFont,
-	  componentData.properties.font,
 	  componentData.properties.textAlignment,
 	  componentData.properties.action,
 	  componentData.properties.source,

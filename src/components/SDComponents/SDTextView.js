@@ -1,16 +1,20 @@
+// components/SDTextView.js
 import React from 'react';
+import useSDPropertiesModifier, { getAlignment }  from '../Common/useSDPropertiesModifier';
 
 const SDTextView = ({ component, children }) => {
-  const font = component.properties.font?.fontValue();
-  const color = component.properties.font?.colorValue();
+  const properties = component.properties;
+  const font = properties.font?.fontValue();
+  const color = properties.font?.colorValue(1.0);
 
-  const alignmentType = component.properties.textAlignment?.alignment || 'leading';
+  // Usamos nuestro hook para obtener los estilos finales
+  const alignmentStyle = getAlignment(properties?.frame?.alignment) ?? {};
+  const divStyle = useSDPropertiesModifier(properties, { color, ...font, ...alignmentStyle });
+
+  const alignmentType = properties.textAlignment?.alignment || 'leading';
 
   return (
-    <div>
-      <span style={{ color, font }}>{component.properties.text || ''}</span>
-      {children}
-    </div>
+    <span style={divStyle}>{properties.text || ''}</span>
   );
 };
 

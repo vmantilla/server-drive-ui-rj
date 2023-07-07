@@ -12,7 +12,7 @@ import { loadThemes } from './themes';
 // Llamar a loadThemes para cargar los datos de los themes
 loadThemes().then((themesData) => {
   // Utilizar los datos de los themes cargados
-  console.log(themesData);
+  //console.log(themesData);
 });
 
 function App() {

@@ -4,7 +4,6 @@
         "type": "ScrollView",
         "properties": {
             "backgroundColor": "onPrimaryContainer",
-            "cornerRadius": "none",
             "axis" : "Vertical",
             "padding": {
                 "top": 0,
@@ -16,9 +15,9 @@
             "showsIndicators": true,
             "contentInset": {
                 "top": 0,
-                "bottom": 10,
-                "left": 10,
-                "right": 10
+                "bottom": 0,
+                "left": 0,
+                "right": 0
             },
             "frame": {
                 "alignment": "TopCenter"
@@ -31,7 +30,6 @@
                 "type": "HStack",
                 "properties": {
                     "backgroundColor": "primaryContainer",
-                    "cornerRadius": "none",
                     "axis" : "Vertical",
                     "padding": {
                         "top": 0,
@@ -105,7 +103,6 @@
                         "id": 5,
                         "type": "HStack",
                         "properties": {
-                            "cornerRadius": "none",
                             "axis" : "Vertical",
                             "padding": {
                                 "top": 0,
@@ -232,20 +229,8 @@
                         "alignment": "TopCenter"
                     },
                     "axis" : "Vertical",
-                    "padding": {
-                        "top": 0,
-                        "bottom": 0,
-                        "left": 0,
-                        "right": 0
-                    },
                     "isEnabled": true,
                     "showsIndicators": true,
-                    "contentInset": {
-                        "top": 50,
-                        "bottom": 0,
-                        "left": 0,
-                        "right": 0
-                    },
                     "horizontalAlignment": "Center"
                 },
                 "childrens": [
@@ -314,7 +299,9 @@
                                     "padding": {
                                         "right": 20
                                     },
-                                    "cornerRadius": "small",
+                                    "cornerRadius": {
+                                        "shape": "small"
+                                    },
                                     "isEnabled": true,
                                     "horizontalAlignment": "Center"
                                 },
@@ -331,12 +318,12 @@
                                                 "left": 5
                                             },
                                             "frame": {
-                                                "height": 10,
-                                                "width": 10
+                                                "height": 15,
+                                                "width": 10,
+                                                "alignment": "Center"
                                             },
                                             "isEnabled": true,
-                                            "name": "example",
-                                            "contentMode": "Fit"
+                                            "name": "example"
                                         }
                                     },
                                     {
@@ -344,19 +331,22 @@
                                         "type": "Text",
                                         "properties": {
                                             "frame": {
-                                                "height": 20,
+                                                "height": 15,
                                                 "width": 25,
                                                 "alignment": "Center"
                                             },
-
-                                            "cornerRadius": "small",
+                                            "padding": {
+                                                "left": 6
+                                            },
+                                            "cornerRadius": {
+                                                "shape": "small"
+                                            },
                                             "isEnabled": true,
                                             "text": "4.8",
                                             "font": {
                                                 "font": "labelSmall",
                                                 "color": "onPrimaryContainer"
-                                            },
-                                            "textAlignment": "Center"
+                                            }
                                         }
                                     }
 
@@ -370,11 +360,8 @@
                         "type": "VStack",
                         "properties": {
                             "frame": {
-                                "height": 140,
+                                "height": 100,
                                 "alignment": "TopCenter"
-                            },
-                            "padding": {
-                                "bottom": 10
                             },
                             "backgroundColor": "primaryContainer"
                         },
@@ -384,7 +371,7 @@
                                 "type": "Text",
                                 "properties": {
                                     "frame": {
-                                        "height": 120,
+                                        "height": 100,
                                         "alignment": "CenterStart"
                                     },
                                     "backgroundColor": "primaryContainer",
@@ -395,7 +382,7 @@
                                         "right": 0
                                     },
                                     "isEnabled": true,
-                                    "text": "Monstera \nAdansonii",
+                                    "text": "Monstera\nAdansonii",
                                     "font": {
                                         "font": "displayMedium",
                                         "color": "tertiary"
@@ -411,13 +398,17 @@
                         "id": 19,
                         "type": "HStack",
                         "properties": {
+                            "frame": {
+                                "width": 151
+                            },
                             "backgroundColor": "primaryContainer",
-                            "cornerRadius": "large",
-                            "padding": {
-                                "top": -30,
-                                "bottom": 0,
-                                "left": 0,
-                                "right": -30
+                            "cornerRadius": {
+                                "shape": "large",
+                                "corners": {
+                                    "topStart": 0,
+                                    "topEnd": 0,
+                                    "bottomEnd": 0
+                                }
                             },
                             "isEnabled": true
                         },
@@ -428,132 +419,227 @@
                                 "properties": {
                                     "frame": {
                                         "alignment": "TopCenter",
-                                        "width": 160
+                                        "minWidth": 151
                                     },
                                     "backgroundColor": "primaryContainer",
-                                    "padding": {
-                                        "top": 10,
-                                        "bottom": 0,
-                                        "left": 0,
-                                        "right": 0
-                                    },
                                     "isEnabled": true
                                 },
                                 "childrens": [
                                     {
-                                        "id":21,
-                                        "type": "Text",
+                                        "id": 54,
+                                        "type": "VStack",
                                         "properties": {
                                             "frame": {
-                                                "height": 40,
-                                                "width": 50
-                                            },
-                                            "backgroundColor": "primaryContainer",
-                                            "padding": {
-                                                "top": 20,
-                                                "bottom": 0,
-                                                "left": 0,
-                                                "right": 70
+                                                "aligment": "CenterStart"
                                             },
                                             "isEnabled": true,
-                                            "text": "PRICE\n$ 400",
-                                            "font": {
-                                                "font": "bodyMedium",
-                                                "color": "tertiary"
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "id": 22,
-                                        "type": "Text",
-                                        "properties": {
-                                            "frame": {
-                                                "height": 40,
-                                                "width": 50,
-                                                "aligment": "TopStart"
+                                            "verticalAlignment": "Top"
+                                        },
+                                        "childrens": [
+                                            {
+                                                "id": 68,
+                                                "type": "VStack",
+                                                "properties": {
+                                                    "padding": {
+                                                        "top": 20
+                                                    },
+                                                    "isEnabled": true,
+                                                    "verticalAlignment": "Center"
+                                                },
+                                                "childrens": [
+                                                    {
+                                                        "id":21,
+                                                        "type": "Text",
+                                                        "properties": {
+                                                            "frame": {
+                                                                "alignment": "CenterStart"
+                                                            },
+                                                            "padding": {
+                                                                "left": 20
+                                                            },
+                                                            "backgroundColor": "primaryContainer",
+                                                            "isEnabled": true,
+                                                            "text": "PRICE",
+                                                            "font": {
+                                                                "font": "bodyMedium",
+                                                                "color": "tertiary"
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "id": 66,
+                                                        "type": "Text",
+                                                        "properties": {
+                                                            "frame": {
+                                                                "alignment": "CenterStart"
+                                                            },
+                                                            "padding": {
+                                                                "left": 20
+                                                            },
+                                                            "backgroundColor": "primaryContainer",
+                                                            "isEnabled": true,
+                                                            "text": "$ 400",
+                                                            "font": {
+                                                                "font": "bodyMedium",
+                                                                "color": "tertiary"
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "states": []
                                             },
-                                            "backgroundColor": "primaryContainer",
-                                            "padding": {
-                                                "top": 5,
-                                                "bottom": 0,
-                                                "left": 0,
-                                                "right": 70
-                                            },
-                                            "isEnabled": true,
-                                            "text": "SIZE   \n5¨h",
-                                            "font": {
-                                                "font": "bodyMedium",
-                                                "color": "tertiary"
+                                            {
+                                                "id": 69,
+                                                "type": "VStack",
+                                                "properties": {
+                                                    "padding": {
+                                                        "bottom": 20
+                                                    },
+                                                    "isEnabled": true,
+                                                    "verticalAlignment": "Top"
+                                                },
+                                                "childrens": [
+                                                    {
+                                                        "id": 22,
+                                                        "type": "Text",
+                                                        "properties": {
+                                                            "frame": {
+                                                                "alignment": "CenterStart"
+                                                            },
+                                                            "padding": {
+                                                                "left": 20
+                                                            },
+                                                            "backgroundColor": "primaryContainer",
+                                                            "isEnabled": true,
+                                                            "text": "SIZE",
+                                                            "font": {
+                                                                "font": "bodyMedium",
+                                                                "color": "tertiary"
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "id": 67,
+                                                        "type": "Text",
+                                                        "properties": {
+                                                            "frame": {
+                                                                "alignment": "CenterStart"
+                                                            },
+                                                            "padding": {
+                                                                "left": 20
+                                                            },
+                                                            "backgroundColor": "primaryContainer",
+                                                            "isEnabled": true,
+                                                            "text": "5¨h",
+                                                            "font": {
+                                                                "font": "bodyMedium",
+                                                                "color": "tertiary"
+                                                            }
+                                                        }
+                                                    }
+                                                ],
+                                                "states": []
                                             }
-                                        }
+                                        ],
+                                        "states": []
                                     },
                                     {
                                         "id": 23,
                                         "type": "HStack",
                                         "properties": {
-                                            "cornerRadius": "medium",
+                                            "cornerRadius": {
+                                                "shape": "medium"
+                                            },
                                             "frame": {
-                                                "width": 100
+                                                "height": 50,
+                                                "width": 120
                                             },
                                             "padding": {
-                                                "top": 10,
-                                                "bottom": 0,
-                                                "left": 0,
-                                                "right": 20
+                                                "bottom": 20,
+                                                "left": 20,
+                                                "alignment": "CenterEnd"
                                             },
                                             "isEnabled": true,
-                                            "spacing": 10,
-                                            "horizontalAlignment": "Center"
+                                            "spacing": 10
                                         },
                                         "childrens": [
                                             {
-                                                "id": 24,
-                                                "type": "Image",
+                                                "id": 62,
+                                                "type": "Button",
                                                 "properties": {
                                                     "frame": {
                                                         "height": 45,
                                                         "width": 45
                                                     },
-                                                    "source": {
-                                                        "src": "heart",
-                                                        "origin": "Assets"
-                                                    },
-                                                    "padding": {
-                                                        "top": 0,
-                                                        "bottom": 0,
-                                                        "left": 0,
-                                                        "right": 0
+                                                    "cornerRadius": {
+                                                        "shape": "small"
                                                     },
                                                     "isEnabled": true,
-                                                    "name": "example",
-                                                    "contentMode": "FillBounds"
+                                                    "textAlignment": "Center",
+                                                    "action": {
+                                                        "type": "Alert",
+                                                        "title": "Alerta",
+                                                        "message": "Haz hecho clic en el botón",
+                                                        "destination": null
+                                                    }
                                                 },
-                                                "childrens": [],
+                                                "childrens": [
+                                                    {
+                                                        "id": 24,
+                                                        "type": "Image",
+                                                        "properties": {
+                                                            "source": {
+                                                                "src": "heart",
+                                                                "origin": "Assets"
+                                                            },
+                                                            "isEnabled": true,
+                                                            "name": "example",
+                                                            "contentMode": "FillBounds"
+                                                        },
+                                                        "childrens": [],
+                                                        "states": []
+                                                    }
+                                                ],
                                                 "states": []
                                             },
                                             {
-                                                "id": 25,
-                                                "type": "Image",
+                                                "id": 53,
+                                                "type": "Button",
                                                 "properties": {
                                                     "frame": {
                                                         "height": 45,
                                                         "width": 45
                                                     },
-                                                    "source": {
-                                                        "src": "shoping",
-                                                        "origin": "Assets"
-                                                    },
-                                                    "padding": {
-                                                        "top": 0,
-                                                        "bottom": 0,
-                                                        "left": 0,
-                                                        "right": 0
-                                                    },
                                                     "isEnabled": true,
-                                                    "name": "example",
-                                                    "contentMode": "FillBounds"
+                                                    "textAlignment": "Center",
+                                                    "action": {
+                                                        "type": "Alert",
+                                                        "title": "Alerta",
+                                                        "message": "Haz hecho clic en el botón",
+                                                        "destination": null
+                                                    }
                                                 },
-                                                "childrens": [],
+                                                "childrens": [
+                                                    {
+                                                        "id": 25,
+                                                        "type": "Image",
+                                                        "properties": {
+                                                            "frame": {
+                                                                "height": 45,
+                                                                "width": 45
+                                                            },
+                                                            "source": {
+                                                                "src": "shoping",
+                                                                "origin": "Assets"
+                                                            },
+                                                            "isEnabled": true,
+                                                            "name": "example",
+                                                            "contentMode": "FillBounds"
+                                                        },
+                                                        "childrens": [],
+                                                        "states": []
+                                                    }
+                                                ],
                                                 "states": []
                                             }
                                         ]
@@ -565,12 +651,21 @@
                                 "type": "HStack",
                                 "properties": {
                                     "backgroundColor": "onPrimary",
-                                    "cornerRadius": "medium",
+                                    "frame": {
+                                        "height": 219,
+                                        "width": 209
+                                    },
+                                    "cornerRadius": {
+                                        "shape": "medium",
+                                        "corners": {
+                                            "topStart": 14,
+                                            "topEnd": 0,
+                                            "bottomStart": 14,
+                                            "bottomEnd": 0
+                                        }
+                                    },
                                     "padding": {
-                                        "top": 10,
-                                        "bottom": 0,
-                                        "left": 0,
-                                        "right": 0
+                                        "top": 0
                                     },
                                     "isEnabled": true,
                                     "spacing": 10,
@@ -581,10 +676,8 @@
                                         "id": 27,
                                         "type": "Image",
                                         "properties": {
-                                            "frame": {
-                                            },
                                             "source": {
-                                                "src": "https://img1.wsimg.com/isteam/ip/39a5b780-cafd-4a46-b655-b64c84ff6342/Matas-grandes-06-Ref-AC394-estados.jpg/:/",
+                                                "src": "https://2img1.wsimg.com/isteam/ip/39a5b780-cafd-4a46-b655-b64c84ff6342/Matas-grandes-06-Ref-AC394-estados.jpg/:/",
                                                 "origin": "Url"
                                             },
                                             "backgroundColor": "onPrimary",
@@ -596,7 +689,7 @@
                                             },
                                             "isEnabled": true,
                                             "name": "example",
-                                            "contentMode": "Fit"
+                                            "contentMode": "FIT"
                                         },
                                         "childrens": [],
                                         "states": []
@@ -614,7 +707,9 @@
                     "frame": {
                         "height": 30
                     },
-                    "cornerRadius": "small",
+                    "cornerRadius": {
+                        "shape": "small"
+                    },
                     "border": {
                         "color": "primary",
                         "width": 1
@@ -759,8 +854,7 @@
                 "type": "HStack",
                 "properties": {
                     "frame": {
-                        "height": 70,
-                        "width": 260
+                        "height": 70
                     },
                     "isEnabled": true,
                     "spacing": 30,
@@ -780,8 +874,8 @@
                                 "type": "Image",
                                 "properties": {
                                     "frame": {
-                                        "height": 25,
-                                        "width": 25
+                                        "height": 22,
+                                        "width": 22
                                     },
                                     "source": {
                                         "src": "sunAndMoon",
@@ -790,7 +884,10 @@
                                     "isEnabled": true,
                                     "name": "example",
                                     "contentMode": "FillBounds"
-                                }
+                                },
+                                "isEnabled": true,
+                                "name": "example",
+                                "contentMode": "FillBounds"
                             },
                             {
                                 "id": 37,
@@ -799,8 +896,8 @@
                                     "isEnabled": true,
                                     "text": "LIGHT",
                                     "font": {
-                                        "font": "labelSmall",
-                                        "color": "tertiary"
+                                      "font": "labelSmall",
+                                      "color": "tertiary"
                                     },
                                     "textAlignment": "Center"
                                 }
@@ -809,6 +906,9 @@
                                 "id": 38,
                                 "type": "Text",
                                 "properties": {
+                                    "padding": {
+                                        "left": 6
+                                    },
                                     "isEnabled": true,
                                     "text": "35-40%",
                                     "font": {
@@ -834,8 +934,8 @@
                                 "type": "Image",
                                 "properties": {
                                     "frame": {
-                                        "height": 26,
-                                        "width": 26
+                                        "height": 22,
+                                        "width": 22
                                     },
                                     "source": {
                                         "src": "temperature",
@@ -877,7 +977,8 @@
                             }
                         ],
                         "states": []
-                    },{
+                    },
+                    {
                         "id": 43,
                         "type": "VStack",
                         "properties": {
@@ -890,8 +991,8 @@
                                 "type": "Image",
                                 "properties": {
                                     "frame": {
-                                        "height": 25,
-                                        "width": 25
+                                        "height": 22,
+                                        "width": 15
                                     },
                                     "source": {
                                         "src": "waterIcon",
@@ -906,6 +1007,9 @@
                                 "id": 45,
                                 "type": "Text",
                                 "properties": {
+                                    "frame": {
+                                        "alignment": "Center"
+                                    },
                                     "isEnabled": true,
                                     "text": "WATER",
                                     "padding": {
@@ -940,50 +1044,76 @@
                 ]
             },
             {
-                "id": 47,
-                "type": "Text",
+                "id": 59,
+                "type": "VStack",
                 "properties": {
                     "frame": {
-                        "height": 30,
-                        "alignment": "CenterStart"
-                    },
-                    "padding": {
-                        "top": 10,
-                        "bottom": 0,
-                        "left": 20,
-                        "right": 0
-                    },
-                    "isEnabled": true,
-                    "text": "About",
-                    "font": {
-                        "font": "bodyLarge",
-                        "color": "tertiary"
-                    },
-                    "textAlignment": "Start"
-                },
-                "childrens": [],
-                "states": []
-            },
-            {
-                "id": 48,
-                "type": "Text",
-                "properties": {
-                    "frame": {
-                        "alignment": "CenterStart"
+                        "height": 30
                     },
                     "padding": {
                         "left": 20,
                         "right": 20
                     },
                     "isEnabled": true,
-                    "text": "The Monstera Adansonii grows best in a well-draining Aroid mix using bark, perlite, peat moss, and charcoal. Keep your plant in bright indirect light and humidity above 60%. When watering, make sure that the potting mix of your Adansonii remains slightly moist",
-                    "font": {
-                        "font": "bodySmall",
-                        "color": "onTertiary"
-                    },
-                    "textAlignment": "Start"
+                    "verticalAlignment": "Center"
                 },
-                "childrens": [],
+                "childrens": [
+                    {
+                        "id": 47,
+                        "type": "Text",
+                        "properties": {
+                            "frame": {
+                                "height": 30,
+                                "alignment": "CenterStart"
+                            },
+                            "isEnabled": true,
+                            "text": "About",
+                            "font": {
+                                "font": "bodyLarge",
+                                "color": "tertiary"
+                            },
+                            "padding": {
+                                "left": 0
+                            },
+                            "textAlignment": "Start"
+                        },
+                        "childrens": [],
+                        "states": []
+                    }
+                ],
+                "states": []
+            },
+            {
+                "id": 60,
+                "type": "VStack",
+                "properties": {
+                    "padding": {
+                        "left": 20,
+                        "right": 20
+                    },
+                    "isEnabled": true,
+                    "verticalAlignment": "Center"
+                },
+                "childrens": [
+                    {
+                        "id": 48,
+                        "type": "Text",
+                        "properties": {
+                            "frame": {
+                                "alignment": "CenterStart"
+                            },
+                            "isEnabled": true,
+                            "text": "The Monstera Adansonii grows best in a well-draining Aroid mix using bark, perlite, peat moss, and charcoal. Keep your plant in bright indirect light and humidity above 60%. When watering, make sure that the potting mix of your Adansonii remains slightly moist",
+                            "font": {
+                                "font": "bodySmall",
+                                "color": "onTertiary"
+                            },
+                            "textAlignment": "Start"
+                        },
+                        "childrens": [],
+                        "states": []
+                    }
+                ],
                 "states": []
             },
             {
@@ -995,7 +1125,9 @@
                         "alignment": "CenterStart"
                     },
                     "backgroundColor": "onPrimary",
-                    "cornerRadius": "small",
+                    "cornerRadius": {
+                        "shape": "small"
+                    },
                     "padding": {
                         "top": 20,
                         "left": 20,
@@ -1033,7 +1165,7 @@
                         "type": "Text",
                         "properties": {
                             "frame": {
-                                "alignment": "CenterStart"
+                                "alignment": "Center"
                             },
                             "isEnabled": true,
                             "text": "View 3 items",
@@ -1050,7 +1182,7 @@
                         "type": "Text",
                         "properties": {
                             "frame": {
-                                "alignment": "CenterEnd"
+                                "alignment": "Center"
                             },
                             "isEnabled": true,
                             "text": "$ 400",
@@ -1059,8 +1191,7 @@
                                 "color": "tertiary"
                             },
                             "padding": {
-                                "left": 20,
-                                "right": 20
+                                "left": 20
                             }
                         },
                         "childrens": [],

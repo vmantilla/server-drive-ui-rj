@@ -17,6 +17,16 @@
 .dropArea {
   min-height: 40px;
   height: auto;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+  padding: 0px;
+}
+
+.dropAreaDot {
+  min-height: 40px;
+  height: auto;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border: 1px dashed rgba(0, 0, 0, 0.1);
   padding: 0px;
 }
 
@@ -36,6 +46,7 @@
   flex: 1;
   margin-bottom: 0;
   display: flex;
+  border: 1px dotted rgba(0, 0, 0, 0.1);
   border-radius: 2px;
   padding: 0px;
 }
@@ -68,6 +79,8 @@
   flex: 1;
   margin-bottom: 0;
   display: flex;
+  justify-content: center;
+  border: 1px dotted rgba(0, 0, 0, 0.1);
   border-radius: 2px;
   padding: 0px;
 }
@@ -75,3 +88,7 @@
 .hstack.dropArea > *:last-child {
   margin-right: 0;
 }
+
+
+
+

@@ -1,25 +1,30 @@
-// components/SDVStackView.js
 import React from 'react';
 import useSDPropertiesModifier from '../Common/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
 
-const SDVStackView = ({ component, children }) => {
+
+const SDScrollView = ({ component, children }) => {
+  const { axis } = component.properties;
+
   // Obtenemos las propiedades de nuestro componente
   const properties = component.properties;
 
-  // Configuramos nuestro estilo inicial del div
+  const scrollAxis = axis?.axis || 'vertical';
+
   const initialDivStyle = {
   };
 
   // Usamos nuestro hook para obtener los estilos finales
   const style = useSDPropertiesModifier(properties, initialDivStyle);
-  
-  // Aquí puedes usar las propiedades del componente para configurar tu VStack.
-  // Por ahora, solo se está utilizando el tipo de componente como texto de placeholder.
+
+  if (style.maxHeight === '100%') {
+    style.maxHeight = undefined;
+  }
+
   return (
-    <div className="vstack dropArea" style={style}>
-      {children}
+    <div className={`sd-scroll-view sd-scroll-view-${scrollAxis}`} style={style}>
+       {children}
     </div>
   );
 };
 
-export default SDVStackView;
+export default SDScrollView;
