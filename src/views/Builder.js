@@ -1,68 +1,74 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { App, View } from 'framework7-react';
 import Preview from './Preview';
+import ColorsAndFontsView from './ColorsAndFontsView';
 import { Tab, Tabs } from 'react-bootstrap';
-import { Resizable } from "re-resizable";
+import { Resizable } from 're-resizable';
+import { AiOutlineDrag } from 'react-icons/ai';
+import Draggable from 'react-draggable';
+import '../css/Builder.css';
+import { loadThemes } from '../styles/themes';
 
 const Builder = () => {
-    return (
-      <App>
-        <View main>
-          <div className="container-fluid" style={{height: '100vh'}}>
-            <Tabs defaultActiveKey="components" id="uncontrolled-tab-example" className="mb-3">
-              <Tab eventKey="components" title="Components">
-                <div className="row" style={{border: '1px solid black', height: '33.33vh'}}>
-                  <Resizable defaultSize={{width: '33.33%', height: '100%'}}>
-                    <div className="col-12" style={{border: '1px solid red', height: '100%'}}>
-                      {/* Aquí puedes listar tus componentes */}
-                      <span>Listado de componentes</span>
-                    </div>
-                  </Resizable>
-                  <Resizable defaultSize={{width: '33.33%', height: '100%'}}>
-                    <div className="col-12" style={{border: '1px solid blue', height: '100%'}}>
-                      {/* Aquí es donde los usuarios pueden arrastrar y soltar componentes */}
-                      <span>Área de construcción de la interfaz de usuario</span>
-                    </div>
-                  </Resizable>
-                  <Resizable defaultSize={{width: '33.33%', height: '100%'}}>
-                    <div className="col-12" style={{border: '1px solid green', height: '100%'}}>
-                      {/* Aquí se mostrarán y podrán ser editadas las propiedades del componente seleccionado */}
-                      <span>Panel de propiedades del componente</span>
-                    </div>
-                  </Resizable>
+  const [activeTab, setActiveTab] = useState('components');
+  const [themesData, setThemesData] = useState(null);
+
+  const handleTabChange = (tabKey) => {
+    setActiveTab(tabKey);
+  };
+
+  useEffect(() => {
+    // Llamar a loadThemes para cargar los datos de los themes
+    loadThemes().then((data) => {
+      setThemesData(data);
+    });
+  }, []);
+
+  return (
+    <App>
+      <View main>
+        <div className="container-fluid" style={{ height: '100vh' }}>
+          <Tabs
+            activeKey={activeTab}
+            onSelect={handleTabChange}
+            id="uncontrolled-tab-example"
+            className="mb-3 custom-tabs"
+          >
+            <Tab eventKey="components" title="Components">
+              {/* Panel de componentes */}
+              <div className="row" style={{ height: 'calc(100vh - 60px)' }}>
+                <div className="col-3 resizable-panel">
+                  <span>Listado de componentes</span>
                 </div>
-                <Resizable defaultSize={{width: '100%', height: '33.33%'}}>
-                  <div className="row" style={{border: '1px solid yellow', height: '100%'}}>
-                    <div className="col-12" style={{height: '100%'}}>
-                      {/* Aquí puedes cambiar entre las diferentes vistas creadas */}
-                      <span>Panel de vistas</span>
-                    </div>
-                  </div>
-                </Resizable>
-              </Tab>
-              <Tab eventKey="colors_fonts" title="Colors & Fonts">
-                <Resizable defaultSize={{width: '100%', height: '33.33%'}}>
-                  <div className="row" style={{border: '1px solid purple', height: '100%'}}>
-                    <div className="col-12" style={{height: '100%'}}>
-                      {/* Aquí se pueden seleccionar colores y fuentes */}
-                      <span>Panel de paleta de colores y fuentes</span>
-                    </div>
-                  </div>
-                </Resizable>
-              </Tab>
-              <Tab eventKey="preview" title="Preview">
-                <Resizable defaultSize={{width: '100%', height: '100vh'}}>
-                  <div style={{border: '1px solid orange', height: '100%'}}>
-                    <Preview />
-                  </div>
-                </Resizable>
-              </Tab>
-            </Tabs>
-          </div>
-        </View>
-      </App>
-    );
-}
+                <div className="col-6 resizable-panel">
+                  <span>Área de construcción de la interfaz de usuario</span>
+                </div>
+                <div className="col-3 resizable-panel">
+                  <span>Panel de propiedades del componente</span>
+                </div>
+              </div>
+              <div className="row resizable-panel">
+                <div className="col-12">
+                  <span>Panel de vistas</span>
+                </div>
+              </div>
+            </Tab>
+            <Tab eventKey="colors_fonts" title="Colors & Fonts">
+              {/* Panel de paleta de colores y fuentes */}
+              {themesData && <ColorsAndFontsView themesData={themesData} />}
+            </Tab>
+            <Tab eventKey="preview" title="Preview">
+              {/* Panel de vista previa */}
+              <div className="resizable-panel">
+                <Preview />
+              </div>
+            </Tab>
+          </Tabs>
+        </div>
+      </View>
+    </App>
+  );
+};
 
 export default Builder;

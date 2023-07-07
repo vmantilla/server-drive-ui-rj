@@ -1,0 +1,56 @@
+.resizable-handle-bottom,
+.resizable-handle-right {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: 1px solid gray;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999;
+}
+
+.resizable-handle-right {
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.resizable-handle-icon {
+  font-size: 16px;
+}
+
+.resizable-handle-icon-vertical {
+  font-size: 14px;
+  transform: rotate(-90deg);
+  color: gray;
+}
+
+.resizable-panel {
+  border-bottom: 1px solid gray;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  position: relative;
+}
+
+.resizable-preview-panel {
+  border: 1px solid orange;
+  height: 100%;
+}
+
+.nav-tabs .nav-link.active {
+  background-color: transparent;
+  color: #000;
+  border: none;
+}
+
+.nav-tabs .nav-link:focus,
+.nav-tabs .nav-link:hover {
+  background-color: transparent;
+  color: #000;
+  border: none;
+}
