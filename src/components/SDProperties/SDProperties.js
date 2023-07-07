@@ -1,4 +1,4 @@
-import { themesData } from '../../themes';
+import { themesData } from '../../styles/themes';
 
 class SDProperties {
     constructor(frame, backgroundColor, cornerRadius, border, padding, isEnabled, contentInset, text, font, textAlignment, action, source, contentMode, resizable, aspectRatio, spacing, verticalAlignment, horizontalAlignment, overlayAlignment, axis, showsIndicators, placeholder, secure, keyboardType, autocapitalization, autocorrection, returnKeyType, enablesReturnKeyAutomatically, onEditingChanged, onCommit) {

@@ -1,4 +1,4 @@
-import { themesData } from '../../themes';
+import { themesData } from '../../styles/themes';
 
 class SDFont {
   constructor(font, color) {
