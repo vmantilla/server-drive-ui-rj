@@ -63,7 +63,9 @@ const ColorsAndFontsView = ({ themesData }) => {
       <div className="row">
         <div className="col-8">
           <Tabs defaultActiveKey="colors" id="uncontrolled-tab-example">
-            <Tab eventKey="colors" title="Colores">
+            <Tab eventKey="colors" title="Colors" style={{
+                              paddingTop: '20px',
+                            }}>
               <div className="row">
                 {Object.entries(colors).map(([key, value]) => (
                   <div key={key} className="col-3 mb-3">
@@ -86,13 +88,12 @@ const ColorsAndFontsView = ({ themesData }) => {
                               backgroundColor: value.value,
                               width: '80px',
                               height: '80px',
-                              border: '1px solid #000',
+                              border: '1px solid #DDD',
                               borderRadius: '50%',
                               position: 'relative',
                             }}
                             onClick={(event) => handleSwatchClick(key, event)}
                           />
-                          {editingColor === key ? (
                             <input
                               type="text"
                               value={inputValues[key]?.value || ''}
@@ -103,7 +104,7 @@ const ColorsAndFontsView = ({ themesData }) => {
                               style={{
                                 width: '80px',
                                 height: '20px',
-                                border: `1px solid ${value.value}`,
+                                border: `1px solid #FFF`,
                                 position: 'relative',
                                 backgroundColor: 'transparent',
                                 borderRadius: '4px',
@@ -111,21 +112,7 @@ const ColorsAndFontsView = ({ themesData }) => {
                                 color: '#000',
                               }}
                             />
-                          ) : (
-                            <div
-                              className="color-value"
-                              onClick={(event) => handleInputFocus(event, key)} style={{
-                                width: '80px',
-                                height: '24px',
-                                position: 'relative',
-                                backgroundColor: 'transparent',
-                                textAlign: 'center',
-                                color: '#000',
-                              }}
-                            >
-                              {value.value}
-                            </div>
-                          )}
+                          
                         </div>
                       </div>
                       {showInfo === key && (
@@ -149,7 +136,9 @@ const ColorsAndFontsView = ({ themesData }) => {
                 ))}
               </div>
             </Tab>
-            <Tab eventKey="fonts" title="Fuentes">
+            <Tab eventKey="fonts" title="Fonts" style={{
+                              paddingTop: '20px',
+                            }}>
               <div className="row">
                 {Object.entries(fonts).map(([key, value]) => (
                   <div key={key} className="col-3 mb-3">
