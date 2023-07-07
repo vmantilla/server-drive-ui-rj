@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import useSDPropertiesModifier, { getAlignment }  from '../Common/useSDPropertiesModifier';
+import useSDPropertiesModifier, { getAlignment }  from '../modifiers/useSDPropertiesModifier';
 import defaultImage from '../../assets/images/default.png';
 
 const SDImageView = ({ component, children }) => {

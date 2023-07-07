@@ -1,6 +1,6 @@
 // components/SDButtonView.js
 import React from 'react';
-import useSDPropertiesModifier, { getAlignment }  from '../Common/useSDPropertiesModifier';
+import useSDPropertiesModifier, { getAlignment }  from '../modifiers/useSDPropertiesModifier';
 
 const SDButtonView = ({ component, children }) => {
   const properties = component.properties;

@@ -1,6 +1,6 @@
 // themes.js
 
-import { fetchJsonFile } from '../utils/utils';
+import { fetchJsonFile } from '../helpers/utils';
 
 export let themesData = null;
 

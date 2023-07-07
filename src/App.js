@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './LoginPage';
-import BuilderPreview from './builder/Preview';
+import Builder from './views/Builder';
+import Preview from './views/Preview';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -19,7 +20,9 @@ function App() {
       <div>
         <Routes>
           <Route path="/" element={<LoginPage />} />
-          <Route path="/preview" element={<BuilderPreview />} />
+          <Route path="/builder" element={<Builder />}>
+            <Route path="preview" element={<Preview />} />
+          </Route>
         </Routes>
       </div>
     </Router>

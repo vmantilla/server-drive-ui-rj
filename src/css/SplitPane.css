@@ -1,0 +1,8 @@
+
+.split-pane .Pane1 {
+  overflow: auto;
+}
+
+.split-pane .Pane2 {
+  overflow: auto;
+}

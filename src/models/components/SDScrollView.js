@@ -1,5 +1,5 @@
 import React from 'react';
-import useSDPropertiesModifier from '../Common/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
+import useSDPropertiesModifier from '../modifiers/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
 
 
 const SDScrollView = ({ component, children }) => {

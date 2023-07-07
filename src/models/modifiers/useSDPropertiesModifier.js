@@ -24,7 +24,6 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
     maxHeight = `calc(${maxHeight} - ${marginVertical}px)`;
   }
 
-  
   return {
     ...divStyle,
     minWidth: frame.minWidth ?? frame.width ?? divStyle.minWidth ?? 0,
@@ -32,7 +31,7 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
     minHeight: frame.minHeight ?? frame.height ?? divStyle.minHeight ?? 0,
     maxHeight: maxHeight,
     backgroundColor: properties.backgroundColorValue(1.0) ?? divStyle.backgroundColor ?? 'transparent',
-    borderRadius: properties.cornerRadiusValue() ?? 0,
+    borderRadius: properties.cornerRadius?.cornerRadiusValue(frame) ?? 0,
     borderColor: properties.border?.colorValue ?? divStyle.borderColor ?? 'transparent',
     borderWidth: properties.border?.width ?? divStyle.borderWidth ?? 0,
     marginTop: properties.padding?.top ?? 0,

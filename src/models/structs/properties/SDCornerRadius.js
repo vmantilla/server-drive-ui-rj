@@ -4,9 +4,13 @@ class SDCornerRadius {
         this.corners = cornerRadius.corners;
     }
 
-    get cornerRadiusValue() {
+    cornerRadiusValue(frame) {
+
+        let corners = this.corners;
+        let shape = this.shape;
+
         let defaultRadius;
-        switch (this.shape) {
+        switch (shape) {
             case "none":
                 defaultRadius = 0;
                 break;
@@ -26,19 +30,15 @@ class SDCornerRadius {
                 defaultRadius = 40;
                 break;
             case "full":
-                defaultRadius = (this.frame?.height ?? 0) * 0.5;
+                defaultRadius = (frame?.height ?? 0) * 0.5;
                 break;
             default:
                 defaultRadius = 0;
                 break;
         }
 
-        return {
-            topStart: this.corners.topStart ?? defaultRadius,
-            topEnd: this.corners.topEnd ?? defaultRadius,
-            bottomStart: this.corners.bottomStart ?? defaultRadius,
-            bottomEnd: this.corners.bottomEnd ?? defaultRadius
-        };
+        return `${corners?.topStart ?? defaultRadius}px ${corners?.topEnd ?? defaultRadius}px ${corners?.bottomEnd ?? defaultRadius}px ${corners?.bottomStart ?? defaultRadius}px`;
+
     }
 }
 

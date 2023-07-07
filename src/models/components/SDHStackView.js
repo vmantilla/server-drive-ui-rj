@@ -1,6 +1,6 @@
 // components/SDHStackView.js
 import React from 'react';
-import useSDPropertiesModifier from '../Common/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
+import useSDPropertiesModifier from '../modifiers/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
 
 const SDHStackView = ({ component, children }) => {
   // Obtenemos las propiedades de nuestro componente
