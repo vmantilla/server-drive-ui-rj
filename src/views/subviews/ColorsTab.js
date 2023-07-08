@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 
-const ColorsTab = ({ themesData }) => {
+const ColorsTab = ({ themesData, setThemesData }) => {
   const { colors, fonts } = themesData;
   const [editingColor, setEditingColor] = useState(null);
   const [showInfo, setShowInfo] = useState(null);
@@ -42,6 +42,8 @@ const ColorsTab = ({ themesData }) => {
     setEditingColor(null);
     if (inputValues[colorKey]) {
       colors[colorKey].value = inputValues[colorKey].value;
+      // Actualiza themesData luego de modificar los colores
+      setThemesData({ ...themesData, colors });
     }
   };
 
@@ -50,9 +52,12 @@ const ColorsTab = ({ themesData }) => {
       setEditingColor(null);
       if (inputValues[colorKey]) {
         colors[colorKey].value = inputValues[colorKey].value;
+        // Actualiza themesData luego de modificar los colores
+        setThemesData({ ...themesData, colors });
       }
     }
   };
+
   return (
     
               <div className="row">

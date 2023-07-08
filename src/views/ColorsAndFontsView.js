@@ -8,29 +8,10 @@ import ColorsTab from './subviews/ColorsTab';
 import { getThemesData, setThemesData, loadThemes } from '../styles/themes.js';
 
 
-const ColorsAndFontsView = () => {
-  const [themesData, setLocalThemesData] = useState(null);
-
-  useEffect(() => {
-    const fetchThemes = async () => {
-      const loadedThemes = await loadThemes();
-      setThemesData(loadedThemes);
-      setLocalThemesData(loadedThemes);
-      console.log('loaded has changed:', loadedThemes);
-    };
-
-    fetchThemes();
-  }, []);
-
-  useEffect(() => {
-    if (themesData) {
-      console.log('themesData has changed:', themesData);
-    }
-  }, [themesData]);
+const ColorsAndFontsView = ({ themesData, setThemesData }) => {
 
   const handleThemesDataUpdate = (newThemesData) => {
     // Actualiza themesData utilizando setThemesData
-    console.log('Actualiza has changed:', newThemesData);
     setThemesData(newThemesData);
   };
 
@@ -45,7 +26,8 @@ const ColorsAndFontsView = () => {
         <div className="col-8">
           <Tabs defaultActiveKey="colors" id="uncontrolled-tab-example">
             <Tab eventKey="colors" title="Colors" style={{ paddingTop: '20px' }}>
-              <ColorsTab themesData={themesData} />
+              <ColorsTab themesData={themesData} 
+                setThemesData={handleThemesDataUpdate}/>
             </Tab>
             <Tab eventKey="fonts" title="Fonts" style={{ paddingTop: '20px' }}>
               <FontsTab
@@ -57,7 +39,7 @@ const ColorsAndFontsView = () => {
         </div>
 
         <div className="col-4">
-          <Preview />
+          <Preview themesData={themesData} />
         </div>
       </div>
     </div>

@@ -56,12 +56,12 @@ const Builder = () => {
             </Tab>
             <Tab eventKey="colors_fonts" title="Colors & Fonts">
               {/* Panel de paleta de colores y fuentes */}
-              {themesData && <ColorsAndFontsView />}
+              {themesData && <ColorsAndFontsView themesData={themesData} setThemesData={setThemesData}/>}
             </Tab>
             <Tab eventKey="preview" title="Preview">
               {/* Panel de vista previa */}
               <div className="resizable-panel">
-                <Preview />
+                <Preview themesData={themesData}/>
               </div>
             </Tab>
           </Tabs>
