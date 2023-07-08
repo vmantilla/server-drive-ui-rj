@@ -1,8 +1,14 @@
-// themes.js
-
 import { fetchJsonFile } from '../helpers/utils';
 
 export let themesData = null;
+
+export const setThemesData = (newThemesData) => {
+  themesData = newThemesData;
+};
+
+export const getThemesData = () => {
+  return themesData;
+};
 
 export const loadThemes = async () => {
   if (themesData) {

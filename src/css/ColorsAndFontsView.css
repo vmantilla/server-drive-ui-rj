@@ -54,3 +54,34 @@
 .color-title {
   margin-left: 8px;
 }
+
+.font-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.font-label {
+  margin-right: 8px;
+  text-align: right;
+  width: 80px;
+}
+
+
+.font-name {
+  font-weight: bold;
+  display: inline-block;
+  width: 80px;
+}
+
+.font-value {
+  display: flex;
+  align-items: center;
+}
+
+.font-value .font-input {
+  width: 80px;
+  border: 1px solid #ccc; /* Borde */
+  border-radius: 4px; /* Borde suave */
+  padding: 5px; /* Espacio interior para el input */
+}
