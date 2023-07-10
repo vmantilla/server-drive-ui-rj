@@ -1,11 +1,10 @@
-// Archivo: DragDropPreview.js
-
 import React, { useState, useEffect } from 'react';
 import { App, View } from 'framework7-react';
 import '../css/Simulator.css';
 import { createSDComponent } from '../helpers/createSDComponent';
 import { renderComponentTree } from '../helpers/renderComponentTree';
 import { useDrop } from 'react-dnd';
+import SDComponent from '../models/structs/SDComponent'; // Asegúrate de importar tu clase SDComponent
 
 const DragDropPreview = ({ themesData, viewData, setBuilderData }) => {
   const [sdComponents, setSdComponents] = useState([]);
@@ -25,11 +24,32 @@ const DragDropPreview = ({ themesData, viewData, setBuilderData }) => {
     }),
   }));
 
-  const handleDrop = (item, monitor) => {
-    console.log('Component dropped:', item);
-    // Here you would typically handle the dropped component, e.g., add it to your component list
-      setBuilderData([...viewData, item]);
-  };
+  const handleDrop = (item) => {
+    // Verificar si el componente ya existe en el simulador
+    const isComponentAlreadyAdded = viewData.some((component) => component.id === item.id);
+    if (isComponentAlreadyAdded) {
+      return;
+    }
+
+    console.log('Component:', item.type);
+
+    // Generar un ID aleatorio
+    const randomId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+    if (['vstack', 'hstack', 'zstack'].includes(item.type)) {
+      setBuilderData(prev => [...prev, new SDComponent(randomId, item.type, item.properties, [], item.states)]);
+       console.log('Component stack:', item);
+    } else {
+      setBuilderData(prev => {
+        const lastStackIndex = prev.length - 1;
+        if (lastStackIndex >= 0 && ['vstack', 'hstack', 'zstack'].includes(prev[lastStackIndex].type)) {
+          prev[lastStackIndex].childrens.push(new SDComponent(randomId, item.type, item.properties, [], item.states));
+        }
+        return [...prev];
+      });
+       console.log('Component dropped:', item);
+    }
+};
 
   return (
     <App>

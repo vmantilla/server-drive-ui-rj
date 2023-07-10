@@ -7,7 +7,7 @@ import '../../css/ComponentItem.css';
 const ComponentItem = ({ component }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'component',
-    item: { id: component.name },
+    item: { id: component.name, type: component.type },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
