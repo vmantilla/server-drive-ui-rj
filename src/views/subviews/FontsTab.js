@@ -5,11 +5,13 @@ const FontsTab = ({ themesData, setThemesData }) => {
   const [inputValues, setInputValues] = useState(fonts);
 
   const handleFontValueChange = (event, fontKey, propertyKey) => {
-    const newValue = event.target.value;
+    let newValue = event.target.value;
 
     // Verifica si el nuevo valor debería ser un número
     if (['size', 'lineHeight', 'letterSpacing', 'weight'].includes(propertyKey)) {
-      const parsedValue = parseFloat(newValue);
+      let parsedValue = parseFloat(newValue);
+      if (isNaN(parsedValue)) parsedValue = 0; // Cambia NaN a 0
+
       setInputValues(prevInputValues => ({
         ...prevInputValues,
         [fontKey]: {
@@ -32,6 +34,14 @@ const FontsTab = ({ themesData, setThemesData }) => {
     if (inputValues[fontKey]) {
       fonts[fontKey] = { ...inputValues[fontKey] };
       setThemesData({ ...themesData, fonts });
+
+      // Update state to trigger re-render and ensure UI reflects changes
+      setInputValues(prevInputValues => ({
+        ...prevInputValues,
+        [fontKey]: {
+          ...fonts[fontKey],
+        },
+      }));
     }
   };
 
