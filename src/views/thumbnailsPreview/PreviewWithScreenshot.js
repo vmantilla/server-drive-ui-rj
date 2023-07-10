@@ -1,9 +1,9 @@
 // Archivo: PreviewWithScreenshot.js
 import React, { useEffect, useRef, useState } from 'react';  // Agregamos useState aquí
 import { App, View } from 'framework7-react';
-import '../css/Simulator.css';
-import { createSDComponent } from '../helpers/createSDComponent';
-import { renderComponentTree } from '../helpers/renderComponentTree';
+import '../../css/Simulator.css';
+import { createSDComponent } from '../../helpers/createSDComponent';
+import { renderComponentTree } from '../../helpers/renderComponentTree';
 import { toPng } from 'html-to-image';
 
 const PreviewWithScreenshot = ({ themesData, viewData, onScreenshotReady }) => {

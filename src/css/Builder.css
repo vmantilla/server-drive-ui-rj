@@ -54,3 +54,20 @@
   color: #000;
   border: none;
 }
+
+
+.panel-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  height: 100%;
+}
+
+.panel-title {
+  text-align: start;
+  font-size: 0.8em;
+  color: #888;
+  margin-bottom: 10px;
+}
+

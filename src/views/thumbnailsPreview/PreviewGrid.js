@@ -1,8 +1,8 @@
 // Archivo: PreviewGrid.js
 import React, { useState, useEffect, useCallback } from 'react';
-import { fetchJsonFile } from '../helpers/utils';
+import { fetchJsonFile } from '../../helpers/utils';
 import PreviewWithScreenshot from './PreviewWithScreenshot';
-import '../css/thumbnailsViews.css';
+import '../../css/thumbnailsViews.css';
 
 const PreviewGrid = ({ themesData }) => {
   const [gridViewsData, setGridViewsData] = useState([]);

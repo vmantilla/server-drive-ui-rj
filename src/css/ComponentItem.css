@@ -1,0 +1,14 @@
+/* Archivo: ComponentItem.css */
+
+.component-item {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 5px;
+  background-color: #fafafa;
+  text-align: center;
+  cursor: grab;
+}
+
+.component-item.dragging {
+  opacity: 0.5;
+}
