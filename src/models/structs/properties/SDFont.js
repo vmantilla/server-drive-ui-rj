@@ -7,25 +7,44 @@ class SDFont {
   }
 
   fontValue() {
-    const font = themesData.fonts[this.font || ''];
+  const font = themesData.fonts[this.font || ''];
 
-    if (!font) {
+  if (!font) {
     // Establecer un valor predeterminado para la fuente
-      return { fontFamily: 'Arial', fontSize: 12, fontWeight: 400, lineHeight: '16px' };
-    }
-
-    let weight = font.weight || 400;
-    let lineHeight = `${font.lineHeight || 16}px`;
-
-    if (typeof window !== 'undefined' && window.FontFace && document.fonts && font.url) {
-      const fontFace = new window.FontFace(font.name, `url(${font.url})`);
-      document.fonts.add(fontFace);
-      return { fontFamily: font.name, fontSize: font.size, fontWeight: weight, lineHeight: lineHeight };
-    } else {
-    // Si no hay URL para la fuente, utiliza una fuente estándar del sistema
-      return { fontFamily: 'Arial', fontSize: font.size, fontWeight: weight, lineHeight: lineHeight };
-    }
+    return { 
+      fontFamily: 'Arial', 
+      fontSize: 12, 
+      fontWeight: 400, 
+      lineHeight: '16px', 
+      letterSpacing: 'normal' // valor por defecto para letterSpacing 
+    };
   }
+
+  let weight = font.weight || 400;
+  let lineHeight = `${font.lineHeight || 16}px`;
+  let letterSpacing = font.letterSpacing || 'normal'; // Usa 'normal' si letterSpacing no está definido
+
+  if (typeof window !== 'undefined' && window.FontFace && document.fonts && font.url) {
+    const fontFace = new window.FontFace(font.name, `url(${font.url})`);
+    document.fonts.add(fontFace);
+    return { 
+      fontFamily: font.name, 
+      fontSize: font.size, 
+      fontWeight: weight, 
+      lineHeight: lineHeight, 
+      letterSpacing: letterSpacing // añade letterSpacing aquí
+    };
+  } else {
+    // Si no hay URL para la fuente, utiliza una fuente estándar del sistema
+    return { 
+      fontFamily: 'Arial', 
+      fontSize: font.size, 
+      fontWeight: weight, 
+      lineHeight: lineHeight, 
+      letterSpacing: letterSpacing // y aquí también
+    };
+  }
+}
 
 
   colorValue(opacity) {

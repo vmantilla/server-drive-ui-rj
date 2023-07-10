@@ -10,8 +10,7 @@ const handleFontValueChange = (event, fontKey, propertyKey) => {
     // Verifica si el nuevo valor debería ser un número
     if (['size', 'lineHeight', 'letterSpacing', 'weight'].includes(propertyKey)) {
       let parsedValue = parseFloat(newValue);
-      if (isNaN(parsedValue)) parsedValue = 0; // Cambia NaN a 0
-
+      
       setInputValues(prevInputValues => {
         const updatedValues = {
           ...prevInputValues,
@@ -46,7 +45,28 @@ const handleFontValueChange = (event, fontKey, propertyKey) => {
     }
   };
 
-  const handleInputBlur = (fontKey) => {
+const handleInputBlur = (event, fontKey, propertyKey) => {
+  let newValue = event.target.value;
+
+  if (['size', 'lineHeight', 'letterSpacing', 'weight'].includes(propertyKey)) {
+    let parsedValue = parseFloat(newValue);
+    if (isNaN(parsedValue) || parsedValue < 0) parsedValue = 0;
+
+    setInputValues(prevInputValues => {
+      const updatedValues = {
+        ...prevInputValues,
+        [fontKey]: {
+          ...prevInputValues[fontKey],
+          [propertyKey]: parsedValue,
+        },
+      };
+
+      fonts[fontKey] = { ...updatedValues[fontKey] };
+      setThemesData({ ...themesData, fonts });
+
+      return updatedValues;
+    });
+  } else {
     if (inputValues[fontKey]) {
       fonts[fontKey] = { ...inputValues[fontKey] };
       setThemesData({ ...themesData, fonts });
@@ -59,7 +79,9 @@ const handleFontValueChange = (event, fontKey, propertyKey) => {
         },
       }));
     }
-  };
+  }
+};
+
 
   return (
     <div className="row">
@@ -83,7 +105,7 @@ const handleFontValueChange = (event, fontKey, propertyKey) => {
                 type="number"
                 id={`${key}-size`}
                 onChange={(event) => handleFontValueChange(event, key, 'size')}
-                onBlur={() => handleInputBlur(key)}
+                onBlur={(event) => handleInputBlur(event, key, 'size')}
                 value={isNaN(value.size) ? '' : value.size}
                 className="font-input"
               />
@@ -94,7 +116,7 @@ const handleFontValueChange = (event, fontKey, propertyKey) => {
                 type="number"
                 id={`${key}-lineHeight`}
                 onChange={(event) => handleFontValueChange(event, key, 'lineHeight')}
-                onBlur={() => handleInputBlur(key)}
+                onBlur={(event) => handleInputBlur(event, key, 'lineHeight')}
                 value={isNaN(value.lineHeight) ? '' : value.lineHeight}
                 className="font-input"
               />
@@ -105,7 +127,7 @@ const handleFontValueChange = (event, fontKey, propertyKey) => {
                 type="number"
                 id={`${key}-letterSpacing`}
                 onChange={(event) => handleFontValueChange(event, key, 'letterSpacing')}
-                onBlur={() => handleInputBlur(key)}
+                onBlur={(event) => handleInputBlur(event, key, 'letterSpacing')}
                 value={isNaN(value.letterSpacing) ? '' : value.letterSpacing}
                 className="font-input"
               />
@@ -116,7 +138,7 @@ const handleFontValueChange = (event, fontKey, propertyKey) => {
                 type="number"
                 id={`${key}-weight`}
                 onChange={(event) => handleFontValueChange(event, key, 'weight')}
-                onBlur={() => handleInputBlur(key)}
+                onBlur={(event) => handleInputBlur(event, key, 'weight')}
                 value={isNaN(value.weight) ? '' : value.weight}
                 className="font-input"
               />
