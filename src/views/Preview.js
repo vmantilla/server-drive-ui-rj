@@ -3,21 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import { App, View } from 'framework7-react';
 import '../css/Simulator.css'
-import { fetchJsonFile } from '../helpers/utils';
 import { createSDComponent } from '../helpers/createSDComponent';
 import { renderComponentTree } from '../helpers/renderComponentTree';
 
-const Preview = () => {
+const Preview = ({ themesData, viewData }) => {  // Recibimos themesData y viewData como props
   const [sdComponents, setSdComponents] = useState([]);
 
   useEffect(() => {
-    fetchJsonFile('./file.json').then(data => {
-      const components = data.map((componentData) => {
-        return createSDComponent(componentData);
-      });
-      setSdComponents(components);
+    const components = viewData.map((componentData) => {  
+      return createSDComponent(componentData, themesData);  // Pasamos themesData a createSDComponent
     });
-  }, []);
+    setSdComponents(components);
+  }, [viewData, themesData]);  // Agregamos themesData a las dependencias del useEffect
 
   return (
     <App>

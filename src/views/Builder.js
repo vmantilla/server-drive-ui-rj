@@ -5,6 +5,7 @@ import { AiOutlineDrag } from 'react-icons/ai';
 import { loadThemes } from '../styles/themes';
 import Draggable from 'react-draggable';
 import { App, View } from 'framework7-react';
+import { fetchJsonFile } from '../helpers/utils';
 
 import Preview from './Preview';
 import PreviewGrid from './PreviewGrid';
@@ -17,7 +18,7 @@ const Builder = () => {
   const [activeTab, setActiveTab] = useState('components');
   const [themesData, setThemesData] = useState(null);
   const [selectedView, setSelectedView] = useState(null);
-
+  const [previewData, setPreviewData] = useState([]);
 
   const handleTabChange = (tabKey) => {
     setActiveTab(tabKey);
@@ -27,6 +28,12 @@ const Builder = () => {
     // Llamar a loadThemes para cargar los datos de los themes
     loadThemes().then((data) => {
       setThemesData(data);
+    });
+  }, []);
+
+  useEffect(() => {
+    fetchJsonFile('./file.json').then(data => {
+      setPreviewData(data);
     });
   }, []);
 
@@ -56,18 +63,18 @@ const Builder = () => {
               <div className="row resizable-panel">
                 <div className="col-12">
                   <span>Panel de vistas</span>
-                  <PreviewGrid />
+                  <PreviewGrid themesData={themesData} />
                 </div>
               </div>
             </Tab>
             <Tab eventKey="colors_fonts" title="Colors & Fonts">
               {/* Panel de paleta de colores y fuentes */}
-              {themesData && <ColorsAndFontsView themesData={themesData} setThemesData={setThemesData}/>}
+              {themesData && <ColorsAndFontsView themesData={themesData} viewData={previewData} setThemesData={setThemesData}/>}
             </Tab>
             <Tab eventKey="preview" title="Preview">
               {/* Panel de vista previa */}
               <div className="resizable-panel">
-                <Preview themesData={themesData}/>
+                <Preview themesData={themesData} viewData={previewData} />
               </div>
             </Tab>
           </Tabs>

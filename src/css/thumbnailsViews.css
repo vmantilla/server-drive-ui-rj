@@ -14,3 +14,9 @@
   text-align: center;
   margin-bottom: 10px;
 }
+
+
+.thumbnail-simulator {
+  position: absolute;
+  left: -9999px;
+}

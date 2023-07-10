@@ -7,8 +7,7 @@ import FontsTab from './subviews/FontsTab';
 import ColorsTab from './subviews/ColorsTab';
 import { getThemesData, setThemesData, loadThemes } from '../styles/themes.js';
 
-
-const ColorsAndFontsView = ({ themesData, setThemesData }) => {
+const ColorsAndFontsView = ({ themesData, viewData, setThemesData }) => {
 
   const handleThemesDataUpdate = (newThemesData) => {
     // Actualiza themesData utilizando setThemesData
@@ -39,7 +38,7 @@ const ColorsAndFontsView = ({ themesData, setThemesData }) => {
         </div>
 
         <div className="col-4">
-          <Preview themesData={themesData} />
+          <Preview themesData={themesData} viewData={viewData} />
         </div>
       </div>
     </div>
