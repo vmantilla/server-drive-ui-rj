@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { App, View } from 'framework7-react';
-import '../css/Simulator.css';
+import '../css/DragDropPreview.css';
 import { createSDComponent } from '../helpers/createSDComponent';
 import { renderComponentTree } from '../helpers/renderComponentTree';
 import { useDrop } from 'react-dnd';
@@ -16,13 +16,14 @@ const DragDropPreview = ({ themesData, viewData, setBuilderData }) => {
     setSdComponents(components);
   }, [viewData, themesData]);
 
-  const [{ isOver }, drop] = useDrop(() => ({
+    const [{ isOver }, drop] = useDrop(() => ({
     accept: 'component',
     drop: (item, monitor) => handleDrop(item, monitor),
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
   }));
+
 
   const handleDrop = (item) => {
     // Verificar si el componente ya existe en el simulador
@@ -36,13 +37,13 @@ const DragDropPreview = ({ themesData, viewData, setBuilderData }) => {
     // Generar un ID aleatorio
     const randomId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
-    if (['vstack', 'hstack', 'zstack'].includes(item.type)) {
+    if (['VStack', 'HStack', 'ZStack'].includes(item.type)) {
       setBuilderData(prev => [...prev, new SDComponent(randomId, item.type, item.properties, [], item.states)]);
        console.log('Component stack:', item);
     } else {
       setBuilderData(prev => {
         const lastStackIndex = prev.length - 1;
-        if (lastStackIndex >= 0 && ['vstack', 'hstack', 'zstack'].includes(prev[lastStackIndex].type)) {
+        if (lastStackIndex >= 0 && ['VStack', 'HStack', 'ZStack'].includes(prev[lastStackIndex].type)) {
           prev[lastStackIndex].childrens.push(new SDComponent(randomId, item.type, item.properties, [], item.states));
         }
         return [...prev];
@@ -54,9 +55,12 @@ const DragDropPreview = ({ themesData, viewData, setBuilderData }) => {
   return (
     <App>
       <View main>
-        <div ref={drop} className={`simulator ${isOver ? 'over' : ''}`}>
-          {sdComponents ? sdComponents.map(renderComponentTree) : 'Cargando...'}
-        </div>
+            <div className='simulator'>
+              <div ref={drop} className={`${isOver ? 'isOver' : ''}`}>
+            {sdComponents && sdComponents.length > 0 && sdComponents.map(childComponent => renderComponentTree(childComponent, true, isOver))}
+
+    </div>
+    </div>
       </View>
     </App>
   );

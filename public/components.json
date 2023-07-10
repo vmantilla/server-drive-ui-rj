@@ -1,9 +1,9 @@
 {
   "components": [
     { "name": "Scroll", "type": "ScrollView" },
-    { "name": "Vertical Stack", "type": "vstack" },
-    { "name": "Horizontal Stack", "type": "hstack" },
-    { "name": "Depth Stack", "type": "zstack" },
+    { "name": "Vertical Stack", "type": "VStack" },
+    { "name": "Horizontal Stack", "type": "HStack" },
+    { "name": "Depth Stack", "type": "ZStack" },
     { "name": "Button", "type": "button" },
     { "name": "Input", "type": "input" },
     { "name": "Form", "type": "form" },

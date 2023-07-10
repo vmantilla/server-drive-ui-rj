@@ -1,11 +1,10 @@
 // components/SDZStackView.js
 import React from 'react';
-import useSDPropertiesModifier from '../modifiers/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
+import { useDrop } from 'react-dnd';
+import useSDPropertiesModifier from '../modifiers/useSDPropertiesModifier';
 
-const SDZStackView = ({ component, children }) => {
-  // Obtenemos las propiedades de nuestro componente
+const SDZStackView = ({ component, children, isBuilderMode }) => {
   const properties = component.properties;
-
   // Configuramos nuestro estilo inicial del div
   const initialDivStyle = {
     display: 'flex', 
@@ -13,13 +12,23 @@ const SDZStackView = ({ component, children }) => {
     position: 'relative',
   };
 
-  // Usamos nuestro hook para obtener los estilos finales
   const style = useSDPropertiesModifier(properties, initialDivStyle);
-  
-  // Aquí puedes usar las propiedades del componente para configurar tu ZStack.
-  // Por ahora, solo se está utilizando el tipo de componente como texto de placeholder.
+
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: 'component',
+    collect: (monitor) => {
+      const over = monitor.isOver({ shallow: true });
+      console.log(`Is over: ${over}`);
+      return { isOver: over };
+    },
+  }));
+
   return (
-    <div className="dropArea" style={style}>
+    <div 
+      ref={isBuilderMode ? drop : null} 
+      className={`zstack ${isBuilderMode ? 'builderMode' : ''} ${isOver ? 'isOver' : ''}`} 
+      style={style}
+    >
       {children}
     </div>
   );

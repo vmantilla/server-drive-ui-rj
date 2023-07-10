@@ -8,44 +8,48 @@ import SDImageView from '../models/components/SDImageView';
 import SDButtonView from '../models/components/SDButtonView';
 import SDScrollView from '../models/components/SDScrollView';
 
-export function renderComponentTree(component) {
-	let Component;
+export function renderComponentTree(component, isBuilderMode, isOver = false) {
+  let Component;
 
-	switch (component.type) {
-	case "VStack":
-		Component = SDVStackView
-		break;
-	case "HStack":
-		Component = SDHStackView;
-		break;
-	case "ZStack":
-		Component = SDZStackView;
-		break;
-	case "Text":
+  switch (component.type) {
+    case "VStack":
+      Component = SDVStackView
+      console.log(' SDVStackView:', component.type); // Agrega un registro para indicar el componente actual
+      
+      break;
+    case "HStack":
+      Component = SDHStackView;
+      break;
+    case "ZStack":
+      Component = SDZStackView;
+      break;
+    case "Text":
       Component = SDTextView; // Use a paragraph for Text components
       break;
-  case "Button":
+    case "Button":
       Component = SDButtonView; // Use a button element for Button components
       break;
-  case "Image":
+    case "Image":
       Component = SDImageView; // Use an img element for Image components
       break;
-  case "TextField":
+    case "TextField":
       Component = 'div'; // Use an input element for TextField components
       break;
-  case "ScrollView":
+    case "ScrollView":
       Component = SDScrollView; // Use a div for ScrollView components
       break;
-  default:
-     console.log(' Default to a div:', component.type); // Agrega un registro para indicar el componente actual
-
-     
+    default:
       Component = 'div'; // Default to a div
   }
 
   return (
-  	<Component key={component.id} component={component}>
-  	{component.childrens && component.childrens.length > 0 && component.childrens.map(renderComponentTree)}
-  	</Component>
-  	);
-  }
+    <Component 
+      key={component.id} 
+      component={component} 
+      isBuilderMode = {isBuilderMode}
+    >
+      {component.childrens && component.childrens.length > 0 && component.childrens.map(childComponent => renderComponentTree(childComponent, isBuilderMode, isOver))}
+    </Component>
+  );
+}
+
