@@ -14,7 +14,6 @@ const SDHStackView = ({ component, children, isBuilderMode }) => {
     accept: 'component',
     collect: (monitor) => {
       const over = monitor.isOver({ shallow: true });
-      console.log(`Is over: ${over}`);
       return { isOver: over };
     },
   }));

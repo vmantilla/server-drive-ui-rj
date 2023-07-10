@@ -1,5 +1,4 @@
 // Archivo: renderComponentTree.js
-
 import SDVStackView from '../models/components/SDVStackView';
 import SDHStackView from '../models/components/SDHStackView';
 import SDZStackView from '../models/components/SDZStackView';
@@ -8,14 +7,12 @@ import SDImageView from '../models/components/SDImageView';
 import SDButtonView from '../models/components/SDButtonView';
 import SDScrollView from '../models/components/SDScrollView';
 
-export function renderComponentTree(component, isBuilderMode, isOver = false) {
+export function renderComponentTree(component, isBuilderMode, setActiveStackId) {
   let Component;
 
   switch (component.type) {
     case "VStack":
       Component = SDVStackView
-      console.log(' SDVStackView:', component.type); // Agrega un registro para indicar el componente actual
-      
       break;
     case "HStack":
       Component = SDHStackView;
@@ -24,22 +21,22 @@ export function renderComponentTree(component, isBuilderMode, isOver = false) {
       Component = SDZStackView;
       break;
     case "Text":
-      Component = SDTextView; // Use a paragraph for Text components
+      Component = SDTextView; 
       break;
     case "Button":
-      Component = SDButtonView; // Use a button element for Button components
+      Component = SDButtonView; 
       break;
     case "Image":
-      Component = SDImageView; // Use an img element for Image components
+      Component = SDImageView; 
       break;
     case "TextField":
-      Component = 'div'; // Use an input element for TextField components
+      Component = 'div'; 
       break;
     case "ScrollView":
-      Component = SDScrollView; // Use a div for ScrollView components
+      Component = SDScrollView;
       break;
     default:
-      Component = 'div'; // Default to a div
+      Component = 'div'; 
   }
 
   return (
@@ -47,9 +44,9 @@ export function renderComponentTree(component, isBuilderMode, isOver = false) {
       key={component.id} 
       component={component} 
       isBuilderMode = {isBuilderMode}
+      setActiveStackId = {setActiveStackId}
     >
-      {component.childrens && component.childrens.length > 0 && component.childrens.map(childComponent => renderComponentTree(childComponent, isBuilderMode, isOver))}
+      {component.childrens && component.childrens.length > 0 && component.childrens.map(childComponent => renderComponentTree(childComponent, isBuilderMode, setActiveStackId))}
     </Component>
   );
 }
-

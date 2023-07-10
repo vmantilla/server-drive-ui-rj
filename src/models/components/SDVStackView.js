@@ -1,34 +1,46 @@
-// components/SDVStackView.js
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useDrop } from 'react-dnd';
 import useSDPropertiesModifier from '../modifiers/useSDPropertiesModifier';
 
-const SDVStackView = ({ component, children, isBuilderMode }) => {
+const SDVStackView = ({ component, children, isBuilderMode, setActiveStackId }) => {
   const properties = component.properties;
   const initialDivStyle = {};
 
   // Usamos nuestro hook para obtener los estilos finales
   const style = useSDPropertiesModifier(properties, initialDivStyle);
 
+  const componentRef = useRef(null);
+
+  useEffect(() => {
+    if (componentRef.current) {
+      componentRef.current.id = component.id;
+    }
+  }, [component.id]);
+
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'component',
+    hover: () => {
+      if (isBuilderMode) {
+        setActiveStackId(component.id);
+      }
+    },
     collect: (monitor) => {
       const over = monitor.isOver({ shallow: true });
-      console.log(`Is over: ${over}`);
       return { isOver: over };
     },
-}));
-
+  }));
 
   return (
     <div 
-  ref={isBuilderMode ? drop : null} 
-  className={`vstack ${isBuilderMode ? 'builderMode' : ''} ${isOver ? 'isOver' : ''}`} 
-  style={style}
->
-  {children}
-</div>
-
+      ref={node => {
+        drop(node);
+        componentRef.current = node;
+      }}
+      className={`vstack ${isBuilderMode ? 'builderMode' : ''} ${isOver ? 'isOver' : ''}`} 
+      style={style}
+    >
+      {children}
+    </div>
   );
 };
 
