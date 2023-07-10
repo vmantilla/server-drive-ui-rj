@@ -4,7 +4,7 @@ const FontsTab = ({ themesData, setThemesData }) => {
   const { fonts } = themesData;
   const [inputValues, setInputValues] = useState(fonts);
 
-  const handleFontValueChange = (event, fontKey, propertyKey) => {
+const handleFontValueChange = (event, fontKey, propertyKey) => {
     let newValue = event.target.value;
 
     // Verifica si el nuevo valor debería ser un número
@@ -12,21 +12,37 @@ const FontsTab = ({ themesData, setThemesData }) => {
       let parsedValue = parseFloat(newValue);
       if (isNaN(parsedValue)) parsedValue = 0; // Cambia NaN a 0
 
-      setInputValues(prevInputValues => ({
-        ...prevInputValues,
-        [fontKey]: {
-          ...prevInputValues[fontKey],
-          [propertyKey]: parsedValue,
-        },
-      }));
+      setInputValues(prevInputValues => {
+        const updatedValues = {
+          ...prevInputValues,
+          [fontKey]: {
+            ...prevInputValues[fontKey],
+            [propertyKey]: parsedValue,
+          },
+        };
+
+        // Actualizar themesData inmediatamente después de setInputValues
+        fonts[fontKey] = { ...updatedValues[fontKey] };
+        setThemesData({ ...themesData, fonts });
+
+        return updatedValues;
+      });
     } else {
-      setInputValues(prevInputValues => ({
-        ...prevInputValues,
-        [fontKey]: {
-          ...prevInputValues[fontKey],
-          [propertyKey]: newValue,
-        },
-      }));
+      setInputValues(prevInputValues => {
+        const updatedValues = {
+          ...prevInputValues,
+          [fontKey]: {
+            ...prevInputValues[fontKey],
+            [propertyKey]: newValue,
+          },
+        };
+
+        // Actualizar themesData inmediatamente después de setInputValues
+        fonts[fontKey] = { ...updatedValues[fontKey] };
+        setThemesData({ ...themesData, fonts });
+
+        return updatedValues;
+      });
     }
   };
 
@@ -57,7 +73,6 @@ const FontsTab = ({ themesData, setThemesData }) => {
                 type="text"
                 id={`${key}-name`}
                 onChange={(event) => handleFontValueChange(event, key, 'name')}
-                onBlur={() => handleInputBlur(key)}
                 value={value.name}
                 className="font-input"
               />
