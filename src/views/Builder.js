@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { App, View } from 'framework7-react';
-import Preview from './Preview';
-import ColorsAndFontsView from './ColorsAndFontsView';
 import { Tab, Tabs } from 'react-bootstrap';
 import { Resizable } from 're-resizable';
 import { AiOutlineDrag } from 'react-icons/ai';
-import Draggable from 'react-draggable';
-import '../css/Builder.css';
 import { loadThemes } from '../styles/themes';
+import Draggable from 'react-draggable';
+import { App, View } from 'framework7-react';
+
+import Preview from './Preview';
+import PreviewGrid from './PreviewGrid';
+import ColorsAndFontsView from './ColorsAndFontsView';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../css/Builder.css';
 
 const Builder = () => {
   const [activeTab, setActiveTab] = useState('components');
   const [themesData, setThemesData] = useState(null);
+  const [selectedView, setSelectedView] = useState(null);
+
 
   const handleTabChange = (tabKey) => {
     setActiveTab(tabKey);
@@ -51,6 +56,7 @@ const Builder = () => {
               <div className="row resizable-panel">
                 <div className="col-12">
                   <span>Panel de vistas</span>
+                  <PreviewGrid />
                 </div>
               </div>
             </Tab>
