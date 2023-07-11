@@ -14,7 +14,7 @@ import Preview from './Preview';
 import PreviewGrid from './thumbnailsPreview/PreviewGrid';
 import ColorsAndFontsView from './ColorsAndFontsView';
 import ComponentList from './components/ComponentList';
-import DragDropPreview from './DragDropPreview';
+import DropZone from './DropZone';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/Builder.css';
@@ -32,6 +32,11 @@ const Builder = () => {
   const handleTabChange = (tabKey) => {
     setActiveTab(tabKey);
   };
+
+const moveCard = (dragIndex, hoverIndex) => {
+    console.log("Mover tarjeta desde: ", dragIndex, " a ", hoverIndex);
+    // Aquí es donde realizarías la lógica para reordenar tus tarjetas en el estado.
+  }
 
   useEffect(() => {
     // Llamar a loadThemes para cargar los datos de los themes
@@ -69,16 +74,26 @@ const Builder = () => {
                 <div className="col-3 resizable-panel">
                   <div className="panel-container">
                     <span className="panel-title">Listado de componentes</span>
-                    <ComponentList components={components} />
+                    <ComponentList components={components} moveCard={moveCard}/>
                   </div>
                 </div>
                 <div className="col-6 resizable-panel">
                   <div className="panel-container">
                     <span className="panel-title">Área de construcción de la interfaz de usuario</span>
-                    <DragDropPreview 
-                      themesData={themesData} 
-                      viewData={previewBuilderData}  
-                      setBuilderData={setPreviewBuilderData} 
+                    <DropZone 
+                      style={{
+                        width: '375px', 
+                        height: '812px', 
+                        borderRadius: '40px',
+                        backgroundColor: '#F0F0F0',
+                        boxShadow: '0 0 10px rgba(0,0,0,0.15)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        padding: '20px',
+                        overflow: 'auto'
+                      }} 
                     />
                   </div>
                 </div>

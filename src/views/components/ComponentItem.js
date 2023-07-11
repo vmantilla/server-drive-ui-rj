@@ -3,8 +3,9 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
 import '../../css/ComponentItem.css';
+import DraggableCard from '../DraggableCard';
 
-const ComponentItem = ({ component }) => {
+const ComponentItem = ({ component, moveCard }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'component',
     item: { id: component.name, type: component.type },
@@ -14,9 +15,8 @@ const ComponentItem = ({ component }) => {
   }));
 
   return (
-    <div ref={drag} className={`component-item ${isDragging ? 'dragging' : ''}`}>
-      {component.name}
-    </div>
+      <DraggableCard card={{ id: component.id, text: component.name, subCards: [] }} index={component.id} moveCard={moveCard} />
+    
   );
 };
 

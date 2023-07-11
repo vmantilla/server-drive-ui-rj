@@ -4,11 +4,11 @@ import React from 'react';
 import { useDrag } from 'react-dnd';
 import ComponentItem from './ComponentItem';
 
-const ComponentList = ({ components }) => {
+const ComponentList = ({ components, moveCard }) => {
   return (
     <div>
       {components.map((component, index) => (
-        <ComponentItem key={index} component={component} />
+        <ComponentItem key={index} component={component} moveCard={moveCard}/>
       ))}
     </div>
   );

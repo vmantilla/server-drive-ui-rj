@@ -54,11 +54,12 @@ const DraggableCard = ({ card, index, moveCard, isInDropZone, setNestedCards }) 
       if (isInDropZone && !monitor.didDrop()) {
         const newCard = { ...card, subCards: [...card.subCards, item] };
         setNestedCards(prevCards =>
-          prevCards.map(c => c.id === card.id ? newCard : c)
+          prevCards.filter(c => c).map(c => c.id === card.id ? newCard : c)
         );
       }
     },
   });
+
 
   drag(drop(ref));
 

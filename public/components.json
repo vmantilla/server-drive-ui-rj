@@ -1,13 +1,13 @@
 {
   "components": [
-    { "name": "Scroll", "type": "ScrollView" },
-    { "name": "Vertical Stack", "type": "VStack" },
-    { "name": "Horizontal Stack", "type": "HStack" },
-    { "name": "Depth Stack", "type": "ZStack" },
-    { "name": "Button", "type": "button" },
-    { "name": "Input", "type": "input" },
-    { "name": "Form", "type": "form" },
-    { "name": "Image", "type": "image" },
-    { "name": "Text", "type": "text" }
+    { "name": "Scroll", "type": "ScrollView", "id": 1 },
+    { "name": "Vertical Stack", "type": "VStack", "id": 2 },
+    { "name": "Horizontal Stack", "type": "HStack", "id": 3 },
+    { "name": "Depth Stack", "type": "ZStack", "id": 4 },
+    { "name": "Button", "type": "button", "id": 5 },
+    { "name": "Input", "type": "input", "id": 6 },
+    { "name": "Form", "type": "form", "id": 7 },
+    { "name": "Image", "type": "image", "id": 8 },
+    { "name": "Text", "type": "text", "id": 9 }
   ]
 }
