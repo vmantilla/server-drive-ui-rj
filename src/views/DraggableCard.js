@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
-const DraggableCard = ({ card, index, moveCard, isInDropZone }) => {
+const DraggableCard = ({ card, index, moveCard, isInDropZone, setNestedCards }) => {
   const ref = useRef(null);
 
   const [{ isDragging }, drag] = useDrag({
@@ -12,7 +12,6 @@ const DraggableCard = ({ card, index, moveCard, isInDropZone }) => {
     }),
   });
 
-  // Establecemos los estilos del componente.
   const cardStyle = {
     padding: '10px',
     marginBottom: '10px',
@@ -50,6 +49,13 @@ const DraggableCard = ({ card, index, moveCard, isInDropZone }) => {
 
       moveCard(dragIndex, hoverIndex);
       item.index = hoverIndex;
+
+      if (isInDropZone) {
+        const newCard = { ...card, subCards: [...card.subCards, item] };
+        setNestedCards(prevCards =>
+          prevCards.map(c => c.id === card.id ? newCard : c)
+        );
+      }
     },
   });
 
@@ -58,13 +64,11 @@ const DraggableCard = ({ card, index, moveCard, isInDropZone }) => {
   return (
     <div ref={ref} style={cardStyle}>
       {card.text}
-      {/* Render any subcards if they exist */}
       {card.subCards?.map((subCard, i) => (
-        <DraggableCard key={i} index={i} card={subCard} moveCard={moveCard} isInDropZone={isInDropZone} />
+        <DraggableCard key={i} index={i} card={subCard} moveCard={moveCard} isInDropZone={isInDropZone} setNestedCards={setNestedCards} />
       ))}
     </div>
   );
 };
 
 export default DraggableCard;
-

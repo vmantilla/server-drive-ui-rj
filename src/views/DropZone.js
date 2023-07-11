@@ -27,6 +27,10 @@ const DropZone = ({ style }) => {
     );
   }, []);
 
+  const setNestedCards = useCallback((newCards) => {
+    setDroppedCards(newCards);
+  }, []);
+
   const [, drop] = useDrop({
     accept: 'card',
     drop: (item, monitor) => {
@@ -36,12 +40,11 @@ const DropZone = ({ style }) => {
         return;
       }
 
-      // No agregar la tarjeta si ya está presente
       if (!droppedCards.find(card => card.id === id)) {
-      	const randomId =
-	    Math.random().toString(36).substring(2, 15) +
-	    Math.random().toString(36).substring(2, 15);
-        setDroppedCards(prev => [...prev, {...item, id: randomId || createNewCard(randomId, item.text).id, isInDropZone: true }]);
+        const randomId =
+          Math.random().toString(36).substring(2, 15) +
+          Math.random().toString(36).substring(2, 15);
+        setDroppedCards(prev => [...prev, {...item, id: randomId, isInDropZone: true }]);
       }
     },
   });
@@ -50,11 +53,12 @@ const DropZone = ({ style }) => {
 
   return (
     <div ref={ref} style={style}>
-     {droppedCards.map((card, i) => (
-  card && card.id ? <DraggableCard key={card.id} index={i} card={card} moveCard={moveCard} isInDropZone={true} /> : null
-	))}
+      {droppedCards.map((card, i) => (
+        card && card.id ? <DraggableCard key={card.id} index={i} card={card} moveCard={moveCard} isInDropZone={true} setNestedCards={setNestedCards} /> : null
+      ))}
     </div>
   );
 };
 
 export default DropZone;
+
