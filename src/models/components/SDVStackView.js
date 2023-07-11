@@ -16,7 +16,7 @@ const SDVStackView = ({ component, children }) => {
   // Aquí puedes usar las propiedades del componente para configurar tu VStack.
   // Por ahora, solo se está utilizando el tipo de componente como texto de placeholder.
   return (
-    <div className="vstack" style={style}>
+    <div className="vstack dropArea" style={style}>
       {children}
     </div>
   );
