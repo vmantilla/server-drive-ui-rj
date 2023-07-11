@@ -1,11 +1,20 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
+
 import { useDrop } from 'react-dnd';
 import update from 'immutability-helper';
 import DraggableCard from './DraggableCard';
 
+const createNewCard = (id,text) => {
+  return { id: id, text, subCards: [] };
+}
+
 const DropZone = ({ style }) => {
   const ref = useRef(null);
   const [droppedCards, setDroppedCards] = useState([]);
+
+  useEffect(() => {
+    console.log(droppedCards);
+  }, [droppedCards]);
 
   const moveCard = useCallback((dragIndex, hoverIndex) => {
     setDroppedCards(prevCards =>
@@ -21,14 +30,18 @@ const DropZone = ({ style }) => {
   const [, drop] = useDrop({
     accept: 'card',
     drop: (item, monitor) => {
-      if (monitor.didDrop()) {
+      const { id, isInDropZone } = item;
+
+      if (monitor.didDrop() || isInDropZone) {
         return;
       }
-      const { text } = item;
 
-      // Do not add the card if it is already present
-      if (!droppedCards.includes(text)) {
-        setDroppedCards(prev => [...prev, text]);
+      // No agregar la tarjeta si ya está presente
+      if (!droppedCards.find(card => card.id === id)) {
+      	const randomId =
+	    Math.random().toString(36).substring(2, 15) +
+	    Math.random().toString(36).substring(2, 15);
+        setDroppedCards(prev => [...prev, {...item, id: randomId || createNewCard(randomId, item.text).id, isInDropZone: true }]);
       }
     },
   });
@@ -37,9 +50,9 @@ const DropZone = ({ style }) => {
 
   return (
     <div ref={ref} style={style}>
-      {droppedCards.map((card, i) => (
-        <DraggableCard key={i} index={i} text={card} moveCard={moveCard} />
-      ))}
+     {droppedCards.map((card, i) => (
+  card && card.id ? <DraggableCard key={card.id} index={i} card={card} moveCard={moveCard} isInDropZone={true} /> : null
+	))}
     </div>
   );
 };
