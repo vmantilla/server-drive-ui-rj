@@ -15,7 +15,7 @@ const ComponentItem = ({ component, moveCard }) => {
   }));
 
   return (
-      <DraggableCard card={{ id: component.id, text: component.name, subCards: [] }} index={component.id} moveCard={moveCard} />
+      <DraggableCard card={{ id: component.id, text: component.name, subCards: [], type: component.type}} isInDropZone={false} index={component.id} moveCard={moveCard} />
     
   );
 };
