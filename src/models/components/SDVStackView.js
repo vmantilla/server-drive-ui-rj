@@ -1,44 +1,22 @@
-import React, { useRef, useEffect } from 'react';
-import { useDrop } from 'react-dnd';
-import useSDPropertiesModifier from '../modifiers/useSDPropertiesModifier';
+// components/SDVStackView.js
+import React from 'react';
+import useSDPropertiesModifier from '../modifiers/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
 
-const SDVStackView = ({ component, children, isBuilderMode, setActiveStackId }) => {
+const SDVStackView = ({ component, children }) => {
+  // Obtenemos las propiedades de nuestro componente
   const properties = component.properties;
-  const initialDivStyle = {};
+
+  // Configuramos nuestro estilo inicial del div
+  const initialDivStyle = {
+  };
 
   // Usamos nuestro hook para obtener los estilos finales
   const style = useSDPropertiesModifier(properties, initialDivStyle);
-
-  const componentRef = useRef(null);
-
-  useEffect(() => {
-    if (componentRef.current) {
-      componentRef.current.id = component.id;
-    }
-  }, [component.id]);
-
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: 'component',
-    hover: () => {
-      if (isBuilderMode) {
-        setActiveStackId(component.id);
-      }
-    },
-    collect: (monitor) => {
-      const over = monitor.isOver({ shallow: true });
-      return { isOver: over };
-    },
-  }));
-
+  
+  // Aquí puedes usar las propiedades del componente para configurar tu VStack.
+  // Por ahora, solo se está utilizando el tipo de componente como texto de placeholder.
   return (
-    <div 
-      ref={node => {
-        drop(node);
-        componentRef.current = node;
-      }}
-      className={`vstack ${isBuilderMode ? 'builderMode' : ''} ${isOver ? 'isOver' : ''}`} 
-      style={style}
-    >
+    <div className="vstack" style={style}>
       {children}
     </div>
   );
