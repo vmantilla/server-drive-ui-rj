@@ -49,6 +49,7 @@ const DropZone = ({ style }) => {
     },
   });
 
+
   drop(ref);
 
   return (

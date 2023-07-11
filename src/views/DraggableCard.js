@@ -49,8 +49,9 @@ const DraggableCard = ({ card, index, moveCard, isInDropZone, setNestedCards }) 
 
       moveCard(dragIndex, hoverIndex);
       item.index = hoverIndex;
-
-      if (isInDropZone) {
+    },
+    drop: (item, monitor) => {
+      if (isInDropZone && !monitor.didDrop()) {
         const newCard = { ...card, subCards: [...card.subCards, item] };
         setNestedCards(prevCards =>
           prevCards.map(c => c.id === card.id ? newCard : c)
