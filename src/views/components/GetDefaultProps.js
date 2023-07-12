@@ -108,9 +108,9 @@ const getDefaultScrollViewProperties = () => {
   return new SDProperties(
     { width: "100%", height: "100%" },
     'primaryContainer',
-    null,
-    null,
-    null,
+    new SDCornerRadius({ shape: 'small'}),
+    { color: 'primaryContainer', width: 1 },
+    { top: 5, bottom: 5, left: 10, right: 10 },
     true
   );
 }
@@ -118,8 +118,14 @@ const getDefaultScrollViewProperties = () => {
 const getDefaultScrollViewMain = () => {
     return new SDComponent(
         uuidv4(),
-        SDComponentType.ScrollView,
-        getDefaultProps(SDComponentType.ScrollView),
+        SDComponentType[SDComponentType.ScrollView],
+        new SDProperties(
+    { width: "100%", height: "100%" },
+    'primaryContainer',
+    new SDCornerRadius({ shape: 'small'}),
+    { color: 'primaryContainer', width: 1 },
+    true
+  ),
         [],
         {}
     );

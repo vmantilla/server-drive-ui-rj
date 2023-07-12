@@ -14,6 +14,7 @@ import Preview from './Preview';
 import PreviewGrid from './thumbnailsPreview/PreviewGrid';
 import ColorsAndFontsView from './ColorsAndFontsView';
 import { Componentes } from './components/Componentes';
+import SDPropertiesForm from './SDPropertiesForm';
 
 import DropZone from './DropZone';
 
@@ -101,6 +102,7 @@ const moveCard = (dragIndex, hoverIndex) => {
                 <div className="col-3 resizable-panel">
                   <div className="panel-container">
                     <span className="panel-title">Panel de propiedades del componente</span>
+                    <SDPropertiesForm/>
                   </div>
                 </div>
               </div>
