@@ -58,24 +58,21 @@ const SDVStackView = ({ component, children, setDroppedComponents, droppedCompon
   }),
 });
 
-
-
   const isActive = canDrop && isOver;
   if (isActive) {
-      style.backgroundColor = 'MidnightBlue';
+    style.backgroundColor = 'MidnightBlue';
   } else if (canDrop) {
-      style.backgroundColor = 'Gold';
+    style.backgroundColor = 'Gold';
   }
 
   // Aquí puedes usar las propiedades del componente para configurar tu VStack.
-// Por ahora, solo se está utilizando el tipo de componente como texto de placeholder.
-return (
-  <div ref={drop} className="vstack dropArea" style={style}>
-    {component.children && component.children.map(childComponent => renderBuilderComponentTree(childComponent, setDroppedComponents, droppedComponents))}
-  </div>
-);
+  // Por ahora, solo se está utilizando el tipo de componente como texto de placeholder.
+  return (
+    <div ref={drop} className="vstack dropArea" style={style}>
+      {component.children && component.children.map(childComponent => renderBuilderComponentTree(childComponent, setDroppedComponents, droppedComponents))}
+    </div>
+  );
 
 };
-
 
 export default SDVStackView;
