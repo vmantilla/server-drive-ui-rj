@@ -2,10 +2,12 @@ import React from 'react';
 
 function useSDPropertiesModifier(properties = {}, divStyle = {}) {
   // Si no se proporcionan las propiedades, devolvemos el estilo div proporcionado
-  if (!properties) return divStyle;
+  if (!properties || Object.keys(properties).length === 0) return divStyle;
 
   // Si el frame está ausente, usamos los valores por defecto
   const frame = properties.frame || {};
+
+  console.log("useSDPropertiesModifier", properties);
 
   // Calculamos el valor total del margen
   const marginHorizontal = (properties.padding?.left ?? 0) + (properties.padding?.right ?? 0);
@@ -31,7 +33,7 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
     minHeight: frame.minHeight ?? frame.height ?? divStyle.minHeight ?? 0,
     maxHeight: maxHeight,
     backgroundColor: properties.backgroundColorValue(1.0) ?? divStyle.backgroundColor ?? 'transparent',
-    borderRadius: properties.cornerRadius?.cornerRadiusValue(frame) ?? 0,
+    borderRadius: properties.cornerRadius?.cornerRadiusValue(frame) || 0,
     borderColor: properties.border?.colorValue ?? divStyle.borderColor ?? 'transparent',
     borderWidth: properties.border?.width ?? divStyle.borderWidth ?? 0,
     marginTop: properties.padding?.top ?? 0,
@@ -69,7 +71,5 @@ export const getAlignment = (alignment) => {
       return { justifySelf: 'center', alignSelf: 'center' };
   }
 };
-
-
 
 export default useSDPropertiesModifier;

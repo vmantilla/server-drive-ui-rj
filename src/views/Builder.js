@@ -13,7 +13,8 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import Preview from './Preview';
 import PreviewGrid from './thumbnailsPreview/PreviewGrid';
 import ColorsAndFontsView from './ColorsAndFontsView';
-import ComponentList from './components/ComponentList';
+import { Componentes } from './components/Componentes';
+
 import DropZone from './DropZone';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -74,7 +75,7 @@ const moveCard = (dragIndex, hoverIndex) => {
                 <div className="col-3 resizable-panel">
                   <div className="panel-container">
                     <span className="panel-title">Listado de componentes</span>
-                    <ComponentList components={components} moveCard={moveCard}/>
+                    <Componentes/>
                   </div>
                 </div>
                 <div className="col-6 resizable-panel">
@@ -91,8 +92,8 @@ const moveCard = (dragIndex, hoverIndex) => {
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        padding: '20px',
-                        overflow: 'auto'
+                        overflow: 'auto',
+                        border: '20px solid #333333' //C0C0C0
                       }} 
                     />
                   </div>

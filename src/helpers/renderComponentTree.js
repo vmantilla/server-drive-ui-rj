@@ -7,7 +7,7 @@ import SDImageView from '../models/components/SDImageView';
 import SDButtonView from '../models/components/SDButtonView';
 import SDScrollView from '../models/components/SDScrollView';
 
-export function renderComponentTree(component, isBuilderMode, setActiveStackId) {
+export function renderComponentTree(component) {
   let Component;
 
   switch (component.type) {
@@ -43,10 +43,9 @@ export function renderComponentTree(component, isBuilderMode, setActiveStackId) 
     <Component 
       key={component.id} 
       component={component} 
-      isBuilderMode = {isBuilderMode}
-      setActiveStackId = {setActiveStackId}
     >
-      {component.childrens && component.childrens.length > 0 && component.childrens.map(childComponent => renderComponentTree(childComponent, isBuilderMode, setActiveStackId))}
+      {component.childrens && component.childrens.length > 0 && component.childrens.map(childComponent => renderComponentTree(childComponent))}
     </Component>
   );
 }
+
