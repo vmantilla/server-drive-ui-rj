@@ -1,4 +1,3 @@
-// Archivo: renderBuilderComponentTree.js
 import SDVStackView from './renders/RenderVStackView';
 import SDHStackView from './renders/RenderHStackView';
 import SDZStackView from './renders/RenderZStackView';
@@ -7,7 +6,7 @@ import SDImageView from './renders/RenderImageView';
 import SDButtonView from './renders/RenderButtonView';
 import SDScrollView from './renders/RenderScrollView';
 
-export function renderBuilderComponentTree(component, setDroppedComponents, droppedComponents) {
+export function renderBuilderComponentTree(component, handleDrop) {
  
   let Component;
 
@@ -44,11 +43,9 @@ export function renderBuilderComponentTree(component, setDroppedComponents, drop
     <Component 
       key={component.id} 
       component={component}
-      setDroppedComponents={setDroppedComponents}
-      droppedComponents={droppedComponents}
+      handleDrop={handleDrop}
     >
-      {component.childrens && component.childrens.length > 0 && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, setDroppedComponents, droppedComponents))}
+      {component.childrens && component.childrens.length > 0 && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop))}
     </Component>
   );
 }
-
