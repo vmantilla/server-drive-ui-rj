@@ -1,9 +1,10 @@
 import SDProperties from '../../models/structs/SDProperties';
+import SDComponent from '../../models/structs/SDComponent';
 import SDComponentType from '../../enums/SDComponentType';
 import SDCornerRadius from '../../models/structs/properties/SDCornerRadius';
+import { v4 as uuidv4 } from 'uuid'; 
 
 const getDefaultVStackProperties = () => {
-	console.log("getDefaultVStackProperties")
   return new SDProperties(
     { width: "100%", height: 100 },
     'primaryContainer',
@@ -40,18 +41,17 @@ const getDefaultVStackProperties = () => {
 
 const getDefaultHStackProperties = () => {
   return new SDProperties(
-    { width: "100%", height: "100%" },
+    { height: 100 },
     'primaryContainer',
     new SDCornerRadius({ shape: 'small'}),
     { color: 'primaryContainer', width: 1 },
-    { top: 10, bottom: 10, left: 10, right: 10 },
     true
   );
 }
 
 const getDefaultZStackProperties = () => {
   return new SDProperties(
-    { width: "100%", height: "100%" },
+    { width: 100, height: 100 },
     'primaryContainer',
     new SDCornerRadius({ shape: 'small'}),
     { color: 'primaryContainer', width: 1 },
@@ -113,6 +113,16 @@ const getDefaultScrollViewProperties = () => {
     null,
     true
   );
+}
+
+const getDefaultScrollViewMain = () => {
+    return new SDComponent(
+        uuidv4(),
+        SDComponentType.ScrollView,
+        getDefaultProps(SDComponentType.ScrollView),
+        [],
+        {}
+    );
 }
 
 function getUnnownProperties() {
@@ -187,7 +197,7 @@ const getDefaultProps = (componentType) => {
     case SDComponentType.ScrollView:
       return getDefaultScrollViewProperties();
     default:
-      return new getUnnownProperties();
+      return getDefaultScrollViewMain();
   }
 }
 

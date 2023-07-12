@@ -34,8 +34,6 @@ const Dropzone = ( { style }) => {
 
 
     const handleDrop = (item, parentComponent) => {
-        console.log("handleDrop", item);
-
         const newComponent = new SDComponent(
             uuidv4(),
             SDComponentType[item.type],

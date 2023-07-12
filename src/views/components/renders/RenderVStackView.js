@@ -1,37 +1,23 @@
-// SDVStackView.js
 import React from 'react';
 import useSDPropertiesModifier from '../../../models/modifiers/useSDPropertiesModifier';
-import { useDrop } from 'react-dnd';
-import { v4 as uuidv4 } from 'uuid';
 import { tipoItem } from '../Componentes';
-import getDefaultProps from '../GetDefaultProps';
-import SDComponent from '../../../models/structs/SDComponent';
-import SDComponentType from '../../../enums/SDComponentType';
 import { renderBuilderComponentTree } from '../renderBuilderComponentTree';
 
 
-const SDVStackView = ({ component, children, handleDrop }) => {
+import useDropHandler from '../useDropHandler';
+
+const SDVStackView = ({ component, handleDrop, color }) => {
   const properties = component.properties;
 
   const initialDivStyle = {
+    backgroundColor: '#f2f2f2', 
+    border: '1px dashed #000000'
   };
+
 
   const style = useSDPropertiesModifier(properties, initialDivStyle);
 
-  const [{ canDrop, isOver }, drop] = useDrop({
-    accept: tipoItem.COMPONENTE,
-    drop: (item, monitor) => {
-      // Calling handleDrop from Dropzone component.
-      if (handleDrop) {
-        handleDrop(item, component);
-      }
-      return { name: 'SDVStackView' };
-    },
-    collect: monitor => ({
-      isOver: monitor.isOver({ shallow: true }),
-      canDrop: monitor.canDrop(),
-    }),
-  });
+  const { canDrop, isOver, drop } = useDropHandler(handleDrop, tipoItem.COMPONENTE, component);
 
   const isActive = canDrop && isOver;
   if (isActive) {
@@ -42,7 +28,7 @@ const SDVStackView = ({ component, children, handleDrop }) => {
 
   return (
     <div ref={drop} className="vstack dropArea" style={style}>
-      {component.children && component.children.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop))}
+      {component.childrens && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop))}
     </div>
   );
 };

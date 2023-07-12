@@ -1,23 +1,33 @@
-// components/SDHStackView.js
 import React from 'react';
-import useSDPropertiesModifier from '../../../models/modifiers/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
+import useSDPropertiesModifier from '../../../models/modifiers/useSDPropertiesModifier';
+import { tipoItem } from '../Componentes';
+import { renderBuilderComponentTree } from '../renderBuilderComponentTree';
 
-const SDHStackView = ({ component, children }) => {
-  // Obtenemos las propiedades de nuestro componente
+
+import useDropHandler from '../useDropHandler';
+
+const SDHStackView = ({ component, handleDrop, color }) => {
   const properties = component.properties;
 
-  // Configuramos nuestro estilo inicial del div
   const initialDivStyle = {
+    backgroundColor: '#f2f2f2', 
+    border: '1px dashed #000000'
   };
 
-  // Usamos nuestro hook para obtener los estilos finales
   const style = useSDPropertiesModifier(properties, initialDivStyle);
-  
-  // Aquí puedes usar las propiedades del componente para configurar tu HStack.
-  // Por ahora, solo se está utilizando el tipo de componente como texto de placeholder.
+
+  const { canDrop, isOver, drop } = useDropHandler(handleDrop, tipoItem.COMPONENTE, component);
+
+  const isActive = canDrop && isOver;
+  if (isActive) {
+        style.backgroundColor = 'darkgreen'
+    } else if (canDrop) {
+        style.backgroundColor = 'darkkhaki'
+    }
+
   return (
-    <div className="hstack dropArea" style={style}>
-      {children}
+    <div ref={drop} className="hstack dropArea" style={style}>
+      {component.childrens && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop))}
     </div>
   );
 };

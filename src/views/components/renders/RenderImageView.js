@@ -8,7 +8,15 @@ const SDImageView = ({ component, children }) => {
   
   // Usamos nuestro hook para obtener los estilos finales
   const alignmentStyle = getAlignment(properties?.frame?.alignment) ?? {};
-  const divStyle = useSDPropertiesModifier(properties, alignmentStyle);
+  const initialImageStyle = {
+    height: '150px',
+    width: '200px',
+    backgroundColor: '#f2f2f2',
+    border: '1px dashed #000000',
+    ...alignmentStyle,
+  };
+
+  const divStyle = useSDPropertiesModifier(properties, initialImageStyle);
 
   const contentModeStyle = getContentModeStyle(properties.contentMode);
 
