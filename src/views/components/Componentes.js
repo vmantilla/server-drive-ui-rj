@@ -1,4 +1,5 @@
 import { useDrag } from 'react-dnd';
+import { v4 as uuidv4 } from 'uuid';
 import SDComponentType from '../../enums/SDComponentType';
 
 const tipoItem = {
@@ -8,7 +9,7 @@ const tipoItem = {
 const Componente = ({ type, children }) => {
     const [{isDragging}, drag] = useDrag({
         type: tipoItem.COMPONENTE,
-        item: { type },
+        item: { id: uuidv4(), type },
         collect: monitor => ({
             isDragging: !!monitor.isDragging(),
         }),

@@ -18,24 +18,35 @@ const Dropzone = ( { style }) => {
          console.log("droppedComponents", droppedComponents);
     }, [droppedComponents]);
 
-    const addChildToTree = (tree, parentId, child) => {
-      if (tree.id === parentId) {
-        // Verify that there isn't already a child with the same ID
-        const existingChild = tree.childrens.find(c => c.id === child.id);
-        if (!existingChild) {
-          tree.childrens.push(child);
+    const findInTree = (tree, childId) => {
+        if (tree.id === childId) {
+            return true;
         }
-        return;
-      }
-      for (const c of tree.childrens) {
-        addChildToTree(c, parentId, child);
-      }
+        for (const c of tree.childrens) {
+            if (findInTree(c, childId)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    const addChildToTree = (tree, parentId, child) => {
+        if (tree.id === parentId) {
+            // Verificar que no exista ya un hijo con el mismo ID en cualquier parte del árbol
+            if (!findInTree(tree, child.id)) {
+                tree.childrens.push(child);
+            }
+            return;
+        }
+        for (const c of tree.childrens) {
+            addChildToTree(c, parentId, child);
+        }
     };
 
 
     const handleDrop = (item, parentComponent) => {
         const newComponent = new SDComponent(
-            uuidv4(),
+            item.id,
             SDComponentType[item.type],
             getDefaultProps(item.type),
             [],
