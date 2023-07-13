@@ -2,17 +2,20 @@ import React, { useState } from "react";
 import { Modal, Button, FormControl } from "react-bootstrap";
 
 const PaddingPickerWidget = (props) => {
-  const { padding } = props;
+  const { onChange } = props;
+  const value = props.value || { top: 0, bottom: 0, left: 0, right: 0 };
+
+  const [paddingValues, setPaddingValues] = useState(value);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const handlePaddingChange = (direction, event) => {
-    const value = parseInt(event.target.value);
+    const newValue = parseInt(event.target.value);
     setPaddingValues(prevPaddingValues => ({
       ...prevPaddingValues,
-      [direction]: isNaN(value) ? 0 : value
+      [direction]: isNaN(newValue) ? 0 : newValue
     }));
   };
 
