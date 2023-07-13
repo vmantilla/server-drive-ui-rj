@@ -21,7 +21,8 @@ const ColorPickerWidget = (props) => {
           width: '50px', 
           height: '30px', 
           border: 'none',
-          display: 'inline-block'
+          display: 'inline-block',
+          borderRadius: '10px' // Un borde de radio pequeño para el botón
         }} />
 
       <Modal show={show} onHide={handleClose}>
@@ -37,10 +38,14 @@ const ColorPickerWidget = (props) => {
                 </div>
                 <div
                   style={{
-                    width: "50px",
-                    height: "50px",
+                    width: "80px",
+                    height: "80px",
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: '10px', // Un borde de radio pequeño para cada muestra de color
                     backgroundColor: colorValue.value,
-                    border: '1px solid lightgray',
+                    border: colorKey === value ? '2px solid blue' : '1px solid lightgray',
                   }}
                   onClick={() => {
                     onChange(colorKey);

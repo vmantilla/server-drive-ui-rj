@@ -10,7 +10,7 @@ import addFormats from "ajv-formats";
 import '../../css/PropertyInspectorStyles.css'; 
 import ColorPickerWidget from "./ColorPickerWidget";
 import RadiusPickerWidget from "./RadiusPickerWidget";
-
+import PaddingPickerWidget from "./PaddingPickerWidget";
 
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
@@ -59,15 +59,7 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
       color: { "ui:widget": "ColorPickerWidget" }, 
       width: { "ui:widget": "updown" } 
     },
-    padding: {
-      "ui:field": "layout",
-      "ui:layout": [
-        { top: { "ui:widget": "updown", "classNames": "my-custom-class top" } },
-        { bottom: { "ui:widget": "updown", "classNames": "my-custom-class bottom" } },
-        { left: { "ui:widget": "updown", "classNames": "my-custom-class left" } },
-        { right: { "ui:widget": "updown", "classNames": "my-custom-class right" } },
-      ],
-    },
+    padding: { "ui:widget": "PaddingPickerWidget" },
     cornerRadius: { "ui:widget": "RadiusPickerWidget" },
   };
 
@@ -139,7 +131,8 @@ const handleOnChange = ({ formData }) => {
       noHtml5Validate={true}
       widgets={{ 
         ColorPickerWidget: CustomColorPickerWidget,
-        RadiusPickerWidget: RadiusPickerWidget  }}
+        RadiusPickerWidget: RadiusPickerWidget,
+        PaddingPickerWidget: PaddingPickerWidget  }}
       SubmitButton={CustomSubmitButton}
     />
   );

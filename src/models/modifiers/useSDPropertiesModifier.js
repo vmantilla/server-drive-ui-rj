@@ -36,7 +36,9 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
     backgroundColor: divStyle.backgroundColor 
       ?? (properties.backgroundColor ? colorValue(properties.backgroundColor, 1.0) : 'transparent')
       ?? 'transparent',
-    borderRadius: (typeof properties.cornerRadius === 'function') ? properties.cornerRadius(frame) : (properties.cornerRadius || 0),
+    borderRadius: properties.cornerRadius 
+      ? cornerRadiusValue(frame, properties.cornerRadius)
+      : 0,
     borderColor: divStyle.borderColor ?? 
              (properties.border?.color && colorValue(properties.border.color, 1.0)) ?? 
              'transparent',
@@ -51,6 +53,42 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
     paddingRight: properties.contentInset?.right ?? 0
   };
 }
+
+
+const cornerRadiusValue = (frame, cornerRadiusObject) => {
+  let corners = cornerRadiusObject.corners;
+  let shape = cornerRadiusObject.shape;
+
+  let defaultRadius;
+  switch (shape) {
+    case "none":
+      defaultRadius = 0;
+      break;
+    case "extraSmall":
+      defaultRadius = 5;
+      break;
+    case "small":
+      defaultRadius = 10;
+      break;
+    case "medium":
+      defaultRadius = 20;
+      break;
+    case "large":
+      defaultRadius = 30;
+      break;
+    case "extraLarge":
+      defaultRadius = 40;
+      break;
+    case "full":
+      defaultRadius = (frame?.height ?? 0) * 0.5;
+      break;
+    default:
+      defaultRadius = 0;
+      break;
+  }
+
+  return `${corners?.topStart ?? defaultRadius}px ${corners?.topEnd ?? defaultRadius}px ${corners?.bottomEnd ?? defaultRadius}px ${corners?.bottomStart ?? defaultRadius}px`;
+};
 
 
 

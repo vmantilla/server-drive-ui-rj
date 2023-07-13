@@ -3,11 +3,13 @@
 export const genericSchema = {
   type: "object",
   properties: {
-    action: { type: "string" },
-    aspectRatio: { type: "string" },
-    autocapitalization: { type: "string" },
-    autocorrection: { type: "string" },
-    axis: { type: "string" },
+    frame: {
+      type: "object",
+      properties: {
+        width: { type: "number" },
+        height: { type: "number" }
+      }
+    },
     backgroundColor: { type: "string"},
     border: {
       type: "object",
@@ -16,34 +18,23 @@ export const genericSchema = {
         width: { type: "number" }
       }
     },
-    contentInset: { type: "string" },
-    contentMode: { type: "string" },
-    cornerRadius: { type: "string"}
-    ,
+    cornerRadius: { type: "string" },
+    padding: { type: "string" },
     enablesReturnKeyAutomatically: { type: "boolean" },
     font: { type: "string" },
-    frame: {
-      type: "object",
-      properties: {
-        width: { type: "number" },
-        height: { type: "number" }
-      }
-    },
+    contentInset: { type: "string" },
+    contentMode: { type: "string" },
     horizontalAlignment: { type: "string" },
     isEnabled: { type: "boolean" },
+    action: { type: "string" },
+    aspectRatio: { type: "string" },
+    autocapitalization: { type: "string" },
+    autocorrection: { type: "string" },
+    axis: { type: "string" },
     keyboardType: { type: "string" },
     onCommit: { type: "string" },
     onEditingChanged: { type: "string" },
     overlayAlignment: { type: "string" },
-    padding: {
-      type: "object",
-      properties: {
-        top: { type: "number" },
-        bottom: { type: "number" },
-        left: { type: "number" },
-        right: { type: "number" }
-      }
-    },
     placeholder: { type: "string" },
     resizable: { type: "boolean" },
     returnKeyType: { type: "string" },
@@ -85,13 +76,7 @@ export const buttonSchema = {
       },
       required: ['top', 'bottom', 'left', 'right'],  // Agrega esto si todas las propiedades son necesarias
     },
-    cornerRadius: {
-      type: "object",
-      properties: {
-        shape: { type: "string" },
-        corners: { type: "string" }
-      }
-    },
+    cornerRadius: { type: "string" },
   },
 };
 
