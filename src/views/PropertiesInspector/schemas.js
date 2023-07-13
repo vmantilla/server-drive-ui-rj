@@ -3,15 +3,69 @@
 export const genericSchema = {
   type: "object",
   properties: {
-    color: { type: "string" },
-    shape: { type: "string" },
+    action: { type: "string" },
+    aspectRatio: { type: "string" },
+    autocapitalization: { type: "string" },
+    autocorrection: { type: "string" },
+    axis: { type: "string" },
+    backgroundColor: { type: "string", 
+    enum: ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#000000", "#ffffff"],
+      enumNames: ["Rojo", "Verde", "Azul", "Amarillo", "Magenta", "Cyan", "Negro", "Blanco"]
+    },
+    border: {
+      type: "object",
+      properties: {
+        color: { type: "string" },
+        width: { type: "number" }
+      }
+    },
+    contentInset: { type: "string" },
+    contentMode: { type: "string" },
+    cornerRadius: {
+      type: "object",
+      properties: {
+        shape: { type: "string" },
+        corners: { type: "string" }
+      }
+    },
+    enablesReturnKeyAutomatically: { type: "boolean" },
     font: { type: "string" },
-    alignment: { type: "string" },
-    padding: { type: "number" },
-    content: { type: "string" },
+    frame: {
+      type: "object",
+      properties: {
+        width: { type: "number" },
+        height: { type: "number" }
+      }
+    },
+    horizontalAlignment: { type: "string" },
     isEnabled: { type: "boolean" },
+    keyboardType: { type: "string" },
+    onCommit: { type: "string" },
+    onEditingChanged: { type: "string" },
+    overlayAlignment: { type: "string" },
+    padding: {
+      type: "object",
+      properties: {
+        top: { type: "number" },
+        bottom: { type: "number" },
+        left: { type: "number" },
+        right: { type: "number" }
+      }
+    },
+    placeholder: { type: "string" },
+    resizable: { type: "boolean" },
+    returnKeyType: { type: "string" },
+    secure: { type: "boolean" },
+    showsIndicators: { type: "boolean" },
+    source: { type: "string" },
+    spacing: { type: "string" },
+    text: { type: "string" },
+    textAlignment: { type: "string" },
+    verticalAlignment: { type: "string" },
   },
+  required: [], // puedes definir las propiedades requeridas aquí.
 };
+
 
 export const textSchema = {
   type: "object",

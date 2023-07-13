@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const getDefaultVStackProperties = () => {
   return new SDProperties(
-    { width: "100%", height: 100 },
+    { height: 100 },
     'primaryContainer',
     new SDCornerRadius({ shape: 'small'}),
     { color: 'primaryContainer', width: 1 },
@@ -73,7 +73,7 @@ const getDefaultTextProperties = () => {
 
 const getDefaultButtonProperties = () => {
   return new SDProperties(
-    { width: "100px", height: "50px" },
+    { width: 100, height: 50 },
     'primaryContainer',
     new SDCornerRadius({ shape: 'small'}),
     { color: 'primaryContainer', width: 1 },
@@ -84,7 +84,7 @@ const getDefaultButtonProperties = () => {
 
 const getDefaultImageProperties = () => {
   return new SDProperties(
-    { width: "100px", height: "100px" },
+    { width: 100, height: 100 },
     null,
     null,
     null,
@@ -95,7 +95,7 @@ const getDefaultImageProperties = () => {
 
 const getDefaultTextFieldProperties = () => {
   return new SDProperties(
-    { width: "200px", height: "40px" },
+    { width: 200, height: 40 },
     'primaryContainer',
     new SDCornerRadius({ shape: 'small'}),
     { color: 'primaryContainer', width: 1 },
@@ -106,7 +106,7 @@ const getDefaultTextFieldProperties = () => {
 
 const getDefaultScrollViewProperties = () => {
   return new SDProperties(
-    { width: "100%", height: "100%" },
+    { },
     'primaryContainer',
     new SDCornerRadius({ shape: 'small'}),
     { color: 'primaryContainer', width: 1 },
@@ -120,7 +120,7 @@ const getDefaultScrollViewMain = () => {
         uuidv4(),
         SDComponentType[SDComponentType.ScrollView],
         new SDProperties(
-    { width: "100%", height: "100%" },
+    { },
     'primaryContainer',
     new SDCornerRadius({ shape: 'small'}),
     { color: 'primaryContainer', width: 1 },
@@ -133,7 +133,6 @@ const getDefaultScrollViewMain = () => {
 
 function getUnnownProperties() {
     const frame = {
-        width: '100%',
         height: 100
     };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { themesData } from '../../styles/themes';
 
 function useSDPropertiesModifier(properties = {}, divStyle = {}) {
   // Si no se proporcionan las propiedades, devolvemos el estilo div proporcionado
@@ -30,8 +31,8 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
     maxWidth: maxWidth,
     minHeight: divStyle.minHeight ?? frame.minHeight ?? frame.height ?? 0,
     maxHeight: maxHeight,
-    backgroundColor: divStyle.backgroundColor ?? properties.backgroundColorValue(1.0) ?? 'transparent',
-    borderRadius: properties.cornerRadius?.cornerRadiusValue(frame) || 0,
+    backgroundColor: divStyle.backgroundColor ?? backgroundColorValue(properties.backgroundColor, 1.0) ?? 'transparent',
+    borderRadius: (typeof properties.cornerRadius === 'function') ? properties.cornerRadius(frame) : (properties.cornerRadius || 0),
     borderColor: divStyle.borderColor ?? properties.border?.colorValue ?? 'transparent',
     borderWidth: divStyle.borderWidth ?? properties.border?.width ??  0,
     marginTop: properties.padding?.top ?? 0,
@@ -44,6 +45,24 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
     paddingRight: properties.contentInset?.right ?? 0
   };
 }
+
+
+
+// Asume que DesignSystemManager.shared.designSystem.colors[backgroundColor] devuelve un objeto con 'value' y 'opacity'.
+const backgroundColorValue = (backgroundColor, opacity = null) => {
+    const colorData = themesData.colors[backgroundColor || ''];
+
+    if (!colorData) {
+      return 'transparent';
+    }
+
+    const { value, defaultOpacity } = colorData;
+    const customOpacity = opacity !== undefined ? opacity : defaultOpacity;
+    const hex = value.startsWith('#') ? value.substring(1) : value;
+
+    return `rgba(${parseInt(hex.substring(0, 2), 16)}, ${parseInt(hex.substring(2, 4), 16)}, ${parseInt(hex.substring(4, 6), 16)}, ${customOpacity})`;
+}
+
 
 export const getAlignment = (alignment) => {
   switch (alignment) {

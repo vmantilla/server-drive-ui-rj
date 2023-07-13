@@ -32,18 +32,14 @@ const Builder = () => {
   const [previewBuilderData, setPreviewBuilderData] = useState([]);
 
   const [selectedComponent, setSelectedComponent] = useState({});
-
-
-const handleComponentUpdate = (updatedComponent) => {
-    // Actualiza el componente en el array droppedComponents.
-    setDroppedComponents((prevComponents) => {
-      return prevComponents.map((c) => c.id === updatedComponent.id ? updatedComponent : c);
-    });
-  };
+  const [droppedComponents, setDroppedComponents] = useState([])
   
+  useEffect(() => {
+  console.log('droppedComponents changed:', droppedComponents);
+}, [droppedComponents]);
+
   const handleComponentClick = (component) => {
     // Set the selected component
-    console.log("Componente seleccionado: ", component);
     setSelectedComponent(component);
   };
 
@@ -112,15 +108,18 @@ const moveCard = (dragIndex, hoverIndex) => {
                         overflow: 'auto',
                         border: '20px solid #333333' //C0C0C0
                       }} 
+                      droppedComponents={droppedComponents}
+                      setDroppedComponents={setDroppedComponents}
                       onComponentClick={handleComponentClick}
                     />
                   </div>
                 </div>
                 <div className="col-3 resizable-panel">
-                  <div className="panel-container">
+                  <div className="panel-container" style={{overflowY: 'auto', maxHeight: '100vh'}}>
                     <span className="panel-title">Panel de propiedades del componente</span>
-                     {selectedComponent && <PropertyInspector component={selectedComponent} onComponentUpdate={handleComponentUpdate} />
-}
+                     {selectedComponent && <PropertyInspector component={selectedComponent} droppedComponents={droppedComponents}
+                      setDroppedComponents={setDroppedComponents} />
+                    }
                   </div>
                 </div>
               </div>

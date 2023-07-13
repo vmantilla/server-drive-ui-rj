@@ -8,12 +8,13 @@ import Ajv from "ajv";
 import addFormats from "ajv-formats";
 
 import '../../css/PropertyInspectorStyles.css'; 
+import ColorPickerWidget from "./ColorPickerWidget";
 
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
 addFormats(ajv);
 
-const PropertyInspector = ({ component = {} }) => {
+const PropertyInspector = ({ component = {}, droppedComponents, setDroppedComponents }) => {
 
   const [formData, setFormData] = useState({});
 
@@ -22,7 +23,7 @@ const PropertyInspector = ({ component = {} }) => {
       case "Text":
         return textSchema;
       case "Button":
-        return buttonSchema;
+        return genericSchema;
       case "Image":
         return imageSchema;
       case "TextField":
@@ -47,6 +48,7 @@ const PropertyInspector = ({ component = {} }) => {
   return {
     title: { "ui:widget": "text" },
     color: { "ui:widget": "color" },
+    backgroundColor: { "ui:widget": "ColorPickerWidget" },
     isEnabled: { "ui:widget": "checkbox" },
     padding: {
       "ui:field": "layout",
@@ -82,15 +84,38 @@ const PropertyInspector = ({ component = {} }) => {
 
 
   useEffect(() => {
-    setFormData(component);
+    setFormData(component.properties);
   }, [component]);
 
-  const handleOnChange = ({ formData }) => {
-    setFormData(formData);
-  };
+const handleOnChange = ({ formData }) => {
+  if (Array.isArray(droppedComponents)) {
+    let updated = false;
+    const newDroppedComponents = droppedComponents.map(c => {
+      if (c.id === component.id && JSON.stringify(c.properties) !== JSON.stringify(formData)) {
+        updated = true;
+        return { ...c, properties: formData };
+      } 
+      return c;
+    });
+
+    if (updated) {
+      console.log("updated", newDroppedComponents);
+      setDroppedComponents(newDroppedComponents);
+      setFormData(formData);
+    }
+  } else {
+    // handle the case where droppedComponents is not an array
+  }
+};
+
+
 
   // Si component.properties es undefined o null, utiliza un objeto vacío
   const properties = component?.properties || {};
+
+  const CustomSubmitButton = () => {
+    return <></>;
+  };
 
   return (
     <Form
@@ -99,6 +124,10 @@ const PropertyInspector = ({ component = {} }) => {
       formData={formData}
       onChange={handleOnChange}
       validator={ajv.validate}
+      showErrorList={false}
+      noHtml5Validate={true}
+      widgets={{ ColorPickerWidget }}
+      SubmitButton={CustomSubmitButton}
     />
   );
 };
