@@ -25,15 +25,21 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
     maxHeight = `calc(${maxHeight} - ${marginVertical}px)`;
   }
 
+// Si la propiedad 'border' está presente, imprime un log
+  
   return {
     ...divStyle,
     minWidth: divStyle.minWidth ?? frame.minWidth ?? frame.width ?? 0,
     maxWidth: maxWidth,
     minHeight: divStyle.minHeight ?? frame.minHeight ?? frame.height ?? 0,
     maxHeight: maxHeight,
-    backgroundColor: divStyle.backgroundColor ?? backgroundColorValue(properties.backgroundColor, 1.0) ?? 'transparent',
+    backgroundColor: divStyle.backgroundColor 
+      ?? (properties.backgroundColor ? colorValue(properties.backgroundColor, 1.0) : 'transparent')
+      ?? 'transparent',
     borderRadius: (typeof properties.cornerRadius === 'function') ? properties.cornerRadius(frame) : (properties.cornerRadius || 0),
-    borderColor: divStyle.borderColor ?? properties.border?.colorValue ?? 'transparent',
+    borderColor: divStyle.borderColor ?? 
+             (properties.border?.color && colorValue(properties.border.color, 1.0)) ?? 
+             'transparent',
     borderWidth: divStyle.borderWidth ?? properties.border?.width ??  0,
     marginTop: properties.padding?.top ?? 0,
     marginLeft: properties.padding?.left ?? 0,
@@ -49,8 +55,8 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
 
 
 // Asume que DesignSystemManager.shared.designSystem.colors[backgroundColor] devuelve un objeto con 'value' y 'opacity'.
-const backgroundColorValue = (backgroundColor, opacity = null) => {
-    const colorData = themesData.colors[backgroundColor || ''];
+const colorValue = (colorName, opacity = null) => {
+    const colorData = themesData.colors[colorName || ''];
 
     if (!colorData) {
       return 'transparent';

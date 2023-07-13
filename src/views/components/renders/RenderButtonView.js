@@ -8,6 +8,14 @@ const SDButtonView = ({ component, children, onClick }) => {
   const alignmentStyle = getAlignment(properties?.frame?.alignment) ?? {};
   
   const initialButtonStyle = {
+    boxShadow: 'none',
+    outline: 'none',
+    transform: 'none',
+    WebkitTransform: 'translateZ(0)',
+    MozTransform: 'translateZ(0)',
+    msTransform: 'translateZ(0)',
+    OTransform: 'translateZ(0)',
+    WebkitTapHighlightColor: 'transparent',
     ...alignmentStyle
   };
 

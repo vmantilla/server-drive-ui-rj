@@ -9,6 +9,8 @@ import addFormats from "ajv-formats";
 
 import '../../css/PropertyInspectorStyles.css'; 
 import ColorPickerWidget from "./ColorPickerWidget";
+import RadiusPickerWidget from "./RadiusPickerWidget";
+
 
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
@@ -53,7 +55,10 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
     title: { "ui:widget": "text" },
     color: { "ui:widget": "color" },
     backgroundColor: { "ui:widget": "ColorPickerWidget" },
-    isEnabled: { "ui:widget": "checkbox" },
+    border: { 
+      color: { "ui:widget": "ColorPickerWidget" }, 
+      width: { "ui:widget": "updown" } 
+    },
     padding: {
       "ui:field": "layout",
       "ui:layout": [
@@ -63,7 +68,9 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
         { right: { "ui:widget": "updown", "classNames": "my-custom-class right" } },
       ],
     },
+    cornerRadius: { "ui:widget": "RadiusPickerWidget" },
   };
+
 
 
     case "Image":
@@ -130,7 +137,9 @@ const handleOnChange = ({ formData }) => {
       validator={ajv.validate}
       showErrorList={false}
       noHtml5Validate={true}
-      widgets={{ ColorPickerWidget: CustomColorPickerWidget }}
+      widgets={{ 
+        ColorPickerWidget: CustomColorPickerWidget,
+        RadiusPickerWidget: RadiusPickerWidget  }}
       SubmitButton={CustomSubmitButton}
     />
   );

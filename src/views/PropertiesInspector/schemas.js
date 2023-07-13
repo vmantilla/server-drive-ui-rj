@@ -18,13 +18,8 @@ export const genericSchema = {
     },
     contentInset: { type: "string" },
     contentMode: { type: "string" },
-    cornerRadius: {
-      type: "object",
-      properties: {
-        shape: { type: "string" },
-        corners: { type: "string" }
-      }
-    },
+    cornerRadius: { type: "string"}
+    ,
     enablesReturnKeyAutomatically: { type: "boolean" },
     font: { type: "string" },
     frame: {
@@ -89,7 +84,14 @@ export const buttonSchema = {
         right: { type: "number" },
       },
       required: ['top', 'bottom', 'left', 'right'],  // Agrega esto si todas las propiedades son necesarias
-    }
+    },
+    cornerRadius: {
+      type: "object",
+      properties: {
+        shape: { type: "string" },
+        corners: { type: "string" }
+      }
+    },
   },
 };
 
