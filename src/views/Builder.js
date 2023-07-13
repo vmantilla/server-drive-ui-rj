@@ -22,7 +22,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/Builder.css';
 
 
-
 const Builder = () => {
   const [activeTab, setActiveTab] = useState('components');
   const [themesData, setThemesData] = useState(null);
@@ -117,7 +116,7 @@ const moveCard = (dragIndex, hoverIndex) => {
                 <div className="col-3 resizable-panel">
                   <div className="panel-container" style={{overflowY: 'auto', maxHeight: '100vh'}}>
                     <span className="panel-title">Panel de propiedades del componente</span>
-                     {selectedComponent && <PropertyInspector component={selectedComponent} droppedComponents={droppedComponents}
+                     {selectedComponent && <PropertyInspector themesData={themesData} component={selectedComponent} droppedComponents={droppedComponents}
                       setDroppedComponents={setDroppedComponents} />
                     }
                   </div>

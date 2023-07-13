@@ -1,22 +1,28 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#000000", "#ffffff"];
-
 const ColorPickerWidget = (props) => {
-  const { value, onChange } = props;
+  const { value, onChange, themesData } = props;
   
-  // Estado para controlar la visibilidad de la modal
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  console.log(themesData)
+
   return (
     <>
-      <Button variant="primary" onClick={handleShow} style={{backgroundColor: value}}>
-        Seleccionar color
-      </Button>
+      <Button 
+        variant="primary" 
+        onClick={handleShow} 
+        style={{
+          backgroundColor: themesData.colors[value].value, 
+          width: '50px', 
+          height: '30px', 
+          border: 'none',
+          display: 'inline-block'
+        }} />
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -24,18 +30,18 @@ const ColorPickerWidget = (props) => {
         </Modal.Header>
         <Modal.Body>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" }}>
-            {colors.map((color, index) => (
+            {Object.entries(themesData.colors).map(([colorKey, colorValue], index) => (
               <div
                 key={index}
                 style={{
                   width: "50px",
                   height: "50px",
-                  backgroundColor: color,
-                  border: value === color ? "2px solid black" : "none",
+                  backgroundColor: colorValue.value,
+                  border: value === colorValue.value ? "2px solid black" : "none",
                 }}
                 onClick={() => {
-                  onChange(color);
-                  handleClose();  // Cierra la modal al seleccionar un color
+                  onChange(colorKey);
+                  handleClose();
                 }}
               ></div>
             ))}

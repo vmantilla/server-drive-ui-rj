@@ -8,10 +8,7 @@ export const genericSchema = {
     autocapitalization: { type: "string" },
     autocorrection: { type: "string" },
     axis: { type: "string" },
-    backgroundColor: { type: "string", 
-    enum: ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff", "#000000", "#ffffff"],
-      enumNames: ["Rojo", "Verde", "Azul", "Amarillo", "Magenta", "Cyan", "Negro", "Blanco"]
-    },
+    backgroundColor: { type: "string"},
     border: {
       type: "object",
       properties: {

@@ -14,9 +14,13 @@ import ColorPickerWidget from "./ColorPickerWidget";
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
 addFormats(ajv);
 
-const PropertyInspector = ({ component = {}, droppedComponents, setDroppedComponents }) => {
+const PropertyInspector = ({ themesData, component = {}, droppedComponents, setDroppedComponents }) => {
 
   const [formData, setFormData] = useState({});
+
+  const CustomColorPickerWidget = (props) => {
+  return <ColorPickerWidget {...props} themesData={themesData} />;
+};
 
   const getSchema = (componentType) => {
     switch (componentType) {
@@ -126,7 +130,7 @@ const handleOnChange = ({ formData }) => {
       validator={ajv.validate}
       showErrorList={false}
       noHtml5Validate={true}
-      widgets={{ ColorPickerWidget }}
+      widgets={{ ColorPickerWidget: CustomColorPickerWidget }}
       SubmitButton={CustomSubmitButton}
     />
   );

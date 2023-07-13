@@ -5,7 +5,6 @@ import '../css/ColorsAndFontsView.css';
 import Preview from './Preview';
 import FontsTab from './subviews/FontsTab';
 import ColorsTab from './subviews/ColorsTab';
-import { getThemesData, setThemesData, loadThemes } from '../styles/themes.js';
 
 const ColorsAndFontsView = ({ themesData, viewData, setThemesData }) => {
 
