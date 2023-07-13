@@ -2,7 +2,7 @@
 import React from 'react';
 import useSDPropertiesModifier, { getAlignment }  from '../../../models/modifiers/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
 
-const SDTextView = ({ component, children }) => {
+const SDTextView = ({ component, children, onClick }) => {
   const properties = component.properties;
   const font = properties.font?.fontValue();
   const color = properties.font?.colorValue(1.0);
@@ -14,7 +14,7 @@ const SDTextView = ({ component, children }) => {
   const alignmentType = properties.textAlignment?.alignment || 'leading';
 
   return (
-    <span style={divStyle}>{properties.text || ''}</span>
+    <span style={divStyle}  onClick={onClick}>{properties.text || ''}</span>
   );
 };
 

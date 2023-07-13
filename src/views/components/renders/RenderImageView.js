@@ -2,17 +2,13 @@ import React, { useEffect, useState } from 'react';
 import useSDPropertiesModifier, { getAlignment } from '../../../models/modifiers/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
 import defaultImage from '../../../assets/images/default.png';
 
-const SDImageView = ({ component, children }) => {
+const SDImageView = ({ component, children, onClick }) => {
   const properties = component.properties;
   const [imgSrc, setImgSrc] = useState(null);
   
   // Usamos nuestro hook para obtener los estilos finales
   const alignmentStyle = getAlignment(properties?.frame?.alignment) ?? {};
   const initialImageStyle = {
-    height: '150px',
-    width: '200px',
-    backgroundColor: '#f2f2f2',
-    border: '1px dashed #000000',
     ...alignmentStyle,
   };
 
@@ -55,6 +51,7 @@ const SDImageView = ({ component, children }) => {
         e.target.style.width = '20px'; 
         e.target.style.height = '20px';
       }}
+       onClick={onClick}
     />
   );
 };

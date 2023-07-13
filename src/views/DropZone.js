@@ -10,10 +10,11 @@ import { renderBuilderComponentTree } from './components/renderBuilderComponentT
 
 import { v4 as uuidv4 } from 'uuid'; 
 
-const Dropzone = ( { style }) => {
+const Dropzone = ( { style, onComponentClick }) => {
     const [droppedComponents, setDroppedComponents] = useState([])
     const [draggingItem, setDraggingItem] = useState(null);
 
+    
     useEffect(() => {
          console.log("droppedComponents", droppedComponents);
     }, [droppedComponents]);
@@ -93,7 +94,7 @@ const Dropzone = ( { style }) => {
     return (
         <div ref={drop} style={{ ...style, backgroundColor }}>
             {
-                droppedComponents ? droppedComponents.map(component => renderBuilderComponentTree(component, handleDrop)) : 'Cargando...'
+                droppedComponents ? droppedComponents.map(component => renderBuilderComponentTree(component, handleDrop, onComponentClick)) : 'Cargando...'
             }
         </div>
     )

@@ -6,12 +6,11 @@ import { renderBuilderComponentTree } from '../renderBuilderComponentTree';
 
 import useDropHandler from '../useDropHandler';
 
-const SDHStackView = ({ component, handleDrop, color }) => {
+const SDHStackView = ({ component, handleDrop, onClick }) => {
   const properties = component.properties;
 
   const initialDivStyle = {
-    backgroundColor: '#f2f2f2', 
-    border: '1px dashed #000000'
+   
   };
 
   const style = useSDPropertiesModifier(properties, initialDivStyle);
@@ -26,8 +25,8 @@ const SDHStackView = ({ component, handleDrop, color }) => {
     }
 
   return (
-    <div ref={drop} className="hstack dropArea" style={style}>
-      {component.childrens && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop))}
+    <div ref={drop} className="hstack dropArea" style={style} onClick={onClick}>
+      {component.childrens && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop,onClick))}
     </div>
   );
 };

@@ -14,7 +14,7 @@ import Preview from './Preview';
 import PreviewGrid from './thumbnailsPreview/PreviewGrid';
 import ColorsAndFontsView from './ColorsAndFontsView';
 import { Componentes } from './components/Componentes';
-import SDPropertiesForm from './SDPropertiesForm';
+import PropertyInspector from './PropertiesInspector/PropertyInspector';
 
 import DropZone from './DropZone';
 
@@ -30,6 +30,22 @@ const Builder = () => {
   const [previewData, setPreviewData] = useState([]);
   const [components, setComponents] = useState([]);
   const [previewBuilderData, setPreviewBuilderData] = useState([]);
+
+  const [selectedComponent, setSelectedComponent] = useState({});
+
+
+const handleComponentUpdate = (updatedComponent) => {
+    // Actualiza el componente en el array droppedComponents.
+    setDroppedComponents((prevComponents) => {
+      return prevComponents.map((c) => c.id === updatedComponent.id ? updatedComponent : c);
+    });
+  };
+  
+  const handleComponentClick = (component) => {
+    // Set the selected component
+    console.log("Componente seleccionado: ", component);
+    setSelectedComponent(component);
+  };
 
   const handleTabChange = (tabKey) => {
     setActiveTab(tabKey);
@@ -96,13 +112,15 @@ const moveCard = (dragIndex, hoverIndex) => {
                         overflow: 'auto',
                         border: '20px solid #333333' //C0C0C0
                       }} 
+                      onComponentClick={handleComponentClick}
                     />
                   </div>
                 </div>
                 <div className="col-3 resizable-panel">
                   <div className="panel-container">
                     <span className="panel-title">Panel de propiedades del componente</span>
-                    <SDPropertiesForm/>
+                     {selectedComponent && <PropertyInspector component={selectedComponent} onComponentUpdate={handleComponentUpdate} />
+}
                   </div>
                 </div>
               </div>

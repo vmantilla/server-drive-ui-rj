@@ -6,12 +6,11 @@ import { renderBuilderComponentTree } from '../renderBuilderComponentTree';
 
 import useDropHandler from '../useDropHandler';
 
-const SDScrollView = ({ component, handleDrop, color }) => {
+const SDScrollView = ({ component, handleDrop, onClick }) => {
   const properties = component.properties;
 
   const initialDivStyle = {
-    backgroundColor: '#f2f2f2', 
-    border: '1px dashed #000000'
+   
   };
 
  const scrollAxis = component.properties?.axis || 'vertical';
@@ -32,7 +31,7 @@ const SDScrollView = ({ component, handleDrop, color }) => {
     }
 
   return (
-    <div className={`sd-scroll-view sd-scroll-view-${scrollAxis}`} style={style}>
+    <div className={`sd-scroll-view sd-scroll-view-${scrollAxis}`} style={style}  onClick={onClick}>
       {component.childrens && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop))}
     </div>
   );

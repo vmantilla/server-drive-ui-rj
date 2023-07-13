@@ -6,15 +6,11 @@ import { renderBuilderComponentTree } from '../renderBuilderComponentTree';
 
 import useDropHandler from '../useDropHandler';
 
-const SDZStackView = ({ component, children, handleDrop, color }) => {
+const SDZStackView = ({ component, children, handleDrop, onClick }) => {
   const properties = component.properties;
 
   const initialDivStyle = {
-    display: 'flex', 
-    flexDirection: 'column',
-    position: 'relative',
-    backgroundColor: '#f2f2f2', 
-    border: '1px dashed #000000'
+    
   };
 
   const style = useSDPropertiesModifier(properties, initialDivStyle);
@@ -29,8 +25,8 @@ const SDZStackView = ({ component, children, handleDrop, color }) => {
     }
 
   return (
-    <div ref={drop} className="zstack" style={style}>
-      {component.childrens && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop))}
+    <div ref={drop} className="zstack" style={style} onClick={onClick}>
+      {component.childrens && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop, onClick))}
     </div>
   );
 };

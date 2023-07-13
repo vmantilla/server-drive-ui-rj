@@ -6,24 +6,8 @@ import SDImageView from './renders/RenderImageView';
 import SDButtonView from './renders/RenderButtonView';
 import SDScrollView from './renders/RenderScrollView';
 
-export function renderBuilderComponentTree(component, handleDrop, level = 0) {
+export function renderBuilderComponentTree(component, handleDrop, onComponentClick) {
 
-  let color;
-  switch (level % 3) {  // Usamos módulo para ciclar entre 3 colores
-    case 0:
-      color = "red";
-      break;
-    case 1:
-      color = "green";
-      break;
-    case 2:
-      color = "blue";
-      break;
-    default:
-      color = "black";
-      break;
-  }
- 
   let Component;
 
   switch (component.type) {
@@ -60,9 +44,9 @@ export function renderBuilderComponentTree(component, handleDrop, level = 0) {
       key={component.id} 
       component={component}
       handleDrop={handleDrop}
-      color={color}
+      onClick={() => onComponentClick(component)}
     >
-      {component.childrens && component.childrens.length > 0 && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop, level + 1))}
+      {component.childrens && component.childrens.length > 0 && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop, onComponentClick))}
     </Component>
   );
 }
