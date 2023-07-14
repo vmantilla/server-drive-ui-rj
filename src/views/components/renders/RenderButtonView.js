@@ -22,7 +22,10 @@ const SDButtonView = ({ component, children, onClick }) => {
   const buttonStyle = useSDPropertiesModifier(properties, initialButtonStyle);
 
   return (
-    <button className="buttonView" style={buttonStyle} onClick={onClick}>
+    <button className="buttonView" style={buttonStyle} onClick={(e) => {
+        e.stopPropagation(); 
+        onClick(e, component);
+      }}>
       {children}
     </button>
   );

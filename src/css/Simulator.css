@@ -14,36 +14,11 @@
   background-color: #f0f0f0;
 }
 
-.dropArea {
-  min-height: 40px;
-  height: auto;
-  padding: 0px;
-}
-
 /* en tu archivo de estilos */
 .vstack {
   display: flex;
   flex-direction: column;
 }
-
-.vstack.dropArea {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.vstack.dropArea > * {
-  flex: 1;
-  margin-bottom: 0;
-  display: flex;
-  border-radius: 2px;
-  padding: 0px;
-}
-
-.vstack.dropArea > *:last-child {
-  margin-right: 0;
-}
-
 
 .zstack {
   position: relative;
@@ -56,22 +31,4 @@
 .hstack {
   display: flex;
   flex-direction: row;
-}
-
-.hstack.dropArea {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.hstack.dropArea > * {
-  flex: 1;
-  margin-bottom: 0;
-  display: flex;
-  border-radius: 2px;
-  padding: 0px;
-}
-
-.hstack.dropArea > *:last-child {
-  margin-right: 0;
 }

@@ -1,20 +1,7 @@
 // schemas.js
 
-export const genericSchema = {
-  type: "object",
-  properties: {
-    frame: { type: "string"},
-    backgroundColor: { type: "string"},
-    border: {
-      type: "object",
-      properties: {
-        color: { type: "string" },
-        width: { type: "number" }
-      }
-    },
-    cornerRadius: { type: "string" },
-    padding: { type: "string" },
-    enablesReturnKeyAutomatically: { type: "boolean" },
+/*
+enablesReturnKeyAutomatically: { type: "boolean" },
     font: { type: "string" },
     contentInset: { type: "string" },
     contentMode: { type: "string" },
@@ -39,61 +26,77 @@ export const genericSchema = {
     text: { type: "string" },
     textAlignment: { type: "string" },
     verticalAlignment: { type: "string" },
+    */
+
+export const genericSchema = {
+  type: "object",
+  properties: {
+    frame: { type: "string"},
+    backgroundColor: { type: "string"},
+    border: {
+      type: "object",
+      properties: {
+        color: { type: "string" },
+        width: { type: "number" }
+      }
+    },
+    cornerRadius: { type: "string" },
+    padding: { type: "string" },
   },
   required: [], // puedes definir las propiedades requeridas aquí.
 };
 
+export const vstackSchema = {
+  ...genericSchema,
+  properties: {
+    ...genericSchema.properties,
+  },
+};
+
+export const hstackSchema = {
+  ...genericSchema,
+  properties: {
+    ...genericSchema.properties,
+  },
+};
+
 
 export const textSchema = {
-  type: "object",
+  ...genericSchema,
   properties: {
-    text: { type: "string" },
+    ...genericSchema.properties,
     color: { type: "string" },
-    font: { type: "string" },
     alignment: { type: "string" },
   },
 };
 
 export const buttonSchema = {
-  type: "object",
+  ...genericSchema,
   properties: {
-    title: { type: "string" },
-    color: { type: "string" },
-    isEnabled: { type: "boolean" },
-    padding: { 
-      type: "object",
-      properties: {
-        top: { type: "number" },
-        bottom: { type: "number" },
-        left: { type: "number" },
-        right: { type: "number" },
-      },
-      required: ['top', 'bottom', 'left', 'right'],  // Agrega esto si todas las propiedades son necesarias
-    },
-    cornerRadius: { type: "string" },
+    ...genericSchema.properties,
   },
 };
 
 export const imageSchema = {
-  type: "object",
+  ...genericSchema,
   properties: {
-    source: { type: "string" },
+    ...genericSchema.properties,
     resizeMode: { type: "string" },
   },
 };
 
 export const textFieldSchema = {
-  type: "object",
+  ...genericSchema,
   properties: {
+    ...genericSchema.properties,
     placeholder: { type: "string" },
-    text: { type: "string" },
-    keyboardType: { type: "string" },
   },
 };
 
 export const scrollViewSchema = {
-  type: "object",
+  ...genericSchema,
   properties: {
+    ...genericSchema.properties,
     contentContainerStyle: { type: "string" },
   },
 };

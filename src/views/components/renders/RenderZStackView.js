@@ -25,7 +25,10 @@ const SDZStackView = ({ component, children, handleDrop, onClick }) => {
     }
 
   return (
-    <div ref={drop} className="zstack" style={style} onClick={onClick}>
+    <div ref={drop} className="zstack" style={style} onClick={(e) => {
+        e.stopPropagation(); 
+        onClick(e, component);
+      }}>
       {component.childrens && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop, onClick))}
     </div>
   );

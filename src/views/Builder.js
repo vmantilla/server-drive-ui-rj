@@ -37,8 +37,7 @@ const Builder = () => {
   console.log('droppedComponents changed:', droppedComponents);
 }, [droppedComponents]);
 
-  const handleComponentClick = (component) => {
-    // Set the selected component
+  const handleComponentClick = (e, component) => {
     setSelectedComponent(component);
   };
 
@@ -131,11 +130,11 @@ const moveCard = (dragIndex, hoverIndex) => {
               </Tab>
               <Tab eventKey="colors_fonts" title="Colors & Fonts">
                 {/* Panel de paleta de colores y fuentes */}
+                {themesData && <ColorsAndFontsView themesData={themesData} viewData={previewData} setThemesData={setThemesData}/>}
               </Tab>
               <Tab eventKey="preview" title="Preview">
                 {/* Panel de vista previa */}
                 <div className="resizable-panel">
-                  
                 </div>
               </Tab>
             </Tabs>

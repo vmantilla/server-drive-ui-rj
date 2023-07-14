@@ -31,7 +31,10 @@ const SDScrollView = ({ component, handleDrop, onClick }) => {
     }
 
   return (
-    <div className={`sd-scroll-view sd-scroll-view-${scrollAxis}`} style={style}  onClick={onClick}>
+    <div className={`sd-scroll-view sd-scroll-view-${scrollAxis}`} style={style}  onClick={(e) => {
+        e.stopPropagation(); 
+        onClick(e, component);
+      }}>
       {component.childrens && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop))}
     </div>
   );

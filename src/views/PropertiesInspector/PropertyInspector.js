@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Form from "@rjsf/core";
-import { genericSchema, textSchema, buttonSchema, imageSchema, textFieldSchema, scrollViewSchema } from './schemas';
+import { genericSchema, textSchema, buttonSchema, imageSchema, textFieldSchema, scrollViewSchema, vstackSchema, hstackSchema } from './schemas';
 
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
@@ -37,55 +37,73 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
         return textFieldSchema;
       case "ScrollView":
         return scrollViewSchema;
+      case "VStack":
+        return vstackSchema;
+      case "HStack":
+        return hstackSchema;
       default:
         return {};
     }
   };
 
-  const getUiSchema = (componentType) => {
-  switch (componentType) {
-    case "Text":
-      return {
-        text: { "ui:widget": "textarea" },
-        color: { "ui:widget": "color" },
-        font: { "ui:widget": "select", "ui:options": { enumOptions: ["Arial", "Verdana", "Helvetica", "Times New Roman"] } },
-        alignment: { "ui:widget": "radio", "ui:options": { inline: true } },
-      };
-    case "Button":
-  return {
-    title: { "ui:widget": "text" },
-    color: { "ui:widget": "color" },
+  const genericUiSchema = {
+    frame: { "ui:widget": "FramePickerWidget" },
     backgroundColor: { "ui:widget": "ColorPickerWidget" },
     border: { 
       color: { "ui:widget": "ColorPickerWidget" }, 
       width: { "ui:widget": "updown" } 
     },
-    padding: { "ui:widget": "PaddingPickerWidget" },
     cornerRadius: { "ui:widget": "RadiusPickerWidget" },
-    frame: { "ui:widget": "FramePickerWidget" },
+    padding: { "ui:widget": "PaddingPickerWidget" },
+    font: { "ui:widget": "select", "ui:options": { enumOptions: ["Arial", "Verdana", "Helvetica", "Times New Roman"] } },
+    // Agrega todos los demás widgets de UI que son comunes
   };
 
 
-
+  const getUiSchema = (componentType) => {
+  switch (componentType) {
+    case "Text":
+      return {
+        ...genericUiSchema,
+        text: { "ui:widget": "textarea" },
+        color: { "ui:widget": "color" },
+        alignment: { "ui:widget": "radio", "ui:options": { inline: true } },
+      };
+    case "Button":
+      return {
+        ...genericUiSchema,
+        title: { "ui:widget": "text" },
+      };
+    case "VStack":
+      return {
+        ...genericUiSchema
+      };
+    case "HStack":
+      return {
+        ...genericUiSchema
+      };
     case "Image":
       return {
+        ...genericUiSchema,
         source: { "ui:widget": "text" },
         resizeMode: { "ui:widget": "select", "ui:options": { enumOptions: ["cover", "contain", "stretch", "repeat", "center"] } },
       };
     case "TextField":
       return {
+        ...genericUiSchema,
         placeholder: { "ui:widget": "text" },
-        text: { "ui:widget": "text" },
         keyboardType: { "ui:widget": "select", "ui:options": { enumOptions: ["default", "number-pad", "decimal-pad", "numeric", "email-address", "phone-pad"] } },
       };
     case "ScrollView":
       return {
+        ...genericUiSchema,
         contentContainerStyle: { "ui:widget": "textarea" },
       };
     default:
       return {};
   }
 };
+
 
 
   useEffect(() => {
@@ -112,7 +130,6 @@ const handleOnChange = ({ formData }) => {
     // handle the case where droppedComponents is not an array
   }
 };
-
 
 
   // Si component.properties es undefined o null, utiliza un objeto vacío

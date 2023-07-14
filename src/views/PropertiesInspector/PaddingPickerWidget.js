@@ -3,15 +3,18 @@ import { Modal, Button, FormControl } from "react-bootstrap";
 
 const PaddingPickerWidget = (props) => {
   const { onChange } = props;
-  const value = props.value || { top: 0, bottom: 0, left: 0, right: 0 };
+  const defaultPadding = { top: 0, bottom: 0, left: 0, right: 0 };
+  const value = props.value || defaultPadding;
 
   const [paddingValues, setPaddingValues] = useState(value);
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    setPaddingValues(value);
+    if (JSON.stringify(value) !== JSON.stringify(paddingValues)) {
+      setPaddingValues(value);
+    }
   }, [value]);
-
+  
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 

@@ -14,7 +14,10 @@ const SDTextView = ({ component, children, onClick }) => {
   const alignmentType = properties.textAlignment?.alignment || 'leading';
 
   return (
-    <span style={divStyle}  onClick={onClick}>{properties.text || ''}</span>
+    <span style={divStyle}  onClick={(e) => {
+        e.stopPropagation(); 
+        onClick(e, component);
+      }}>{properties.text || ''}</span>
   );
 };
 

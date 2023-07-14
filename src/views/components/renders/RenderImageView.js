@@ -51,7 +51,10 @@ const SDImageView = ({ component, children, onClick }) => {
         e.target.style.width = '20px'; 
         e.target.style.height = '20px';
       }}
-       onClick={onClick}
+       onClick={(e) => {
+        e.stopPropagation(); 
+        onClick(e, component);
+      }}
     />
   );
 };

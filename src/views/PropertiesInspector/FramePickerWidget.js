@@ -20,29 +20,29 @@ const FramePickerWidget = (props) => {
   const handleShow = () => setShow(true);
 
 	useEffect(() => {
-  if (typeof value.width === "string" && /^\d+$/.test(value.width)) {
+  if (value.width && typeof value.width === "string" && /^\d+$/.test(value.width)) {
     setWidthValue('custom');
     setCustomWidthMin(value.width);
     setCustomWidthMax("");
     setCustomWidthMode('fixed');
-  } else if (typeof value.width === "object" && value.width.min && value.width.max) {
+  } else if (value.width && typeof value.width === "object" && value.width.min && value.width.max) {
     setWidthValue('custom');
-    setCustomWidthMin(value.width.min);
-    setCustomWidthMax(value.width.max);
+    setCustomWidthMin(value.width?.min);
+    setCustomWidthMax(value.width?.max);
     setCustomWidthMode('range');
   } else {
     setWidthValue(value.width);
   }
 
-  if (typeof value.height === "string" && /^\d+$/.test(value.height)) {
+  if (value.height && typeof value.height === "string" && /^\d+$/.test(value.height)) {
     setHeightValue('custom');
     setCustomHeightMin(value.height);
     setCustomHeightMax("");
     setCustomHeightMode('fixed');
-  } else if (typeof value.height === "object" && value.height.min && value.height.max) {
+  } else if (value.height && typeof value.height === "object" && value.height.min && value.height.max) {
     setHeightValue('custom');
-    setCustomHeightMin(value.height.min);
-    setCustomHeightMax(value.height.max);
+    setCustomHeightMin(value.height?.min);
+    setCustomHeightMax(value.height?.max);
     setCustomHeightMode('range');
   } else {
     setHeightValue(value.height);

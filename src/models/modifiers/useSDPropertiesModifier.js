@@ -31,6 +31,7 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
       (properties.border?.color && colorValue(properties.border.color, 1.0)) ??
       'transparent',
     borderWidth: divStyle.borderWidth ?? properties.border?.width ?? 0,
+    borderStyle: 'solid', 
     marginTop: properties.padding?.top ?? 0,
     marginLeft: properties.padding?.left ?? 0,
     marginBottom: properties.padding?.bottom ?? 0,
@@ -70,15 +71,8 @@ const frameToStyle = (frame, marginHorizontal, marginVertical) => {
     }
   });
 
-  console.log("raul", style)
-
   return style;
 };
-
-
-
-
-
 
 
 const cornerRadiusValue = (frame, cornerRadiusObject) => {

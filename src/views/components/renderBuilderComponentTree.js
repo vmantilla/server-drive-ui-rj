@@ -40,13 +40,13 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
   }
 
   return (
-    <Component 
-      key={component.id} 
-      component={component}
-      handleDrop={handleDrop}
-      onClick={() => onComponentClick(component)}
-    >
-      {component.childrens && component.childrens.length > 0 && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop, onComponentClick))}
-    </Component>
-  );
+  <Component 
+    key={component.id} 
+    component={component}
+    handleDrop={handleDrop}
+    onClick={onComponentClick}
+  >
+    {component.childrens && component.childrens.length > 0 && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop, onComponentClick))}
+  </Component>
+);
 }

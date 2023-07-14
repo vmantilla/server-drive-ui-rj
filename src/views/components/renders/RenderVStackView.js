@@ -26,7 +26,10 @@ const SDVStackView = ({ component, handleDrop, onClick }) => {
     }
 
   return (
-    <div ref={drop} className="vstack dropArea" style={style} onClick={onClick}>
+    <div ref={drop} className="vstack dropArea" style={style} onClick={(e) => {
+        e.stopPropagation(); 
+        onClick(e, component);
+      }}>
       {component.childrens && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop, onClick))}
     </div>
   );
