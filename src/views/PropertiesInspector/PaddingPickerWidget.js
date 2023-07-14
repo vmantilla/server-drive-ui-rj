@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, FormControl } from "react-bootstrap";
 
 const PaddingPickerWidget = (props) => {
-  const { value: propValue, onChange } = props;
+  const { onChange } = props;
+  const value = props.value || { top: 0, bottom: 0, left: 0, right: 0 };
 
-  const [paddingValues, setPaddingValues] = useState(propValue);
+  const [paddingValues, setPaddingValues] = useState(value);
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    setPaddingValues(propValue);
-  }, [propValue]);
+    setPaddingValues(value);
+  }, [value]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -61,35 +62,28 @@ const PaddingPickerWidget = (props) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              border: "0px solid gray",
+              backgroundColor: "lightblue",
+              border: "1px solid gray",
+              width: "200px",
+              height: "100px",
               padding: "10px"
             }}
           >
             <div
               style={{
-                backgroundColor: "lightblue",
-                border: "1px solid gray",
-                width: "200px",
-                height: "100px",
+                border: "1px solid black",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "white",
                 padding: `${Math.min(paddingValues.top, 20)}px ${Math.min(paddingValues.right, 20)}px ${Math.min(
                   paddingValues.bottom,
                   20
                 )}px ${Math.min(paddingValues.left, 20)}px`
               }}
             >
-              <div
-                style={{
-                  border: "1px solid black",
-                  height: "100%",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxSizing: "border-box",
-                  display: "flex",
-                  backgroundColor: "white"
-                }}
-              >
-                Content
-              </div>
+              Content
             </div>
           </div>
           <div>
