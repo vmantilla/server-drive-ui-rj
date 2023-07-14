@@ -73,7 +73,7 @@ const PaddingPickerWidget = (props) => {
               <div style={{ border: "1px solid black", height: "100%", alignItems: "center",
               justifyContent: "center", boxSizing: "border-box", display: "flex",
               alignItems: "center",
-              justifyContent: "center", }}>
+              justifyContent: "center", backgroundColor: "white", }}>
                 Content
               </div>
             </div>
