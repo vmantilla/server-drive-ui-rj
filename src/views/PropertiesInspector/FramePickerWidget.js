@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, FormControl } from "react-bootstrap";
 
 const FramePickerWidget = (props) => {
@@ -7,6 +7,7 @@ const FramePickerWidget = (props) => {
 
   const [widthValue, setWidthValue] = useState(value.width);
   const [heightValue, setHeightValue] = useState(value.height);
+
   const [customWidthMode, setCustomWidthMode] = useState("fixed");
   const [customWidthMin, setCustomWidthMin] = useState("");
   const [customWidthMax, setCustomWidthMax] = useState("");
@@ -17,6 +18,38 @@ const FramePickerWidget = (props) => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+	useEffect(() => {
+  if (typeof value.width === "string" && /^\d+$/.test(value.width)) {
+    setWidthValue('custom');
+    setCustomWidthMin(value.width);
+    setCustomWidthMax("");
+    setCustomWidthMode('fixed');
+  } else if (typeof value.width === "object" && value.width.min && value.width.max) {
+    setWidthValue('custom');
+    setCustomWidthMin(value.width.min);
+    setCustomWidthMax(value.width.max);
+    setCustomWidthMode('range');
+  } else {
+    setWidthValue(value.width);
+  }
+
+  if (typeof value.height === "string" && /^\d+$/.test(value.height)) {
+    setHeightValue('custom');
+    setCustomHeightMin(value.height);
+    setCustomHeightMax("");
+    setCustomHeightMode('fixed');
+  } else if (typeof value.height === "object" && value.height.min && value.height.max) {
+    setHeightValue('custom');
+    setCustomHeightMin(value.height.min);
+    setCustomHeightMax(value.height.max);
+    setCustomHeightMode('range');
+  } else {
+    setHeightValue(value.height);
+  }
+}, [value.width, value.height]);
+
+
 
   const handleWidthClick = (width) => {
     setWidthValue(width);
@@ -88,9 +121,10 @@ const FramePickerWidget = (props) => {
           <Modal.Title>Frame Picker</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px", justifyContent: "center", margin: "auto" }}>
+  
             {/* Width options */}
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
               <div
                 style={{
                   width: "80px",
@@ -106,7 +140,7 @@ const FramePickerWidget = (props) => {
                 Full Width
               </div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
               <div
                 style={{
                   width: "80px",
@@ -122,7 +156,7 @@ const FramePickerWidget = (props) => {
                 Auto Width
               </div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
               <div
                 style={{
                   width: "80px",
@@ -140,7 +174,7 @@ const FramePickerWidget = (props) => {
             </div>
 
             {/* Height options */}
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
               <div
                 style={{
                   width: "80px",
@@ -156,7 +190,7 @@ const FramePickerWidget = (props) => {
                 Full Height
               </div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
               <div
                 style={{
                   width: "80px",
@@ -172,7 +206,7 @@ const FramePickerWidget = (props) => {
                 Auto Height
               </div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
               <div
                 style={{
                   width: "80px",
