@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Modal, Button, FormControl } from "react-bootstrap";
 
 const PaddingPickerWidget = (props) => {
@@ -7,10 +7,6 @@ const PaddingPickerWidget = (props) => {
 
   const [paddingValues, setPaddingValues] = useState(value);
   const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    setPaddingValues(value);
-  }, [value]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -76,6 +72,7 @@ const PaddingPickerWidget = (props) => {
               style={{
                 border: "1px solid black",
                 height: "100%",
+                width: "100%",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
