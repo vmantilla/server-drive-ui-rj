@@ -49,11 +49,12 @@
                     {
                         "id": 3,
                         "type": "Button",
+                        ,
+                                "alignment": "CenterStart"
                         "properties": {
                             "frame": {
                                 "height": 25,
-                                "width": 25,
-                                "alignment": "CenterStart"
+                                "width": { "min": 22, "max": null}
                             },
                             "padding": {
                                 "top": 0,

@@ -11,6 +11,7 @@ import '../../css/PropertyInspectorStyles.css';
 import ColorPickerWidget from "./ColorPickerWidget";
 import RadiusPickerWidget from "./RadiusPickerWidget";
 import PaddingPickerWidget from "./PaddingPickerWidget";
+import FramePickerWidget from "./FramePickerWidget";
 
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
@@ -61,6 +62,7 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
     },
     padding: { "ui:widget": "PaddingPickerWidget" },
     cornerRadius: { "ui:widget": "RadiusPickerWidget" },
+    frame: { "ui:widget": "FramePickerWidget" },
   };
 
 
@@ -132,7 +134,8 @@ const handleOnChange = ({ formData }) => {
       widgets={{ 
         ColorPickerWidget: CustomColorPickerWidget,
         RadiusPickerWidget: RadiusPickerWidget,
-        PaddingPickerWidget: PaddingPickerWidget  }}
+        PaddingPickerWidget: PaddingPickerWidget,
+        FramePickerWidget: FramePickerWidget  }}
       SubmitButton={CustomSubmitButton}
     />
   );

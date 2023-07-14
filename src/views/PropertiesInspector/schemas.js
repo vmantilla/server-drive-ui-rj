@@ -3,13 +3,7 @@
 export const genericSchema = {
   type: "object",
   properties: {
-    frame: {
-      type: "object",
-      properties: {
-        width: { type: "number" },
-        height: { type: "number" }
-      }
-    },
+    frame: { type: "string"},
     backgroundColor: { type: "string"},
     border: {
       type: "object",
