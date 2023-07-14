@@ -1,48 +1,36 @@
 import React from 'react';
 import { themesData } from '../../styles/themes';
 
+
+
 function useSDPropertiesModifier(properties = {}, divStyle = {}) {
   // Si no se proporcionan las propiedades, devolvemos el estilo div proporcionado
   if (!properties || Object.keys(properties).length === 0) return divStyle;
 
-  // Si el frame está ausente, usamos los valores por defecto
-  const frame = properties.frame || {};
-
+  const frame = properties?.frame || {};
+  
   // Calculamos el valor total del margen
   const marginHorizontal = (properties.padding?.left ?? 0) + (properties.padding?.right ?? 0);
   const marginVertical = (properties.padding?.top ?? 0) + (properties.padding?.bottom ?? 0);
+  // Si el frame está ausente, usamos los valores por defecto
+  const frameStyle = properties.frame ? frameToStyle(properties.frame, marginHorizontal, marginVertical) : {};
 
-  // Aquí puedes definir cómo se aplicarán las propiedades a los estilos
-  // Por ejemplo, usando los valores predeterminados en caso de que las propiedades no estén definidas
-
-  let maxWidth = frame.maxWidth ?? frame.width ?? '100%';
-  if (maxWidth === '100%' && marginHorizontal) {
-    maxWidth = `calc(${maxWidth} - ${marginHorizontal}px)`;
-  }
-
-  let maxHeight = frame.maxHeight ?? frame.height ?? '100%';
-  if (maxHeight === '100%' && marginVertical) {
-    maxHeight = `calc(${maxHeight} - ${marginVertical}px)`;
-  }
-
-// Si la propiedad 'border' está presente, imprime un log
   
   return {
     ...divStyle,
-    minWidth: divStyle.minWidth ?? frame.minWidth ?? frame.width ?? 0,
-    maxWidth: maxWidth,
-    minHeight: divStyle.minHeight ?? frame.minHeight ?? frame.height ?? 0,
-    maxHeight: maxHeight,
-    backgroundColor: divStyle.backgroundColor 
-      ?? (properties.backgroundColor ? colorValue(properties.backgroundColor, 1.0) : 'transparent')
-      ?? 'transparent',
-    borderRadius: properties.cornerRadius 
+    ...frameStyle,
+    backgroundColor:
+      divStyle.backgroundColor ??
+      (properties.backgroundColor ? colorValue(properties.backgroundColor, 1.0) : 'transparent') ??
+      'transparent',
+    borderRadius: properties.cornerRadius
       ? cornerRadiusValue(frame, properties.cornerRadius)
       : 0,
-    borderColor: divStyle.borderColor ?? 
-             (properties.border?.color && colorValue(properties.border.color, 1.0)) ?? 
-             'transparent',
-    borderWidth: divStyle.borderWidth ?? properties.border?.width ??  0,
+    borderColor:
+      divStyle.borderColor ??
+      (properties.border?.color && colorValue(properties.border.color, 1.0)) ??
+      'transparent',
+    borderWidth: divStyle.borderWidth ?? properties.border?.width ?? 0,
     marginTop: properties.padding?.top ?? 0,
     marginLeft: properties.padding?.left ?? 0,
     marginBottom: properties.padding?.bottom ?? 0,
@@ -50,9 +38,47 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
     paddingTop: properties.contentInset?.top ?? 0,
     paddingLeft: properties.contentInset?.left ?? 0,
     paddingBottom: properties.contentInset?.bottom ?? 0,
-    paddingRight: properties.contentInset?.right ?? 0
+    paddingRight: properties.contentInset?.right ?? 0,
   };
 }
+
+const frameToStyle = (frame, marginHorizontal, marginVertical) => {
+  let style = {};
+
+  const processValue = (value, dimension) => {
+    if (typeof value === 'number' || (typeof value === 'string' && !isNaN(value))) {
+      return `${Number(value)}px`;
+    } else if (typeof value === 'string' && value.includes('%')) {
+      if (dimension === 'width') {
+        return `calc(${value} - ${marginHorizontal}px)`;
+      } else if (dimension === 'height') {
+        return `calc(${value} - ${marginVertical}px)`;
+      }
+    } else {
+      return value;
+    }
+  };
+
+  ['width', 'height'].forEach((dimension) => {
+    const value = frame[dimension];
+
+    if (typeof value === 'number' || typeof value === 'string') {
+      style[dimension] = processValue(value, dimension);
+    } else if (typeof value === 'object' && value !== null) {
+      if ('min' in value && value.min != null) style[`min${dimension.charAt(0).toUpperCase() + dimension.slice(1)}`] = processValue(value.min, dimension);
+      if ('max' in value && value.max != null) style[`max${dimension.charAt(0).toUpperCase() + dimension.slice(1)}`] = processValue(value.max, dimension);
+    }
+  });
+
+  console.log("raul", style)
+
+  return style;
+};
+
+
+
+
+
 
 
 const cornerRadiusValue = (frame, cornerRadiusObject) => {
@@ -90,21 +116,18 @@ const cornerRadiusValue = (frame, cornerRadiusObject) => {
   return `${corners?.topStart ?? defaultRadius}px ${corners?.topEnd ?? defaultRadius}px ${corners?.bottomEnd ?? defaultRadius}px ${corners?.bottomStart ?? defaultRadius}px`;
 };
 
-
-
-// Asume que DesignSystemManager.shared.designSystem.colors[backgroundColor] devuelve un objeto con 'value' y 'opacity'.
 const colorValue = (colorName, opacity = null) => {
-    const colorData = themesData.colors[colorName || ''];
+  const colorData = themesData.colors[colorName || ''];
 
-    if (!colorData) {
-      return 'transparent';
-    }
+  if (!colorData) {
+    return 'transparent';
+  }
 
-    const { value, defaultOpacity } = colorData;
-    const customOpacity = opacity !== undefined ? opacity : defaultOpacity;
-    const hex = value.startsWith('#') ? value.substring(1) : value;
+  const { value, defaultOpacity } = colorData;
+  const customOpacity = opacity !== undefined ? opacity : defaultOpacity;
+  const hex = value.startsWith('#') ? value.substring(1) : value;
 
-    return `rgba(${parseInt(hex.substring(0, 2), 16)}, ${parseInt(hex.substring(2, 4), 16)}, ${parseInt(hex.substring(4, 6), 16)}, ${customOpacity})`;
+  return `rgba(${parseInt(hex.substring(0, 2), 16)}, ${parseInt(hex.substring(2, 4), 16)}, ${parseInt(hex.substring(4, 6), 16)}, ${customOpacity})`;
 }
 
 

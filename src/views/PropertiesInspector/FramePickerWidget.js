@@ -96,12 +96,12 @@ const FramePickerWidget = (props) => {
                   width: "80px",
                   height: "80px",
                   borderRadius: '0px',
-                  border: widthValue === 'full' ? '2px solid blue' : '1px solid lightgray',
+                  border: widthValue === '100%' ? '2px solid blue' : '1px solid lightgray',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onClick={() => handleWidthClick('full')}
+                onClick={() => handleWidthClick('100%')}
               >
                 Full Width
               </div>
@@ -146,12 +146,12 @@ const FramePickerWidget = (props) => {
                   width: "80px",
                   height: "80px",
                   borderRadius: '0px',
-                  border: heightValue === 'full' ? '2px solid blue' : '1px solid lightgray',
+                  border: heightValue === '100%' ? '2px solid blue' : '1px solid lightgray',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onClick={() => handleHeightClick('full')}
+                onClick={() => handleHeightClick('100%')}
               >
                 Full Height
               </div>

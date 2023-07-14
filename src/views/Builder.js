@@ -131,12 +131,11 @@ const moveCard = (dragIndex, hoverIndex) => {
               </Tab>
               <Tab eventKey="colors_fonts" title="Colors & Fonts">
                 {/* Panel de paleta de colores y fuentes */}
-                {themesData && <ColorsAndFontsView themesData={themesData} viewData={previewData} setThemesData={setThemesData}/>}
               </Tab>
               <Tab eventKey="preview" title="Preview">
                 {/* Panel de vista previa */}
                 <div className="resizable-panel">
-                  <Preview themesData={themesData} viewData={previewData} />
+                  
                 </div>
               </Tab>
             </Tabs>
