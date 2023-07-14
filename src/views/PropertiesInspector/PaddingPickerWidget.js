@@ -13,14 +13,26 @@ const PaddingPickerWidget = (props) => {
 
   const handlePaddingChange = (direction, event) => {
     const newValue = parseInt(event.target.value);
-    setPaddingValues(prevPaddingValues => ({
+    setPaddingValues((prevPaddingValues) => ({
       ...prevPaddingValues,
       [direction]: isNaN(newValue) ? 0 : newValue
     }));
   };
 
   const handleApplyPadding = () => {
-    onChange(paddingValues);
+    if (paddingValues.top === 0 && paddingValues.bottom === 0 && paddingValues.left === 0 && paddingValues.right === 0) {
+      // Si todos los valores de padding son cero, eliminar la propiedad de padding
+      onChange(undefined);
+    } else {
+      // Eliminar las direcciones de padding que tienen valor cero
+      const updatedPaddingValues = Object.keys(paddingValues).reduce((result, direction) => {
+        if (paddingValues[direction] !== 0) {
+          result[direction] = paddingValues[direction];
+        }
+        return result;
+      }, {});
+      onChange(updatedPaddingValues);
+    }
     handleClose();
   };
 
@@ -35,13 +47,44 @@ const PaddingPickerWidget = (props) => {
           <Modal.Title>Padding Picker</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "10px" }}>
+            <strong>Preview:</strong>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "0px solid gray",
+              padding: "10px"
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "lightblue",
+                border: "1px solid gray",
+                width: "200px",
+                height: "100px",
+                padding: `${Math.min(paddingValues.top, 20)}px ${Math.min(paddingValues.right, 20)}px ${Math.min(
+            paddingValues.bottom,
+            20
+          )}px ${Math.min(paddingValues.left, 20)}px`}}
+            >
+              <div style={{ border: "1px solid black", height: "100%", alignItems: "center",
+              justifyContent: "center", boxSizing: "border-box", display: "flex",
+              alignItems: "center",
+              justifyContent: "center", }}>
+                Content
+              </div>
+            </div>
+          </div>
           <div>
             <label>
               Top:
               <FormControl
                 type="number"
                 value={paddingValues.top}
-                onChange={(event) => handlePaddingChange('top', event)}
+                onChange={(event) => handlePaddingChange("top", event)}
               />
             </label>
           </div>
@@ -51,7 +94,7 @@ const PaddingPickerWidget = (props) => {
               <FormControl
                 type="number"
                 value={paddingValues.bottom}
-                onChange={(event) => handlePaddingChange('bottom', event)}
+                onChange={(event) => handlePaddingChange("bottom", event)}
               />
             </label>
           </div>
@@ -61,7 +104,7 @@ const PaddingPickerWidget = (props) => {
               <FormControl
                 type="number"
                 value={paddingValues.left}
-                onChange={(event) => handlePaddingChange('left', event)}
+                onChange={(event) => handlePaddingChange("left", event)}
               />
             </label>
           </div>
@@ -71,7 +114,7 @@ const PaddingPickerWidget = (props) => {
               <FormControl
                 type="number"
                 value={paddingValues.right}
-                onChange={(event) => handlePaddingChange('right', event)}
+                onChange={(event) => handlePaddingChange("right", event)}
               />
             </label>
           </div>
