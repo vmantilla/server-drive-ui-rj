@@ -106,11 +106,22 @@ const getDefaultTextFieldProperties = () => {
 
 const getDefaultScrollViewProperties = () => {
   return new SDProperties(
-    { },
+    { height: "100%", width: "100%" },
     'primaryContainer',
     new SDCornerRadius({ shape: 'small'}),
-    { color: 'primaryContainer', width: 1 },
-    { top: 5, bottom: 5, left: 10, right: 10 },
+    {},
+    { top: 0, bottom: 0, left: 0, right: 0 },
+    true
+  );
+}
+
+const getDefaultSpaceViewProperties = () => {
+  return new SDProperties(
+    { height: "100%", width: "100%" },
+    'primaryContainer',
+    new SDCornerRadius({ shape: 'small'}),
+    {},
+    { top: 0, bottom: 0, left: 0, right: 0 },
     true
   );
 }
@@ -120,7 +131,7 @@ const getDefaultScrollViewMain = () => {
         uuidv4(),
         SDComponentType[SDComponentType.ScrollView],
         new SDProperties(
-    { },
+    { height: "100%", width: "100%" },
     'primaryContainer',
     new SDCornerRadius({ shape: 'small'}),
     { color: 'primaryContainer', width: 1 },
@@ -201,6 +212,8 @@ const getDefaultProps = (componentType) => {
       return getDefaultTextFieldProperties();
     case SDComponentType.ScrollView:
       return getDefaultScrollViewProperties();
+    case SDComponentType.Space:
+      return getDefaultSpaceViewProperties();
     default:
       return getDefaultScrollViewMain();
   }

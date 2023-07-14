@@ -135,6 +135,7 @@ const moveCard = (dragIndex, hoverIndex) => {
               <Tab eventKey="preview" title="Preview">
                 {/* Panel de vista previa */}
                 <div className="resizable-panel">
+                 <Preview themesData={themesData} viewData={previewData} />
                 </div>
               </Tab>
             </Tabs>

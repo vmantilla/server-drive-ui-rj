@@ -33,6 +33,7 @@ const Componentes = () => {
             <Componente type={SDComponentType.Image}>Image</Componente>
             <Componente type={SDComponentType.TextField}>TextField</Componente>
             <Componente type={SDComponentType.ScrollView}>ScrollView</Componente>
+            <Componente type={SDComponentType.Space}>Space</Componente>
         </>
     )
 }

@@ -5,6 +5,7 @@ import SDTextView from './renders/RenderTextView';
 import SDImageView from './renders/RenderImageView';
 import SDButtonView from './renders/RenderButtonView';
 import SDScrollView from './renders/RenderScrollView';
+import RenderSpaceView from './renders/RenderSpaceView';
 
 export function renderBuilderComponentTree(component, handleDrop, onComponentClick) {
 
@@ -34,6 +35,8 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
       break;
     case "ScrollView":
       Component = SDScrollView;
+    case "Space":
+      Component = RenderSpaceView;
       break;
     default:
       Component = 'div'; 

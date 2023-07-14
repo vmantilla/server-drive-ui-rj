@@ -16,12 +16,12 @@
 
 /* en tu archivo de estilos */
 .vstack {
-  display: flex;
   flex-direction: column;
 }
 
 .zstack {
   position: relative;
+  background-color: #f0f0f0;
 }
 .zstack > * {
   position: absolute;
@@ -29,6 +29,18 @@
 
 
 .hstack {
-  display: flex;
   flex-direction: row;
+}
+
+.hstack > .dotted-line {
+  border-top: 1px dashed #000;
+  width: 100%;
+  flexGrow: 1;
+}
+
+.vstack > .dotted-line {
+  align-self: center;
+  border-left: 1px dashed #000;
+  height: 100%;
+  flexGrow: 1;
 }

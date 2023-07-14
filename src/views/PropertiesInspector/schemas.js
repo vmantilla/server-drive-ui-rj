@@ -93,6 +93,14 @@ export const textFieldSchema = {
   },
 };
 
+export const spaceSchema = {
+  type: "object",
+  properties: {
+    frame: { type: "string"},
+  },
+};
+
+
 export const scrollViewSchema = {
   ...genericSchema,
   properties: {

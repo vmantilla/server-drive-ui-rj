@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Form from "@rjsf/core";
-import { genericSchema, textSchema, buttonSchema, imageSchema, textFieldSchema, scrollViewSchema, vstackSchema, hstackSchema } from './schemas';
+import { genericSchema, textSchema, buttonSchema, imageSchema, textFieldSchema, scrollViewSchema, vstackSchema, hstackSchema, spaceSchema } from './schemas';
 
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
@@ -41,6 +41,8 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
         return vstackSchema;
       case "HStack":
         return hstackSchema;
+      case "Space":
+        return spaceSchema;
       default:
         return {};
     }
@@ -110,26 +112,33 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
     setFormData(component.properties);
   }, [component]);
 
+const updateNestedComponent = (components, targetId, newProperties) => {
+  return components.map(component => {
+    if (component.id === targetId) {
+      // actualizamos las propiedades de este componente
+      return { ...component, properties: newProperties };
+    } else if (component.childrens) {
+      // aplicamos la función de manera recursiva a los hijos del componente
+      return { ...component, childrens: updateNestedComponent(component.childrens, targetId, newProperties) };
+    } else {
+      // si este componente no es el que estamos buscando y no tiene hijos, lo dejamos tal cual
+      return component;
+    }
+  });
+};
+
 const handleOnChange = ({ formData }) => {
   if (Array.isArray(droppedComponents)) {
-    let updated = false;
-    const newDroppedComponents = droppedComponents.map(c => {
-      if (c.id === component.id && JSON.stringify(c.properties) !== JSON.stringify(formData)) {
-        updated = true;
-        return { ...c, properties: formData };
-      } 
-      return c;
-    });
+    const newDroppedComponents = updateNestedComponent(droppedComponents, component.id, formData);
 
-    if (updated) {
-      console.log("updated", newDroppedComponents);
-      setDroppedComponents(newDroppedComponents);
-      setFormData(formData);
-    }
+    console.log("updated", newDroppedComponents);
+    setDroppedComponents(newDroppedComponents);
+    setFormData(formData);
   } else {
     // handle the case where droppedComponents is not an array
   }
 };
+
 
 
   // Si component.properties es undefined o null, utiliza un objeto vacío
