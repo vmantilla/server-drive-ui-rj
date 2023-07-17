@@ -70,6 +70,13 @@ export const textSchema = {
   },
 };
 
+export const objectSchema = {
+  ...genericSchema,
+  properties: {
+    ...genericSchema.properties,
+  },
+};
+
 export const buttonSchema = {
   ...genericSchema,
   properties: {

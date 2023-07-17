@@ -15,32 +15,36 @@
 }
 
 /* en tu archivo de estilos */
-.vstack {
-  flex-direction: column;
+.vstack, .hstack {
+  display: flex;
+  align-items: center;
 }
 
 .zstack {
   position: relative;
   background-color: #f0f0f0;
 }
-.hstack {
-  display: flex;
-  align-items: center;
+
+.hstack > * {
+  flex-shrink: 0; 
+  flex-grow: 0;
 }
 
 .hstack > .dotted-line {
   border-top: 1px dashed #000;
   width: 100%;
-  flexGrow: 1;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 
-.vstack {
-  display: flex;
-  justify-content: center;
+.vstack > * {
+  flex-shrink: 0;
+  flex-grow: 0;
 }
 
 .vstack > .dotted-line {
   border-left: 1px dashed #000;
   height: 100%;
-  flexGrow: 1;
+  flex-grow: 1;
+  flex-shrink: 1;
 }

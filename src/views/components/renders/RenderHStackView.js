@@ -25,7 +25,7 @@ const SDHStackView = ({ component, handleDrop, onClick, index, moveChildrens }) 
     }
 
   return (
-    <div ref={drop} ref={ref} className="hstack dropArea" style={style} onClick={(e) => {
+    <div ref={drop} className="hstack dropArea" style={style} onClick={(e) => {
         e.stopPropagation(); 
         onClick(e, component);
       }}>

@@ -28,11 +28,7 @@ const Componentes = () => {
             <Componente type={SDComponentType.VStack}>VStack</Componente>
             <Componente type={SDComponentType.HStack}>HStack</Componente>
             <Componente type={SDComponentType.ZStack}>ZStack</Componente>
-            <Componente type={SDComponentType.Text}>Text</Componente>
-            <Componente type={SDComponentType.Button}>Button</Componente>
-            <Componente type={SDComponentType.Image}>Image</Componente>
-            <Componente type={SDComponentType.TextField}>TextField</Componente>
-            <Componente type={SDComponentType.ScrollView}>ScrollView</Componente>
+            <Componente type={SDComponentType.Object}>Object</Componente>
             <Componente type={SDComponentType.Space}>Space</Componente>
         </>
     )

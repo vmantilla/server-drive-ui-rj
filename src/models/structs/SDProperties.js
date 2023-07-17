@@ -1,13 +1,13 @@
 
 class SDProperties {
-    constructor(frame, backgroundColor, cornerRadius, border, padding, isEnabled, contentInset, text, font, textAlignment, action, source, contentMode, resizable, aspectRatio, spacing, verticalAlignment, horizontalAlignment, overlayAlignment, axis, showsIndicators, placeholder, secure, keyboardType, autocapitalization, autocorrection, returnKeyType, enablesReturnKeyAutomatically, onEditingChanged, onCommit) {
+    constructor(frame, backgroundColor, cornerRadius, border, margin, isEnabled, padding, text, font, textAlignment, action, source, contentMode, resizable, aspectRatio, spacing, verticalAlignment, horizontalAlignment, overlayAlignment, axis, showsIndicators, placeholder, secure, keyboardType, autocapitalization, autocorrection, returnKeyType, enablesReturnKeyAutomatically, onEditingChanged, onCommit) {
         this.frame = frame;
         this.backgroundColor = backgroundColor;
         this.cornerRadius = cornerRadius;
         this.border = border;
-        this.padding = padding;
+        this.margin = margin;
         this.isEnabled = isEnabled;
-        this.contentInset = contentInset;
+        this.padding = padding;
         this.text = text;
         this.font = font;
         this.textAlignment = textAlignment;

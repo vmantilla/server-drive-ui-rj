@@ -10,11 +10,12 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
   const frame = properties?.frame || {};
   
   // Calculamos el valor total del margen
-  const marginHorizontal = (properties.padding?.left ?? 0) + (properties.padding?.right ?? 0);
-  const marginVertical = (properties.padding?.top ?? 0) + (properties.padding?.bottom ?? 0);
+  const marginHorizontal = (properties.margin?.left ?? 0) + (properties.margin?.right ?? 0);
+  const marginVertical = (properties.margin?.top ?? 0) + (properties.margin?.bottom ?? 0);
   // Si el frame está ausente, usamos los valores por defecto
   const frameStyle = properties.frame ? frameToStyle(properties.frame, marginHorizontal, marginVertical) : {};
 
+console.log("properties.padding", properties.padding)
   
   return {
     ...divStyle,
@@ -32,14 +33,14 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
       'transparent',
     borderWidth: divStyle.borderWidth ?? properties.border?.width ?? 0,
     borderStyle: 'solid', 
-    marginTop: properties.padding?.top ?? 0,
-    marginLeft: properties.padding?.left ?? 0,
-    marginBottom: properties.padding?.bottom ?? 0,
-    marginRight: properties.padding?.right ?? 0,
-    paddingTop: properties.contentInset?.top ?? 0,
-    paddingLeft: properties.contentInset?.left ?? 0,
-    paddingBottom: properties.contentInset?.bottom ?? 0,
-    paddingRight: properties.contentInset?.right ?? 0,
+    marginTop: properties.margin?.top ?? 0,
+    marginLeft: properties.margin?.left ?? 0,
+    marginBottom: properties.margin?.bottom ?? 0,
+    marginRight: properties.margin?.right ?? 0,
+    paddingTop: properties.padding?.top ?? 0,
+    paddingLeft: properties.padding?.left ?? 0,
+    paddingBottom: properties.padding?.bottom ?? 0,
+    paddingRight: properties.padding?.right ?? 0,
   };
 }
 

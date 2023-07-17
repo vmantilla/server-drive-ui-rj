@@ -8,7 +8,8 @@ const SDComponentType = {
     Image: "Image",
     TextField: "TextField",
     ScrollView: "ScrollView",
-    Space: "Space"
+    Space: "Space",
+    Object: "Object",
 }
 
 export default SDComponentType;

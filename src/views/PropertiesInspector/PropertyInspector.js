@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Form from "@rjsf/core";
-import { genericSchema, textSchema, buttonSchema, imageSchema, textFieldSchema, scrollViewSchema, vstackSchema, hstackSchema, spaceSchema } from './schemas';
+import { genericSchema, textSchema, buttonSchema, imageSchema, textFieldSchema, scrollViewSchema, vstackSchema, hstackSchema, spaceSchema, objectSchema } from './schemas';
 
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
@@ -43,6 +43,8 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
         return hstackSchema;
       case "Space":
         return spaceSchema;
+      case "Object":
+        return objectSchema;
       default:
         return {};
     }
@@ -72,6 +74,11 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
         alignment: { "ui:widget": "radio", "ui:options": { inline: true } },
       };
     case "Button":
+      return {
+        ...genericUiSchema,
+        title: { "ui:widget": "text" },
+      };
+    case "Object":
       return {
         ...genericUiSchema,
         title: { "ui:widget": "text" },

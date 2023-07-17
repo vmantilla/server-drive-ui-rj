@@ -4,59 +4,55 @@ import SDComponentType from '../../enums/SDComponentType';
 import SDCornerRadius from '../../models/structs/properties/SDCornerRadius';
 import { v4 as uuidv4 } from 'uuid'; 
 
+const getDefaultObjectProperties = () => {
+  return new SDProperties(
+    { width: 100, height: 100 },
+    null,
+    new SDCornerRadius({ shape: 'small'}),
+    { color: 'outline', width: 1 },
+    null,
+    true,
+    { top: 0, bottom: 0, left: 2, right: 2 },
+    null
+  );
+}
+
 const getDefaultVStackProperties = () => {
   return new SDProperties(
     { height: 100 },
-    'primaryContainer',
+    null,
     new SDCornerRadius({ shape: 'small'}),
-    { color: 'primaryContainer', width: 1 },
+    { color: 'outline', width: 1 },
     null,
     true,
-    { top: 0, bottom: 0, leading: 0, trailing: 0 }, // Dummy contentInset
-    "VStack Dummy Text", // Dummy text
-    { family: "Arial", size: 12, weight: "normal", color: "black" }, // Dummy font
-    "center", // Dummy text alignment
-    null, // Dummy action
-    null, // Dummy source
-    "scaleToFill", // Dummy content mode
-    false, // Dummy resizable
-    null, // Dummy aspectRatio
-    10, // Dummy spacing
-    "center", // Dummy vertical alignment
-    "center", // Dummy horizontal alignment
-    "center", // Dummy overlay alignment
-    "vertical", // Dummy axis
-    false, // Dummy shows indicators
-    null, // Dummy placeholder
-    false, // Dummy secure
-    "default", // Dummy keyboard type
-    "sentences", // Dummy autocapitalization
-    "default", // Dummy autocorrection
-    "default", // Dummy return key type
-    false, // Dummy enablesReturnKeyAutomatically
-    null, // Dummy onEditingChanged
-    null // Dummy onCommit
+    { top: 2, bottom: 2, left: 2, right: 2 },
+    null
   );
 }
 
 const getDefaultHStackProperties = () => {
   return new SDProperties(
-    { height: 100 },
-    'primaryContainer',
+    { height: "auto" },
+    null,
     new SDCornerRadius({ shape: 'small'}),
-    { color: 'primaryContainer', width: 1 },
-    true
+    { color: 'outline', width: 1 },
+    null,
+    true,
+    { top: 2, bottom: 2, left: 2, right: 2 },
+    null
   );
 }
 
 const getDefaultZStackProperties = () => {
   return new SDProperties(
-    { width: 100, height: 100 },
-    'primaryContainer',
+    { height: 100 },
+    null,
     new SDCornerRadius({ shape: 'small'}),
-    { color: 'primaryContainer', width: 1 },
-    { top: 10, bottom: 10, left: 10, right: 10 },
-    true
+    { color: 'outline', width: 1 },
+    null,
+    true,
+    { top: 2, bottom: 2, left: 2, right: 2 },
+    null
   );
 }
 
@@ -71,49 +67,6 @@ const getDefaultTextProperties = () => {
   );
 }
 
-const getDefaultButtonProperties = () => {
-  return new SDProperties(
-    { width: 100, height: 50 },
-    'primaryContainer',
-    new SDCornerRadius({ shape: 'small'}),
-    { color: 'primaryContainer', width: 1 },
-    { top: 10, bottom: 10, left: 10, right: 10 },
-    true
-  );
-}
-
-const getDefaultImageProperties = () => {
-  return new SDProperties(
-    { width: 100, height: 100 },
-    null,
-    null,
-    null,
-    null,
-    true
-  );
-}
-
-const getDefaultTextFieldProperties = () => {
-  return new SDProperties(
-    { width: 200, height: 40 },
-    'primaryContainer',
-    new SDCornerRadius({ shape: 'small'}),
-    { color: 'primaryContainer', width: 1 },
-    { top: 5, bottom: 5, left: 10, right: 10 },
-    true
-  );
-}
-
-const getDefaultScrollViewProperties = () => {
-  return new SDProperties(
-    { height: "100%", width: "100%" },
-    'primaryContainer',
-    new SDCornerRadius({ shape: 'small'}),
-    {},
-    { top: 0, bottom: 0, left: 0, right: 0 },
-    true
-  );
-}
 
 const getDefaultSpaceViewProperties = () => {
   return new SDProperties(
@@ -124,22 +77,6 @@ const getDefaultSpaceViewProperties = () => {
     { top: 0, bottom: 0, left: 0, right: 0 },
     true
   );
-}
-
-const getDefaultScrollViewMain = () => {
-    return new SDComponent(
-        uuidv4(),
-        SDComponentType[SDComponentType.ScrollView],
-        new SDProperties(
-    { height: "100%", width: "100%" },
-    'primaryContainer',
-    new SDCornerRadius({ shape: 'small'}),
-    { color: 'primaryContainer', width: 1 },
-    true
-  ),
-        [],
-        {}
-    );
 }
 
 function getUnnownProperties() {
@@ -202,20 +139,12 @@ const getDefaultProps = (componentType) => {
       return getDefaultHStackProperties();
     case SDComponentType.ZStack:
       return getDefaultZStackProperties();
-    case SDComponentType.Text:
-      return getDefaultTextProperties();
-    case SDComponentType.Button:
-      return getDefaultButtonProperties();
-    case SDComponentType.Image:
-      return getDefaultImageProperties();
-    case SDComponentType.TextField:
-      return getDefaultTextFieldProperties();
-    case SDComponentType.ScrollView:
-      return getDefaultScrollViewProperties();
     case SDComponentType.Space:
       return getDefaultSpaceViewProperties();
+    case SDComponentType.Object:
+      return getDefaultObjectProperties();
     default:
-      return getDefaultScrollViewMain();
+      return getDefaultObjectProperties();
   }
 }
 

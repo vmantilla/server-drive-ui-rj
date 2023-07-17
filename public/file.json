@@ -5,7 +5,7 @@
         "properties": {
             "backgroundColor": "onPrimaryContainer",
             "axis" : "Vertical",
-            "padding": {
+            "margin": {
                 "top": 0,
                 "bottom": 0,
                 "left": 0,
@@ -13,7 +13,7 @@
             },
             "isEnabled": true,
             "showsIndicators": true,
-            "contentInset": {
+            "padding": {
                 "top": 0,
                 "bottom": 0,
                 "left": 0,
@@ -31,7 +31,7 @@
                 "properties": {
                     "backgroundColor": "primaryContainer",
                     "axis" : "Vertical",
-                    "padding": {
+                    "margin": {
                         "top": 0,
                         "bottom": 0,
                         "left": 0,
@@ -55,7 +55,7 @@
                                 "width": 25,
                                 "alignment": "CenterStart"
                             },
-                            "padding": {
+                            "margin": {
                                 "top": 0,
                                 "bottom": 0,
                                 "left": 20,
@@ -83,7 +83,7 @@
                                         "height": 20,
                                         "width": 20
                                     },
-                                    "padding": {
+                                    "margin": {
                                         "top": 0,
                                         "bottom": 0,
                                         "left": 0,
@@ -104,7 +104,7 @@
                         "type": "HStack",
                         "properties": {
                             "axis" : "Vertical",
-                            "padding": {
+                            "margin": {
                                 "top": 0,
                                 "bottom": 0,
                                 "left": 20,
@@ -126,7 +126,7 @@
                                         "height": 20,
                                         "width": 20
                                     },
-                                    "padding": {
+                                    "margin": {
                                         "top": 0,
                                         "bottom": 0,
                                         "left": 0,
@@ -150,7 +150,7 @@
                                                 "src": "search",
                                                 "origin": "Assets"
                                             },
-                                            "padding": {
+                                            "margin": {
                                                 "top": 0,
                                                 "bottom": 0,
                                                 "left": 0,
@@ -174,7 +174,7 @@
                                         "height": 20,
                                         "width": 20
                                     },
-                                    "padding": {
+                                    "margin": {
                                         "top": 0,
                                         "bottom": 0,
                                         "left": 0,
@@ -198,7 +198,7 @@
                                                 "src": "upload",
                                                 "origin": "Assets"
                                             },
-                                            "padding": {
+                                            "margin": {
                                                 "top": 0,
                                                 "bottom": 0,
                                                 "left": 0,
@@ -242,7 +242,7 @@
                                 "height": 30
                             },
                             "backgroundColor": "primaryContainer",
-                            "padding": {
+                            "margin": {
                                 "top": 0,
                                 "bottom": 0,
                                 "left": 0,
@@ -260,7 +260,7 @@
                                         "width": 50,
                                         "alignment": "Center"
                                     },
-                                    "padding": {
+                                    "margin": {
                                         "top": 0,
                                         "bottom": 0,
                                         "left": 20,
@@ -279,7 +279,7 @@
                                 "id": 13,
                                 "type": "HStack",
                                 "properties": {
-                                    "padding": {
+                                    "margin": {
                                         "top": 0,
                                         "bottom": 0,
                                         "left": 0,
@@ -296,7 +296,7 @@
                                         "height": 20,
                                         "width": 40
                                     },
-                                    "padding": {
+                                    "margin": {
                                         "right": 20
                                     },
                                     "cornerRadius": {
@@ -314,7 +314,7 @@
                                                 "src": "star",
                                                 "origin": "Assets"
                                             },
-                                            "padding": {
+                                            "margin": {
                                                 "left": 5
                                             },
                                             "frame": {
@@ -335,7 +335,7 @@
                                                 "width": 25,
                                                 "alignment": "Center"
                                             },
-                                            "padding": {
+                                            "margin": {
                                                 "left": 6
                                             },
                                             "cornerRadius": {
@@ -375,7 +375,7 @@
                                         "alignment": "CenterStart"
                                     },
                                     "backgroundColor": "primaryContainer",
-                                    "padding": {
+                                    "margin": {
                                         "top": 0,
                                         "bottom": 0,
                                         "left": 20,
@@ -440,7 +440,7 @@
                                                 "id": 68,
                                                 "type": "VStack",
                                                 "properties": {
-                                                    "padding": {
+                                                    "margin": {
                                                         "top": 20
                                                     },
                                                     "isEnabled": true,
@@ -454,7 +454,7 @@
                                                             "frame": {
                                                                 "alignment": "CenterStart"
                                                             },
-                                                            "padding": {
+                                                            "margin": {
                                                                 "left": 20
                                                             },
                                                             "backgroundColor": "primaryContainer",
@@ -473,7 +473,7 @@
                                                             "frame": {
                                                                 "alignment": "CenterStart"
                                                             },
-                                                            "padding": {
+                                                            "margin": {
                                                                 "left": 20
                                                             },
                                                             "backgroundColor": "primaryContainer",
@@ -492,7 +492,7 @@
                                                 "id": 69,
                                                 "type": "VStack",
                                                 "properties": {
-                                                    "padding": {
+                                                    "margin": {
                                                         "bottom": 20
                                                     },
                                                     "isEnabled": true,
@@ -506,7 +506,7 @@
                                                             "frame": {
                                                                 "alignment": "CenterStart"
                                                             },
-                                                            "padding": {
+                                                            "margin": {
                                                                 "left": 20
                                                             },
                                                             "backgroundColor": "primaryContainer",
@@ -525,7 +525,7 @@
                                                             "frame": {
                                                                 "alignment": "CenterStart"
                                                             },
-                                                            "padding": {
+                                                            "margin": {
                                                                 "left": 20
                                                             },
                                                             "backgroundColor": "primaryContainer",
@@ -554,7 +554,7 @@
                                                 "height": 50,
                                                 "width": 120
                                             },
-                                            "padding": {
+                                            "margin": {
                                                 "bottom": 20,
                                                 "left": 20,
                                                 "alignment": "CenterEnd"
@@ -664,7 +664,7 @@
                                             "bottomEnd": 0
                                         }
                                     },
-                                    "padding": {
+                                    "margin": {
                                         "top": 0
                                     },
                                     "isEnabled": true,
@@ -681,7 +681,7 @@
                                                 "origin": "Url"
                                             },
                                             "backgroundColor": "onPrimary",
-                                            "padding": {
+                                            "margin": {
                                                 "top": 0,
                                                 "bottom": 0,
                                                 "left": 0,
@@ -714,7 +714,7 @@
                         "color": "primary",
                         "width": 1
                     },
-                    "padding": {
+                    "margin": {
                         "top": 10,
                         "left": 15,
                         "right": 15
@@ -736,7 +736,7 @@
                                 "src": "search",
                                 "origin": "Assets"
                             },
-                            "padding": {
+                            "margin": {
                                 "top": 10,
                                 "bottom": 10,
                                 "left": 10
@@ -750,7 +750,7 @@
                         "id": 30,
                         "type": "TextField",
                         "properties": {
-                            "padding": {
+                            "margin": {
                                 "top": 5,
                                 "bottom": 5
                             },
@@ -777,7 +777,7 @@
                         "id": 31,
                         "type": "Button",
                         "properties": {
-                            "padding": {
+                            "margin": {
                                 "left": 10,
                                 "right": 10
                             },
@@ -806,7 +806,7 @@
                                         "src": "scan",
                                         "origin": "Assets"
                                     },
-                                    "padding": {
+                                    "margin": {
                                         "top": 10,
                                         "bottom": 10,
                                         "left": 10,
@@ -832,7 +832,7 @@
                         "height": 40,
                         "alignment": "CenterStart"
                     },
-                    "padding": {
+                    "margin": {
                         "top": 0,
                         "bottom": 0,
                         "left": 20,
@@ -906,7 +906,7 @@
                                 "id": 38,
                                 "type": "Text",
                                 "properties": {
-                                    "padding": {
+                                    "margin": {
                                         "left": 6
                                     },
                                     "isEnabled": true,
@@ -1012,7 +1012,7 @@
                                     },
                                     "isEnabled": true,
                                     "text": "WATER",
-                                    "padding": {
+                                    "margin": {
                                         "top": 7
                                     },
                                     "font": {
@@ -1026,7 +1026,7 @@
                                 "id": 46,
                                 "type": "Text",
                                 "properties": {
-                                    "padding": {
+                                    "margin": {
                                         "left": 2
                                     },
                                     "isEnabled": true,
@@ -1050,7 +1050,7 @@
                     "frame": {
                         "height": 30
                     },
-                    "padding": {
+                    "margin": {
                         "left": 20,
                         "right": 20
                     },
@@ -1072,7 +1072,7 @@
                                 "font": "bodyLarge",
                                 "color": "tertiary"
                             },
-                            "padding": {
+                            "margin": {
                                 "left": 0
                             },
                             "textAlignment": "Start"
@@ -1087,7 +1087,7 @@
                 "id": 60,
                 "type": "VStack",
                 "properties": {
-                    "padding": {
+                    "margin": {
                         "left": 20,
                         "right": 20
                     },
@@ -1128,7 +1128,7 @@
                     "cornerRadius": {
                         "shape": "small"
                     },
-                    "padding": {
+                    "margin": {
                         "top": 20,
                         "left": 20,
                         "right": 20
@@ -1145,7 +1145,7 @@
                                 "height": 25,
                                 "width": 25
                             },
-                            "padding": {
+                            "margin": {
                                 "left": 20,
                                 "right": 20
                             },
@@ -1190,7 +1190,7 @@
                                 "font": "bodyLarge",
                                 "color": "tertiary"
                             },
-                            "padding": {
+                            "margin": {
                                 "left": 20
                             }
                         },
