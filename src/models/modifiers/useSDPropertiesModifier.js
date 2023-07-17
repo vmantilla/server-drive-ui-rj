@@ -15,8 +15,6 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
   // Si el frame está ausente, usamos los valores por defecto
   const frameStyle = properties.frame ? frameToStyle(properties.frame, marginHorizontal, marginVertical) : {};
 
-console.log("properties.padding", properties.padding)
-  
   return {
     ...divStyle,
     ...frameStyle,

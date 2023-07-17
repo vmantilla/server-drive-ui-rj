@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Form from "@rjsf/core";
-import { genericSchema, textSchema, buttonSchema, imageSchema, textFieldSchema, scrollViewSchema, vstackSchema, hstackSchema, spaceSchema, objectSchema } from './schemas';
+import { genericSchema, textSchema, buttonSchema, imageSchema, textFieldSchema, scrollViewSchema, vstackSchema, hstackSchema, spaceSchema, objectSchema, containerViewSchema } from './schemas';
 
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
@@ -45,6 +45,8 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
         return spaceSchema;
       case "Object":
         return objectSchema;
+      case "ContainerView":
+        return containerViewSchema;
       default:
         return {};
     }
@@ -64,7 +66,9 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
   };
 
 
+
   const getUiSchema = (componentType) => {
+    console.log("getUiSchema = (componentType)", componentType);
   switch (componentType) {
     case "Text":
       return {
@@ -102,6 +106,11 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
         ...genericUiSchema,
         placeholder: { "ui:widget": "text" },
         keyboardType: { "ui:widget": "select", "ui:options": { enumOptions: ["default", "number-pad", "decimal-pad", "numeric", "email-address", "phone-pad"] } },
+      };
+    case "ContainerView":
+      return {
+        ...genericUiSchema,
+        title: { "ui:widget": "text" },
       };
     case "ScrollView":
       return {

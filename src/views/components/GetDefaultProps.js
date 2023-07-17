@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const getDefaultObjectProperties = () => {
   return new SDProperties(
+    null,
     { width: 100, height: 100 },
     null,
     new SDCornerRadius({ shape: 'small'}),
@@ -17,21 +18,9 @@ const getDefaultObjectProperties = () => {
   );
 }
 
-const getDefaultVStackProperties = () => {
+const getDefaultContainerViewProperties = () => {
   return new SDProperties(
-    { height: 100 },
-    null,
-    new SDCornerRadius({ shape: 'small'}),
-    { color: 'outline', width: 1 },
-    null,
-    true,
-    { top: 2, bottom: 2, left: 2, right: 2 },
-    null
-  );
-}
-
-const getDefaultHStackProperties = () => {
-  return new SDProperties(
+    "row",
     { height: "auto" },
     null,
     new SDCornerRadius({ shape: 'small'}),
@@ -43,33 +32,10 @@ const getDefaultHStackProperties = () => {
   );
 }
 
-const getDefaultZStackProperties = () => {
-  return new SDProperties(
-    { height: 100 },
-    null,
-    new SDCornerRadius({ shape: 'small'}),
-    { color: 'outline', width: 1 },
-    null,
-    true,
-    { top: 2, bottom: 2, left: 2, right: 2 },
-    null
-  );
-}
-
-const getDefaultTextProperties = () => {
-  return new SDProperties(
-    { width: "auto", height: "auto" },
-    null,
-    null,
-    null,
-    null,
-    true
-  );
-}
-
 
 const getDefaultSpaceViewProperties = () => {
   return new SDProperties(
+    null,
     { height: "100%", width: "100%" },
     'primaryContainer',
     new SDCornerRadius({ shape: 'small'}),
@@ -96,6 +62,7 @@ function getUnnownProperties() {
 
     // Aquí se crean las propiedades del stack
     const properties = new SDProperties(
+        null,
         frame, // Marco que define el tamaño y la posición
         'primaryContainer', // Color de fondo transparente
         null, // Sin borde redondeado
@@ -133,12 +100,8 @@ function getUnnownProperties() {
 
 const getDefaultProps = (componentType) => {
   switch(componentType) {
-    case SDComponentType.VStack:
-      return getDefaultVStackProperties();
-    case SDComponentType.HStack:
-      return getDefaultHStackProperties();
-    case SDComponentType.ZStack:
-      return getDefaultZStackProperties();
+    case SDComponentType.ContainerView:
+      return getDefaultContainerViewProperties();
     case SDComponentType.Space:
       return getDefaultSpaceViewProperties();
     case SDComponentType.Object:

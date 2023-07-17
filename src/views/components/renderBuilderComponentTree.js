@@ -1,6 +1,4 @@
-import SDVStackView from './renders/RenderVStackView';
-import SDHStackView from './renders/RenderHStackView';
-import SDZStackView from './renders/RenderZStackView';
+import RenderContainerView from './renders/RenderContainerView';
 import RenderObjectView from './renders/RenderObjectView';
 import RenderSpaceView from './renders/RenderSpaceView';
 
@@ -14,14 +12,8 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
   }
 
   switch (component.type) {
-    case "VStack":
-      Component = SDVStackView
-      break;
-    case "HStack":
-      Component = SDHStackView;
-      break;
-    case "ZStack":
-      Component = SDZStackView;
+    case "ContainerView":
+      Component = RenderContainerView
       break;
     case "Object":
       Component = RenderObjectView; 

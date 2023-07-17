@@ -6,7 +6,7 @@ import { renderBuilderComponentTree } from '../renderBuilderComponentTree';
 
 import { useDropHandler, useDragAndDrop } from '../useDropHandler';
 
-const SDHStackView = ({ component, handleDrop, onClick, index, moveChildrens }) => {
+const RenderContainerView = ({ component, handleDrop, onClick, index, moveChildrens }) => {
   
   const properties = component.properties;
   const initialDivStyle = { };
@@ -24,8 +24,25 @@ const SDHStackView = ({ component, handleDrop, onClick, index, moveChildrens }) 
         style.backgroundColor = 'darkkhaki'
     }
 
+
+    let className;
+  switch (properties.layout) {
+    case "row":
+      className = "vstack";
+      break;
+    case "column":
+      className = "hstack";
+      break;
+    case "overflow":
+      className = "zstack";
+      break;
+    default:
+      className = "hstack";
+      break;
+  }
+
   return (
-    <div ref={drop} className="hstack dropArea" style={style} onClick={(e) => {
+    <div ref={drop} className={`${className} dropArea`} style={style} onClick={(e) => {
         e.stopPropagation(); 
         onClick(e, component);
       }}>
@@ -36,4 +53,4 @@ const SDHStackView = ({ component, handleDrop, onClick, index, moveChildrens }) 
   );
 };
 
-export default SDHStackView;
+export default RenderContainerView;

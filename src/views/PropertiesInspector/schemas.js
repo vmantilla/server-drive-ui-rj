@@ -46,6 +46,20 @@ export const genericSchema = {
   required: [], // puedes definir las propiedades requeridas aquí.
 };
 
+export const containerViewSchema = {
+  ...genericSchema,
+  properties: {
+    layout: { 
+      type: "string", 
+      enum: ["column", "row", "overflow"],
+      default: "row"
+    },
+    ...genericSchema.properties,
+  },
+  required: [], // puedes definir las propiedades requeridas aquí.
+};
+
+
 export const vstackSchema = {
   ...genericSchema,
   properties: {

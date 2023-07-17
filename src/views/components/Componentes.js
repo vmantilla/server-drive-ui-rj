@@ -25,9 +25,7 @@ const Componente = ({ type, children }) => {
 const Componentes = () => {
     return (
         <>
-            <Componente type={SDComponentType.VStack}>VStack</Componente>
-            <Componente type={SDComponentType.HStack}>HStack</Componente>
-            <Componente type={SDComponentType.ZStack}>ZStack</Componente>
+            <Componente type={SDComponentType.ContainerView}>ContainerView</Componente>
             <Componente type={SDComponentType.Object}>Object</Componente>
             <Componente type={SDComponentType.Space}>Space</Componente>
         </>
