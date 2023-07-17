@@ -3,7 +3,7 @@ import { useDrag, useDrop } from 'react-dnd';
 import useSDPropertiesModifier, { getAlignment } from '../../../models/modifiers/useSDPropertiesModifier'; 
 import { tipoItem } from '../Componentes';
 
-const SDButtonView = ({ component, children, onClick, index, moveButton }) => {
+const SDButtonView = ({ component, children, onClick, index, moveChildrens }) => {
   const ref = useRef(null);
 
   const [, drag] = useDrag({
@@ -21,7 +21,7 @@ const SDButtonView = ({ component, children, onClick, index, moveButton }) => {
         return;
       }
 
-      moveButton(dragIndex, hoverIndex);
+      moveChildrens(component, dragIndex, hoverIndex);
       item.index = hoverIndex;
     },
   });

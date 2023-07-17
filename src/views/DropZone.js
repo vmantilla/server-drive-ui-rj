@@ -81,6 +81,29 @@ const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedCompo
         }),
     })
 
+    const findParentAndReorder = (tree, childId, dragIndex, hoverIndex) => {
+    if (tree.childrens.some(c => c.id === childId)) {
+        // Encontramos al padre del nodo que se está moviendo. Reordenamos sus hijos.
+        let childrenCopy = [...tree.childrens];
+        let draggedChild = childrenCopy[dragIndex];
+        childrenCopy.splice(dragIndex, 1);
+        childrenCopy.splice(hoverIndex, 0, draggedChild);
+        return { ...tree, childrens: childrenCopy };
+    } else {
+        // No encontramos al padre en el nodo actual. Buscamos en los hijos.
+        let childrenCopy = tree.childrens.map(c => findParentAndReorder(c, childId, dragIndex, hoverIndex));
+        return { ...tree, childrens: childrenCopy };
+    }
+};
+
+const moveChildrens = (component, dragIndex, hoverIndex) => {
+    setDroppedComponents(prevComponents => {
+        let newComponents = prevComponents.map(c => findParentAndReorder(c, component.id, dragIndex, hoverIndex));
+        return newComponents;
+    });
+};
+
+
     const isActive = canDrop && isOver
     let backgroundColor = '#FFF';
     if (isActive) {
@@ -92,7 +115,7 @@ const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedCompo
     return (
         <div ref={drop} style={{ ...style, backgroundColor }}>
             {
-                droppedComponents ? droppedComponents.map(component => renderBuilderComponentTree(component, handleDrop, onComponentClick)) : 'Cargando...'
+                droppedComponents ? droppedComponents.map(component => renderBuilderComponentTree(component, handleDrop, onComponentClick, 0,  moveChildrens)) : 'Cargando...'
             }
         </div>
     )

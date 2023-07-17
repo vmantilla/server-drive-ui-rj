@@ -7,8 +7,7 @@ import SDButtonView from './renders/RenderButtonView';
 import SDScrollView from './renders/RenderScrollView';
 import RenderSpaceView from './renders/RenderSpaceView';
 
-export function renderBuilderComponentTree(component, handleDrop, onComponentClick, index, moveButton) {
-
+export function renderBuilderComponentTree(component, handleDrop, onComponentClick, index, moveChildrens) {
 
   let Component;
 
@@ -50,9 +49,9 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
       handleDrop={handleDrop}
       onClick={onComponentClick}
       index={index}
-      moveButton={moveButton}
+      moveChildrens={moveChildrens}
     >
-      {component.childrens && component.childrens.length > 0 && component.childrens.map((childComponent, i) => renderBuilderComponentTree(childComponent, handleDrop, onComponentClick, i, moveButton))}
+      {component.childrens && component.childrens.length > 0 && component.childrens.map((childComponent, i) => renderBuilderComponentTree(childComponent, handleDrop, onComponentClick, i, moveChildrens))}
     </Component>
   );
 }

@@ -6,31 +6,10 @@ import { renderBuilderComponentTree } from '../renderBuilderComponentTree';
 
 import useDropHandler from '../useDropHandler';
 
-const SDHStackView = ({ component, handleDrop, onClick }) => {
-  const [childrens, setChildrens] = React.useState(component.childrens);
-
-  const moveButton = (dragIndex, hoverIndex) => {
-  const dragButton = childrens[dragIndex];
+const SDHStackView = ({ component, handleDrop, onClick, moveChildrens }) => {
   
-  console.log('Before moving button: ', dragIndex);
-
-  setChildrens(
-    update(childrens, {
-      $splice: [
-        [dragIndex, 1],
-        [hoverIndex, 0, dragButton],
-      ],
-    }),
-  );
-
-  console.log('After moving button: ', hoverIndex);
-};
-
   const properties = component.properties;
-
-  const initialDivStyle = {
-   
-  };
+  const initialDivStyle = { };
 
   const style = useSDPropertiesModifier(properties, initialDivStyle);
 
@@ -49,7 +28,7 @@ const SDHStackView = ({ component, handleDrop, onClick }) => {
         onClick(e, component);
       }}>
      {component.childrens && component.childrens.map((childComponent, i) =>
-  renderBuilderComponentTree(childComponent, handleDrop, onClick, i, moveButton)
+  renderBuilderComponentTree(childComponent, handleDrop, onClick, i, moveChildrens)
 )}
  </div>
   );
