@@ -4,7 +4,7 @@ import useSDPropertiesModifier from '../../../models/modifiers/useSDPropertiesMo
 import { tipoItem } from '../Componentes';
 import { renderBuilderComponentTree } from '../renderBuilderComponentTree';
 
-import useDropHandler from '../useDropHandler';
+import { useDropHandler } from '../useDropHandler';
 
 const SDZStackView = ({ component, children, handleDrop, onClick }) => {
   const properties = component.properties;

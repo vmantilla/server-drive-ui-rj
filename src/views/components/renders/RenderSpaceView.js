@@ -1,7 +1,13 @@
 import React from 'react';
 import useSDPropertiesModifier, { getAlignment }  from '../../../models/modifiers/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
 
-const RenderSpaceView = ({ component, children, onClick }) => {
+import { useDragAndDrop } from '../useDropHandler';
+
+const RenderSpaceView = ({ component, children, onClick, index, moveChildrens }) => {
+
+  const { ref } = useDragAndDrop(component, index, moveChildrens);
+  
+
   const properties = component.properties;
   const font = properties.font?.fontValue();
   const color = properties.font?.colorValue(1.0);
@@ -13,7 +19,7 @@ const RenderSpaceView = ({ component, children, onClick }) => {
   const alignmentType = properties.textAlignment?.alignment || 'leading';
 
   return (
-  	<div className="dotted-line"></div>
+  	<div ref={ref} className="dotted-line"></div>
   );
 };
 

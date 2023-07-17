@@ -4,7 +4,7 @@ import { tipoItem } from '../Componentes';
 import { renderBuilderComponentTree } from '../renderBuilderComponentTree';
 
 
-import useDropHandler from '../useDropHandler';
+import { useDropHandler } from '../useDropHandler';
 
 const SDVStackView = ({ component, handleDrop, onClick }) => {
   const properties = component.properties;

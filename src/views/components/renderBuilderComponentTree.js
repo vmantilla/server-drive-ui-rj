@@ -11,6 +11,11 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
 
   let Component;
 
+  if (!component) {
+    console.error('El componente es undefined');
+    return;
+  }
+
   switch (component.type) {
     case "VStack":
       Component = SDVStackView
@@ -35,6 +40,7 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
       break;
     case "ScrollView":
       Component = SDScrollView;
+      break;
     case "Space":
       Component = RenderSpaceView;
       break;

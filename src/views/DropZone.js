@@ -82,19 +82,27 @@ const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedCompo
     })
 
     const findParentAndReorder = (tree, childId, dragIndex, hoverIndex) => {
-    if (tree.childrens.some(c => c.id === childId)) {
-        // Encontramos al padre del nodo que se está moviendo. Reordenamos sus hijos.
+    if (tree.childrens.some(c => c && c.id === childId)) {
+        // We found the parent of the node being moved. Reorder its children.
         let childrenCopy = [...tree.childrens];
         let draggedChild = childrenCopy[dragIndex];
+
+        // Check if the dragged child exists
+        if (!draggedChild) {
+            // The dragged child does not exist yet, so return the original tree without reordering
+            return tree;
+        }
+
         childrenCopy.splice(dragIndex, 1);
         childrenCopy.splice(hoverIndex, 0, draggedChild);
         return { ...tree, childrens: childrenCopy };
     } else {
-        // No encontramos al padre en el nodo actual. Buscamos en los hijos.
-        let childrenCopy = tree.childrens.map(c => findParentAndReorder(c, childId, dragIndex, hoverIndex));
+        // We didn't find the parent at the current node. Search in the children.
+        let childrenCopy = tree.childrens.map(c => c ? findParentAndReorder(c, childId, dragIndex, hoverIndex) : c);
         return { ...tree, childrens: childrenCopy };
     }
 };
+
 
 const moveChildrens = (component, dragIndex, hoverIndex) => {
     setDroppedComponents(prevComponents => {

@@ -23,13 +23,9 @@
   position: relative;
   background-color: #f0f0f0;
 }
-.zstack > * {
-  position: absolute;
-}
-
-
 .hstack {
-  flex-direction: row;
+  display: flex;
+  align-items: center;
 }
 
 .hstack > .dotted-line {
@@ -38,8 +34,12 @@
   flexGrow: 1;
 }
 
+.vstack {
+  display: flex;
+  justify-content: center;
+}
+
 .vstack > .dotted-line {
-  align-self: center;
   border-left: 1px dashed #000;
   height: 100%;
   flexGrow: 1;

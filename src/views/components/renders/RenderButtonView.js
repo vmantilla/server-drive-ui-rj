@@ -1,34 +1,10 @@
 import React, { useRef } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
 import useSDPropertiesModifier, { getAlignment } from '../../../models/modifiers/useSDPropertiesModifier'; 
-import { tipoItem } from '../Componentes';
+import { useDragAndDrop } from '../useDropHandler';
 
 const SDButtonView = ({ component, children, onClick, index, moveChildrens }) => {
-  const ref = useRef(null);
-
-  const [, drag] = useDrag({
-    type: tipoItem.COMPONENTE,
-    item: { id: component.id, index },
-  });
-
-  const [, drop] = useDrop({
-    accept: tipoItem.COMPONENTE,
-    hover(item, monitor) {
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      moveChildrens(component, dragIndex, hoverIndex);
-      item.index = hoverIndex;
-    },
-  });
-
-  drag(drop(ref));
+  const { ref } = useDragAndDrop(component, index, moveChildrens);
   const properties = component.properties;
-  
   const alignmentStyle = getAlignment(properties?.frame?.alignment) ?? {};
   
   const initialButtonStyle = {
@@ -50,7 +26,6 @@ const SDButtonView = ({ component, children, onClick, index, moveChildrens }) =>
         e.stopPropagation(); 
         onClick(e, component);
       }}>
-      {children}
     </button>
   );
 };

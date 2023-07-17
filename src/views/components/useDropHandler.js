@@ -1,6 +1,8 @@
-import { useDrop } from 'react-dnd';
+import { useRef } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
+import { tipoItem } from './Componentes';
 
-const useDropHandler = (handleDrop, itemTypes, component) => {
+export const useDropHandler = (handleDrop, itemTypes, component) => {
   const [{ canDrop, isOver }, drop] = useDrop({
     accept: itemTypes,
     drop: (item, monitor) => {
@@ -19,4 +21,31 @@ const useDropHandler = (handleDrop, itemTypes, component) => {
   return { canDrop, isOver, drop };
 };
 
-export default useDropHandler;
+
+export const useDragAndDrop = (component, index, moveChildrens) => {
+  const ref = useRef(null);
+
+  const [, drag] = useDrag({
+    type: tipoItem.COMPONENTE,
+    item: { id: component.id, index },
+  });
+
+  const [, drop] = useDrop({
+    accept: tipoItem.COMPONENTE,
+    hover(item, monitor) {
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      moveChildrens(component, dragIndex, hoverIndex);
+      item.index = hoverIndex;
+    },
+  });
+
+  drag(drop(ref));
+
+  return { ref };
+};

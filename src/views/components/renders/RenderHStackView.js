@@ -4,9 +4,9 @@ import useSDPropertiesModifier from '../../../models/modifiers/useSDPropertiesMo
 import { tipoItem } from '../Componentes';
 import { renderBuilderComponentTree } from '../renderBuilderComponentTree';
 
-import useDropHandler from '../useDropHandler';
+import { useDropHandler, useDragAndDrop } from '../useDropHandler';
 
-const SDHStackView = ({ component, handleDrop, onClick, moveChildrens }) => {
+const SDHStackView = ({ component, handleDrop, onClick, index, moveChildrens }) => {
   
   const properties = component.properties;
   const initialDivStyle = { };
@@ -14,6 +14,8 @@ const SDHStackView = ({ component, handleDrop, onClick, moveChildrens }) => {
   const style = useSDPropertiesModifier(properties, initialDivStyle);
 
   const { canDrop, isOver, drop } = useDropHandler(handleDrop, tipoItem.COMPONENTE, component);
+  const { ref } = useDragAndDrop(component, index, moveChildrens);
+  
 
   const isActive = canDrop && isOver;
   if (isActive) {
@@ -23,7 +25,7 @@ const SDHStackView = ({ component, handleDrop, onClick, moveChildrens }) => {
     }
 
   return (
-    <div ref={drop} className="hstack dropArea" style={style} onClick={(e) => {
+    <div ref={drop} ref={ref} className="hstack dropArea" style={style} onClick={(e) => {
         e.stopPropagation(); 
         onClick(e, component);
       }}>
