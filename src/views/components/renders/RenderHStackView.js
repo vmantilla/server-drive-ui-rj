@@ -1,12 +1,31 @@
 import React from 'react';
+import update from 'immutability-helper';
 import useSDPropertiesModifier from '../../../models/modifiers/useSDPropertiesModifier';
 import { tipoItem } from '../Componentes';
 import { renderBuilderComponentTree } from '../renderBuilderComponentTree';
 
-
 import useDropHandler from '../useDropHandler';
 
 const SDHStackView = ({ component, handleDrop, onClick }) => {
+  const [childrens, setChildrens] = React.useState(component.childrens);
+
+  const moveButton = (dragIndex, hoverIndex) => {
+  const dragButton = childrens[dragIndex];
+  
+  console.log('Before moving button: ', dragIndex);
+
+  setChildrens(
+    update(childrens, {
+      $splice: [
+        [dragIndex, 1],
+        [hoverIndex, 0, dragButton],
+      ],
+    }),
+  );
+
+  console.log('After moving button: ', hoverIndex);
+};
+
   const properties = component.properties;
 
   const initialDivStyle = {
@@ -29,8 +48,10 @@ const SDHStackView = ({ component, handleDrop, onClick }) => {
         e.stopPropagation(); 
         onClick(e, component);
       }}>
-      {component.childrens && component.childrens.map(childComponent => renderBuilderComponentTree(childComponent, handleDrop,onClick))}
-    </div>
+     {component.childrens && component.childrens.map((childComponent, i) =>
+  renderBuilderComponentTree(childComponent, handleDrop, onClick, i, moveButton)
+)}
+ </div>
   );
 };
 

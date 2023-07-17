@@ -1,8 +1,32 @@
-// components/SDButtonView.js
-import React from 'react';
-import useSDPropertiesModifier, { getAlignment } from '../../../models/modifiers/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
+import React, { useRef } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
+import useSDPropertiesModifier, { getAlignment } from '../../../models/modifiers/useSDPropertiesModifier'; 
+import { tipoItem } from '../Componentes';
 
-const SDButtonView = ({ component, children, onClick }) => {
+const SDButtonView = ({ component, children, onClick, index, moveButton }) => {
+  const ref = useRef(null);
+
+  const [, drag] = useDrag({
+    type: tipoItem.COMPONENTE,
+    item: { id: component.id, index },
+  });
+
+  const [, drop] = useDrop({
+    accept: tipoItem.COMPONENTE,
+    hover(item, monitor) {
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      moveButton(dragIndex, hoverIndex);
+      item.index = hoverIndex;
+    },
+  });
+
+  drag(drop(ref));
   const properties = component.properties;
   
   const alignmentStyle = getAlignment(properties?.frame?.alignment) ?? {};
@@ -22,7 +46,7 @@ const SDButtonView = ({ component, children, onClick }) => {
   const buttonStyle = useSDPropertiesModifier(properties, initialButtonStyle);
 
   return (
-    <button className="buttonView" style={buttonStyle} onClick={(e) => {
+    <button ref={ref} className="buttonView" style={buttonStyle} onClick={(e) => {
         e.stopPropagation(); 
         onClick(e, component);
       }}>
