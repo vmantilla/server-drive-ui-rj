@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Form from "@rjsf/core";
-import { genericSchema, textSchema, buttonSchema, imageSchema, textFieldSchema, scrollViewSchema, vstackSchema, hstackSchema, spaceSchema, objectSchema, containerViewSchema } from './schemas';
 
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
+import { spaceSchema, objectSchema, containerViewSchema } from './schemas';
 
 import '../../css/PropertyInspectorStyles.css'; 
 import ColorPickerWidget from "./ColorPickerWidget";
@@ -27,20 +27,6 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
 
   const getSchema = (componentType) => {
     switch (componentType) {
-      case "Text":
-        return textSchema;
-      case "Button":
-        return genericSchema;
-      case "Image":
-        return imageSchema;
-      case "TextField":
-        return textFieldSchema;
-      case "ScrollView":
-        return scrollViewSchema;
-      case "VStack":
-        return vstackSchema;
-      case "HStack":
-        return hstackSchema;
       case "Space":
         return spaceSchema;
       case "Object":
@@ -68,58 +54,7 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
 
 
   const getUiSchema = (componentType) => {
-    console.log("getUiSchema = (componentType)", componentType);
-  switch (componentType) {
-    case "Text":
-      return {
-        ...genericUiSchema,
-        text: { "ui:widget": "textarea" },
-        color: { "ui:widget": "color" },
-        alignment: { "ui:widget": "radio", "ui:options": { inline: true } },
-      };
-    case "Button":
-      return {
-        ...genericUiSchema,
-        title: { "ui:widget": "text" },
-      };
-    case "Object":
-      return {
-        ...genericUiSchema,
-        title: { "ui:widget": "text" },
-      };
-    case "VStack":
-      return {
-        ...genericUiSchema
-      };
-    case "HStack":
-      return {
-        ...genericUiSchema
-      };
-    case "Image":
-      return {
-        ...genericUiSchema,
-        source: { "ui:widget": "text" },
-        resizeMode: { "ui:widget": "select", "ui:options": { enumOptions: ["cover", "contain", "stretch", "repeat", "center"] } },
-      };
-    case "TextField":
-      return {
-        ...genericUiSchema,
-        placeholder: { "ui:widget": "text" },
-        keyboardType: { "ui:widget": "select", "ui:options": { enumOptions: ["default", "number-pad", "decimal-pad", "numeric", "email-address", "phone-pad"] } },
-      };
-    case "ContainerView":
-      return {
-        ...genericUiSchema,
-        title: { "ui:widget": "text" },
-      };
-    case "ScrollView":
-      return {
-        ...genericUiSchema,
-        contentContainerStyle: { "ui:widget": "textarea" },
-      };
-    default:
-      return {};
-  }
+    return genericUiSchema;
 };
 
 
@@ -155,6 +90,15 @@ const handleOnChange = ({ formData }) => {
   }
 };
 
+const validate = (formData, schema) => {
+  const valid = ajv.validate(schema, formData);
+  const errors = ajv.errors;
+  return { valid, errors };
+};
+
+validate.isValid = (formData, schema) => {
+  return ajv.validate(schema, formData);
+};
 
 
   // Si component.properties es undefined o null, utiliza un objeto vacío
@@ -170,7 +114,7 @@ const handleOnChange = ({ formData }) => {
       uiSchema={getUiSchema(component.type)}
       formData={formData}
       onChange={handleOnChange}
-      validator={ajv.validate}
+      validator={validate}
       showErrorList={false}
       noHtml5Validate={true}
       widgets={{ 

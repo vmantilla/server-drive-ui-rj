@@ -50,8 +50,8 @@ export const containerViewSchema = {
   ...genericSchema,
   properties: {
     layout: { 
-      type: "string", 
-      enum: ["column", "row", "overflow"],
+      type: ["string", null],
+      enum: ["column", "row", "overflow", null],
       default: "row"
     },
     ...genericSchema.properties,
@@ -59,24 +59,7 @@ export const containerViewSchema = {
   required: [], // puedes definir las propiedades requeridas aquí.
 };
 
-
-export const vstackSchema = {
-  ...genericSchema,
-  properties: {
-    ...genericSchema.properties,
-  },
-};
-
-export const hstackSchema = {
-  ...genericSchema,
-  properties: {
-    ...genericSchema.properties,
-  },
-};
-
-
 export const textSchema = {
-  ...genericSchema,
   properties: {
     ...genericSchema.properties,
     color: { type: "string" },
@@ -84,32 +67,20 @@ export const textSchema = {
   },
 };
 
-export const objectSchema = {
-  ...genericSchema,
-  properties: {
-    ...genericSchema.properties,
-  },
-};
-
 export const buttonSchema = {
-  ...genericSchema,
   properties: {
     ...genericSchema.properties,
   },
 };
 
 export const imageSchema = {
-  ...genericSchema,
   properties: {
-    ...genericSchema.properties,
     resizeMode: { type: "string" },
   },
 };
 
 export const textFieldSchema = {
-  ...genericSchema,
   properties: {
-    ...genericSchema.properties,
     placeholder: { type: "string" },
   },
 };
@@ -129,3 +100,96 @@ export const scrollViewSchema = {
     contentContainerStyle: { type: "string" },
   },
 };
+
+export const objectSchema = {
+  "type": "object",
+  "properties": {
+    "type": { 
+      "type": ["string", "null"],
+      "enum": ["EmptyView","Button", "Image", "Text", "TextField", null],
+      "default": "EmptyView"
+    },
+    "frame": { "type": "string"},
+    "backgroundColor": { "type": "string"},
+    "border": {
+      "type": "object",
+      "properties": {
+        "color": { "type": "string" },
+        "width": { "type": "number" }
+      }
+    },
+    "cornerRadius": { "type": "string" },
+    "padding": { "type": "string" }
+  },
+  "anyOf": [
+    {
+      "if": {
+        "properties": {
+          "type": { "const": "Button" }
+        }
+      },
+      "then": {
+        "properties": {
+          "buttonText": { "type": "string" },
+          "buttonAction": { "type": "string" }
+        },
+        "required": ["buttonText", "buttonAction"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": { "const": "Image" }
+        }
+      },
+      "then": {
+        "properties": {
+          "imageUrl": { "type": "string" }
+        },
+        "required": ["imageUrl"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": { "const": "Text" }
+        }
+      },
+      "then": {
+        "properties": {
+          "textContent": { "type": "string" }
+        },
+        "required": ["textContent"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": { "const": "TextField" }
+        }
+      },
+      "then": {
+        "properties": {
+          "textFieldPlaceholder": { "type": "string" }
+        },
+        "required": ["textFieldPlaceholder"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": { "const": "EmptyView" }
+        }
+      },
+      "then": {
+        "properties": {}
+      }
+    }
+  ]
+}
+;
+
+
+
+
+
