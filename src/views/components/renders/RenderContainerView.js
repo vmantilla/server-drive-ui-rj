@@ -26,7 +26,7 @@ const RenderContainerView = ({ component, handleDrop, onClick, index, moveChildr
 
 
     let className;
-  switch (properties.layout) {
+  switch (properties.type) {
     case "row":
       className = "vstack";
       break;

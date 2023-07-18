@@ -12,13 +12,34 @@ const RenderObjectView = ({ component, children, onClick, index, moveChildrens }
 
   const objectStyle = useSDPropertiesModifier(properties, initialObjectStyle);
 
-  return (
-    <div ref={ref} style={objectStyle} onClick={(e) => {
-        e.stopPropagation(); 
+  // Según el tipo de componente, renderizamos diferentes cosas
+  const renderComponent = () => {
+    const componentProps = {
+      style: objectStyle,
+      ...component.props,
+      ref: ref,
+      onClick: (e) => {
+        e.stopPropagation();
         onClick(e, component);
-      }}>
-    </div>
-  );
+      }
+    };
+
+    switch (properties.type) {
+      case 'Button':
+        return <button {...componentProps}>{children}</button>;
+      case 'Image':
+        return <img {...componentProps} />;
+      case 'Text':
+        return <p {...componentProps}>{children}</p>;
+      case 'TextField':
+        return <input {...componentProps} />;
+      case 'View':
+      default:
+        return <div {...componentProps}>{children}</div>;
+    }
+  };
+
+  return renderComponent();
 };
 
 export default RenderObjectView;

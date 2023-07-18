@@ -49,9 +49,9 @@ export const genericSchema = {
 export const containerViewSchema = {
   ...genericSchema,
   properties: {
-    layout: { 
-      type: ["string", null],
-      enum: ["column", "row", "overflow", null],
+    type: { 
+      type: "string", 
+      enum: ["column", "row", "overflow"],
       default: "row"
     },
     ...genericSchema.properties,
@@ -104,12 +104,7 @@ export const scrollViewSchema = {
 export const objectSchema = {
   "type": "object",
   "properties": {
-    "type": { 
-      "type": ["string", "null"],
-      "enum": ["EmptyView","Button", "Image", "Text", "TextField", null],
-      "default": "EmptyView"
-    },
-    "frame": { "type": "string"},
+    "frame": { "type": "string" },
     "backgroundColor": { "type": "string"},
     "border": {
       "type": "object",
@@ -119,10 +114,11 @@ export const objectSchema = {
       }
     },
     "cornerRadius": { "type": "string" },
-    "padding": { "type": "string" }
+    "padding": { "type": "string" },
   },
   "anyOf": [
     {
+      "title": "Button",
       "if": {
         "properties": {
           "type": { "const": "Button" }
@@ -130,13 +126,15 @@ export const objectSchema = {
       },
       "then": {
         "properties": {
-          "buttonText": { "type": "string" },
-          "buttonAction": { "type": "string" }
+          "text": { "type": "string" },
+          "action": { "type": "string" },
+          "type": { "type": "string", "const": "Button" }
         },
-        "required": ["buttonText", "buttonAction"]
+        "required": ["text", "action"]
       }
     },
     {
+      "title": "Image",
       "if": {
         "properties": {
           "type": { "const": "Image" }
@@ -144,12 +142,22 @@ export const objectSchema = {
       },
       "then": {
         "properties": {
-          "imageUrl": { "type": "string" }
+          "source": { 
+            "type": "object",
+            "properties": {
+              "src": { "type": "string", "default": "default.png" },
+              "origin": { "type": "string", "enum": ["Url", "Assets", "System"], "default": "Assets" }
+            },
+            "required": ["src", "origin"]
+          },
+          "type": { "type": "string", "const": "Image" },
+          "contentMode": { "type": "string", "enum": ["FIT", "FILL", "ASPECTFIT", "ASPECTFILL", "CENTER"], "default": "FIT" }
         },
-        "required": ["imageUrl"]
+        "required": ["source"]
       }
     },
     {
+      "title": "Text",
       "if": {
         "properties": {
           "type": { "const": "Text" }
@@ -157,12 +165,22 @@ export const objectSchema = {
       },
       "then": {
         "properties": {
-          "textContent": { "type": "string" }
+          "text": { "type": "string" },
+          "type": { "type": "string", "const": "Text" },
+          "font": {
+            "type": "object",
+            "properties": {
+              "font": { "type": "string" },
+              "color": { "type": "string" }
+            },
+            "required": ["font", "color"]
+          }
         },
-        "required": ["textContent"]
+        "required": ["text", "font"]
       }
     },
     {
+      "title": "TextField",
       "if": {
         "properties": {
           "type": { "const": "TextField" }
@@ -170,12 +188,25 @@ export const objectSchema = {
       },
       "then": {
         "properties": {
-          "textFieldPlaceholder": { "type": "string" }
+          "text": { "type": "string" },
+          "type": { "type": "string", "const": "TextField" },
+          "placeholder": { "type": "string" },
+          "secure": { "type": "boolean" },
+          "keyboardType": { "type": "string", "enum": ["default", "number-pad", "decimal-pad", "numeric", "email-address", "phone-pad"], default: "default" },
+          "font": {
+            "type": "object",
+            "properties": {
+              "font": { "type": "string" },
+              "color": { "type": "string" }
+            },
+            "required": ["font", "color"]
+          },
         },
-        "required": ["textFieldPlaceholder"]
+        "required": ["placeholder", "keyboardType", "font"]
       }
     },
     {
+      "title": "EmptyView",
       "if": {
         "properties": {
           "type": { "const": "EmptyView" }
@@ -186,8 +217,11 @@ export const objectSchema = {
       }
     }
   ]
-}
-;
+};
+
+
+
+
 
 
 

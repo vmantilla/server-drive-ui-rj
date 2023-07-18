@@ -12,6 +12,7 @@ import ColorPickerWidget from "./ColorPickerWidget";
 import RadiusPickerWidget from "./RadiusPickerWidget";
 import PaddingPickerWidget from "./PaddingPickerWidget";
 import FramePickerWidget from "./FramePickerWidget";
+import FontPickerWidget from "./FontPickerWidget";
 
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
@@ -25,7 +26,15 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
   return <ColorPickerWidget {...props} themesData={themesData} />;
 };
 
+const CustomFontPickerWidget = (props) => {
+  return <FontPickerWidget {...props} themesData={themesData} />;
+};
+
+
   const getSchema = (componentType) => {
+
+    console.log("objectSchema", objectSchema);
+    
     switch (componentType) {
       case "Space":
         return spaceSchema;
@@ -47,13 +56,16 @@ const PropertyInspector = ({ themesData, component = {}, droppedComponents, setD
     },
     cornerRadius: { "ui:widget": "RadiusPickerWidget" },
     padding: { "ui:widget": "PaddingPickerWidget" },
-    font: { "ui:widget": "select", "ui:options": { enumOptions: ["Arial", "Verdana", "Helvetica", "Times New Roman"] } },
-    // Agrega todos los demás widgets de UI que son comunes
+    font: {
+      font: { "ui:widget": "FontPickerWidget" },
+      color: { "ui:widget": "ColorPickerWidget" }
+    },// Agrega todos los demás widgets de UI que son comunes
   };
 
 
 
   const getUiSchema = (componentType) => {
+    console.log("genericUiSchema", genericUiSchema);
     return genericUiSchema;
 };
 
@@ -97,7 +109,7 @@ const validate = (formData, schema) => {
 };
 
 validate.isValid = (formData, schema) => {
-  return ajv.validate(schema, formData);
+  return true
 };
 
 
@@ -121,7 +133,8 @@ validate.isValid = (formData, schema) => {
         ColorPickerWidget: CustomColorPickerWidget,
         RadiusPickerWidget: RadiusPickerWidget,
         PaddingPickerWidget: PaddingPickerWidget,
-        FramePickerWidget: FramePickerWidget  }}
+        FramePickerWidget: FramePickerWidget ,
+        FontPickerWidget: CustomFontPickerWidget }}
       SubmitButton={CustomSubmitButton}
     />
   );
