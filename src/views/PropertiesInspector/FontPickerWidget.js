@@ -25,10 +25,10 @@ const FontPickerWidget = (props) => {
         onClick={handleShow} 
         style={{
           fontFamily: themesData.fonts[value]?.name ?? 'default', 
-          width: '150px', 
+          width: '100%', 
           height: '30px', 
           border: 'none',
-          display: 'inline-block',
+          display: 'block',
           borderRadius: '10px'
         }}>
           {value}

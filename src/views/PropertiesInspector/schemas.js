@@ -102,122 +102,95 @@ export const scrollViewSchema = {
 };
 
 export const objectSchema = {
-  "type": "object",
-  "properties": {
-    "frame": { "type": "string" },
-    "backgroundColor": { "type": "string"},
-    "border": {
-      "type": "object",
-      "properties": {
-        "color": { "type": "string" },
-        "width": { "type": "number" }
+  type: "object",
+  properties: {
+    type: { 
+      type: "string",
+      enum: ["EmptyView", "Button", "Image", "Text", "TextField"],
+      default: "EmptyView"
+    },
+    frame: { type: "string" },
+    backgroundColor: { type: "string" },
+    border: {
+      type: "object",
+      properties: {
+        color: { type: "string" },
+        width: { type: "number" }
       }
     },
-    "cornerRadius": { "type": "string" },
-    "padding": { "type": "string" },
+    cornerRadius: { type: "string" },
+    padding: { type: "string" },
   },
-  "anyOf": [
-    {
-      "title": "Button",
-      "if": {
-        "properties": {
-          "type": { "const": "Button" }
-        }
-      },
-      "then": {
-        "properties": {
-          "text": { "type": "string" },
-          "action": { "type": "string" },
-          "type": { "type": "string", "const": "Button" }
-        },
-        "required": ["text", "action"]
-      }
-    },
-    {
-      "title": "Image",
-      "if": {
-        "properties": {
-          "type": { "const": "Image" }
-        }
-      },
-      "then": {
-        "properties": {
-          "source": { 
-            "type": "object",
-            "properties": {
-              "src": { "type": "string", "default": "default.png" },
-              "origin": { "type": "string", "enum": ["Url", "Assets", "System"], "default": "Assets" }
-            },
-            "required": ["src", "origin"]
-          },
-          "type": { "type": "string", "const": "Image" },
-          "contentMode": { "type": "string", "enum": ["FIT", "FILL", "ASPECTFIT", "ASPECTFILL", "CENTER"], "default": "FIT" }
-        },
-        "required": ["source"]
-      }
-    },
-    {
-      "title": "Text",
-      "if": {
-        "properties": {
-          "type": { "const": "Text" }
-        }
-      },
-      "then": {
-        "properties": {
-          "text": { "type": "string" },
-          "type": { "type": "string", "const": "Text" },
-          "font": {
-            "type": "object",
-            "properties": {
-              "font": { "type": "string" },
-              "color": { "type": "string" }
-            },
-            "required": ["font", "color"]
-          }
-        },
-        "required": ["text", "font"]
-      }
-    },
-    {
-      "title": "TextField",
-      "if": {
-        "properties": {
-          "type": { "const": "TextField" }
-        }
-      },
-      "then": {
-        "properties": {
-          "text": { "type": "string" },
-          "type": { "type": "string", "const": "TextField" },
-          "placeholder": { "type": "string" },
-          "secure": { "type": "boolean" },
-          "keyboardType": { "type": "string", "enum": ["default", "number-pad", "decimal-pad", "numeric", "email-address", "phone-pad"], default: "default" },
-          "font": {
-            "type": "object",
-            "properties": {
-              "font": { "type": "string" },
-              "color": { "type": "string" }
-            },
-            "required": ["font", "color"]
+  dependencies: {
+    type: {
+      oneOf: [
+        {
+          properties: {
+            type: { enum: ["EmptyView"] }
           },
         },
-        "required": ["placeholder", "keyboardType", "font"]
-      }
-    },
-    {
-      "title": "EmptyView",
-      "if": {
-        "properties": {
-          "type": { "const": "EmptyView" }
+        {
+          properties: {
+            type: { enum: ["Button"] },
+            text: { type: "string" },
+            action: { type: "string" }
+          },
+          required: ["text", "action"]
+        },
+        {
+          properties: {
+            type: { enum: ["Image"] },
+            source: {
+              type: "object",
+              properties: {
+                src: { type: "string", default: "default.png" },
+                origin: { type: "string", enum: ["Url", "Assets", "System"], default: "Assets" }
+              },
+              required: ["src", "origin"]
+            },
+            contentMode: { type: "string", enum: ["FIT", "FILL", "ASPECTFIT", "ASPECTFILL", "CENTER"], default: "FIT" }
+          },
+          required: ["source"]
+        },
+        {
+          properties: {
+            type: { enum: ["Text"] },
+            text: { type: "string" },
+            font: {
+              type: "object",
+              properties: {
+                font: { type: "string" },
+                color: { type: "string" }
+              },
+              required: ["font", "color"]
+            }
+          },
+          required: ["text", "font"]
+        },
+        {
+          properties: {
+            type: { enum: ["TextField"] },
+            text: { type: "string" },
+            placeholder: { type: "string" },
+            secure: { type: "boolean" },
+            keyboardType: { type: "string", enum: ["default", "number-pad", "decimal-pad", "numeric", "email-address", "phone-pad"], default: "default" },
+            font: {
+              type: "object",
+              properties: {
+                font: { type: "string" },
+                color: { type: "string" }
+              },
+              required: ["font", "color"]
+            },
+          },
+          required: ["placeholder", "keyboardType", "font"]
         }
-      },
-      "then": {
-        "properties": {}
-      }
+      ]
     }
-  ]
+  }
 };
+
+
 
 
 

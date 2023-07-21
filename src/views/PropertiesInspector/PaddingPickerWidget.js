@@ -58,10 +58,10 @@ const PaddingPickerWidget = (props) => {
         onClick={handleShow}
         style={{ 
           padding: `${shapes[value.shape] || 0}px`,
-          width: '100px',
+          width: '100%', 
           height: '50px',
           border: 'none',
-          display: 'inline-block',
+          display: 'block',
         }}
       >
         <div style={{ marginTop: '5px' }}>

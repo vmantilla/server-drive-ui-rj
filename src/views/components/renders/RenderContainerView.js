@@ -28,21 +28,21 @@ const RenderContainerView = ({ component, handleDrop, onClick, index, moveChildr
     let className;
   switch (properties.type) {
     case "row":
-      className = "vstack";
+      className = "container-row";
       break;
     case "column":
-      className = "hstack";
+      className = "container-column";
       break;
     case "overflow":
-      className = "zstack";
+      className = "container-overflow";
       break;
     default:
-      className = "hstack";
+      className = "container-row";
       break;
   }
 
   return (
-    <div ref={drop} className={`${className} dropArea`} style={style} onClick={(e) => {
+    <div ref={drop} className={`container ${className}`} style={style} onClick={(e) => {
         e.stopPropagation(); 
         onClick(e, component);
       }}>

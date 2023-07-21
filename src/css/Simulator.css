@@ -10,41 +10,46 @@
   overflow-y: auto;
 }
 
-.over {
-  background-color: #f0f0f0;
-}
-
-/* en tu archivo de estilos */
-.vstack, .hstack {
+/* Generic container */
+.container {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
-.zstack {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  background-color: #f0f0f0;
+/* Container with elements in column */
+.container-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.hstack > * {
-  flex-shrink: 0; 
-  flex-grow: 0;
+/* Container with elements in row */
+.container-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
-.hstack > .dotted-line {
+/* Container with overflow (scroll) */
+.container-overflow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto; /* enables scroll if content exceeds the container size */
+}
+
+
+.container-row > .dotted-line {
   border-top: 1px dashed #000;
   width: 100%;
   flex-grow: 1;
   flex-shrink: 1;
 }
 
-.vstack > * {
-  flex-shrink: 0;
-  flex-grow: 0;
-}
-
-.vstack > .dotted-line {
+.container-column > .dotted-line {
   border-left: 1px dashed #000;
   height: 100%;
   flex-grow: 1;

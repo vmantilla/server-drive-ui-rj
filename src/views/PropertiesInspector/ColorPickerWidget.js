@@ -13,16 +13,18 @@ const ColorPickerWidget = (props) => {
 
   return (
     <>
+    
       <Button 
         variant="primary" 
         onClick={handleShow} 
         style={{
           backgroundColor: themesData.colors[value]?.value ?? 'transparent', 
-          width: '50px', 
+          width: '100%',  // Ocupa todo el ancho
           height: '30px', 
-          border: 'none',
-          display: 'inline-block',
-          borderRadius: '10px' // Un borde de radio pequeño para el botón
+          border: '1px solid black',  // Borde negro de 1px
+          display: 'block',
+          borderRadius: '10px', 
+          padding: '4px'  
         }} />
 
       <Modal show={show} onHide={handleClose}>

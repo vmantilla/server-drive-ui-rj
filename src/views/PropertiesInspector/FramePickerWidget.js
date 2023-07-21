@@ -112,7 +112,14 @@ const FramePickerWidget = (props) => {
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
+      <Button variant="primary" 
+          onClick={handleShow} style={{
+          width: '100%', 
+          height: '50px', 
+          border: 'none',
+          display: 'block',
+          borderRadius: '10px' // Un borde de radio pequeño para el botón
+        }} >
         Set Frame
       </Button>
 

@@ -21,7 +21,7 @@ const getDefaultObjectProperties = () => {
 const getDefaultContainerViewProperties = () => {
   return new SDProperties(
     "row",
-    { height: "auto" },
+    { width: "100%", height: "100" },
     null,
     new SDCornerRadius({ shape: 'small'}),
     { color: 'outline', width: 1 },
