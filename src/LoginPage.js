@@ -28,6 +28,11 @@ const LoginPage = () => {
 
       // Additional actions with the API response if needed
       // e.g., storing user information in the global application state
+      const data = await response.json();
+      const token = data.token; // Este camino dependerá de cómo la API devuelva el token
+
+      // Guardar el token en el almacenamiento local
+      localStorage.setItem('token', token);
 
       // Redirect to the dashboard
       navigate("/builder");
