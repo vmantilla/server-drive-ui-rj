@@ -9,8 +9,6 @@ const ColorPickerWidget = (props) => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  console.log(themesData);
-
   return (
     <>
     

@@ -13,10 +13,6 @@ import { v4 as uuidv4 } from 'uuid';
 const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedComponents }) => {
     const [draggingItem, setDraggingItem] = useState(null);
     
-    useEffect(() => {
-         console.log("droppedComponents", droppedComponents);
-    }, [droppedComponents]);
-
     const findInTree = (tree, childId) => {
         if (tree.id === childId) {
             return true;

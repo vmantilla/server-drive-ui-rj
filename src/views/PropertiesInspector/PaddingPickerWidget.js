@@ -49,7 +49,7 @@ const PaddingPickerWidget = (props) => {
     onChange(newPaddingValues);
   };
 
-  console.log(themesData);
+//  console.log(themesData);
 
   return (
     <>

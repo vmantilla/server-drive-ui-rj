@@ -26,14 +26,14 @@ const RenderContainerView = ({ component, handleDrop, onClick, index, moveChildr
 
 
     let className;
-  switch (properties.type) {
-    case "row":
+  switch (properties.componentType) {
+    case "Row":
       className = "container-row";
       break;
-    case "column":
+    case "Column":
       className = "container-column";
       break;
-    case "overflow":
+    case "Overflow":
       className = "container-overflow";
       break;
     default:

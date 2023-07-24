@@ -57,7 +57,7 @@ const RadiusPickerWidget = (props) => {
     onChange({ shape: value.shape, corners: newCornerValues });
   };
 
-  console.log(themesData);
+//  console.log(themesData);
 
   return (
     <>

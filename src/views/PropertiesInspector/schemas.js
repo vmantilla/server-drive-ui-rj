@@ -28,6 +28,19 @@ enablesReturnKeyAutomatically: { type: "boolean" },
     verticalAlignment: { type: "string" },
     */
 
+
+
+export const objectSchema = {
+  properties: {
+    componentType: { 
+      type: "string", 
+      enum: ["EmptyView", "Button", "Image", "Text", "TextField", "Space"],
+      default: "EmptyView"
+    },
+  },
+  required: [], // puedes definir las propiedades requeridas aquí.
+};
+
 export const genericSchema = {
   type: "object",
   properties: {
@@ -49,146 +62,54 @@ export const genericSchema = {
 export const containerViewSchema = {
   ...genericSchema,
   properties: {
-    type: { 
+    componentType: { 
       type: "string", 
-      enum: ["column", "row", "overflow"],
-      default: "row"
+      enum: ["Column", "Row", "Overflow"],
+      default: "Row"
     },
     ...genericSchema.properties,
   },
   required: [], // puedes definir las propiedades requeridas aquí.
 };
 
-export const textSchema = {
-  properties: {
-    ...genericSchema.properties,
-    color: { type: "string" },
-    alignment: { type: "string" },
-  },
-};
-
-export const buttonSchema = {
-  properties: {
-    ...genericSchema.properties,
-  },
-};
-
-export const imageSchema = {
-  properties: {
-    resizeMode: { type: "string" },
-  },
-};
-
-export const textFieldSchema = {
-  properties: {
-    placeholder: { type: "string" },
-  },
-};
-
 export const spaceSchema = {
-  type: "object",
+  ...objectSchema,
   properties: {
+    ...objectSchema.properties,
     frame: { type: "string"},
   },
 };
 
 
-export const scrollViewSchema = {
+export const EmptyViewSchema = {
   ...genericSchema,
   properties: {
+    componentType: { 
+      type: "string", 
+      enum: ["EmptyView", "Button", "Image", "Text", "TextField", "Space"],
+      default: "Button"
+    },
     ...genericSchema.properties,
-    contentContainerStyle: { type: "string" },
   },
+  required: [], // puedes definir las propiedades requeridas aquí.
 };
 
-export const objectSchema = {
-  type: "object",
+export const ButtonViewSchema = {
+  ...genericSchema,
   properties: {
-    type: { 
-      type: "string",
-      enum: ["EmptyView", "Button", "Image", "Text", "TextField"],
-      default: "EmptyView"
+    componentType: { 
+      type: "string", 
+      enum: ["EmptyView", "Button", "Image", "Text", "TextField", "Space"],
+      default: "Button"
     },
-    frame: { type: "string" },
-    backgroundColor: { type: "string" },
-    border: {
-      type: "object",
-      properties: {
-        color: { type: "string" },
-        width: { type: "number" }
-      }
-    },
-    cornerRadius: { type: "string" },
-    padding: { type: "string" },
+    text: { type: "string" },
+    action: { type: "string" },
+    ...genericSchema.properties,
   },
-  dependencies: {
-    type: {
-      oneOf: [
-        {
-          properties: {
-            type: { enum: ["EmptyView"] }
-          },
-        },
-        {
-          properties: {
-            type: { enum: ["Button"] },
-            text: { type: "string" },
-            action: { type: "string" }
-          },
-          required: ["text", "action"]
-        },
-        {
-          properties: {
-            type: { enum: ["Image"] },
-            source: {
-              type: "object",
-              properties: {
-                src: { type: "string", default: "default.png" },
-                origin: { type: "string", enum: ["Url", "Assets", "System"], default: "Assets" }
-              },
-              required: ["src", "origin"]
-            },
-            contentMode: { type: "string", enum: ["FIT", "FILL", "ASPECTFIT", "ASPECTFILL", "CENTER"], default: "FIT" }
-          },
-          required: ["source"]
-        },
-        {
-          properties: {
-            type: { enum: ["Text"] },
-            text: { type: "string" },
-            font: {
-              type: "object",
-              properties: {
-                font: { type: "string" },
-                color: { type: "string" }
-              },
-              required: ["font", "color"]
-            }
-          },
-          required: ["text", "font"]
-        },
-        {
-          properties: {
-            type: { enum: ["TextField"] },
-            text: { type: "string" },
-            placeholder: { type: "string" },
-            secure: { type: "boolean" },
-            keyboardType: { type: "string", enum: ["default", "number-pad", "decimal-pad", "numeric", "email-address", "phone-pad"], default: "default" },
-            font: {
-              type: "object",
-              properties: {
-                font: { type: "string" },
-                color: { type: "string" }
-              },
-              required: ["font", "color"]
-            },
-          },
-          required: ["placeholder", "keyboardType", "font"]
-        }
-      ]
-    }
-  }
+  required: [], // puedes definir las propiedades requeridas aquí.
 };
+
+
 
 
 

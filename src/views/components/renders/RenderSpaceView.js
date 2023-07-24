@@ -19,7 +19,7 @@ const RenderSpaceView = ({ component, children, onClick, index, moveChildrens })
   const alignmentType = properties.textAlignment?.alignment || 'leading';
 
   return (
-  	<div ref={ref} className="dotted-line"></div>
+  	<div ref={ref} className="spacer"></div>
   );
 };
 

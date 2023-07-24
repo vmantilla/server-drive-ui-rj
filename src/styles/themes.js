@@ -4,7 +4,7 @@ export let themesData = null;
 
 export const setThemesData = (newThemesData) => {
   themesData = newThemesData;
-  console.log('themesData updated:', themesData);
+//console.log('themesData updated:', themesData);
 };
 
 export const getThemesData = () => {

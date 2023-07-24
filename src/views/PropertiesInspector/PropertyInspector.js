@@ -5,7 +5,7 @@ import Form from "@rjsf/core";
 
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import { spaceSchema, objectSchema, containerViewSchema } from './schemas';
+import { spaceSchema, objectSchema, containerViewSchema, EmptyViewSchema, ButtonViewSchema} from './schemas';
 
 import '../../css/PropertyInspectorStyles.css'; 
 import ColorPickerWidget from "./ColorPickerWidget";
@@ -21,26 +21,35 @@ addFormats(ajv);
 const PropertyInspector = ({ themesData, component = {}, droppedComponents, setDroppedComponents }) => {
 
   const [formData, setFormData] = useState({});
+  const [keyValue, setKeyValue] = useState(0);
 
   const CustomColorPickerWidget = (props) => {
+    if (!themesData) { return null; };
   return <ColorPickerWidget {...props} themesData={themesData} />;
 };
 
 const CustomFontPickerWidget = (props) => {
+  if (!themesData) { return null; };
   return <FontPickerWidget {...props} themesData={themesData} />;
 };
 
 
   const getSchema = (componentType) => {
 
-    console.log("objectSchema", objectSchema);
+//    console.log("objectSchema", objectSchema);
     
     switch (componentType) {
       case "Space":
         return spaceSchema;
-      case "Object":
-        return objectSchema;
-      case "ContainerView":
+      case "Button":
+        return ButtonViewSchema;
+      case "EmptyView":
+        return EmptyViewSchema;
+      case "Row":
+        return containerViewSchema;
+      case "Column":
+        return containerViewSchema;
+      case "Overflow":
         return containerViewSchema;
       default:
         return {};
@@ -65,7 +74,7 @@ const CustomFontPickerWidget = (props) => {
 
 
   const getUiSchema = (componentType) => {
-    console.log("genericUiSchema", genericUiSchema);
+//    console.log("genericUiSchema", genericUiSchema);
     return genericUiSchema;
 };
 
@@ -73,6 +82,7 @@ const CustomFontPickerWidget = (props) => {
 
   useEffect(() => {
     setFormData(component.properties);
+    console.log("component.properties", component.properties);
   }, [component]);
 
 const updateNestedComponent = (components, targetId, newProperties) => {
@@ -96,7 +106,10 @@ const handleOnChange = ({ formData }) => {
 
     console.log("updated", newDroppedComponents);
     setDroppedComponents(newDroppedComponents);
+    setKeyValue((prevValue) => prevValue + 1);
     setFormData(formData);
+
+    
   } else {
     // handle the case where droppedComponents is not an array
   }
@@ -113,17 +126,15 @@ validate.isValid = (formData, schema) => {
 };
 
 
-  // Si component.properties es undefined o null, utiliza un objeto vacío
-  const properties = component?.properties || {};
-
   const CustomSubmitButton = () => {
     return <></>;
   };
 
   return (
     <Form
-      schema={getSchema(component.type)}
-      uiSchema={getUiSchema(component.type)}
+      key={keyValue} 
+      schema={getSchema(component?.properties?.componentType || {})}
+      uiSchema={getUiSchema(component?.properties?.componentType || {})}
       formData={formData}
       onChange={handleOnChange}
       validator={validate}

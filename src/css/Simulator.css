@@ -42,16 +42,17 @@
 }
 
 
-.container-row > .dotted-line {
-  border-top: 1px dashed #000;
-  width: 100%;
+.container-row > .spacer {
+  border: 1px dashed #000;
   flex-grow: 1;
   flex-shrink: 1;
+  height: 5px;
 }
 
-.container-column > .dotted-line {
-  border-left: 1px dashed #000;
-  height: 100%;
+.container-column > .spacer {
+  border: 1px dashed #000;
   flex-grow: 1;
   flex-shrink: 1;
+  width: 5px;
 }
+

@@ -11,7 +11,9 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
     return;
   }
 
-  switch (component.type) {
+  const properties = component?.properties || {};
+
+  switch (component.componentType) {
     case "ContainerView":
       Component = RenderContainerView
       break;
@@ -26,15 +28,23 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
   }
 
   return (
-    <Component 
-      key={component.id} 
-      component={component}
-      handleDrop={handleDrop}
-      onClick={onComponentClick}
-      index={index}
-      moveChildrens={moveChildrens}
-    >
-      {component.childrens && component.childrens.length > 0 && component.childrens.map((childComponent, i) => renderBuilderComponentTree(childComponent, handleDrop, onComponentClick, i, moveChildrens))}
-    </Component>
-  );
+  <Component 
+    key={component.id} 
+    component={component}
+    handleDrop={handleDrop}
+    onClick={onComponentClick}
+    index={index}
+    moveChildrens={moveChildrens}
+  >
+    {component.childrens && component.childrens.length > 0 && component.childrens.map((childComponent, i) => {
+      // Verifica si el componente hijo tiene propiedades antes de intentar renderizarlo
+      if (childComponent.properties) {
+        return renderBuilderComponentTree(childComponent, handleDrop, onComponentClick, i, moveChildrens)
+      } else {
+        console.warn(`El componente hijo en el índice ${i} no tiene propiedades y no se renderizará.`);
+      }
+    })}
+  </Component>
+);
+
 }

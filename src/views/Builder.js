@@ -10,11 +10,15 @@ import { fetchJsonFile } from '../helpers/utils';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
+import { openDB } from 'idb';
+
 import Preview from './Preview';
 import PreviewGrid from './thumbnailsPreview/PreviewGrid';
 import ColorsAndFontsView from './ColorsAndFontsView';
 import { Componentes } from './components/Componentes';
 import PropertyInspector from './PropertiesInspector/PropertyInspector';
+
+import SDComponent from '../models/structs/SDComponent';
 
 import DropZone from './DropZone';
 
@@ -36,6 +40,44 @@ const Builder = () => {
   useEffect(() => {
   console.log('droppedComponents changed:', droppedComponents);
 }, [droppedComponents]);
+
+  useEffect(() => {
+    const initDB = async () => {
+      const db = await openDB('builderDB', 1, {
+        upgrade(db) {
+          db.createObjectStore('droppedComponentsStore');
+        },
+      });
+      const components = await db.getAll('droppedComponentsStore');
+      setDroppedComponents(components.map(component => SDComponent.fromJSON(component)));
+    };
+
+    initDB();
+}, []);
+
+useEffect(() => {
+    const updateDB = async () => {
+      const db = await openDB('builderDB', 1);
+      for (let i = 0; i < droppedComponents.length; i++) {
+        if (droppedComponents[i] && typeof droppedComponents[i].toJSON === 'function') {
+          console.log('Saving JSON:', droppedComponents[i].toJSON());
+          await db.put('droppedComponentsStore', droppedComponents[i].toJSON(), i);
+        }
+      }
+    };
+
+    updateDB();
+  }, [droppedComponents]);
+
+
+
+
+
+  const clearDroppedComponents = async () => {
+    const db = await openDB('builderDB', 1);
+    await db.clear('droppedComponentsStore');
+    setDroppedComponents([]);
+  };
 
   const handleComponentClick = (e, component) => {
     setSelectedComponent(component);
@@ -69,6 +111,7 @@ const Builder = () => {
       <App>
         <View main>
           <div className="container-fluid" style={{ height: '100vh' }}>
+           <button onClick={clearDroppedComponents}>Limpiar</button>
             <Tabs
               activeKey={activeTab}
               onSelect={handleTabChange}

@@ -24,7 +24,7 @@ const RenderObjectView = ({ component, children, onClick, index, moveChildrens }
       }
     };
 
-    switch (properties.type) {
+    switch (properties.componentType) {
       case 'Button':
         return <button {...componentProps}>{children}</button>;
       case 'Image':
