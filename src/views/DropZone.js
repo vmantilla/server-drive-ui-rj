@@ -117,11 +117,19 @@ const moveChildrens = (component, dragIndex, hoverIndex) => {
     }
 
     return (
-        <div ref={drop} style={{ ...style, backgroundColor }}>
-            {
-                droppedComponents ? droppedComponents.map(component => renderBuilderComponentTree(component, handleDrop, onComponentClick, 0,  moveChildrens)) : 'Cargando...'
+       <div ref={drop} style={{ ...style, backgroundColor }}>
+    {
+        droppedComponents 
+        ? droppedComponents.map((component, i) => {
+            if (component.properties) {
+                return renderBuilderComponentTree(component, handleDrop, onComponentClick, i, moveChildrens)
+            } else {
+                console.warn(`El componente principal en el índice ${i} no tiene propiedades y no se renderizará.`);
             }
-        </div>
+        }) 
+        : 'Cargando...'
+    }
+</div>
     )
 }
 

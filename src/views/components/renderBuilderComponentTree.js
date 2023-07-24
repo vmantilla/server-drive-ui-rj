@@ -11,6 +11,11 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
     return;
   }
 
+  if (!component.properties) {
+    console.error('El componente properties es undefined');
+    return;
+  }
+
   const properties = component?.properties || {};
 
   switch (component.componentType) {

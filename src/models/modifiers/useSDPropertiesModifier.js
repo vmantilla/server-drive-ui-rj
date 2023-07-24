@@ -7,6 +7,7 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
   // Si no se proporcionan las propiedades, devolvemos el estilo div proporcionado
   if (!properties || Object.keys(properties).length === 0) return divStyle;
 
+
   const frame = properties?.frame || {};
   
   // Calculamos el valor total del margen
@@ -14,6 +15,8 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
   const marginVertical = (properties.margin?.top ?? 0) + (properties.margin?.bottom ?? 0);
   // Si el frame está ausente, usamos los valores por defecto
   const frameStyle = properties.frame ? frameToStyle(properties.frame, marginHorizontal, marginVertical) : {};
+
+  const spacing = properties.spacing ?? 0;
 
   return {
     ...divStyle,
@@ -39,6 +42,7 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
     paddingLeft: properties.padding?.left ?? 0,
     paddingBottom: properties.padding?.bottom ?? 0,
     paddingRight: properties.padding?.right ?? 0,
+    gap: `${spacing}px`,
   };
 }
 
@@ -110,6 +114,10 @@ const cornerRadiusValue = (frame, cornerRadiusObject) => {
 };
 
 const colorValue = (colorName, opacity = null) => {
+  if (!themesData || !themesData.colors) {
+    return 'transparent';
+  }
+  
   const colorData = themesData.colors[colorName || ''];
 
   if (!colorData) {

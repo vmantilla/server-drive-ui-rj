@@ -18,8 +18,8 @@ class SDComponent {
         return {
             id: this.id,
             componentType: this.componentType,
-            properties: this.properties.toJSON(), // Asumimos que properties es una instancia de SDProperties o una clase similar.
-            childrens: this.childrens.map(child => child.toJSON()), // Usamos map para llamar a toJSON en cada hijo.
+            properties: this.properties ? this.properties.toJSON() : null, // Si properties es null o undefined, asigna null
+            childrens: Array.isArray(this.childrens) ? this.childrens.map(child => child ? child.toJSON() : null) : [], // Si childrens no es una matriz, asigna una matriz vacía
             states: this.states,
             order: this.order
         };
@@ -29,15 +29,16 @@ class SDComponent {
         const component = Object.create(SDComponent.prototype);
 
         // Cuando reasignamos properties y childrens, aseguramos de que estén en el formato correcto.
-        const childrens = json.childrens ? json.childrens.map(childJson => SDComponent.fromJSON(childJson)) : [];
+        const childrens = Array.isArray(json.childrens) ? json.childrens.map(childJson => childJson ? SDComponent.fromJSON(childJson) : null) : [];
 
         Object.assign(component, json, {
-            properties: SDProperties.fromJSON(json.properties), // Asumimos que SDProperties tiene un método estático fromJSON.
+            properties: json.properties ? SDProperties.fromJSON(json.properties) : null, // Si properties es null o undefined, asigna null
             childrens: childrens // Usamos map para llamar a fromJSON en cada hijo.
         });
 
         return component;
     }
+
 }
 
 export default SDComponent;

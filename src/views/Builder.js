@@ -19,6 +19,7 @@ import { Componentes } from './components/Componentes';
 import PropertyInspector from './PropertiesInspector/PropertyInspector';
 
 import SDComponent from '../models/structs/SDComponent';
+import SDProperties from '../models/structs/SDProperties';
 
 import DropZone from './DropZone';
 
@@ -36,12 +37,56 @@ const Builder = () => {
 
   const [selectedComponent, setSelectedComponent] = useState({});
   const [droppedComponents, setDroppedComponents] = useState([])
+
+  const deleteNestedComponent = (components, targetId) => {
+  return components.reduce((updatedComponents, component) => {
+    // Si el componente actual es el que se va a eliminar, no lo agregue a la lista de componentes actualizados.
+    if (component.id === targetId) {
+      return updatedComponents;
+    }
+
+    // Si el componente tiene hijos, revise cada uno de ellos también.
+    if (component.childrens) {
+      return [
+        ...updatedComponents,
+        {
+          ...component,
+          childrens: deleteNestedComponent(component.childrens, targetId),
+        },
+      ];
+    }
+
+    // Si no se cumple ninguna de las condiciones anteriores, simplemente agregue el componente a la lista de componentes actualizados.
+    return [...updatedComponents, component];
+  }, []);
+};
+
+const deleteComponent = (componentId) => {
+  setDroppedComponents(deleteNestedComponent(droppedComponents, componentId));
+};
+
+
   
   useEffect(() => {
-  console.log('droppedComponents changed:', droppedComponents);
+  const updateDB = async () => {
+    const db = await openDB('builderDB', 1);
+    for (let i = 0; i < droppedComponents.length; i++) {
+      if (droppedComponents[i]) {
+        if (typeof droppedComponents[i].toJSON === 'function') {
+          await db.put('droppedComponentsStore', droppedComponents[i].toJSON(), i);
+        } else {
+          console.log(`droppedComponents[${i}] no tiene un método toJSON`);
+        }
+      } else {
+        console.log(`droppedComponents[${i}] es undefined o null`);
+      }
+    }
+  };
+
+  updateDB();
 }, [droppedComponents]);
 
-  useEffect(() => {
+ useEffect(() => {
     const initDB = async () => {
       const db = await openDB('builderDB', 1, {
         upgrade(db) {
@@ -55,20 +100,51 @@ const Builder = () => {
     initDB();
 }, []);
 
-useEffect(() => {
-    const updateDB = async () => {
-      const db = await openDB('builderDB', 1);
-      for (let i = 0; i < droppedComponents.length; i++) {
-        if (droppedComponents[i] && typeof droppedComponents[i].toJSON === 'function') {
-          console.log('Saving JSON:', droppedComponents[i].toJSON());
-          await db.put('droppedComponentsStore', droppedComponents[i].toJSON(), i);
-        }
-      }
-    };
 
-    updateDB();
-  }, [droppedComponents]);
+  const updateComponent = (componentId, newProperties) => {
+    // Convertir newProperties a una instancia de SDProperties
+    const properties = SDProperties.fromJSON(newProperties);
 
+    const newDroppedComponents = updateNestedComponent(droppedComponents, componentId, properties);
+    setDroppedComponents(newDroppedComponents);
+  };
+
+
+  const updateNestedComponent = (components, targetId, newProperties) => {
+  return components.map(component => {
+    if (component.id === targetId) {
+      // Crea una nueva instancia del componente, no la actualices.
+      const updatedComponent = new SDComponent(
+        component.id,
+        component.componentType,
+        newProperties,
+        component.childrens,
+        component.states,
+        component.order
+      );
+
+      // Actualiza el componente seleccionado en el estado.
+      setSelectedComponent(updatedComponent);
+
+      // Retorna el nuevo componente en lugar del original.
+      return updatedComponent;
+    } else if (component.childrens) {
+      // Crear un nuevo componente con los childrens actualizados
+      const updatedComponent = new SDComponent(
+        component.id,
+        component.componentType,
+        component.properties,
+        updateNestedComponent(component.childrens, targetId, newProperties), // Actualiza los hijos
+        component.states,
+        component.order
+      );
+
+      return updatedComponent;
+    } else {
+      return component;
+    }
+  });
+};
 
 
 
@@ -80,8 +156,14 @@ useEffect(() => {
   };
 
   const handleComponentClick = (e, component) => {
-    setSelectedComponent(component);
-  };
+  // Comprueba si component es una instancia de SDComponent
+  if (!(component instanceof SDComponent)) {
+    // Si no lo es, convierte el objeto plano a una instancia de SDComponent
+    component = SDComponent.fromJSON(component);
+  }
+  setSelectedComponent(component);
+};
+
 
   const handleTabChange = (tabKey) => {
     setActiveTab(tabKey);
@@ -153,9 +235,13 @@ useEffect(() => {
                 <div className="col-3 resizable-panel">
                   <div className="panel-container" style={{overflowY: 'auto', maxHeight: '100vh'}}>
                     <span className="panel-title">Panel de propiedades del componente</span>
-                     {selectedComponent && <PropertyInspector themesData={themesData} component={selectedComponent} droppedComponents={droppedComponents}
-                      setDroppedComponents={setDroppedComponents} />
-                    }
+                     {selectedComponent && <PropertyInspector themesData={themesData} 
+                     component={selectedComponent} 
+                     updateComponent={updateComponent}
+                     deleteComponent={deleteComponent}   />
+                      }
+
+                
                   </div>
                 </div>
               </div>

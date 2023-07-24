@@ -67,6 +67,7 @@ export const containerViewSchema = {
       enum: ["Column", "Row", "Overflow"],
       default: "Row"
     },
+    spacing: { type: "number" },
     ...genericSchema.properties,
   },
   required: [], // puedes definir las propiedades requeridas aquí.
