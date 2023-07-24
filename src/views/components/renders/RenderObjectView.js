@@ -30,7 +30,7 @@ const RenderObjectView = ({ component, children, onClick, index, moveChildrens }
       case 'Image':
         return <img {...componentProps} />;
       case 'Text':
-        return <p {...componentProps}>{children}</p>;
+        return <p {...componentProps}>{properties.text}</p>;
       case 'TextField':
         return <input {...componentProps} />;
       case 'View':

@@ -110,6 +110,42 @@ export const ButtonViewSchema = {
   required: [], // puedes definir las propiedades requeridas aquí.
 };
 
+export const TextViewSchema = {
+  ...genericSchema,
+  properties: {
+    componentType: { 
+      type: "string", 
+      enum: ["EmptyView", "Button", "Image", "Text", "TextField", "Space"],
+      default: "Button"
+    },
+    text: { type: "string" },
+    font: { 
+      type: "object",
+      properties: {
+        font: { type: "string" },
+        color: { type: "string" },
+      },
+    },
+    ...genericSchema.properties,
+  },
+  required: [], // puedes definir las propiedades requeridas aquí.
+};
+
+export const ImageViewSchema = {
+  ...genericSchema,
+  properties: {
+    componentType: { 
+      type: "string", 
+      enum: ["EmptyView", "Button", "Image", "Text", "TextField", "Space"],
+      default: "Button"
+    },
+    src: { type: "string", default: "default.png" },
+    origin: { type: "string", enum: ["Url", "Assets", "System"], default: "Assets" },
+    ...genericSchema.properties,
+  },
+  required: [], // puedes definir las propiedades requeridas aquí.
+};
+
 
 
 

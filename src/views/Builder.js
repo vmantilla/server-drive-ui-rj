@@ -66,8 +66,23 @@ const deleteComponent = (componentId) => {
 };
 
 
+
+const exportComponentsToJSON = async () => {
+  const db = await openDB('builderDB', 1);
+  const components = await db.getAll('droppedComponentsStore');
+  const dataStr = JSON.stringify(components);
+  const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  const exportFileDefaultName = 'data.json';
+  
+  let linkElement = document.createElement('a');
+  linkElement.setAttribute('href', dataUri);
+  linkElement.setAttribute('download', exportFileDefaultName);
+  linkElement.click();
+};
+
   
   useEffect(() => {
+//    console.log("droppedComponents", droppedComponents);
   const updateDB = async () => {
     const db = await openDB('builderDB', 1);
     for (let i = 0; i < droppedComponents.length; i++) {
@@ -103,6 +118,7 @@ const deleteComponent = (componentId) => {
 
   const updateComponent = (componentId, newProperties) => {
     // Convertir newProperties a una instancia de SDProperties
+    console.log("updateComponent", newProperties);
     const properties = SDProperties.fromJSON(newProperties);
 
     const newDroppedComponents = updateNestedComponent(droppedComponents, componentId, properties);
@@ -194,6 +210,7 @@ const deleteComponent = (componentId) => {
         <View main>
           <div className="container-fluid" style={{ height: '100vh' }}>
            <button onClick={clearDroppedComponents}>Limpiar</button>
+           <button onClick={exportComponentsToJSON}>Exportar como JSON</button>
             <Tabs
               activeKey={activeTab}
               onSelect={handleTabChange}

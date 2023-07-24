@@ -8,16 +8,6 @@ const RenderSpaceView = ({ component, children, onClick, index, moveChildrens })
   const { ref } = useDragAndDrop(component, index, moveChildrens);
   
 
-  const properties = component.properties;
-  const font = properties.font?.fontValue();
-  const color = properties.font?.colorValue(1.0);
-
-  // Usamos nuestro hook para obtener los estilos finales
-  const alignmentStyle = getAlignment(properties?.frame?.alignment) ?? {};
-  const divStyle = useSDPropertiesModifier(properties, { color, ...font, ...alignmentStyle });
-
-  const alignmentType = properties.textAlignment?.alignment || 'leading';
-
   return (
   	<div ref={ref} className="spacer"></div>
   );

@@ -10,6 +10,16 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
 
   const frame = properties?.frame || {};
   
+
+  let font = null;
+  let color = null;
+
+  if (properties.componentType === 'Text' || properties.componentType === 'TextField') {
+    font = fontValue(properties.font);
+    color = colorValue(properties.font?.color, 1.0);
+  }
+
+
   // Calculamos el valor total del margen
   const marginHorizontal = (properties.margin?.left ?? 0) + (properties.margin?.right ?? 0);
   const marginVertical = (properties.margin?.top ?? 0) + (properties.margin?.bottom ?? 0);
@@ -43,8 +53,49 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
     paddingBottom: properties.padding?.bottom ?? 0,
     paddingRight: properties.padding?.right ?? 0,
     gap: `${spacing}px`,
+    ...font,
+    color: color
   };
 }
+
+// Calcula los valores de las propiedades de la fuente
+const fontValue = (fontProp) => {
+
+  if (!themesData || !themesData.fonts) {
+    return {};
+  }
+
+  const font = themesData.fonts[fontProp.font || ''];
+
+
+  
+  if (!font) {
+    return { 
+      fontFamily: 'Arial', 
+      fontSize: 12, 
+      fontWeight: 400, 
+      lineHeight: '16px', 
+      letterSpacing: 'normal'
+    };
+  }
+
+  let weight = font.weight || 400;
+  let lineHeight = `${font.lineHeight || 16}px`;
+  let letterSpacing = font.letterSpacing || 'normal';
+
+  if (typeof window !== 'undefined' && window.FontFace && document.fonts && font.url) {
+    const fontFace = new window.FontFace(font.name, `url(${font.url})`);
+    document.fonts.add(fontFace);
+  }
+
+  return { 
+    fontFamily: font.url ? font.name : 'Arial', 
+    fontSize: font.size, 
+    fontWeight: weight, 
+    lineHeight: lineHeight, 
+    letterSpacing: letterSpacing
+  };
+};
 
 const frameToStyle = (frame, marginHorizontal, marginVertical) => {
   let style = {};

@@ -30,7 +30,7 @@ export const useDragAndDrop = (component, index, moveChildrens) => {
     item: { id: component.id, index },
   });
 
-  const [, drop] = useDrop({
+  const [, dropHover] = useDrop({
     accept: tipoItem.COMPONENTE,
     hover(item, monitor) {
       const dragIndex = item.index;
@@ -45,7 +45,7 @@ export const useDragAndDrop = (component, index, moveChildrens) => {
     },
   });
 
-  drag(drop(ref));
+  drag(dropHover(ref));
 
   return { ref };
 };

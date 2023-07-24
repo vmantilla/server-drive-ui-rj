@@ -2,7 +2,7 @@ import React from 'react';
 import Form from "@rjsf/core";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import { spaceSchema, objectSchema, containerViewSchema, EmptyViewSchema, ButtonViewSchema} from './schemas';
+import { spaceSchema, objectSchema, containerViewSchema, EmptyViewSchema, ButtonViewSchema, TextViewSchema, ImageViewSchema} from './schemas';
 import '../../css/PropertyInspectorStyles.css'; 
 import ColorPickerWidget from "./ColorPickerWidget";
 import RadiusPickerWidget from "./RadiusPickerWidget";
@@ -37,6 +37,10 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
         return spaceSchema;
       case "Button":
         return ButtonViewSchema;
+      case "Text":
+        return TextViewSchema;
+      case "Image":
+        return ImageViewSchema;
       case "EmptyView":
         return EmptyViewSchema;
       case "Row":
