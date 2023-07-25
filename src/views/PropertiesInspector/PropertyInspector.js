@@ -31,6 +31,20 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
     return <FontPickerWidget {...props} themesData={themesData} />;
   };
 
+    const FileWidget = (props) => {
+    const { onChange } = props;
+    const processFile = (e) => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        onChange(reader.result);
+      };
+      reader.readAsDataURL(file);
+    };
+
+    return <input type="file" onChange={processFile} />;
+  };
+
   const getSchema = (componentType) => {
     switch (componentType) {
       case "Space":
@@ -67,6 +81,9 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
       font: { "ui:widget": "FontPickerWidget" },
       color: { "ui:widget": "ColorPickerWidget" }
     },
+    src: {
+          "ui:widget": "file",
+        },
   };
 
   const getUiSchema = (componentType) => {
@@ -106,7 +123,8 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
           RadiusPickerWidget: RadiusPickerWidget,
           PaddingPickerWidget: PaddingPickerWidget,
           FramePickerWidget: FramePickerWidget,
-          FontPickerWidget: CustomFontPickerWidget 
+          FontPickerWidget: CustomFontPickerWidget,
+          file: FileWidget 
         }}
         SubmitButton={CustomSubmitButton}
       />

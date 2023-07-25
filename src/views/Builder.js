@@ -38,31 +38,74 @@ const Builder = () => {
   const [selectedComponent, setSelectedComponent] = useState({});
   const [droppedComponents, setDroppedComponents] = useState([])
 
-  const deleteNestedComponent = (components, targetId) => {
-  return components.reduce((updatedComponents, component) => {
-    // Si el componente actual es el que se va a eliminar, no lo agregue a la lista de componentes actualizados.
-    if (component.id === targetId) {
-      return updatedComponents;
+  const importComponentsFromJSON = async () => {
+  // Solicita al usuario que cargue el archivo JSON
+  const file = await new Promise((resolve) => {
+    let fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'application/json';
+
+    fileInput.onchange = (e) => {
+      let file = e.target.files[0];
+      resolve(file);
+    };
+
+    fileInput.click();
+  });
+
+  // Lee y analiza el archivo JSON
+  let fileReader = new FileReader();
+  fileReader.onload = async (e) => {
+    let components = JSON.parse(e.target.result);
+
+    // Abre la base de datos IndexedDB
+    const db = await openDB('builderDB', 1);
+    
+    // Limpia los componentes existentes
+    await db.clear('droppedComponentsStore');
+
+    // Agrega los nuevos componentes a la base de datos
+    for (let i = 0; i < components.length; i++) {
+      const component = SDComponent.fromJSON(components[i]);
+      await db.put('droppedComponentsStore', component, i);
     }
 
-    // Si el componente tiene hijos, revise cada uno de ellos también.
-    if (component.childrens) {
-      return [
-        ...updatedComponents,
-        {
-          ...component,
-          childrens: deleteNestedComponent(component.childrens, targetId),
-        },
-      ];
-    }
-
-    // Si no se cumple ninguna de las condiciones anteriores, simplemente agregue el componente a la lista de componentes actualizados.
-    return [...updatedComponents, component];
-  }, []);
+    // Actualiza el estado con los nuevos componentes
+    setDroppedComponents(components.map(component => SDComponent.fromJSON(component)));
+  };
+  
+  fileReader.readAsText(file);
 };
 
+  const deleteNestedComponent = (components, targetId) => {
+  return components.flatMap(component => {
+    if (component.id === targetId) {
+      // Si el componente actual es el que se va a eliminar, retorna un array vacío para que no se incluya en los resultados.
+      return [];
+    } else if (component.childrens) {
+      // Crear un nuevo componente con los childrens actualizados
+      const updatedComponent = new SDComponent(
+        component.id,
+        component.componentType,
+        component.properties,
+        deleteNestedComponent(component.childrens, targetId), // Elimina los hijos
+        component.states,
+        component.order
+      );
+
+      return [updatedComponent];
+    } else {
+      return [component];
+    }
+  });
+};
+
+
 const deleteComponent = (componentId) => {
-  setDroppedComponents(deleteNestedComponent(droppedComponents, componentId));
+  console.log("componentId", componentId)
+  const nestedComponentToDelete = deleteNestedComponent(droppedComponents, componentId)
+  console.log("nestedComponentToDelete", nestedComponentToDelete)
+  setDroppedComponents(nestedComponentToDelete);
 };
 
 
@@ -211,6 +254,7 @@ const exportComponentsToJSON = async () => {
           <div className="container-fluid" style={{ height: '100vh' }}>
            <button onClick={clearDroppedComponents}>Limpiar</button>
            <button onClick={exportComponentsToJSON}>Exportar como JSON</button>
+           <button onClick={importComponentsFromJSON}>Importar desde JSON</button>
             <Tabs
               activeKey={activeTab}
               onSelect={handleTabChange}

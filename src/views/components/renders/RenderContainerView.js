@@ -82,7 +82,7 @@ const RenderContainerView = ({ component, handleDrop, onClick, index, moveChildr
         onClick(e, component);
       }}>
      {component.childrens && component.childrens.map((childComponent, i) =>
-  renderBuilderComponentTree(childComponent, handleDrop, onClick, i, moveChildrens, selectedComponent)
+      renderBuilderComponentTree(childComponent, handleDrop, onClick, i, moveChildrens, selectedComponent)
 )}
  </div>
   );

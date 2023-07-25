@@ -13,7 +13,7 @@ const getDefaultObjectProperties = () => {
     { color: 'outline', width: 1 },
     null,
     true,
-    { top: 0, bottom: 0, left: 2, right: 2 },
+    { top: 0, bottom: 0, left: 0, right: 0 },
     null
   );
 }
