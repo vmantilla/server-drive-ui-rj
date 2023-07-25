@@ -29,7 +29,7 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
       Component = RenderSpaceView;
       break;
     default:
-      Component = 'div'; 
+      Component = RenderObjectView; 
   }
 
   return (

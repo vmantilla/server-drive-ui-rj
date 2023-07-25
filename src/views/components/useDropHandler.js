@@ -21,31 +21,3 @@ export const useDropHandler = (handleDrop, itemTypes, component) => {
   return { canDrop, isOver, drop };
 };
 
-
-export const useDragAndDrop = (component, index, moveChildrens) => {
-  const ref = useRef(null);
-
-  const [, drag] = useDrag({
-    type: tipoItem.COMPONENTE,
-    item: { id: component.id, index },
-  });
-
-  const [, dropHover] = useDrop({
-    accept: tipoItem.COMPONENTE,
-    hover(item, monitor) {
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      moveChildrens(component, dragIndex, hoverIndex);
-      item.index = hoverIndex;
-    },
-  });
-
-  drag(dropHover(ref));
-
-  return { ref };
-};

@@ -1,11 +1,8 @@
 import React from 'react';
 import useSDPropertiesModifier, { getAlignment }  from '../../../models/modifiers/useSDPropertiesModifier'; // Asegúrate de ajustar esta ruta a la ubicación correcta de tu hook
 
-import { useDragAndDrop } from '../useDropHandler';
-
 const RenderSpaceView = ({ component, children, onClick, index, moveChildrens, selectedComponent }) => {
 
-  const { ref } = useDragAndDrop(component, index, moveChildrens);
   const initialObjectStyle = {};
 
   const properties = component.properties;
@@ -19,7 +16,7 @@ const RenderSpaceView = ({ component, children, onClick, index, moveChildrens, s
   }
 
   return (
-  	<div ref={ref} className="spacer"></div>
+  	<div className="spacer"></div>
   );
 };
 

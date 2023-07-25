@@ -1,10 +1,8 @@
 import React, { useRef } from 'react';
 import useSDPropertiesModifier, { getAlignment } from '../../../models/modifiers/useSDPropertiesModifier'; 
-import { useDragAndDrop } from '../useDropHandler';
 
 const RenderObjectView = ({ component, children, onClick, index, moveChildrens, selectedComponent}) => {
   
-  const { ref } = useDragAndDrop(component, index, moveChildrens);
   const properties = component.properties;
   const alignmentStyle = getAlignment(properties?.frame?.alignment) ?? {};
   
@@ -24,7 +22,6 @@ const RenderObjectView = ({ component, children, onClick, index, moveChildrens, 
     const componentProps = {
       style: objectStyle,
       ...component.props,
-      ref: ref,
       onClick: (e) => {
         e.stopPropagation();
         onClick(e, component);
