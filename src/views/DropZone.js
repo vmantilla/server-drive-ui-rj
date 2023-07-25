@@ -10,7 +10,7 @@ import { renderBuilderComponentTree } from './components/renderBuilderComponentT
 
 import { v4 as uuidv4 } from 'uuid'; 
 
-const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedComponents }) => {
+const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedComponents, selectedComponent }) => {
     const [draggingItem, setDraggingItem] = useState(null);
     
     const findInTree = (tree, childId) => {
@@ -78,7 +78,7 @@ const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedCompo
     })
 
     const findParentAndReorder = (tree, childId, dragIndex, hoverIndex) => {
-    if (tree.childrens.some(c => c && c.id === childId)) {
+if (tree.childrens.some(c => c && c.id === childId)) {
         // We found the parent of the node being moved. Reorder its children.
         let childrenCopy = [...tree.childrens];
         let draggedChild = childrenCopy[dragIndex];
@@ -91,10 +91,12 @@ const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedCompo
 
         childrenCopy.splice(dragIndex, 1);
         childrenCopy.splice(hoverIndex, 0, draggedChild);
+            
         return { ...tree, childrens: childrenCopy };
     } else {
         // We didn't find the parent at the current node. Search in the children.
         let childrenCopy = tree.childrens.map(c => c ? findParentAndReorder(c, childId, dragIndex, hoverIndex) : c);
+        
         return { ...tree, childrens: childrenCopy };
     }
 };
@@ -122,7 +124,7 @@ const moveChildrens = (component, dragIndex, hoverIndex) => {
         droppedComponents 
         ? droppedComponents.map((component, i) => {
             if (component.properties) {
-                return renderBuilderComponentTree(component, handleDrop, onComponentClick, i, moveChildrens)
+                return renderBuilderComponentTree(component, handleDrop, onComponentClick, i, moveChildrens, selectedComponent)
             } else {
                 console.warn(`El componente principal en el índice ${i} no tiene propiedades y no se renderizará.`);
             }

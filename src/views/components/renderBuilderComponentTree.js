@@ -2,7 +2,7 @@ import RenderContainerView from './renders/RenderContainerView';
 import RenderObjectView from './renders/RenderObjectView';
 import RenderSpaceView from './renders/RenderSpaceView';
 
-export function renderBuilderComponentTree(component, handleDrop, onComponentClick, index, moveChildrens) {
+export function renderBuilderComponentTree(component, handleDrop, onComponentClick, index, moveChildrens, selectedComponent) {
 
   let Component;
 
@@ -40,11 +40,12 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
     onClick={onComponentClick}
     index={index}
     moveChildrens={moveChildrens}
+    selectedComponent={selectedComponent} 
   >
     {component.childrens && component.childrens.length > 0 && component.childrens.map((childComponent, i) => {
       // Verifica si el componente hijo tiene propiedades antes de intentar renderizarlo
       if (childComponent.properties) {
-        return renderBuilderComponentTree(childComponent, handleDrop, onComponentClick, i, moveChildrens)
+        return renderBuilderComponentTree(childComponent, handleDrop, onComponentClick, i, moveChildrens, selectedComponent)
       } else {
         console.warn(`El componente hijo en el índice ${i} no tiene propiedades y no se renderizará.`);
       }

@@ -82,7 +82,7 @@ const exportComponentsToJSON = async () => {
 
   
   useEffect(() => {
-//    console.log("droppedComponents", droppedComponents);
+    console.log("droppedComponents", droppedComponents);
   const updateDB = async () => {
     const db = await openDB('builderDB', 1);
     for (let i = 0; i < droppedComponents.length; i++) {
@@ -246,6 +246,7 @@ const exportComponentsToJSON = async () => {
                       droppedComponents={droppedComponents}
                       setDroppedComponents={setDroppedComponents}
                       onComponentClick={handleComponentClick}
+                      selectedComponent={selectedComponent} 
                     />
                   </div>
                 </div>

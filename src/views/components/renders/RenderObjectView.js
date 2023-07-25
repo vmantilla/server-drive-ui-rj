@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import useSDPropertiesModifier, { getAlignment } from '../../../models/modifiers/useSDPropertiesModifier'; 
 import { useDragAndDrop } from '../useDropHandler';
 
-const RenderObjectView = ({ component, children, onClick, index, moveChildrens }) => {
+const RenderObjectView = ({ component, children, onClick, index, moveChildrens, selectedComponent}) => {
   
   const { ref } = useDragAndDrop(component, index, moveChildrens);
   const properties = component.properties;
@@ -11,6 +11,13 @@ const RenderObjectView = ({ component, children, onClick, index, moveChildrens }
   const initialObjectStyle = {};
 
   const objectStyle = useSDPropertiesModifier(properties, initialObjectStyle);
+  
+  // Si el componente es el seleccionado, le añadimos un borde azul
+  if (component.id === selectedComponent.id) {
+      objectStyle.borderWidth = '2px';
+      objectStyle.borderStyle = 'solid';
+      objectStyle.borderColor = 'blue';
+  }
 
   // Según el tipo de componente, renderizamos diferentes cosas
   const renderComponent = () => {

@@ -3,7 +3,7 @@ import useSDPropertiesModifier, { getAlignment }  from '../../../models/modifier
 
 import { useDragAndDrop } from '../useDropHandler';
 
-const RenderSpaceView = ({ component, children, onClick, index, moveChildrens }) => {
+const RenderSpaceView = ({ component, children, onClick, index, moveChildrens, selectedComponent }) => {
 
   const { ref } = useDragAndDrop(component, index, moveChildrens);
   

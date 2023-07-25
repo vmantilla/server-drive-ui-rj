@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import update from 'immutability-helper';
 import useSDPropertiesModifier from '../../../models/modifiers/useSDPropertiesModifier';
 import { tipoItem } from '../Componentes';
@@ -6,15 +6,50 @@ import { renderBuilderComponentTree } from '../renderBuilderComponentTree';
 
 import { useDropHandler, useDragAndDrop } from '../useDropHandler';
 
-const RenderContainerView = ({ component, handleDrop, onClick, index, moveChildrens }) => {
+const RenderContainerView = ({ component, handleDrop, onClick, index, moveChildrens, selectedComponent }) => {
   
+  const handleKeyDown = (e) => {
+
+    if (!selectedComponent) return;
+
+    // Verifica si el componente seleccionado está en este contenedor
+    const childIndex = component.childrens.findIndex(child => child.id === selectedComponent.id);
+    if (childIndex < 0) return;
+      
+    if ((properties.componentType === 'Row' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) ||
+        (properties.componentType === 'Column' && (e.key === 'ArrowUp' || e.key === 'ArrowDown'))) {
+      const newIndex = e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? childIndex - 1 : childIndex + 1;
+      
+      // Asegura que el nuevo índice esté dentro del rango válido
+      if (newIndex < 0 || newIndex >= component.childrens.length) return;
+
+      // Mueve el componente seleccionado
+      moveChildrens(selectedComponent, childIndex, newIndex);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Limpiamos el evento al desmontar el componente
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedComponent, moveChildrens]); // Dependencias del useEffect
+
+
   const properties = component.properties;
   const initialDivStyle = { };
 
   const style = useSDPropertiesModifier(properties, initialDivStyle);
+  // Si el componente es el seleccionado, le añadimos un borde azul
+  if (component.id === selectedComponent.id) {
+      style.borderWidth = '2px';
+      style.borderStyle = 'solid';
+      style.borderColor = 'blue';
+  }
 
   const { canDrop, isOver, drop } = useDropHandler(handleDrop, tipoItem.COMPONENTE, component);
-  const { ref } = useDragAndDrop(component, index, moveChildrens);
   
 
   const isActive = canDrop && isOver;
@@ -47,7 +82,7 @@ const RenderContainerView = ({ component, handleDrop, onClick, index, moveChildr
         onClick(e, component);
       }}>
      {component.childrens && component.childrens.map((childComponent, i) =>
-  renderBuilderComponentTree(childComponent, handleDrop, onClick, i, moveChildrens)
+  renderBuilderComponentTree(childComponent, handleDrop, onClick, i, moveChildrens, selectedComponent)
 )}
  </div>
   );

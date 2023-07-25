@@ -14,10 +14,10 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
   let font = null;
   let color = null;
 
-  if (properties.componentType === 'Text' || properties.componentType === 'TextField') {
+  if ((properties.componentType === 'Text' || properties.componentType === 'TextField') && properties.font) {
     font = fontValue(properties.font);
-    color = colorValue(properties.font?.color, 1.0);
-  }
+    color = colorValue(properties.font?.color, 1.0);  
+}
 
 
   // Calculamos el valor total del margen
