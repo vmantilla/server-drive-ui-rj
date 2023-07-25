@@ -55,6 +55,7 @@ export const genericSchema = {
     },
     cornerRadius: { type: "string" },
     padding: { type: "string" },
+    margin: { type: "string" },
   },
   required: [], // puedes definir las propiedades requeridas aquí.
 };

@@ -9,6 +9,9 @@ import RadiusPickerWidget from "./RadiusPickerWidget";
 import PaddingPickerWidget from "./PaddingPickerWidget";
 import FramePickerWidget from "./FramePickerWidget";
 import FontPickerWidget from "./FontPickerWidget";
+import MarginPickerWidget from "./MarginPickerWidget"
+
+
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
 addFormats(ajv);
@@ -77,6 +80,7 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
     },
     cornerRadius: { "ui:widget": "RadiusPickerWidget" },
     padding: { "ui:widget": "PaddingPickerWidget" },
+    margin: { "ui:widget": "MarginPickerWidget" },
     font: {
       font: { "ui:widget": "FontPickerWidget" },
       color: { "ui:widget": "ColorPickerWidget" }
@@ -122,6 +126,7 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
           ColorPickerWidget: CustomColorPickerWidget,
           RadiusPickerWidget: RadiusPickerWidget,
           PaddingPickerWidget: PaddingPickerWidget,
+          MarginPickerWidget: MarginPickerWidget,
           FramePickerWidget: FramePickerWidget,
           FontPickerWidget: CustomFontPickerWidget,
           file: FileWidget 
