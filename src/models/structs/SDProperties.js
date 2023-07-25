@@ -1,5 +1,5 @@
 class SDProperties {
-    constructor(componentType, frame, backgroundColor, cornerRadius, border, margin, isEnabled, padding, text, font, textAlignment, action, source, contentMode, resizable, aspectRatio, spacing, verticalAlignment, horizontalAlignment, overlayAlignment, axis, showsIndicators, placeholder, secure, keyboardType, autocapitalization, autocorrection, returnKeyType, enablesReturnKeyAutomatically, onEditingChanged, onCommit) {
+    constructor(componentType, frame, backgroundColor, cornerRadius, border, margin, isEnabled, padding, text, font, textAlignment, action, source, contentMode, resizable, aspectRatio, spacing, verticalAlignment, horizontalAlignment, overlayAlignment, axis, showsIndicators, placeholder, secure, keyboardType, autocapitalization, autocorrection, returnKeyType, enablesReturnKeyAutomatically, onEditingChanged, onCommit, src, origin) {
         this.componentType = componentType;
         this.frame = frame;
         this.backgroundColor = backgroundColor;
@@ -31,6 +31,8 @@ class SDProperties {
         this.enablesReturnKeyAutomatically = enablesReturnKeyAutomatically;
         this.onEditingChanged = onEditingChanged;
         this.onCommit = onCommit;
+        this.src = src;
+        this.origin = origin;
     }
 
     toJSON() {
@@ -65,7 +67,9 @@ class SDProperties {
             returnKeyType: this.returnKeyType,
             enablesReturnKeyAutomatically: this.enablesReturnKeyAutomatically,
             onEditingChanged: this.onEditingChanged,
-            onCommit: this.onCommit
+            onCommit: this.onCommit,
+            src: this.src,
+            origin: this.origin
         };
     }
 
