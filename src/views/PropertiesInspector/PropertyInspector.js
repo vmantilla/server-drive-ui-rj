@@ -6,11 +6,9 @@ import { spaceSchema, objectSchema, containerViewSchema, EmptyViewSchema, Button
 import '../../css/PropertyInspectorStyles.css'; 
 import ColorPickerWidget from "./ColorPickerWidget";
 import RadiusPickerWidget from "./RadiusPickerWidget";
-import PaddingPickerWidget from "./PaddingPickerWidget";
+import MarginPickerWidget from "./MarginPickerWidget";
 import FramePickerWidget from "./FramePickerWidget";
 import FontPickerWidget from "./FontPickerWidget";
-import MarginPickerWidget from "./MarginPickerWidget"
-
 
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
@@ -79,16 +77,21 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
       width: { "ui:widget": "updown" } 
     },
     cornerRadius: { "ui:widget": "RadiusPickerWidget" },
-    padding: { "ui:widget": "PaddingPickerWidget" },
     margin: { "ui:widget": "MarginPickerWidget" },
     font: {
       font: { "ui:widget": "FontPickerWidget" },
       color: { "ui:widget": "ColorPickerWidget" }
     },
-    src: {
+    source: {
+      src: {
           "ui:widget": "file",
-        },
-  };
+      },
+      origin: {
+          "ui:widget": "select",
+      }
+    },
+};
+
 
   const getUiSchema = (componentType) => {
     return genericUiSchema;
@@ -113,27 +116,8 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
   };
 
   return (
-    <div>
-      <Form
-        schema={getSchema(component?.properties?.componentType || {})}
-        uiSchema={getUiSchema(component?.properties?.componentType || {})}
-        formData={component.properties}
-        onChange={handleOnChange}
-        validator={validate}
-        showErrorList={false}
-        noHtml5Validate={true}
-        widgets={{ 
-          ColorPickerWidget: CustomColorPickerWidget,
-          RadiusPickerWidget: RadiusPickerWidget,
-          PaddingPickerWidget: PaddingPickerWidget,
-          MarginPickerWidget: MarginPickerWidget,
-          FramePickerWidget: FramePickerWidget,
-          FontPickerWidget: CustomFontPickerWidget,
-          file: FileWidget 
-        }}
-        SubmitButton={CustomSubmitButton}
-      />
-      <button 
+    <div style={{ maxHeight: '100vh', overflowY: 'auto' }}>
+    <button 
         onClick={handleDelete}
         style={{
           height: "40px", 
@@ -148,6 +132,25 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
       >
         Eliminar componente
       </button>
+      <Form
+        schema={getSchema(component?.properties?.componentType || {})}
+        uiSchema={getUiSchema(component?.properties?.componentType || {})}
+        formData={component.properties}
+        onChange={handleOnChange}
+        validator={validate}
+        showErrorList={false}
+        noHtml5Validate={true}
+        widgets={{ 
+          ColorPickerWidget: CustomColorPickerWidget,
+          RadiusPickerWidget: RadiusPickerWidget,
+          MarginPickerWidget: MarginPickerWidget,
+          FramePickerWidget: FramePickerWidget,
+          FontPickerWidget: CustomFontPickerWidget,
+          file: FileWidget 
+        }}
+        SubmitButton={CustomSubmitButton}
+      />
+      
     </div>
   );
 };

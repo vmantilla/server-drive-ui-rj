@@ -5,9 +5,8 @@ class SDProperties {
     backgroundColor = '',
     cornerRadius = {},
     border = {},
-    margin = {},
     isEnabled = true,
-    padding = {},
+    margin = {},
     text = '',
     font = {},
     textAlignment = '',
@@ -31,17 +30,15 @@ class SDProperties {
     enablesReturnKeyAutomatically = '',
     onEditingChanged = '',
     onCommit = '',
-    src = '',
-    origin = ''
+    lineLimit = ''
   } = {}) {
     this.componentType = componentType;
     this.frame = frame;
     this.backgroundColor = backgroundColor;
     this.cornerRadius = cornerRadius;
     this.border = border;
-    this.margin = margin;
     this.isEnabled = isEnabled;
-    this.padding = padding;
+    this.margin = margin;
     this.text = text;
     this.font = font;
     this.textAlignment = textAlignment;
@@ -65,8 +62,7 @@ class SDProperties {
     this.enablesReturnKeyAutomatically = enablesReturnKeyAutomatically;
     this.onEditingChanged = onEditingChanged;
     this.onCommit = onCommit;
-    this.src = src;
-    this.origin = origin;
+    this.lineLimit = lineLimit;
   }
 
     toJSON() {

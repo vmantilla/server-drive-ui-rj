@@ -26,6 +26,9 @@ import DropZone from './DropZone';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/Builder.css';
 
+import { firebase } from '../firebase';
+import { doc, setDoc } from "firebase/firestore";
+
 
 const Builder = () => {
   const [activeTab, setActiveTab] = useState('components');
@@ -76,6 +79,23 @@ const Builder = () => {
   
   fileReader.readAsText(file);
 };
+
+
+const deploy = async () => {
+  try {
+    const db = await openDB('builderDB', 1);
+    const components = await db.getAll('droppedComponentsStore');
+    const dataStr = JSON.stringify(components);
+
+    const docRef = doc(firebase, "users", "ravit-21");
+
+    await setDoc(docRef, { dataStr }, { merge: true });
+    console.log("Document updated with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error updating document: ", e);
+  }
+};
+
 
   const deleteNestedComponent = (components, targetId) => {
   return components.flatMap(component => {
@@ -255,6 +275,7 @@ const exportComponentsToJSON = async () => {
            <button onClick={clearDroppedComponents}>Limpiar</button>
            <button onClick={exportComponentsToJSON}>Exportar como JSON</button>
            <button onClick={importComponentsFromJSON}>Importar desde JSON</button>
+           <button onClick={deploy}>Deploy</button>
             <Tabs
               activeKey={activeTab}
               onSelect={handleTabChange}
@@ -275,8 +296,8 @@ const exportComponentsToJSON = async () => {
                     <span className="panel-title">Área de construcción de la interfaz de usuario</span>
                     <DropZone 
                       style={{
-                        width: '375px', 
-                        height: '812px', 
+                        width: '440px', 
+                        height: '844px', 
                         borderRadius: '40px',
                         backgroundColor: '#F0F0F0',
                         boxShadow: '0 0 10px rgba(0,0,0,0.15)',

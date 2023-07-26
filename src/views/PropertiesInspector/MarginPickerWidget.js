@@ -1,28 +1,28 @@
 import React, { useState } from "react";
 import { Modal, Button, FormControl } from "react-bootstrap";
 
+const shapes = {
+  none: 0,
+  extraSmall: 8,
+  small: 12,
+  medium: 16,
+  large: 24,
+  extraLarge: 32,
+  full: 48,
+};
+
 const MarginPickerWidget = (props) => {
-  const { onChange } = props;
+  const { onChange, themesData } = props;
   const value = props.value || { shape: 'none' }; 
 
-  const shapes = {
-    none: 0,
-    extraSmall: 8,
-    small: 12,
-    medium: 16,
-    large: 24,
-    extraLarge: 32,
-    full: 48,
-  };
-
-  const initialMargin = {
+  const initialPadding = {
     top: shapes[value.shape],
     right: shapes[value.shape],
     bottom: shapes[value.shape],
     left: shapes[value.shape],
   };
 
-  const [marginValues, setMarginValues] = useState(initialMargin);
+  const [paddingValues, setPaddingValues] = useState(initialPadding);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -30,24 +30,26 @@ const MarginPickerWidget = (props) => {
 
   const handleShapeClick = (shapeKey) => {
     const shapeValue = shapes[shapeKey];
-    const newMarginValues = {
+    const newPaddingValues = {
       top: shapeValue,
       right: shapeValue,
       bottom: shapeValue,
       left: shapeValue,
     };
-    setMarginValues(newMarginValues);
-    onChange(newMarginValues);
+    setPaddingValues(newPaddingValues);
+    onChange(newPaddingValues);
   };
 
-  const handleMarginChange = (marginKey, event) => {
-    const newMarginValues = {
-      ...marginValues,
-      [marginKey]: isNaN(event.target.value) ? "" : parseInt(event.target.value),
+  const handlePaddingChange = (paddingKey, event) => {
+    const newPaddingValues = {
+      ...paddingValues,
+      [paddingKey]: isNaN(event.target.value) ? "" : parseInt(event.target.value),
     };
-    setMarginValues(newMarginValues);
-    onChange(newMarginValues);
+    setPaddingValues(newPaddingValues);
+    onChange(newPaddingValues);
   };
+
+//  console.log(themesData);
 
   return (
     <>
@@ -55,7 +57,7 @@ const MarginPickerWidget = (props) => {
         variant="primary" 
         onClick={handleShow}
         style={{ 
-          margin: `${shapes[value.shape] || 0}px`,
+          padding: `${shapes[value.shape] || 0}px`,
           width: '100%', 
           height: '50px',
           border: 'none',
@@ -64,8 +66,8 @@ const MarginPickerWidget = (props) => {
       >
         <div style={{ marginTop: '5px' }}>
           <div>
-            <div>Top: {marginValues.top} Right: {marginValues.right}</div>
-            <div>Bottom: {marginValues.bottom} Left: {marginValues.left}</div>
+            <div>Top: {paddingValues.top} Right: {paddingValues.right}</div>
+            <div>Bottom: {paddingValues.bottom} Left: {paddingValues.left}</div>
           </div>
         </div>
       </Button>
@@ -87,7 +89,7 @@ const MarginPickerWidget = (props) => {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    margin: `${shapeValue}px`,
+                    padding: `${shapeValue}px`,
                     border: shapeKey === value.shape ? '2px solid blue' : '1px solid lightgray',
                   }}
                   onClick={() => handleShapeClick(shapeKey)}
@@ -98,13 +100,13 @@ const MarginPickerWidget = (props) => {
             ))}
           </div>
           <div>
-            {Object.entries(marginValues).map(([marginKey, marginValue], index) => (
+            {Object.entries(paddingValues).map(([paddingKey, paddingValue], index) => (
               <div key={index}>
-                <label>{marginKey}</label>
+                <label>{paddingKey}</label>
                 <FormControl
                   type="number"
-                  value={isNaN(marginValue) ? "" : marginValue}
-                  onChange={(event) => handleMarginChange(marginKey, event)}
+                  value={isNaN(paddingValue) ? "" : paddingValue}
+                  onChange={(event) => handlePaddingChange(paddingKey, event)}
                 />
               </div>
             ))}

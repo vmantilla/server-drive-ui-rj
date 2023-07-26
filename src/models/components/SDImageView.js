@@ -24,6 +24,9 @@ const SDImageView = ({ component, children }) => {
       case 'Assets':
       	setImgSrc(`${process.env.PUBLIC_URL}/assets/images/${src}.png`);
         break;
+      case 'Base64':
+        setImgSrc(`${process.env.PUBLIC_URL}/assets/images/${src}.png`);
+        break;
       case 'System':
         setImgSrc(`${process.env.PUBLIC_URL}/assets/images/${src}.png`);
         break;

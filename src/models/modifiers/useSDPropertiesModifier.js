@@ -13,11 +13,18 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
 
   let font = null;
   let color = null;
+  let textAlignment = null;
+  let lineLimit = null;
 
   if ((properties.componentType === 'Text' || properties.componentType === 'TextField') && properties.font) {
     font = fontValue(properties.font);
     color = colorValue(properties.font?.color, 1.0);  
-}
+  }
+
+  if (properties.componentType === 'Text') {
+    textAlignment = getTextAlignment(properties.textAlignment);
+    lineLimit = properties.lineLimit;
+  }
 
 
   // Calculamos el valor total del margen
@@ -53,6 +60,7 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
     paddingBottom: properties.padding?.bottom ?? 0,
     paddingRight: properties.padding?.right ?? 0,
     gap: `${spacing}px`,
+    textAlign: textAlignment,
     ...font,
     color: color
   };
@@ -215,5 +223,20 @@ export const getAlignment = (alignment) => {
       return { justifySelf: 'center', alignSelf: 'center' };
   }
 };
+
+// Esta función recibe el valor de textAlignment y devuelve el correspondiente valor de CSS
+export const getTextAlignment = (textAlignment) => {
+  switch(textAlignment) {
+    case 'Start':
+      return 'left';
+    case 'Center':
+      return 'center';
+    case 'End':
+      return 'right';
+    default:
+      return 'left';
+  }
+};
+
 
 export default useSDPropertiesModifier;

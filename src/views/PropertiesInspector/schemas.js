@@ -54,8 +54,7 @@ export const genericSchema = {
       }
     },
     cornerRadius: { type: "string" },
-    padding: { type: "string" },
-    margin: { type: "string" },
+    margin: { type: "string" }
   },
   required: [], // puedes definir las propiedades requeridas aquí.
 };
@@ -120,6 +119,12 @@ export const TextViewSchema = {
       default: "Button"
     },
     text: { type: "string" },
+    textAlignment: { 
+      type: "string", 
+      enum: ["Start", "Center", "End"],
+      default: "Center"
+    },
+    lineLimit: { type: "number", default: 0 },
     font: { 
       type: "object",
       properties: {
@@ -140,12 +145,18 @@ export const ImageViewSchema = {
       enum: ["EmptyView", "Button", "Image", "Text", "TextField", "Space"],
       default: "Button"
     },
-    src: { type: "string", default: "default.png" },
-    origin: { type: "string", enum: ["Url", "Assets", "System"], default: "Assets" },
+    source: {
+      type: "object",
+      properties: {
+        src: { type: "string", default: "default.png" },
+        origin: { type: "string", enum: ["Url", "Assets", "System", "Base64"], default: "Assets" }
+      }
+    },
     ...genericSchema.properties,
   },
   required: [], // puedes definir las propiedades requeridas aquí.
 };
+
 
 
 
