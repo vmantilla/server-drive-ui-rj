@@ -10,14 +10,26 @@ const RenderSpaceView = ({ component, children, onClick, index, moveChildrens, s
   
   // Si el componente es el seleccionado, le añadimos un borde azul
   if (component.id === selectedComponent.id) {
-      objectStyle.borderWidth = '2px';
-      objectStyle.borderStyle = 'solid';
-      objectStyle.borderColor = 'blue';
+      initialObjectStyle.borderWidth = '2px';
+      initialObjectStyle.borderStyle = 'solid';
+      initialObjectStyle.borderColor = 'blue';
   }
 
-  return (
-  	<div className="spacer"></div>
-  );
+  // Según el tipo de componente, renderizamos diferentes cosas
+  const renderComponent = () => {
+    const componentProps = {
+      style: initialObjectStyle,
+      ...component.props,
+      onClick: (e) => {
+        e.stopPropagation();
+        onClick(e, component);
+      }
+    };
+  
+    return <div className="spacer" {...componentProps}>{children}</div>;
+  };
+
+  return renderComponent();
 };
 
 export default RenderSpaceView;

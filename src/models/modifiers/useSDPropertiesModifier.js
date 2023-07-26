@@ -101,13 +101,19 @@ const frameToStyle = (frame, marginHorizontal, marginVertical) => {
   let style = {};
 
   const processValue = (value, dimension) => {
-    if (typeof value === 'number' || (typeof value === 'string' && !isNaN(value))) {
+    if (value === null) {
+      return value;
+    } else if (typeof value === 'number' || (typeof value === 'string' && !isNaN(value))) {
       return `${Number(value)}px`;
-    } else if (typeof value === 'string' && value.includes('%')) {
-      if (dimension === 'width') {
-        return `calc(${value} - ${marginHorizontal}px)`;
-      } else if (dimension === 'height') {
-        return `calc(${value} - ${marginVertical}px)`;
+    } else if (typeof value === 'string') {
+      if (value === 'auto') {
+        return value;
+      } else if (value.includes('%')) {
+        if (dimension === 'width') {
+          return `calc(${value} - ${marginHorizontal}px)`;
+        } else if (dimension === 'height') {
+          return `calc(${value} - ${marginVertical}px)`;
+        }
       }
     } else {
       return value;
@@ -127,6 +133,8 @@ const frameToStyle = (frame, marginHorizontal, marginVertical) => {
 
   return style;
 };
+
+
 
 
 const cornerRadiusValue = (frame, cornerRadiusObject) => {

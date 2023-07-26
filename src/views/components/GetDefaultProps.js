@@ -5,44 +5,37 @@ import SDCornerRadius from '../../models/structs/properties/SDCornerRadius';
 import { v4 as uuidv4 } from 'uuid'; 
 
 const getDefaultObjectProperties = () => {
-  return new SDProperties(
-    "EmptyView",
-    { width: 100, height: 100 },
-    null,
-    new SDCornerRadius({ shape: 'none'}),
-    { color: 'outline', width: 1 },
-    null,
-    true,
-    { top: 0, bottom: 0, left: 0, right: 0 },
-    null
-  );
+  return new SDProperties({
+    componentType: "EmptyView",
+    frame: { width: 100, height: 100 },
+    cornerRadius: new SDCornerRadius({ shape: 'none'}),
+    border: { color: 'outline', width: 1 },
+    isEnabled: true,
+    padding: { top: 0, bottom: 0, left: 0, right: 0 },
+  });
 }
 
 const getDefaultContainerViewProperties = () => {
-  return new SDProperties(
-    "Row",
-    { width: "100%", height: "100" },
-    null,
-    new SDCornerRadius({ shape: 'none'}),
-    { color: 'outline', width: 1 },
-    null,
-    true,
-    { top: 2, bottom: 2, left: 2, right: 2 },
-    null
-  );
+  return new SDProperties({
+    componentType: "Row",
+    frame: { width: "100%", height: "100" },
+    cornerRadius: new SDCornerRadius({ shape: 'none'}),
+    border: { color: 'outline', width: 1 },
+    isEnabled: true,
+    padding: { top: 2, bottom: 2, left: 2, right: 2 },
+  });
 }
 
 
 const getDefaultSpaceViewProperties = () => {
-  return new SDProperties(
-    "Space",
-    { height: "100%", width: "100%" },
-    'primaryContainer',
-    new SDCornerRadius({ shape: 'none'}),
-    {},
-    { top: 0, bottom: 0, left: 0, right: 0 },
-    true
-  );
+  return new SDProperties({
+    componentType: "Space",
+    frame: { height: "100%", width: "100%" },
+    backgroundColor: 'primaryContainer',
+    cornerRadius: new SDCornerRadius({ shape: 'none'}),
+    margin: { top: 0, bottom: 0, left: 0, right: 0 },
+    isEnabled: true,
+  });
 }
 
 const getDefaultProps = (componentType) => {
