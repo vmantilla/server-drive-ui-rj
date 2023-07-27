@@ -1,84 +1,90 @@
-// Archivo: PreviewGrid.js
 import React, { useState, useEffect, useCallback } from 'react';
-import { openDB, deleteDB } from 'idb';
 import PreviewWithScreenshot from './PreviewWithScreenshot';
+import axios from 'axios';
 import '../../css/thumbnailsViews.css';
 
-const addPreviewToDB = async (previewData) => {
-  const db = await openDB('builderDBPreview', 1, {
-    upgrade(db) {
-      db.createObjectStore('previews', { keyPath: 'id', autoIncrement: true });
-    },
-  });
+// Configura axios para usar "http://localhost:3000" como URL base
+axios.defaults.baseURL = "http://localhost:3000";
 
-  const tx = db.transaction('previews', 'readwrite');
-  const previewsStore = tx.objectStore('previews');
-  await previewsStore.add(previewData);
+axios.interceptors.request.use(function (config) {
+  const token = localStorage.getItem('token');
+  config.headers.Authorization = token ? `Bearer ${token}` : '';
+  return config;
+});
 
-  await tx.done;
-  await db.close();
+const addPreviewToAPI = async (previewData) => {
+  const response = await axios.post('/previews', previewData);
+  return response.data;
 };
 
-const deletePreviewFromDB = async (id) => {
-  const db = await openDB('builderDBPreview', 1);
-  const tx = db.transaction('previews', 'readwrite');
-  const previewsStore = tx.objectStore('previews');
-  await previewsStore.delete(id);
-
-  await tx.done;
-  await db.close();
+const deletePreviewFromAPI = async (id) => {
+  await axios.delete(`/previews/${id}`);
 };
 
-const getAllPreviewsFromDB = async () => {
-  const db = await openDB('builderDBPreview', 1);
-  const tx = db.transaction('previews', 'readonly');
-  const previewsStore = tx.objectStore('previews');
-  const allPreviews = await previewsStore.getAll();
-
-  await tx.done;
-  await db.close();
-
-  return allPreviews;
+const getAllPreviewsFromAPI = async () => {
+  const response = await axios.get('/previews');
+  console.log(response.data);
+  return response.data;
 };
 
 const PreviewGrid = () => {
   const [gridViewsData, setGridViewsData] = useState([]);
   const [selectedPreviewId, setSelectedPreviewId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);  // Nuevo estado para manejar mensajes de error
 
   useEffect(() => {
-    getAllPreviewsFromDB()
+    getAllPreviewsFromAPI()
       .then(allPreviews => {
         setGridViewsData(allPreviews);
         if (allPreviews.length > 0 && selectedPreviewId === null) {
           setSelectedPreviewId(allPreviews[0].id);
         }
       })
-      .catch(err => console.error(err));
-  }, [selectedPreviewId]);
+      .catch(err => {
+      console.error(err);
+      setErrorMessage("No se pudieron cargar las vistas previas");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+});
+  }, []);
 
   const handleAddNewPreview = useCallback(() => {
-    const newPreview = { id: Date.now() };  // Aquí generamos un nuevo id único para cada preview
-    addPreviewToDB(newPreview)
-      .then(() => {
-        setGridViewsData(prevViewsData => [...prevViewsData, newPreview]);
-        setSelectedPreviewId(newPreview.id);
+    const newPreview = { title: "Nueva vista", base64_image: "" }; 
+    addPreviewToAPI(newPreview)
+      .then((createdPreview) => {
+        setGridViewsData(prevViewsData => [...prevViewsData, createdPreview]);
+        setSelectedPreviewId(createdPreview.id);
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        console.error(err);
+        setErrorMessage("No se pudo agregar la nueva vista previa"); 
+        setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+      });
   }, []);
 
   const handleDeletePreview = useCallback((id) => {
     if (window.confirm("¿Estás seguro de que quieres eliminar esta vista previa?")) {
-      deletePreviewFromDB(id)
+      deletePreviewFromAPI(id)
         .then(() => {
           setGridViewsData(prevViewsData => prevViewsData.filter(preview => preview.id !== id));
           if (selectedPreviewId === id) setSelectedPreviewId(null);
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+          console.error(err);
+          setErrorMessage("No se pudo eliminar la vista previa");
+          setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+        });
     }
   }, [selectedPreviewId]);
 
   return (
     <div className="thumbnails-grid">
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
       {gridViewsData.map((viewData, index) => (
         <div 
           key={index} 
@@ -103,7 +109,7 @@ const PreviewGrid = () => {
           >
             {viewData.title || "Nueva vista"}
           </span>
-          <PreviewWithScreenshot base64Image={viewData.base64Image} />
+          <PreviewWithScreenshot base64Image={viewData.base64_image} />
           {selectedPreviewId === viewData.id && (
             <button 
               style={{
@@ -121,7 +127,7 @@ const PreviewGrid = () => {
                 justifyContent: 'center',
                 cursor: 'pointer',
                 margin: '4px',
-                fontSize: '14px'  // Este es el tamaño del ícono de la basura, ajusta según sea necesario
+                fontSize: '14px'
               }}
               onClick={(e) => {
                 e.stopPropagation();

@@ -15,8 +15,8 @@ const PreviewWithScreenshot = ({ base64Image }) => {
       alignItems: 'center',
       border: '5px solid black',
       borderRadius: '10px',
-      width: '100px',  // Cambie esto al tamaño que desee
-      height: '200px'  // Cambie esto al tamaño que desee
+      width: '100px', 
+      height: '200px'
     }}>
       {image && <img src={image} alt="Simulator Preview" />}
     </div>
