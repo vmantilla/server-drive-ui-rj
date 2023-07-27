@@ -284,7 +284,7 @@ const exportComponentsToJSON = async () => {
             >
               <Tab eventKey="components" title="Components">
                 {/* Panel de componentes */}
-                <div className="row" style={{ height: 'calc(100vh - 60px)' }}>
+                <div className="row" style={{ height: '100%' }}>
                 <div className="col-3 resizable-panel">
                   <div className="panel-container">
                     <span className="panel-title">Listado de componentes</span>

@@ -71,3 +71,16 @@
   margin-bottom: 10px;
 }
 
+.add-preview-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px; 
+  height: 100px; 
+  background-color: #eee;
+  color: #333; 
+  font-size: 24px; 
+  cursor: pointer;
+}
+
+
