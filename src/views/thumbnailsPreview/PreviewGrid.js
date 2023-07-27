@@ -1,5 +1,5 @@
 // Archivo: PreviewGrid.js
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { openDB, deleteDB } from 'idb';
 import PreviewWithScreenshot from './PreviewWithScreenshot';
 import '../../css/thumbnailsViews.css';
@@ -29,14 +29,40 @@ const deletePreviewFromDB = async (id) => {
   await db.close();
 };
 
+const getAllPreviewsFromDB = async () => {
+  const db = await openDB('builderDBPreview', 1);
+  const tx = db.transaction('previews', 'readonly');
+  const previewsStore = tx.objectStore('previews');
+  const allPreviews = await previewsStore.getAll();
+
+  await tx.done;
+  await db.close();
+
+  return allPreviews;
+};
+
 const PreviewGrid = () => {
   const [gridViewsData, setGridViewsData] = useState([]);
   const [selectedPreviewId, setSelectedPreviewId] = useState(null);
 
+  useEffect(() => {
+    getAllPreviewsFromDB()
+      .then(allPreviews => {
+        setGridViewsData(allPreviews);
+        if (allPreviews.length > 0 && selectedPreviewId === null) {
+          setSelectedPreviewId(allPreviews[0].id);
+        }
+      })
+      .catch(err => console.error(err));
+  }, [selectedPreviewId]);
+
   const handleAddNewPreview = useCallback(() => {
     const newPreview = { id: Date.now() };  // Aquí generamos un nuevo id único para cada preview
     addPreviewToDB(newPreview)
-      .then(() => setGridViewsData(prevViewsData => [...prevViewsData, newPreview]))
+      .then(() => {
+        setGridViewsData(prevViewsData => [...prevViewsData, newPreview]);
+        setSelectedPreviewId(newPreview.id);
+      })
       .catch(err => console.error(err));
   }, []);
 
