@@ -13,15 +13,15 @@ const RenderContainerView = ({ component, handleDrop, onClick, index, moveChildr
     if (!selectedComponent) return;
 
     // Verifica si el componente seleccionado está en este contenedor
-    const childIndex = component.childrens.findIndex(child => child.id === selectedComponent.id);
+    const childIndex = component.children.findIndex(child => child.id === selectedComponent.id);
     if (childIndex < 0) return;
       
-    if ((properties.componentType === 'Row' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) ||
-        (properties.componentType === 'Column' && (e.key === 'ArrowUp' || e.key === 'ArrowDown'))) {
+    if ((properties.component_type === 'Row' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) ||
+        (properties.component_type === 'Column' && (e.key === 'ArrowUp' || e.key === 'ArrowDown'))) {
       const newIndex = e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? childIndex - 1 : childIndex + 1;
       
       // Asegura que el nuevo índice esté dentro del rango válido
-      if (newIndex < 0 || newIndex >= component.childrens.length) return;
+      if (newIndex < 0 || newIndex >= component.children.length) return;
 
       // Mueve el componente seleccionado
       moveChildrens(selectedComponent, childIndex, newIndex);
@@ -61,7 +61,7 @@ const RenderContainerView = ({ component, handleDrop, onClick, index, moveChildr
 
 
     let className;
-  switch (properties.componentType) {
+  switch (properties.component_type) {
     case "Row":
       className = "container-row";
       break;
@@ -81,7 +81,7 @@ const RenderContainerView = ({ component, handleDrop, onClick, index, moveChildr
         e.stopPropagation(); 
         onClick(e, component);
       }}>
-     {component.childrens && component.childrens.map((childComponent, i) =>
+     {component.children && component.children.map((childComponent, i) =>
       renderBuilderComponentTree(childComponent, handleDrop, onClick, i, moveChildrens, selectedComponent)
 )}
  </div>

@@ -16,12 +16,12 @@ function useSDPropertiesModifier(properties = {}, divStyle = {}) {
   let textAlignment = null;
   let lineLimit = null;
 
-  if ((properties.componentType === 'Text' || properties.componentType === 'TextField') && properties.font) {
+  if ((properties.component_type === 'Text' || properties.component_type === 'TextField') && properties.font) {
     font = fontValue(properties.font);
     color = colorValue(properties.font?.color, 1.0);  
   }
 
-  if (properties.componentType === 'Text') {
+  if (properties.component_type === 'Text') {
     textAlignment = getTextAlignment(properties.textAlignment);
     lineLimit = properties.lineLimit;
   }

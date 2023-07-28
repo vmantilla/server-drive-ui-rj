@@ -32,7 +32,7 @@ enablesReturnKeyAutomatically: { type: "boolean" },
 
 export const objectSchema = {
   properties: {
-    componentType: { 
+    component_type: { 
       type: "string", 
       enum: ["EmptyView", "Button", "Image", "Text", "TextField", "Space"],
       default: "EmptyView"
@@ -62,7 +62,7 @@ export const genericSchema = {
 export const containerViewSchema = {
   ...genericSchema,
   properties: {
-    componentType: { 
+    component_type: { 
       type: "string", 
       enum: ["Column", "Row", "Overflow"],
       default: "Row"
@@ -85,7 +85,7 @@ export const spaceSchema = {
 export const EmptyViewSchema = {
   ...genericSchema,
   properties: {
-    componentType: { 
+    component_type: { 
       type: "string", 
       enum: ["EmptyView", "Button", "Image", "Text", "TextField", "Space"],
       default: "Button"
@@ -98,7 +98,7 @@ export const EmptyViewSchema = {
 export const ButtonViewSchema = {
   ...genericSchema,
   properties: {
-    componentType: { 
+    component_type: { 
       type: "string", 
       enum: ["EmptyView", "Button", "Image", "Text", "TextField", "Space"],
       default: "Button"
@@ -113,7 +113,7 @@ export const ButtonViewSchema = {
 export const TextViewSchema = {
   ...genericSchema,
   properties: {
-    componentType: { 
+    component_type: { 
       type: "string", 
       enum: ["EmptyView", "Button", "Image", "Text", "TextField", "Space"],
       default: "Button"
@@ -140,7 +140,7 @@ export const TextViewSchema = {
 export const ImageViewSchema = {
   ...genericSchema,
   properties: {
-    componentType: { 
+    component_type: { 
       type: "string", 
       enum: ["EmptyView", "Button", "Image", "Text", "TextField", "Space"],
       default: "Button"

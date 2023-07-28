@@ -46,8 +46,8 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
     return <input type="file" onChange={processFile} />;
   };
 
-  const getSchema = (componentType) => {
-    switch (componentType) {
+  const getSchema = (component_type) => {
+    switch (component_type) {
       case "Space":
         return spaceSchema;
       case "Button":
@@ -93,7 +93,7 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
 };
 
 
-  const getUiSchema = (componentType) => {
+  const getUiSchema = (component_type) => {
     return genericUiSchema;
   };
 
@@ -133,8 +133,8 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
         Eliminar componente
       </button>
       <Form
-        schema={getSchema(component?.properties?.componentType || {})}
-        uiSchema={getUiSchema(component?.properties?.componentType || {})}
+        schema={getSchema(component?.properties?.component_type || {})}
+        uiSchema={getUiSchema(component?.properties?.component_type || {})}
         formData={component.properties}
         onChange={handleOnChange}
         validator={validate}

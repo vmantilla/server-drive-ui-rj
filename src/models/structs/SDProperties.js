@@ -1,6 +1,6 @@
 class SDProperties {
   constructor({
-    componentType = '',
+    component_type = '',
     frame = {},
     backgroundColor = '',
     cornerRadius = {},
@@ -32,7 +32,7 @@ class SDProperties {
     onCommit = '',
     lineLimit = ''
   } = {}) {
-    this.componentType = componentType;
+    this.component_type = component_type;
     this.frame = frame;
     this.backgroundColor = backgroundColor;
     this.cornerRadius = cornerRadius;

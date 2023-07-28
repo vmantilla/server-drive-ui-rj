@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const getDefaultObjectProperties = () => {
   return new SDProperties({
-    componentType: "EmptyView",
+    component_type: "EmptyView",
     frame: { width: 100, height: 100 },
     cornerRadius: new SDCornerRadius({ shape: 'none'}),
     border: { color: 'outline', width: 1 },
@@ -17,7 +17,7 @@ const getDefaultObjectProperties = () => {
 
 const getDefaultContainerViewProperties = () => {
   return new SDProperties({
-    componentType: "Row",
+    component_type: "Row",
     frame: { width: "100%", height: "100" },
     cornerRadius: new SDCornerRadius({ shape: 'none'}),
     border: { color: 'outline', width: 1 },
@@ -29,7 +29,7 @@ const getDefaultContainerViewProperties = () => {
 
 const getDefaultSpaceViewProperties = () => {
   return new SDProperties({
-    componentType: "Space",
+    component_type: "Space",
     frame: { height: "100%", width: "100%" },
     backgroundColor: 'primaryContainer',
     cornerRadius: new SDCornerRadius({ shape: 'none'}),
@@ -38,8 +38,8 @@ const getDefaultSpaceViewProperties = () => {
   });
 }
 
-const getDefaultProps = (componentType) => {
-  switch(componentType) {
+const getDefaultProps = (component_type) => {
+  switch(component_type) {
     case SDComponentType.ContainerView:
       return getDefaultContainerViewProperties();
     case SDComponentType.Space:

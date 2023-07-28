@@ -52,7 +52,7 @@ export function createSDComponent(componentData) {
   ) : null;
 
   // Si el componente tiene hijos, los creamos también
-  const children = componentData.childrens?.map(createSDComponent);
+  const children = componentData.children?.map(createSDComponent);
 
   // Finalmente, creamos y devolvemos el componente SD
   return new SDComponent(

@@ -44,7 +44,7 @@ export function renderComponentTree(component) {
       key={component.id} 
       component={component} 
     >
-      {component.childrens && component.childrens.length > 0 && component.childrens.map(childComponent => renderComponentTree(childComponent))}
+      {component.children && component.children.length > 0 && component.children.map(childComponent => renderComponentTree(childComponent))}
     </Component>
   );
 }

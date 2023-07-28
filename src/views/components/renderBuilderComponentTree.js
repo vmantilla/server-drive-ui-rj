@@ -18,7 +18,7 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
 
   const properties = component?.properties || {};
 
-  switch (component.componentType) {
+  switch (component.component_type) {
     case "ContainerView":
       Component = RenderContainerView
       break;
@@ -42,7 +42,7 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
     moveChildrens={moveChildrens}
     selectedComponent={selectedComponent} 
   >
-    {component.childrens && component.childrens.length > 0 && component.childrens.map((childComponent, i) => {
+    {component.children && component.children.length > 0 && component.children.map((childComponent, i) => {
       // Verifica si el componente hijo tiene propiedades antes de intentar renderizarlo
       if (childComponent.properties) {
         return renderBuilderComponentTree(childComponent, handleDrop, onComponentClick, i, moveChildrens, selectedComponent)

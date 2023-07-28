@@ -17,7 +17,7 @@ const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedCompo
         if (tree.id === childId) {
             return true;
         }
-        for (const c of tree.childrens) {
+        for (const c of tree.children) {
             if (findInTree(c, childId)) {
                 return true;
             }
@@ -29,11 +29,11 @@ const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedCompo
         if (tree.id === parentId) {
             // Verificar que no exista ya un hijo con el mismo ID en cualquier parte del árbol
             if (!findInTree(tree, child.id)) {
-                tree.childrens.push(child);
+                tree.children.push(child);
             }
             return;
         }
-        for (const c of tree.childrens) {
+        for (const c of tree.children) {
             addChildToTree(c, parentId, child);
         }
     };
@@ -78,9 +78,9 @@ const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedCompo
     })
 
     const findParentAndReorder = (tree, childId, dragIndex, hoverIndex) => {
-  if (tree.childrens.some(c => c && c.id === childId)) {
+  if (tree.children.some(c => c && c.id === childId)) {
     // We found the parent of the node being moved. Reorder its children.
-    let childrenCopy = [...tree.childrens];
+    let childrenCopy = [...tree.children];
     let draggedChild = childrenCopy[dragIndex];
 
     // Check if the dragged child exists
@@ -95,7 +95,7 @@ const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedCompo
     // Instantiate a new SDComponent instead of spreading
     return new SDComponent(
       tree.id,
-      tree.componentType,
+      tree.component_type,
       tree.properties,
       childrenCopy,
       tree.states,
@@ -103,12 +103,12 @@ const Dropzone = ( { style, onComponentClick, droppedComponents, setDroppedCompo
     );
   } else {
     // We didn't find the parent at the current node. Search in the children.
-    let childrenCopy = tree.childrens.map(c => c ? findParentAndReorder(c, childId, dragIndex, hoverIndex) : c);
+    let childrenCopy = tree.children.map(c => c ? findParentAndReorder(c, childId, dragIndex, hoverIndex) : c);
     
     // Instantiate a new SDComponent instead of spreading
     return new SDComponent(
       tree.id,
-      tree.componentType,
+      tree.component_type,
       tree.properties,
       childrenCopy,
       tree.states,
