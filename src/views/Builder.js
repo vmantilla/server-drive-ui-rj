@@ -62,7 +62,7 @@ const Builder = () => {
   const [previewBuilderData, setPreviewBuilderData] = useState([]);
 
   const [selectedComponent, setSelectedComponent] = useState({});
-  const [droppedComponents, setDroppedComponents] = useState({})
+  const [droppedComponents, setDroppedComponents] = useState([])
 
 
   const [errorMessage, setErrorMessage] = useState(null);
@@ -372,7 +372,7 @@ const Builder = () => {
     <p>{selectedPreview.title}</p>
     <DropZone 
     style={{
-      width: '419px', 
+      width: '430px', 
       height: '844px', 
       borderRadius: '40px',
       backgroundColor: '#F0F0F0',
