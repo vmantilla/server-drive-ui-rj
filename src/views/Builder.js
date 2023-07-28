@@ -372,7 +372,7 @@ const Builder = () => {
     <p>{selectedPreview.title}</p>
     <DropZone 
     style={{
-      width: '440px', 
+      width: '419px', 
       height: '844px', 
       borderRadius: '40px',
       backgroundColor: '#F0F0F0',
