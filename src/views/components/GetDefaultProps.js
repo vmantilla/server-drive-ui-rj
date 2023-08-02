@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 const getDefaultObjectProperties = () => {
   return new SDProperties({
     component_type: "EmptyView",
-    frame: { width: 100, height: 100 },
+    frame: { width: "100", height: "100" },
     cornerRadius: new SDCornerRadius({ shape: 'none'}),
     border: { color: 'outline', width: 1 },
     isEnabled: true,
