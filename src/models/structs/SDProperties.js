@@ -30,7 +30,8 @@ class SDProperties {
     enablesReturnKeyAutomatically = '',
     onEditingChanged = '',
     onCommit = '',
-    lineLimit = ''
+    lineLimit = '',
+    clickProperties = ''
   } = {}) {
     this.component_type = component_type;
     this.frame = frame;
@@ -63,6 +64,7 @@ class SDProperties {
     this.onEditingChanged = onEditingChanged;
     this.onCommit = onCommit;
     this.lineLimit = lineLimit;
+    this.clickProperties = clickProperties;
   }
 
     toJSON() {

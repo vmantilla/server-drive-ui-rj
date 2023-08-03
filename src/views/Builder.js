@@ -18,6 +18,7 @@ import PreviewGrid from './thumbnailsPreview/PreviewGrid';
 import ColorsAndFontsView from './ColorsAndFontsView';
 import { Componentes } from './components/Componentes';
 import PropertyInspector from './PropertiesInspector/PropertyInspector';
+import SDComponentTree from './SDComponentTree';
 
 import SDComponent from '../models/structs/SDComponent';
 import SDProperties from '../models/structs/SDProperties';
@@ -359,7 +360,10 @@ const Builder = () => {
     <div className="col-3 resizable-panel">
     <div className="panel-container">
     <span className="panel-title">Listado de componentes</span>
-    <Componentes/>
+    {droppedComponents.map((component, index) => (
+      <SDComponentTree key={index} component={component} selectedComponent={selectedComponent} setSelectedComponent={setSelectedComponent} />
+    ))}
+{/*  <Componentes/>  */}
     </div>
     </div>
     <div className="col-6 resizable-panel">

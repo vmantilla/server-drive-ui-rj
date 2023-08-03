@@ -83,14 +83,15 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
       color: { "ui:widget": "ColorPickerWidget" }
     },
     source: {
-      src: {
-          "ui:widget": "file",
-      },
-      origin: {
-          "ui:widget": "select",
-      }
+      src: { "ui:widget": "file" },
+      origin: { "ui:widget": "select" }
+    },
+    clickProperties: { // Widgets para las propiedades de clic
+      isClickable: { "ui:widget": "checkbox" },
+      onClickAction: { "ui:widget": "textarea" },
     },
 };
+
 
 
   const getUiSchema = (component_type) => {

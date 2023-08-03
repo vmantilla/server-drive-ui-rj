@@ -29,6 +29,15 @@ enablesReturnKeyAutomatically: { type: "boolean" },
     */
 
 
+const clickPropertiesSchema = {
+  type: "object",
+  title: "Click Properties",
+  properties: {
+    isClickable: { type: "boolean", title: "Clickable" },
+    onClickAction: { type: "string", title: "On Click Action" },
+  },
+};
+
 
 export const objectSchema = {
   properties: {
@@ -54,10 +63,12 @@ export const genericSchema = {
       }
     },
     cornerRadius: { type: "string" },
-    margin: { type: "string" }
+    margin: { type: "string" },
+    clickProperties: clickPropertiesSchema, // Aquí añadimos las propiedades de clic
   },
   required: [], // puedes definir las propiedades requeridas aquí.
 };
+
 
 export const containerViewSchema = {
   ...genericSchema,
