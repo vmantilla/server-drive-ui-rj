@@ -5,7 +5,7 @@ import { getDefaultProps, getDefaultTextViewProperties } from './components/GetD
 import { v4 as uuidv4 } from 'uuid';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, setDroppedComponents }) => {
+const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, setDroppedComponents, deleteComponentfunc }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -33,27 +33,22 @@ const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, s
     setSelectedComponent(component);
   };
 
-  const handleAddButton = () => {
-    addNewComponent(SDComponentType.Button);
-  };
+  const menuItems = Object.keys(SDComponentType).map((key) => ({
+    label: `Add ${SDComponentType[key]}`,
+    type: SDComponentType[key]
+  }));
 
-  const handleAddContainer = () => {
-    addNewComponent(SDComponentType.Container);
-  };
+  const handleAddComponent = (type) => {
+    const componentChildren = [];
 
-  const addNewComponent = (type) => {
-
-  	const componentChildren = []
-
-    if (type == SDComponentType.Button) {
-    	componentChildren.push(new SDComponent(
-	      uuidv4(),
-	      SDComponentType.Object,
-	      getDefaultTextViewProperties(),
-	      [],
-	      {}
-	    )
-	    );
+    if (type === SDComponentType.Button) {
+      componentChildren.push(new SDComponent(
+        uuidv4(),
+        SDComponentType.Object,
+        getDefaultTextViewProperties(),
+        [],
+        {}
+      ));
     }
 
     const newComponent = new SDComponent(
@@ -65,17 +60,28 @@ const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, s
     );
 
     setDroppedComponents(prevComponents => {
-      let newComponents = [...prevComponents];
-      newComponents.forEach(comp => {
+      const addComponentToSelected = (comp) => {
         if (comp.id === selectedComponent.id) {
           comp.children.push(newComponent);
+          return;
         }
-      });
+        comp.children.forEach(addComponentToSelected);
+      };
+
+      let newComponents = [...prevComponents];
+      newComponents.forEach(addComponentToSelected);
       return newComponents;
     });
 
     setMenuOpen(false);
   };
+
+  const handleDeleteComponent = (id) => {
+    if (window.confirm("¿Estás seguro de que quieres eliminar este componente?")) {
+      deleteComponentfunc(id);
+    }
+  };
+
 
   let menuStyle = { position: 'absolute', background: 'white', border: '1px solid #ccc' };
 
@@ -119,21 +125,25 @@ const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, s
             <i className="bi bi-three-dots" onClick={() => setMenuOpen(!menuOpen)}></i>
             {menuOpen && (
               <div ref={menuRef} style={menuStyle}>
+                {menuItems.map((item, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleAddComponent(item.type)}
+                    style={{ padding: '5px', cursor: 'pointer' }}
+                    onMouseOver={(e) => (e.target.style.background = '#f0f8ff')}
+                    onMouseOut={(e) => (e.target.style.background = 'transparent')}
+                  >
+                    {item.label}
+                  </div>
+                ))}
+                <hr />
                 <div
-                  onClick={handleAddButton}
-                  style={{ padding: '5px', cursor: 'pointer' }}
+                  onClick={() => handleDeleteComponent(component.id)}
+                  style={{ padding: '5px', cursor: 'pointer', color: 'red' }}
                   onMouseOver={(e) => (e.target.style.background = '#f0f8ff')}
                   onMouseOut={(e) => (e.target.style.background = 'transparent')}
                 >
-                  Add a Button
-                </div>
-                <div
-                  onClick={handleAddContainer}
-                  style={{ padding: '5px', cursor: 'pointer' }}
-                  onMouseOver={(e) => (e.target.style.background = '#f0f8ff')}
-                  onMouseOut={(e) => (e.target.style.background = 'transparent')}
-                >
-                  Add a Container
+                  Delete Component
                 </div>
               </div>
             )}

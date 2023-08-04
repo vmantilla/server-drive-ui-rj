@@ -191,9 +191,7 @@ const Builder = () => {
 
 
   const deleteComponent = (componentId) => {
-    console.log("componentId", componentId)
     const nestedComponentToDelete = deleteNestedComponent(droppedComponents, componentId)
-    console.log("nestedComponentToDelete", nestedComponentToDelete)
     setDroppedComponents(nestedComponentToDelete);
   };
 
@@ -361,11 +359,13 @@ const Builder = () => {
     <div className="panel-container">
     <span className="panel-title">Listado de componentes</span>
     {droppedComponents.map((component, index) => (
-      <SDComponentTree key={index} component={component} 
+      <SDComponentTree key={index} deleteComponentfunc={deleteComponent}
+      component={component} 
       selectedComponent={selectedComponent} 
       setSelectedComponent={setSelectedComponent}
       droppedComponents={droppedComponents}
-    setDroppedComponents={setDroppedComponents} />
+      setDroppedComponents={setDroppedComponents} 
+       />
     ))}
 {/*  <Componentes/>  */}
     </div>
