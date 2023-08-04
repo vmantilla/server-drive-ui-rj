@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDrop } from 'react-dnd'
 import { tipoItem } from './components/Componentes'
-import getDefaultProps from './components/GetDefaultProps';
+import { getDefaultProps }  from './components/GetDefaultProps';
 
 import SDComponent from '../models/structs/SDComponent';
 import SDComponentType from '../enums/SDComponentType';

@@ -361,7 +361,11 @@ const Builder = () => {
     <div className="panel-container">
     <span className="panel-title">Listado de componentes</span>
     {droppedComponents.map((component, index) => (
-      <SDComponentTree key={index} component={component} selectedComponent={selectedComponent} setSelectedComponent={setSelectedComponent} />
+      <SDComponentTree key={index} component={component} 
+      selectedComponent={selectedComponent} 
+      setSelectedComponent={setSelectedComponent}
+      droppedComponents={droppedComponents}
+    setDroppedComponents={setDroppedComponents} />
     ))}
 {/*  <Componentes/>  */}
     </div>

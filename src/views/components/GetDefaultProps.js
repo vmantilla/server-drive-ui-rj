@@ -11,7 +11,7 @@ const getDefaultObjectProperties = () => {
     cornerRadius: new SDCornerRadius({ shape: 'none'}),
     border: { color: 'outline', width: 1 },
     isEnabled: true,
-    padding: { top: 0, bottom: 0, left: 0, right: 0 },
+    margin: { top: 0, bottom: 0, left: 0, right: 0 },
   });
 }
 
@@ -22,7 +22,30 @@ const getDefaultContainerViewProperties = () => {
     cornerRadius: new SDCornerRadius({ shape: 'none'}),
     border: { color: 'outline', width: 1 },
     isEnabled: true,
-    padding: { top: 2, bottom: 2, left: 2, right: 2 },
+    margin: { top: 2, bottom: 2, left: 2, right: 2 },
+  });
+}
+
+const getDefaultButtonViewProperties = () => {
+  return new SDProperties({
+    component_type: "Row",
+    frame: { width: "auto", height: "auto" },
+    cornerRadius: new SDCornerRadius({ shape: 'extraSmall'}),
+    border: { color: 'outline', width: 1 },
+    isEnabled: true,
+    margin: { top: 2, bottom: 2, left: 2, right: 2 },
+  });
+}
+
+export const getDefaultTextViewProperties = () => {
+  return new SDProperties({
+    component_type: "Text",
+    text: "Text",
+    frame: { width: "auto", height: "auto" },
+    cornerRadius: new SDCornerRadius({ shape: 'none'}),
+    isEnabled: true,
+    margin: { top: 2, bottom: 2, left: 2, right: 2 },
+    font:{ color:"onSecondaryContainer", font:"labelLarge"}
   });
 }
 
@@ -38,7 +61,8 @@ const getDefaultSpaceViewProperties = () => {
   });
 }
 
-const getDefaultProps = (component_type) => {
+export const getDefaultProps = (component_type) => {
+  console.log("component_type", component_type)
   switch(component_type) {
     case SDComponentType.ContainerView:
       return getDefaultContainerViewProperties();
@@ -46,9 +70,9 @@ const getDefaultProps = (component_type) => {
       return getDefaultSpaceViewProperties();
     case SDComponentType.Object:
       return getDefaultObjectProperties();
+    case SDComponentType.Button:
+      return getDefaultButtonViewProperties()
     default:
       return getDefaultObjectProperties();
   }
 }
-
-export default getDefaultProps;
