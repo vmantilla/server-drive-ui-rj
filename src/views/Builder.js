@@ -357,6 +357,42 @@ const handleAddComponent = (type) => {
 };
 
 
+const handleMoveComponent = (childId, newParentId) => {
+  // Función recursiva para encontrar el componente y su padre
+  const findComponentAndParent = (components, targetId, parent = null) => {
+    for (let component of components) {
+      if (component.id === targetId) return { component: component, parent };
+      if (component.children) {
+        const found = findComponentAndParent(component.children, targetId, component);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  setDroppedComponents(prevComponents => {
+    // Encuentra el hijo y su padre actual
+    const { component: child, parent: oldParent } = findComponentAndParent(prevComponents, childId);
+
+    // Encuentra el nuevo padre
+    const { component: newParent } = findComponentAndParent(prevComponents, newParentId);
+
+    // Elimina el hijo de su posición actual
+    if (oldParent) {
+      const index = oldParent.children.indexOf(child);
+      oldParent.children.splice(index, 1);
+    } else {
+      const index = prevComponents.indexOf(child);
+      prevComponents.splice(index, 1);
+    }
+
+    // Inserta el hijo en el nuevo padre
+    newParent.children.push(child);
+
+    return [...prevComponents];
+  });
+};
+
 
 
 
@@ -484,6 +520,7 @@ const handleAddComponent = (type) => {
       setDroppedComponents={setDroppedComponents}
       handleAddComponent={handleAddComponent}
       handleEmbedComponent={handleEmbedComponent}
+      handleMoveComponent={handleMoveComponent}
       handleDuplicateComponent={handleDuplicateComponent}
       handleDeleteComponent={handleDeleteComponent} 
        />

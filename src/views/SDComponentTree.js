@@ -4,7 +4,7 @@ import SDComponentType from '../enums/SDComponentType';
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, setDroppedComponents, handleAddComponent, handleDeleteComponent, handleDuplicateComponent, handleEmbedComponent }) => {
+const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, setDroppedComponents, handleAddComponent, handleDeleteComponent, handleDuplicateComponent, handleEmbedComponent, handleMoveComponent }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -142,7 +142,7 @@ const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, s
 
       </div>
       </div>
-      {isExpanded && hasChildren && (<div style={{ marginLeft: '20px' }}>{component.children.map((child, index) => (<SDComponentTree key={index} component={child} selectedComponent={selectedComponent} setSelectedComponent={setSelectedComponent} setDroppedComponents={setDroppedComponents} handleAddComponent={handleAddComponent} handleDeleteComponent={handleDeleteComponent} handleDuplicateComponent={handleDuplicateComponent} handleEmbedComponent={handleEmbedComponent}/>))}</div>)}
+      {isExpanded && hasChildren && (<div style={{ marginLeft: '20px' }}>{component.children.map((child, index) => (<SDComponentTree key={index} component={child} selectedComponent={selectedComponent} setSelectedComponent={setSelectedComponent} setDroppedComponents={setDroppedComponents} handleAddComponent={handleAddComponent} handleDeleteComponent={handleDeleteComponent} handleDuplicateComponent={handleDuplicateComponent} handleEmbedComponent={handleEmbedComponent} handleMoveComponent={handleMoveComponent}/>))}</div>)}
     </div>
   );
 };
