@@ -19,6 +19,8 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
   const properties = component?.properties || {};
 
   switch (component.component_type) {
+  case "Button":
+      Component = RenderContainerView
     case "ContainerView":
       Component = RenderContainerView
       break;

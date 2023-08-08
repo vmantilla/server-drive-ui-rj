@@ -43,14 +43,14 @@
 
 
 .container-row > .spacer {
-  border: 1px dashed #000;
+  border: 1px dashed #D3D3D3;
   flex-grow: 1;
   flex-shrink: 1;
   height: 5px;
 }
 
 .container-column > .spacer {
-  border: 1px dashed #000;
+  border: 1px dashed #D3D3D3;
   flex-grow: 1;
   flex-shrink: 1;
   width: 5px;
