@@ -439,28 +439,37 @@ const handleEmbedComponent = (parentType, childId) => {
     return;
   }
 
-  setDroppedComponents(prevComponents => {
-    const foundChildAndParent = findComponentAndParent(prevComponents, childId);
-    if (!foundChildAndParent) {
-      console.warn(`Child component with ID ${childId} not found`);
-      return prevComponents;
+  // Función recursiva para encontrar el componente hijo y su padre
+  const findChildAndParent = (components, targetId, parent = null) => {
+    for (let component of components) {
+      if (component.id === targetId) return { child: component, parent };
+      if (component.children) {
+        const found = findChildAndParent(component.children, targetId, component);
+        if (found) return found;
+      }
     }
+    return null;
+  };
 
-    const { child: component, parent } = foundChildAndParent;
+  setDroppedComponents(prevComponents => {
+    const { child, parent } = findChildAndParent(prevComponents, childId);
 
+    // Crear una nueva instancia del componente padre utilizando SDComponent.
     const parentComponent = new SDComponent(
       uuidv4(),
       parentType,
       getDefaultProps(parentType),
-      [component], // Insertar el componente hijo en el componente padre.
+      [child], // Insertar el componente hijo en el componente padre.
       {},
     );
 
+    // Si el componente hijo se encuentra en la raíz, reemplazarlo directamente
     if (!parent) {
       return prevComponents.map(component => component.id === childId ? parentComponent : component);
     }
 
-    const index = parent.children.indexOf(component);
+    // Reemplazar el componente hijo en su padre con el nuevo componente padre
+    const index = parent.children.indexOf(child);
     parent.children.splice(index, 1, parentComponent);
 
     return [...prevComponents];
