@@ -31,6 +31,9 @@ import '../css/Builder.css';
 import { firebase } from '../firebase';
 import { doc, setDoc } from "firebase/firestore";
 
+import { getDefaultProps, getDefaultTextViewProperties } from './components/GetDefaultProps';
+import { v4 as uuidv4 } from 'uuid';
+import SDComponentType from '../enums/SDComponentType';
 
 import axios from 'axios';
 
@@ -190,11 +193,17 @@ const Builder = () => {
   };
 
 
+  const handleDeleteComponent = (componentId) => {
+  if (window.confirm("¿Estás seguro de que quieres eliminar este componente?")) {
+    deleteComponent(componentId);
+  }
+};
+
   const deleteComponent = (componentId) => {
+    console.log("handleDeleteComponent",componentId)
     const nestedComponentToDelete = deleteNestedComponent(droppedComponents, componentId)
     setDroppedComponents(nestedComponentToDelete);
   };
-
 
 
   const exportComponentsToJSON = async () => {
@@ -210,6 +219,18 @@ const Builder = () => {
     linkElement.click();
   };
 
+
+const handleAddComponent = (type) => {
+    const componentChildren = [];
+    if (type === SDComponentType.Button) {
+      componentChildren.push(new SDComponent(uuidv4(), SDComponentType.Object, getDefaultTextViewProperties(), [], {}));
+    }
+    const newComponent = new SDComponent(uuidv4(), type, getDefaultProps(type), componentChildren, {});
+    setDroppedComponents(prevComponents => {
+      const addComponentToSelected = (comp) => { if (comp.id === selectedComponent.id) comp.children.push(newComponent); comp.children.forEach(addComponentToSelected); };
+      let newComponents = [...prevComponents]; newComponents.forEach(addComponentToSelected); return newComponents;
+    });
+  };
   
   useEffect(() => {
     console.log("droppedComponents", droppedComponents);
@@ -334,6 +355,59 @@ const Builder = () => {
     });
   }, []);
 
+  const handleDuplicateComponent = (componentId) => {
+  // Recursive function to create a duplicate of a component and its children
+  const duplicateComponent = (component) => {
+    const newChildren = component.children ? component.children.map(duplicateComponent) : [];
+    return new SDComponent(
+      uuidv4(),
+      component.component_type,
+      component.properties,
+      newChildren,
+      component.states,
+      component.order
+    );
+  };
+
+  // Recursive function to find the component to duplicate
+  const findNestedComponent = (components, targetId) => {
+    for (let component of components) {
+      if (component.id === targetId) return component;
+      if (component.children) {
+        const found = findNestedComponent(component.children, targetId);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const componentToDuplicate = findNestedComponent(droppedComponents, componentId);
+
+  if (componentToDuplicate) {
+    const duplicatedComponent = duplicateComponent(componentToDuplicate);
+
+    // Recursive function to insert the duplicated component
+    const insertDuplicatedComponent = (components) => {
+      components.forEach((component, index) => {
+        if (component.id === componentId) {
+          components.splice(index + 1, 0, duplicatedComponent);
+        }
+        if (component.children) {
+          insertDuplicatedComponent(component.children);
+        }
+      });
+    };
+
+    let newComponents = [...droppedComponents];
+    insertDuplicatedComponent(newComponents);
+
+    setDroppedComponents(newComponents);
+  } else {
+    console.warn(`Component with ID ${componentId} not found`);
+  }
+};
+
+
   return (
     <DndProvider backend={HTML5Backend}>
     <App>
@@ -359,12 +433,15 @@ const Builder = () => {
     <div className="panel-container">
     <span className="panel-title">Listado de componentes</span>
     {droppedComponents.map((component, index) => (
-      <SDComponentTree key={index} deleteComponentfunc={deleteComponent}
+      <SDComponentTree key={index}
       component={component} 
       selectedComponent={selectedComponent} 
       setSelectedComponent={setSelectedComponent}
       droppedComponents={droppedComponents}
-      setDroppedComponents={setDroppedComponents} 
+      setDroppedComponents={setDroppedComponents}
+      handleAddComponent={handleAddComponent}
+      handleDuplicateComponent={handleDuplicateComponent}
+      handleDeleteComponent={handleDeleteComponent} 
        />
     ))}
 {/*  <Componentes/>  */}
@@ -408,7 +485,7 @@ const Builder = () => {
     {selectedComponent && <PropertyInspector themesData={themesData} 
     component={selectedComponent} 
     updateComponent={updateComponent}
-    deleteComponent={deleteComponent}   />
+    handleDeleteComponent={handleDeleteComponent} />
   }
 
 

@@ -14,13 +14,7 @@ import FontPickerWidget from "./FontPickerWidget";
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
 addFormats(ajv);
 
-const PropertyInspector = ({ themesData, component, updateComponent, deleteComponent }) => {
-
-  const handleDelete = () => {
-    if (window.confirm("¿Estás seguro de que quieres eliminar este componente?")) {
-      deleteComponent(component.id);
-    }
-  };
+const PropertyInspector = ({ themesData, component, updateComponent, handleDeleteComponent }) => {
 
   const CustomColorPickerWidget = (props) => {
     if (!themesData) { return null; };
@@ -119,7 +113,7 @@ const PropertyInspector = ({ themesData, component, updateComponent, deleteCompo
   return (
     <div style={{ maxHeight: '100vh', overflowY: 'auto' }}>
     <button 
-        onClick={handleDelete}
+        onClick={ () => handleDeleteComponent(component.id)}
         style={{
           height: "40px", 
           borderRadius: "0%", 
