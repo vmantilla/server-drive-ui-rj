@@ -357,41 +357,60 @@ const handleAddComponent = (type) => {
 };
 
 
-const handleMoveComponent = (childId, newParentId) => {
-  // Función recursiva para encontrar el componente y su padre
-  const findComponentAndParent = (components, targetId, parent = null) => {
-    for (let component of components) {
-      if (component.id === targetId) return { component: component, parent };
-      if (component.children) {
-        const found = findComponentAndParent(component.children, targetId, component);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
-
+const handleMoveComponent = (childId, parentId) => {
   setDroppedComponents(prevComponents => {
-    // Encuentra el hijo y su padre actual
-    const { component: child, parent: oldParent } = findComponentAndParent(prevComponents, childId);
+    // Clonar los componentes para evitar mutaciones
+    let components = JSON.parse(JSON.stringify(prevComponents));
 
-    // Encuentra el nuevo padre
-    const { component: newParent } = findComponentAndParent(prevComponents, newParentId);
+    // Recursive function to create a duplicate of a component and its children
+    const duplicateComponent = (component) => {
+      const newChildren = component.children ? component.children.map(duplicateComponent) : [];
+      return new SDComponent(
+        uuidv4(),
+        component.component_type,
+        component.properties,
+        newChildren,
+        component.states,
+        component.order
+      );
+    };
+
+    // Función recursiva para encontrar el componente y su padre
+    const findComponentAndParent = (components, targetId, parent = null) => {
+      for (let i = 0; i < components.length; i++) {
+        if (components[i].id === targetId) return { component: components[i], parent, index: i };
+        if (components[i].children) {
+          const found = findComponentAndParent(components[i].children, targetId, components[i]);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    // Encuentra el hijo y su padre actual
+    const { component: child, parent: oldParent, index: oldIndex } = findComponentAndParent(components, childId);
 
     // Elimina el hijo de su posición actual
     if (oldParent) {
-      const index = oldParent.children.indexOf(child);
-      oldParent.children.splice(index, 1);
+      oldParent.children.splice(oldIndex, 1);
     } else {
-      const index = prevComponents.indexOf(child);
-      prevComponents.splice(index, 1);
+      components.splice(oldIndex, 1);
     }
 
-    // Inserta el hijo en el nuevo padre
-    newParent.children.push(child);
+    // Crea una copia del componente y sus hijos
+    const duplicatedChild = duplicateComponent(child);
 
-    return [...prevComponents];
+    // Encuentra el nuevo padre
+    const { component: newParent } = findComponentAndParent(components, parentId);
+
+    // Inserta la copia del hijo en el nuevo padre
+    newParent.children.push(duplicatedChild);
+
+    return components;
   });
 };
+
+
 
 
 

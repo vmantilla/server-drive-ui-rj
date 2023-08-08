@@ -9,6 +9,34 @@ const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, s
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const componentRef = useRef(null);
+  const [hoverComponent, setHoverComponent] = useState(null);
+
+const handleDragEnter = (e) => {
+  e.preventDefault();
+  setHoverComponent(component);
+};
+
+const handleDragLeave = (e) => {
+  e.preventDefault();
+  setHoverComponent(null);
+};
+
+
+  const handleDragStart = (e) => {
+    e.stopPropagation();
+    e.dataTransfer.setData('text/plain', component.id);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const childId = e.dataTransfer.getData('text/plain');
+    handleMoveComponent(childId, component.id);
+  };
 
   const menuItems = [
     {
@@ -74,9 +102,18 @@ const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, s
   const componentLabel = component.component_type === SDComponentType.Button ? 'Button' : component.properties.component_type;
 
   return (
-    <div>
+  	<div>
    <div>
-    <div ref={componentRef} onClick={selectComponent} className={`mb-1 p-2 ${isSelected ? 'border border-primary rounded' : ''}`} style={{ cursor: 'pointer', background: isSelected ? '#f0f8ff' : 'transparent' }}>
+    <div ref={componentRef}
+  draggable
+  onDragStart={handleDragStart}
+  onDragOver={handleDragOver}
+  onDragEnter={handleDragEnter}
+  onDragLeave={handleDragLeave}
+  onDrop={handleDrop}
+  onClick={selectComponent}
+      className={`mb-1 p-2 ${isSelected ? 'border border-primary rounded' : ''}`}
+      style={{ cursor: 'pointer', background: isSelected ? '#f0f8ff' : 'transparent' }}>
       <span onClick={toggleExpanded} className="me-2" style={{ cursor: 'pointer' }}>{hasChildren ? (isExpanded ? <i className="bi bi-chevron-down"></i> : <i className="bi bi-chevron-right"></i>) : <span style={{ width: '1rem', display: 'inline-block' }} />}</span>
       <i className={`bi ${isObject ? 'bi-file-earmark' : 'bi-file-earmark-text'}`} />
       <span className="ms-2" style={{ fontSize: '0.8rem', color: 'black' }}>{componentLabel} {childrenCount > 0 && <span style={{ fontSize: '0.8rem', color: 'black' }}>{`[${childrenCount}]`}</span>}</span> {/* Aquí aplicamos los estilos a las etiquetas de componentes y el contador de hijos */}
