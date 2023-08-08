@@ -28,17 +28,50 @@ const handleDragLeave = (e) => {
   };
 
   const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+  const childId = e.dataTransfer.getData('text/plain');
+  
+  // Comprobar si el componente es un objeto
+  if (component.component_type === 'Object') return;
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const childId = e.dataTransfer.getData('text/plain');
-    handleMoveComponent(childId, component.id);
-  };
+  // Comprobar si el origen y el destino son el mismo
+  if (component.id === childId) return;
 
-  const menuItems = [
+  // Comprobar si el ID del padre es el mismo que el del hijo
+  if (component.parentId === childId) return;
+
+  // Comprobar si es dentro del mismo padre
+  if (component.parentId && selectedComponent && component.parentId === selectedComponent.parentId) return;
+
+  e.preventDefault();
+};
+
+const handleDrop = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  
+  const childId = e.dataTransfer.getData('text/plain');
+  
+  // Comprobar si el componente es un objeto
+  if (component.component_type === 'Object') return;
+
+  // Comprobar si el origen y el destino son el mismo
+  if (component.id === childId) return;
+
+  // Comprobar si el ID del padre es el mismo que el del hijo
+  if (component.parentId === childId) return;
+
+  // Comprobar si es dentro del mismo padre
+  if (component.parentId && selectedComponent && component.parentId === selectedComponent.parentId) return;
+
+  handleMoveComponent(childId, component.id);
+};
+
+
+  const menuItems = [];
+
+// Solo agregar estas opciones si el componente no es "Object" o "Space"
+if (component.component_type !== 'Object' && component.component_type !== 'Space') {
+  menuItems.push(
     {
       label: "Add Container",
       isNonInteractive: true,
@@ -50,29 +83,35 @@ const handleDragLeave = (e) => {
     },
     { label: "Add Object", type: "Object", action: () => handleAddComponent("Object") },
     { label: "Add Space", type: "Space", action: () => handleAddComponent("Space") },
-    { separator: true },
-    {
-      label: "Duplicate Component",
-      action: () => handleDuplicateComponent(component.id),
-      style: { color: "black" },
-    },
-    { separator: true },
-    {
-      label: "Embed in",
-      isNonInteractive: true, // Marcar este elemento como no interactivo
-      subItems: ["ContainerView", "Button", "ScrollView"].map((type) => ({
-        label: `Add ${type}`,
-        type: type,
-        action: () => handleEmbedComponent(type, component.id)
-      })),
-    },
-    { separator: true },
-    {
-      label: "Delete Component",
-      action: () => handleDeleteComponent(component.id),
-      style: { color: "red" },
-    },
-  ];
+    { separator: true }
+  );
+}
+
+// Aquí están el resto de los elementos del menú, que siempre estarán presentes
+menuItems.push(
+  {
+    label: "Duplicate Component",
+    action: () => handleDuplicateComponent(component.id),
+    style: { color: "black" },
+  },
+  { separator: true },
+  {
+    label: "Embed in",
+    isNonInteractive: true, // Marcar este elemento como no interactivo
+    subItems: ["ContainerView", "Button", "ScrollView"].map((type) => ({
+      label: `Add ${type}`,
+      type: type,
+      action: () => handleEmbedComponent(type, component.id)
+    })),
+  },
+  { separator: true },
+  {
+    label: "Delete Component",
+    action: () => handleDeleteComponent(component.id),
+    style: { color: "red" },
+  },
+);
+
 
   useEffect(() => {
     const handleClickOutside = (e) => { if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false); };
@@ -99,7 +138,11 @@ const handleDragLeave = (e) => {
   const childrenCount = hasChildren ? component.children.length : 0;
   const isObject = component.component_type === 'Object';
   const isSelected = selectedComponent && selectedComponent.id === component.id;
-  const componentLabel = component.component_type === SDComponentType.Button ? 'Button' : component.properties.component_type;
+  const componentLabel = component && component.component_type === SDComponentType.Button
+  ? 'Button'
+  : component && component.properties
+    ? component.properties.component_type
+    : 'Unknown';
 
   return (
   	<div>

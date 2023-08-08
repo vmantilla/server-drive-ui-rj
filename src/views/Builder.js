@@ -313,104 +313,6 @@ const handleAddComponent = (type) => {
     });
   };
 
-  const handleEmbedComponent = (parentType, childId) => {
-  if (parentType !== SDComponentType.ContainerView && parentType !== SDComponentType.Button) {
-    console.error("El tipo de padre debe ser un ContainerView o un Button");
-    return;
-  }
-
-  // Función recursiva para encontrar el componente hijo y su padre
-  const findChildAndParent = (components, targetId, parent = null) => {
-    for (let component of components) {
-      if (component.id === targetId) return { child: component, parent };
-      if (component.children) {
-        const found = findChildAndParent(component.children, targetId, component);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
-
-  setDroppedComponents(prevComponents => {
-    const { child, parent } = findChildAndParent(prevComponents, childId);
-
-    // Crear una nueva instancia del componente padre utilizando SDComponent.
-    const parentComponent = new SDComponent(
-      uuidv4(),
-      parentType,
-      getDefaultProps(parentType),
-      [child], // Insertar el componente hijo en el componente padre.
-      {},
-    );
-
-    // Si el componente hijo se encuentra en la raíz, reemplazarlo directamente
-    if (!parent) {
-      return prevComponents.map(component => component.id === childId ? parentComponent : component);
-    }
-
-    // Reemplazar el componente hijo en su padre con el nuevo componente padre
-    const index = parent.children.indexOf(child);
-    parent.children.splice(index, 1, parentComponent);
-
-    return [...prevComponents];
-  });
-};
-
-
-const handleMoveComponent = (childId, parentId) => {
-  setDroppedComponents(prevComponents => {
-    // Clonar los componentes para evitar mutaciones
-    let components = JSON.parse(JSON.stringify(prevComponents));
-
-    // Recursive function to create a duplicate of a component and its children
-    const duplicateComponent = (component) => {
-      const newChildren = component.children ? component.children.map(duplicateComponent) : [];
-      return new SDComponent(
-        uuidv4(),
-        component.component_type,
-        component.properties,
-        newChildren,
-        component.states,
-        component.order
-      );
-    };
-
-    // Función recursiva para encontrar el componente y su padre
-    const findComponentAndParent = (components, targetId, parent = null) => {
-      for (let i = 0; i < components.length; i++) {
-        if (components[i].id === targetId) return { component: components[i], parent, index: i };
-        if (components[i].children) {
-          const found = findComponentAndParent(components[i].children, targetId, components[i]);
-          if (found) return found;
-        }
-      }
-      return null;
-    };
-
-    // Encuentra el hijo y su padre actual
-    const { component: child, parent: oldParent, index: oldIndex } = findComponentAndParent(components, childId);
-
-    // Elimina el hijo de su posición actual
-    if (oldParent) {
-      oldParent.children.splice(oldIndex, 1);
-    } else {
-      components.splice(oldIndex, 1);
-    }
-
-    // Crea una copia del componente y sus hijos
-    const duplicatedChild = duplicateComponent(child);
-
-    // Encuentra el nuevo padre
-    const { component: newParent } = findComponentAndParent(components, parentId);
-
-    // Inserta la copia del hijo en el nuevo padre
-    newParent.children.push(duplicatedChild);
-
-    return components;
-  });
-};
-
-
 
 
 
@@ -454,8 +356,43 @@ const handleMoveComponent = (childId, parentId) => {
     });
   }, []);
 
-  const handleDuplicateComponent = (componentId) => {
-  // Recursive function to create a duplicate of a component and its children
+ const findComponentAndParent = (components, targetId, parent = null) => {
+  for (let component of components) {
+    if (component.id === targetId) return { component, parent };
+    if (component.children) {
+      const found = findComponentAndParent(component.children, targetId, component);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+const handleMoveComponent = (childId, parentId) => {
+  setDroppedComponents(prevComponents => {
+    const foundChildAndParent = findComponentAndParent(prevComponents, childId);
+    if (!foundChildAndParent) {
+      console.warn(`Child component with ID ${childId} not found`);
+      return prevComponents;
+    }
+
+    const { component: child, parent: oldParent } = foundChildAndParent;
+
+    if (oldParent) {
+      const oldIndex = oldParent.children.indexOf(child);
+      oldParent.children.splice(oldIndex, 1);
+    } else {
+      const oldIndex = prevComponents.indexOf(child);
+      prevComponents.splice(oldIndex, 1);
+    }
+
+    const { component: newParent } = findComponentAndParent(prevComponents, parentId);
+    newParent.children.push(child);
+
+    return [...prevComponents];
+  });
+};
+
+const handleDuplicateComponent = (componentId) => {
   const duplicateComponent = (component) => {
     const newChildren = component.children ? component.children.map(duplicateComponent) : [];
     return new SDComponent(
@@ -468,24 +405,16 @@ const handleMoveComponent = (childId, parentId) => {
     );
   };
 
-  // Recursive function to find the component to duplicate
-  const findNestedComponent = (components, targetId) => {
-    for (let component of components) {
-      if (component.id === targetId) return component;
-      if (component.children) {
-        const found = findNestedComponent(component.children, targetId);
-        if (found) return found;
-      }
+  setDroppedComponents(prevComponents => {
+    const foundComponent = findComponentAndParent(prevComponents, componentId);
+    if (!foundComponent) {
+      console.warn(`Component with ID ${componentId} not found`);
+      return prevComponents;
     }
-    return null;
-  };
 
-  const componentToDuplicate = findNestedComponent(droppedComponents, componentId);
-
-  if (componentToDuplicate) {
+    const { component: componentToDuplicate } = foundComponent;
     const duplicatedComponent = duplicateComponent(componentToDuplicate);
 
-    // Recursive function to insert the duplicated component
     const insertDuplicatedComponent = (components) => {
       components.forEach((component, index) => {
         if (component.id === componentId) {
@@ -497,14 +426,48 @@ const handleMoveComponent = (childId, parentId) => {
       });
     };
 
-    let newComponents = [...droppedComponents];
+    let newComponents = [...prevComponents];
     insertDuplicatedComponent(newComponents);
 
-    setDroppedComponents(newComponents);
-  } else {
-    console.warn(`Component with ID ${componentId} not found`);
-  }
+    return newComponents;
+  });
 };
+
+const handleEmbedComponent = (parentType, childId) => {
+  if (parentType !== SDComponentType.ContainerView && parentType !== SDComponentType.Button) {
+    console.error("El tipo de padre debe ser un ContainerView o un Button");
+    return;
+  }
+
+  setDroppedComponents(prevComponents => {
+    const foundChildAndParent = findComponentAndParent(prevComponents, childId);
+    if (!foundChildAndParent) {
+      console.warn(`Child component with ID ${childId} not found`);
+      return prevComponents;
+    }
+
+    const { child: component, parent } = foundChildAndParent;
+
+    const parentComponent = new SDComponent(
+      uuidv4(),
+      parentType,
+      getDefaultProps(parentType),
+      [component], // Insertar el componente hijo en el componente padre.
+      {},
+    );
+
+    if (!parent) {
+      return prevComponents.map(component => component.id === childId ? parentComponent : component);
+    }
+
+    const index = parent.children.indexOf(component);
+    parent.children.splice(index, 1, parentComponent);
+
+    return [...prevComponents];
+  });
+};
+
+
 
   return (
     <DndProvider backend={HTML5Backend}>
