@@ -79,12 +79,12 @@ const Builder = () => {
   };
 
   useEffect(() => {
-    console.log(selectedPreview);
-    
   if (selectedPreview && selectedPreview.id) {
+    clearDroppedComponents()
     getComponentsFromAPI(selectedPreview.id)
       .then(componentsFromServer => {
         setDroppedComponents(componentsFromServer.map(component => SDComponent.fromJSON(component)));
+
       })
       .catch(err => {
         console.error(err);
@@ -99,7 +99,6 @@ const Builder = () => {
 
   const saveComponent = useCallback(() => {
     if (selectedPreview && selectedPreview.id) {
-      console.log(droppedComponents);
     saveComponentsToAPI(selectedPreview.id, droppedComponents)
     .then(() => {
       console.log('Componentes guardados con éxito');
@@ -200,7 +199,6 @@ const Builder = () => {
 };
 
   const deleteComponent = (componentId) => {
-    console.log("handleDeleteComponent",componentId)
     const nestedComponentToDelete = deleteNestedComponent(droppedComponents, componentId)
     setDroppedComponents(nestedComponentToDelete);
   };
@@ -233,7 +231,6 @@ const handleAddComponent = (type) => {
   };
   
   useEffect(() => {
-    console.log("droppedComponents", droppedComponents);
     const updateDB = async () => {
       const db = await openDB('builderDB', 1);
       for (let i = 0; i < droppedComponents.length; i++) {
@@ -268,8 +265,6 @@ const handleAddComponent = (type) => {
 
 
   const updateComponent = (componentId, newProperties) => {
-    // Convertir newProperties a una instancia de SDProperties
-    console.log("updateComponent", newProperties);
     const properties = SDProperties.fromJSON(newProperties);
 
     const newDroppedComponents = updateNestedComponent(droppedComponents, componentId, properties);
@@ -502,20 +497,20 @@ const handleEmbedComponent = (parentType, childId) => {
     <div className="col-3 resizable-panel">
     <div className="panel-container">
     <span className="panel-title">Listado de componentes</span>
-    {droppedComponents.map((component, index) => (
-      <SDComponentTree key={index}
-      component={component} 
-      selectedComponent={selectedComponent} 
-      setSelectedComponent={setSelectedComponent}
-      droppedComponents={droppedComponents}
-      setDroppedComponents={setDroppedComponents}
-      handleAddComponent={handleAddComponent}
-      handleEmbedComponent={handleEmbedComponent}
-      handleMoveComponent={handleMoveComponent}
-      handleDuplicateComponent={handleDuplicateComponent}
-      handleDeleteComponent={handleDeleteComponent} 
-       />
-    ))}
+    {droppedComponents.map((component, index) => {
+  return (
+    <SDComponentTree key={index}
+    component={component} 
+    selectedComponent={selectedComponent} 
+    setSelectedComponent={setSelectedComponent}
+    handleAddComponent={handleAddComponent}
+    handleEmbedComponent={handleEmbedComponent}
+    handleMoveComponent={handleMoveComponent}
+    handleDuplicateComponent={handleDuplicateComponent}
+    handleDeleteComponent={handleDeleteComponent} 
+     />
+  );
+})}
 {/*  <Componentes/>  */}
     </div>
     </div>

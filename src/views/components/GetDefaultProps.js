@@ -62,7 +62,6 @@ const getDefaultSpaceViewProperties = () => {
 }
 
 export const getDefaultProps = (component_type) => {
-  console.log("component_type", component_type)
   switch(component_type) {
     case SDComponentType.ContainerView:
       return getDefaultContainerViewProperties();

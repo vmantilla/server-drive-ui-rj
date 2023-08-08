@@ -4,7 +4,7 @@ import SDComponentType from '../enums/SDComponentType';
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, setDroppedComponents, handleAddComponent, handleDeleteComponent, handleDuplicateComponent, handleEmbedComponent, handleMoveComponent }) => {
+const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, handleAddComponent, handleDeleteComponent, handleDuplicateComponent, handleEmbedComponent, handleMoveComponent }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -13,12 +13,16 @@ const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, s
 
 const handleDragEnter = (e) => {
   e.preventDefault();
-  setHoverComponent(component);
+  if (e.currentTarget === componentRef.current) {
+    setHoverComponent(component);
+  }
 };
 
 const handleDragLeave = (e) => {
   e.preventDefault();
-  setHoverComponent(null);
+  if (e.currentTarget === componentRef.current) {
+    setHoverComponent(null);
+  }
 };
 
 
@@ -32,6 +36,9 @@ const handleDragLeave = (e) => {
   
   // Comprobar si el componente es un objeto
   if (component.component_type === 'Object') return;
+
+  // Comprobar si el componente es un Spacer
+  if (component.component_type === 'Space') return;
 
   // Comprobar si el origen y el destino son el mismo
   if (component.id === childId) return;
@@ -53,6 +60,9 @@ const handleDrop = (e) => {
   
   // Comprobar si el componente es un objeto
   if (component.component_type === 'Object') return;
+
+  // Comprobar si el componente es un Spacer
+  if (component.component_type === 'Space') return;
 
   // Comprobar si el origen y el destino son el mismo
   if (component.id === childId) return;
@@ -145,8 +155,8 @@ menuItems.push(
     : 'Unknown';
 
   return (
-  	<div>
-   <div>
+  	<div >
+  	<div >
     <div ref={componentRef}
   draggable
   onDragStart={handleDragStart}
@@ -155,9 +165,15 @@ menuItems.push(
   onDragLeave={handleDragLeave}
   onDrop={handleDrop}
   onClick={selectComponent}
-      className={`mb-1 p-2 ${isSelected ? 'border border-primary rounded' : ''}`}
-      style={{ cursor: 'pointer', background: isSelected ? '#f0f8ff' : 'transparent' }}>
-      <span onClick={toggleExpanded} className="me-2" style={{ cursor: 'pointer' }}>{hasChildren ? (isExpanded ? <i className="bi bi-chevron-down"></i> : <i className="bi bi-chevron-right"></i>) : <span style={{ width: '1rem', display: 'inline-block' }} />}</span>
+  className={`mb-0 p-1 ${isSelected ? 'border border-primary rounded' : ''}`}
+  style={{
+    cursor: 'pointer',
+    background: isSelected ? '#f0f8ff' : (hoverComponent === component ? '#00aaff' : 'transparent'),
+    border: hoverComponent === component ? '3px solid #0077cc' : '',
+    borderRadius: '5px',
+    width: hoverComponent === component ? '100%' : ''
+  }}>
+       <span onClick={toggleExpanded} className="me-2" style={{ cursor: 'pointer' }}>{hasChildren ? (isExpanded ? <i className="bi bi-chevron-down"></i> : <i className="bi bi-chevron-right"></i>) : <span style={{ width: '1rem', display: 'inline-block' }} />}</span>
       <i className={`bi ${isObject ? 'bi-file-earmark' : 'bi-file-earmark-text'}`} />
       <span className="ms-2" style={{ fontSize: '0.8rem', color: 'black' }}>{componentLabel} {childrenCount > 0 && <span style={{ fontSize: '0.8rem', color: 'black' }}>{`[${childrenCount}]`}</span>}</span> {/* Aquí aplicamos los estilos a las etiquetas de componentes y el contador de hijos */}
       {isSelected && (
@@ -217,12 +233,9 @@ menuItems.push(
     )}
   </span>
 )}
-
-
-
       </div>
       </div>
-      {isExpanded && hasChildren && (<div style={{ marginLeft: '20px' }}>{component.children.map((child, index) => (<SDComponentTree key={index} component={child} selectedComponent={selectedComponent} setSelectedComponent={setSelectedComponent} setDroppedComponents={setDroppedComponents} handleAddComponent={handleAddComponent} handleDeleteComponent={handleDeleteComponent} handleDuplicateComponent={handleDuplicateComponent} handleEmbedComponent={handleEmbedComponent} handleMoveComponent={handleMoveComponent}/>))}</div>)}
+      {isExpanded && hasChildren && (<div style={{ marginLeft: '20px' }}>{component.children.map((child, index) => (<SDComponentTree key={index} component={child} selectedComponent={selectedComponent} setSelectedComponent={setSelectedComponent} handleAddComponent={handleAddComponent} handleDeleteComponent={handleDeleteComponent} handleDuplicateComponent={handleDuplicateComponent} handleEmbedComponent={handleEmbedComponent} handleMoveComponent={handleMoveComponent}/>))}</div>)}
     </div>
   );
 };
