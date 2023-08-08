@@ -4,7 +4,7 @@ import SDComponentType from '../enums/SDComponentType';
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, setDroppedComponents, handleAddComponent, handleDeleteComponent, handleDuplicateComponent }) => {
+const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, setDroppedComponents, handleAddComponent, handleDeleteComponent, handleDuplicateComponent, handleEmbedComponent }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -35,7 +35,7 @@ const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, s
       subItems: ["ContainerView", "Button", "ScrollView"].map((type) => ({
         label: `Add ${type}`,
         type: type,
-        action: () => handleAddComponent(type)
+        action: () => handleEmbedComponent(type, component.id)
       })),
     },
     { separator: true },
@@ -142,7 +142,7 @@ const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, s
 
       </div>
       </div>
-      {isExpanded && hasChildren && (<div style={{ marginLeft: '20px' }}>{component.children.map((child, index) => (<SDComponentTree key={index} component={child} selectedComponent={selectedComponent} setSelectedComponent={setSelectedComponent} setDroppedComponents={setDroppedComponents} handleAddComponent={handleAddComponent} handleDeleteComponent={handleDeleteComponent} handleDuplicateComponent={handleDuplicateComponent}/>))}</div>)}
+      {isExpanded && hasChildren && (<div style={{ marginLeft: '20px' }}>{component.children.map((child, index) => (<SDComponentTree key={index} component={child} selectedComponent={selectedComponent} setSelectedComponent={setSelectedComponent} setDroppedComponents={setDroppedComponents} handleAddComponent={handleAddComponent} handleDeleteComponent={handleDeleteComponent} handleDuplicateComponent={handleDuplicateComponent} handleEmbedComponent={handleEmbedComponent}/>))}</div>)}
     </div>
   );
 };

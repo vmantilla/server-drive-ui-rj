@@ -313,6 +313,50 @@ const handleAddComponent = (type) => {
     });
   };
 
+  const handleEmbedComponent = (parentType, childId) => {
+  if (parentType !== SDComponentType.ContainerView && parentType !== SDComponentType.Button) {
+    console.error("El tipo de padre debe ser un ContainerView o un Button");
+    return;
+  }
+
+  // Función recursiva para encontrar el componente hijo y su padre
+  const findChildAndParent = (components, targetId, parent = null) => {
+    for (let component of components) {
+      if (component.id === targetId) return { child: component, parent };
+      if (component.children) {
+        const found = findChildAndParent(component.children, targetId, component);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  setDroppedComponents(prevComponents => {
+    const { child, parent } = findChildAndParent(prevComponents, childId);
+
+    // Crear una nueva instancia del componente padre utilizando SDComponent.
+    const parentComponent = new SDComponent(
+      uuidv4(),
+      parentType,
+      getDefaultProps(parentType),
+      [child], // Insertar el componente hijo en el componente padre.
+      {},
+    );
+
+    // Si el componente hijo se encuentra en la raíz, reemplazarlo directamente
+    if (!parent) {
+      return prevComponents.map(component => component.id === childId ? parentComponent : component);
+    }
+
+    // Reemplazar el componente hijo en su padre con el nuevo componente padre
+    const index = parent.children.indexOf(child);
+    parent.children.splice(index, 1, parentComponent);
+
+    return [...prevComponents];
+  });
+};
+
+
 
 
 
@@ -407,7 +451,6 @@ const handleAddComponent = (type) => {
   }
 };
 
-
   return (
     <DndProvider backend={HTML5Backend}>
     <App>
@@ -440,6 +483,7 @@ const handleAddComponent = (type) => {
       droppedComponents={droppedComponents}
       setDroppedComponents={setDroppedComponents}
       handleAddComponent={handleAddComponent}
+      handleEmbedComponent={handleEmbedComponent}
       handleDuplicateComponent={handleDuplicateComponent}
       handleDeleteComponent={handleDeleteComponent} 
        />
