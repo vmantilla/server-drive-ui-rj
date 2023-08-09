@@ -60,24 +60,39 @@ const RenderContainerView = ({ component, handleDrop, onClick, index, moveChildr
     }
 
 
-    let className;
+let className = "container-scrollview"; 
+
+if (component.component_type !== "ScrollView") { 
   switch (properties.component_type) {
     case "Row":
-      className = "container-row";
+      className = "container container-row";
       break;
     case "Column":
-      className = "container-column";
+      className = "container container-column";
       break;
     case "Overflow":
-      className = "container-overflow";
+      className = "container container-overflow";
       break;
     default:
-      className = "container-row";
+      className = "container container-row";
       break;
   }
+} else {
+  switch (properties.component_type) {
+    case "Row":
+      className += " container-scrollview-row"; 
+      break;
+    case "Column":
+      className += " container-scrollview-column"; 
+      break;
+    default:
+      break;
+  }
+}
+
 
   return (
-    <div ref={drop} className={`container ${className}`} style={style} onClick={(e) => {
+    <div ref={drop} className={`${className}`} style={style} onClick={(e) => {
         e.stopPropagation(); 
         onClick(e, component);
       }}>

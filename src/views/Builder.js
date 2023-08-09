@@ -429,7 +429,7 @@ const handleDuplicateComponent = (componentId) => {
 };
 
 const handleEmbedComponent = (parentType, childId) => {
-  if (parentType !== SDComponentType.ContainerView && parentType !== SDComponentType.Button) {
+  if (parentType !== SDComponentType.ContainerView && parentType !== SDComponentType.Button && parentType !== SDComponentType.ScrollView) {
     console.error("El tipo de padre debe ser un ContainerView o un Button");
     return;
   }

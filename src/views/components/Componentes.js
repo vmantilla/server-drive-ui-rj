@@ -26,6 +26,8 @@ const Componentes = () => {
     return (
         <>
             <Componente type={SDComponentType.ContainerView}>ContainerView</Componente>
+            <Componente type={SDComponentType.ScrollView}>ScrollView</Componente>
+            <Componente type={SDComponentType.Button}>Button</Componente>
             <Componente type={SDComponentType.Object}>Object</Componente>
             <Componente type={SDComponentType.Space}>Space</Componente>
         </>

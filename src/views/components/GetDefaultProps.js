@@ -26,6 +26,17 @@ const getDefaultContainerViewProperties = () => {
   });
 }
 
+const getDefaultScrollViewProperties = () => {
+  return new SDProperties({
+    component_type: "Column",
+    frame: { width: "100%", height: "100%" },
+    cornerRadius: new SDCornerRadius({ shape: 'none'}),
+    border: { color: 'outline', width: 1 },
+    isEnabled: true,
+    margin: { top: 2, bottom: 2, left: 2, right: 2 },
+  });
+}
+
 const getDefaultButtonViewProperties = () => {
   return new SDProperties({
     component_type: "Row",
@@ -71,6 +82,8 @@ export const getDefaultProps = (component_type) => {
       return getDefaultObjectProperties();
     case SDComponentType.Button:
       return getDefaultButtonViewProperties()
+    case SDComponentType.ScrollView:
+      return getDefaultScrollViewProperties()
     default:
       return getDefaultObjectProperties();
   }

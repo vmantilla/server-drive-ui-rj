@@ -56,3 +56,17 @@
   width: 5px;
 }
 
+.container-scrollview {
+  display: flex;
+  overflow: auto;
+  flex-grow: 1;
+}
+
+.container-scrollview-row {
+  flex-direction: row;
+}
+
+.container-scrollview-column {
+  flex-direction: column;
+}
+

@@ -83,10 +83,10 @@ const handleDrop = (e) => {
 if (component.component_type !== 'Object' && component.component_type !== 'Space') {
   menuItems.push(
     {
-      label: "Add Container",
+      label: "Add",
       isNonInteractive: true,
       subItems: ["ContainerView", "Button", "ScrollView"].map((type) => ({
-        label: `Add ${type}`,
+        label: `${type}`,
         type: type,
         action: () => handleAddComponent(type)
       })),
@@ -106,10 +106,10 @@ menuItems.push(
   },
   { separator: true },
   {
-    label: "Embed in",
+    label: "Embed",
     isNonInteractive: true, // Marcar este elemento como no interactivo
     subItems: ["ContainerView", "Button", "ScrollView"].map((type) => ({
-      label: `Add ${type}`,
+      label: `In ${type}`,
       type: type,
       action: () => handleEmbedComponent(type, component.id)
     })),
@@ -150,6 +150,8 @@ menuItems.push(
   const isSelected = selectedComponent && selectedComponent.id === component.id;
   const componentLabel = component && component.component_type === SDComponentType.Button
   ? 'Button'
+  : component && component.component_type === SDComponentType.ScrollView
+  ? 'ScrollView'
   : component && component.properties
     ? component.properties.component_type
     : 'Unknown';

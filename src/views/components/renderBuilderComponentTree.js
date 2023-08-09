@@ -1,6 +1,7 @@
 import RenderContainerView from './renders/RenderContainerView';
 import RenderObjectView from './renders/RenderObjectView';
 import RenderSpaceView from './renders/RenderSpaceView';
+import RenderScrollView from './renders/RenderScrollView';
 
 export function renderBuilderComponentTree(component, handleDrop, onComponentClick, index, moveChildrens, selectedComponent) {
 
@@ -19,8 +20,12 @@ export function renderBuilderComponentTree(component, handleDrop, onComponentCli
   const properties = component?.properties || {};
 
   switch (component.component_type) {
-  case "Button":
+    case "ScrollView":
       Component = RenderContainerView
+      break;
+    case "Button":
+      Component = RenderContainerView
+      break;
     case "ContainerView":
       Component = RenderContainerView
       break;
