@@ -100,5 +100,16 @@
   z-index: 9999;
 }
 
+.drop-zone {
+  width: 430px;
+  height: 844px;
+  border-radius: 40px;
+  background-color: #F0F0F0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  border: 20px solid #333333; /* O puedes utilizar #C0C0C0 si prefieres */
+}
+
 
 

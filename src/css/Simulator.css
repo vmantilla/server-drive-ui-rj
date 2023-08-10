@@ -7,7 +7,7 @@
   padding: 0px;
   box-sizing: border-box;
   background-color: #f0f0f0;
-  overflow-y: auto;
+  /*overflow-y: auto;*/
 }
 
 /* Generic container */
@@ -68,5 +68,17 @@
 
 .container-scrollview-column {
   flex-direction: column;
+}
+
+
+.drop-zone {
+  width: 430px;
+  height: 844px;
+  border-radius: 40px;
+  background-color: #F0F0F0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  border: 20px solid #333333; /* O puedes utilizar #C0C0C0 si prefieres */
 }
 

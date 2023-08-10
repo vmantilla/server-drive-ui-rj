@@ -11,8 +11,6 @@ import { fetchJsonFile } from '../helpers/utils';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { openDB } from 'idb';
-
 import Preview from './Preview';
 import PreviewGrid from './thumbnailsPreview/PreviewGrid';
 import ColorsAndFontsView from './ColorsAndFontsView';
@@ -28,12 +26,19 @@ import DropZone from './DropZone';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/Builder.css';
 
-import { firebase } from '../firebase';
-import { doc, setDoc } from "firebase/firestore";
 
 import { getDefaultProps, getDefaultTextViewProperties } from './components/GetDefaultProps';
 import { v4 as uuidv4 } from 'uuid';
 import SDComponentType from '../enums/SDComponentType';
+
+import {
+  importComponentsFromJSON,
+  deploy,
+  exportComponentsToJSON,
+  clearDroppedComponents,
+  initDB,
+  updateDB
+} from './actions/dbActions.js';
 
 import axios from 'axios';
 
@@ -78,9 +83,40 @@ const Builder = () => {
     setSelectedPreview(preview);
   };
 
+  // Usar el efecto para inicializar la base de datos cuando el componente se monte
+  useEffect(() => {
+    initDB(setDroppedComponents);
+  }, []);
+
+  // Usar el efecto para actualizar la base de datos cuando 'droppedComponents' cambie
+  useEffect(() => {
+    updateDB(droppedComponents);
+  }, [droppedComponents]);
+
+
+  const dbActions = {
+    handleImport: async () => {
+      //const fileContent = /* logic to read the file content */
+      importComponentsFromJSON(setDroppedComponents);
+    },
+
+    handleExport: async () => {
+      exportComponentsToJSON(droppedComponents);
+    },
+
+    handleDeploy: async () => {
+      deploy();
+    },
+
+    handleClearDroppedComponents: async () => {
+      clearDroppedComponents(setDroppedComponents);
+    }
+  };
+
+
   useEffect(() => {
   if (selectedPreview && selectedPreview.id) {
-    clearDroppedComponents()
+    dbActions.handleClearDroppedComponents()
     getComponentsFromAPI(selectedPreview.id)
       .then(componentsFromServer => {
         setDroppedComponents(componentsFromServer.map(component => SDComponent.fromJSON(component)));
@@ -113,61 +149,7 @@ const Builder = () => {
     }
   }, [droppedComponents]);
 
-  const importComponentsFromJSON = async () => {
-  // Solicita al usuario que cargue el archivo JSON
-    const file = await new Promise((resolve) => {
-      let fileInput = document.createElement('input');
-      fileInput.type = 'file';
-      fileInput.accept = 'application/json';
-
-      fileInput.onchange = (e) => {
-        let file = e.target.files[0];
-        resolve(file);
-      };
-
-      fileInput.click();
-    });
-
-  // Lee y analiza el archivo JSON
-    let fileReader = new FileReader();
-    fileReader.onload = async (e) => {
-      let components = JSON.parse(e.target.result);
-
-    // Abre la base de datos IndexedDB
-      const db = await openDB('builderDB', 1);
-
-    // Limpia los componentes existentes
-      await db.clear('droppedComponentsStore');
-
-    // Agrega los nuevos componentes a la base de datos
-      for (let i = 0; i < components.length; i++) {
-        const component = SDComponent.fromJSON(components[i]);
-        await db.put('droppedComponentsStore', component, i);
-      }
-
-    // Actualiza el estado con los nuevos componentes
-      setDroppedComponents(components.map(component => SDComponent.fromJSON(component)));
-    };
-
-    fileReader.readAsText(file);
-  };
-
-
-  const deploy = async () => {
-    try {
-      const db = await openDB('builderDB', 1);
-      const components = await db.getAll('droppedComponentsStore');
-      const dataStr = JSON.stringify(components);
-
-      const docRef = doc(firebase, "users", "ravit-21");
-
-      await setDoc(docRef, { dataStr }, { merge: true });
-      console.log("Document updated with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error updating document: ", e);
-    }
-  };
-
+  
   const deleteNestedComponent = (components, targetId) => {
     return components.flatMap(component => {
       if (component.id === targetId) {
@@ -204,20 +186,6 @@ const Builder = () => {
   };
 
 
-  const exportComponentsToJSON = async () => {
-    const db = await openDB('builderDB', 1);
-    const components = await db.getAll('droppedComponentsStore');
-    const dataStr = JSON.stringify(components);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    const exportFileDefaultName = 'data.json';
-
-    let linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-  };
-
-
 const handleAddComponent = (type) => {
     const componentChildren = [];
     if (type === SDComponentType.Button) {
@@ -230,40 +198,7 @@ const handleAddComponent = (type) => {
     });
   };
   
-  useEffect(() => {
-    const updateDB = async () => {
-      const db = await openDB('builderDB', 1);
-      for (let i = 0; i < droppedComponents.length; i++) {
-        if (droppedComponents[i]) {
-          if (typeof droppedComponents[i].toJSON === 'function') {
-            await db.put('droppedComponentsStore', droppedComponents[i].toJSON(), i);
-          } else {
-            console.log(`droppedComponents[${i}] no tiene un método toJSON`);
-          }
-        } else {
-          console.log(`droppedComponents[${i}] es undefined o null`);
-        }
-      }
-    };
-
-    updateDB();
-  }, [droppedComponents]);
-
-  useEffect(() => {
-    const initDB = async () => {
-      const db = await openDB('builderDB', 1, {
-        upgrade(db) {
-          db.createObjectStore('droppedComponentsStore');
-        },
-      });
-      const components = await db.getAll('droppedComponentsStore');
-      setDroppedComponents(components.map(component => SDComponent.fromJSON(component)));
-    };
-
-    initDB();
-  }, []);
-
-
+  
   const updateComponent = (componentId, newProperties) => {
     const properties = SDProperties.fromJSON(newProperties);
 
@@ -306,16 +241,6 @@ const handleAddComponent = (type) => {
         return component;
       }
     });
-  };
-
-
-
-
-
-  const clearDroppedComponents = async () => {
-    const db = await openDB('builderDB', 1);
-    await db.clear('droppedComponentsStore');
-    setDroppedComponents([]);
   };
 
   const handleComponentClick = (e, component) => {
@@ -480,10 +405,10 @@ const handleEmbedComponent = (parentType, childId) => {
     {errorMessage && <div className="error-message">{errorMessage}</div>}
 
     <div className="container-fluid" style={{ height: '100vh' }}>
-    <button onClick={clearDroppedComponents}>Limpiar</button>
-    <button onClick={exportComponentsToJSON}>Exportar como JSON</button>
-    <button onClick={importComponentsFromJSON}>Importar desde JSON</button>
-    <button onClick={deploy}>Deploy</button>
+    <button onClick={dbActions.handleClearDroppedComponents}>Limpiar</button>
+    <button onClick={dbActions.handleExport}>Exportar como JSON</button>
+    <button onClick={dbActions.handleImport}>Importar desde JSON</button>
+    <button onClick={dbActions.handleDeploy}>Deploy</button>
     <button onClick={saveComponent}>Guardar</button>
     <Tabs
     activeKey={activeTab}
@@ -531,9 +456,8 @@ const handleEmbedComponent = (parentType, childId) => {
       boxShadow: '0 0 10px rgba(0,0,0,0.15)',
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center',
       alignItems: 'center',
-      overflow: 'auto',
+      overflow: 'hidden',
       border: '20px solid #333333' //C0C0C0
     }} 
     droppedComponents={droppedComponents}
