@@ -40,26 +40,7 @@ import {
   updateDB
 } from './actions/dbActions.js';
 
-import axios from 'axios';
-
-// Configura axios para usar "http://localhost:3000" como URL base
-axios.defaults.baseURL = "http://localhost:3000";
-
-axios.interceptors.request.use(function (config) {
-  const token = localStorage.getItem('token');
-  config.headers.Authorization = token ? `Bearer ${token}` : '';
-  return config;
-});
-
-const getComponentsFromAPI = async (selectedPreview) => {
-  const response = await axios.get(`/previews/${selectedPreview}/components`);
-  return response.data;
-};
-
-const saveComponentsToAPI = async (selectedPreview, components) => {
-  const response = await axios.put(`/previews/${selectedPreview}/components`, { components });
-  return response.data;
-};
+import { getComponentsFromAPI, saveComponentsToAPI } from './api.js'; 
 
 
 const Builder = () => {

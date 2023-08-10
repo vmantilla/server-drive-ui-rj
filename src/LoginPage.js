@@ -35,7 +35,7 @@ const LoginPage = () => {
       localStorage.setItem('token', token);
 
       // Redirect to the dashboard
-      navigate("/builder");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error:", error);
       setError("Hubo un error en el inicio de sesión");
