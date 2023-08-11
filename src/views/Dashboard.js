@@ -199,8 +199,8 @@ function Dashboard() {
             <div className="project-title-actions d-flex align-items-center justify-content-between">
               <h3 onClick={() => handleProjectSelect(project.id)}>{project.title}</h3>
               <div>
-                <i className="bi bi-pencil-square" style={{ fontSize: '1.5rem', marginRight: '10px', color: 'gray'}} onClick={() => handleModalShow(project.id)}></i>
-                <i className="bi bi-trash" style={{ fontSize: '1.5rem', color: 'gray'}} onClick={() => handleDeleteModalShow(project.id)}></i>
+                <i className="bi bi-pencil-square icon-pencil" onClick={() => handleModalShow(project.id)}></i>
+                <i className="bi bi-trash icon-trash" onClick={() => handleDeleteModalShow(project.id)}></i>
               </div>
             </div>
           </div>
@@ -233,7 +233,7 @@ function Dashboard() {
                 {newProjectImage && (
                     <div style={{ position: 'relative' }}>
                         <img src={newProjectImage} alt="Vista previa" style={{ width: '60%', marginTop: '10px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
-                        <i className="bi bi-trash" style={{ fontSize: '1.5rem',position: 'absolute', top: '-10px', right: '5px', cursor: 'pointer', color: 'gray' }} onClick={handleRemoveImage}></i>
+                        <i className="bi bi-trash icon-medium" style={{ position: 'absolute', top: '-10px', right: '5px', cursor: 'pointer' }} onClick={handleRemoveImage}></i>
                     </div>
                 )}
                 <br />

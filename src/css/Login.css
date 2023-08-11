@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap');
+
+body {
+    font-family: 'Rubik', sans-serif;
+    background-color: #F0F0F0; /* Color de fondo igual al del sidebar */
+    margin: 0;
+}
+
+.login-logo {
+    display: block;
+    margin: 0 auto 2rem auto;
+    width: 180px; 
+}
+
+h2 {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 700; 
+    font-size: 1.5em; 
+    margin-bottom: 20px; 
+    text-align: center;
+}
+
+.login-container {
+    background-color: #ffffff; 
+    padding: 2rem 4rem;
+    border: 1px solid #ccc; /* Borde sutil, similar a una card */
+    border-radius: 10px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    width: 400px; 
+}
+
+.login-form {
+    margin-top: 1rem;
+}
+
+.login-form label {
+    color: #555;
+    font-weight: 600;
+}
+
+.login-form input {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.login-form button {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: none;
+    background-color: #007aff; /* Color de la fuente */
+    color: #ffffff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.login-form button:hover {
+    background-color: #005fdd;
+}
+
+.error-message {
+    color: red;
+    background-color: #ffe6e6;
+    padding: 10px;
+    border: 1px solid red;
+    border-radius: 4px;
+    position: fixed;     
+    top: 10%;            
+    left: 50%;           
+    transform: translateX(-50%);  
+    text-align: center;  
+    z-index: 1100;       
+    width: fit-content;  
+    max-width: 80%;      
+    white-space: nowrap; 
+}

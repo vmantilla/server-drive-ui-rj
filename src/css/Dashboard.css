@@ -1,19 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap');
+
 .dashboard {
-  font-family: 'Arial', sans-serif;
-  padding: 2rem;
-  background-color: #f4f5f7;
+  font-family: 'Rubik', sans-serif;
+  padding: 0 2rem 2rem 2rem;
+
+  background-color: #FFFFFF;
   height: 100vh;
 }
 
-h2 {
-  color: #333;
-  font-size: 1.5rem;
-  margin-bottom: 2rem;
+.dashboard h2 {
+  padding-top: 25px;
+  margin-bottom: 25px;
+}
+
+.dashboard h2, .project-title-actions h3 {
+  text-align: left;
+  font-weight: bold;
+  color: #292929;
+}
+
+h2, .project-card h3, .modal h4 {
+  font-family: 'Rubik', sans-serif;
+  color: #292929;
 }
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Cambiando el tamaño mínimo */
   gap: 1.5rem;
 }
 
@@ -23,6 +36,8 @@ h2 {
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s;
+  border: 0.5px solid #B8B2B2;
+  max-width: 240px; /* Estableciendo un tamaño máximo */
 }
 
 .project-card:hover {
@@ -31,16 +46,16 @@ h2 {
 
 .project-card img {
   width: 100%;
-  height: 150px;
+  height: 130px; /* Reduciendo la altura */
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 0px;
   margin-bottom: 10px; 
 }
 
 .project-card h3 {
-  color: #555;
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.1rem; /* Cambiando el tamaño de fuente */
+  color: #555;
 }
 
 .add-project-card {
@@ -48,21 +63,20 @@ h2 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 222px; /* Puedes ajustar esta altura según lo necesites */
-  color: #007aff; /* Puedes ajustar este color según lo desees */
+  height: 194px; /* Reduciendo la altura */
+  color: #292929;
   font-weight: bold;
+  border: 0.5px solid #B8B2B2;
+  border-radius: 0px;
+  transform: translateY(5px);
 }
 
 .add-project-icon {
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin-bottom: 10px;
 }
 
-.add-project-title {
-  text-align: center;
-}
-
-button {
+.button, .modal button {
   padding: 0.5rem 1rem;
   border: none;
   background-color: #007aff;
@@ -72,12 +86,8 @@ button {
   transition: background-color 0.3s;
 }
 
-button:hover {
+.button:hover, .modal button:hover {
   background-color: #005fdd;
-}
-
-.clickable {
-  cursor: pointer;
 }
 
 .modal {
@@ -89,11 +99,7 @@ button:hover {
   background-color: rgba(255, 255, 255, 0.9); 
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-}
-
-.modal h4 {
-  margin-top: 0;
+  z-index: 1200; /* Incrementando el z-index */
 }
 
 .modal input {
@@ -104,12 +110,13 @@ button:hover {
   margin-bottom: 1rem;
 }
 
-.modal button {
-  margin-right: 1rem;
+.modal, .modal h4, .modal input, .modal button {
+  font-family: 'Rubik', sans-serif;
 }
 
-.modal-backdrop {
-  z-index: 10; /* Ajusta este valor según tus necesidades */
+.error-message, .success-message {
+   border-radius: 4px;
+   margin-top: 10px;
 }
 
 .error-message {
@@ -117,35 +124,39 @@ button:hover {
    background-color: #ffe6e6;
    padding: 10px;
    border: 1px solid red;
-   border-radius: 4px;
-   margin-top: 10px;
 }
 
 .success-message {
    color: green;
    background-color: #e6ffe6;
-   padding: 10px 20px;  /* El padding horizontal es más grande para que sea más corto */
+   padding: 10px 20px;
    border: 1px solid green;
-   border-radius: 4px;
-   position: fixed;     /* Flotante sobre el contenido */
-   top: 2%;            /* Posición vertical, puede ajustarse según tus necesidades */
-   left: 50%;           /* Centrado horizontalmente */
-   transform: translateX(-50%);  /* Ajuste para centrar exactamente en el medio */
-   z-index: 1100;       /* Que quede por encima de otros elementos, puedes ajustar si es necesario */
-   width: auto;         /* No ocupa todo el ancho */
-   text-align: center;  /* El texto está centrado dentro del mensaje */
+   position: fixed;
+   top: 2%;
+   left: 50%;
+   transform: translateX(-50%);
+   z-index: 1100;
+   text-align: center;
 }
 
 .no-image-placeholder {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 150px;  /* Ajusta según el tamaño que desees para el placeholder */
+  height: 130px; /* Coincidir con la nueva altura de la imagen */
   width: 100%;
-  background-color: #f0f0f0;  /* Un fondo claro para diferenciar el placeholder */
+  background-color: #f0f0f0;
   color: gray;
+  margin-bottom: 10px;
 }
 
-.no-image-placeholder .bi-card-image {
-  font-size: 3rem;  /* Ajusta según el tamaño que desees para el ícono */
+.icon-pencil, .icon-trash, .icon-medium {
+  font-size: 1.3rem;
+  color: gray;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.icon-trash {
+  margin-right: 0;
 }
