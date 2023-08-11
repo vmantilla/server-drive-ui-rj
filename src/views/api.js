@@ -9,6 +9,8 @@ axios.interceptors.request.use(function (config) {
   return config;
 });
 
+// === PROJECT API Calls ===
+
 export const getProjectsFromAPI = async () => {
   try {
     const response = await axios.get('/projects');
@@ -29,9 +31,9 @@ export const deleteProjectFromAPI = async (id) => {
   }
 };
 
-export const editProjectNameInAPI = async (id, newName) => {
+export const editProjectNameInAPI = async (id, projectData) => {
   try {
-    const response = await axios.put(`/projects/${id}`, { project: { title: newName } });
+    const response = await axios.put(`/projects/${id}`, { project: projectData });
     return response.data;
   } catch (error) {
     console.error('Error al editar proyecto:', error);
@@ -39,9 +41,9 @@ export const editProjectNameInAPI = async (id, newName) => {
   }
 };
 
-export const addProjectToAPI = async (name) => {
+export const addProjectToAPI = async (projectData) => {
   try {
-    const response = await axios.post('/projects', { project: { title: name, image_url: 'https://vanwoow.es/public/images/notfound.png', description: 'Your default description here' } });
+    const response = await axios.post('/projects', { project: projectData });
     return response.data;
   } catch (error) {
     console.error('Error al agregar proyecto:', error);
@@ -50,9 +52,12 @@ export const addProjectToAPI = async (name) => {
 };
 
 
-export const getComponentsFromAPI = async (selectedPreview) => {
+// === COMPONENTS API Calls ===
+
+
+export const getComponentsFromAPI = async (projectId, selectedPreview) => {
   try {
-    const response = await axios.get(`/previews/${selectedPreview}/components`);
+    const response = await axios.get(`/projects/${projectId}/previews/${selectedPreview}/components`);
     return response.data;
   } catch (error) {
     console.error('Error al obtener componentes:', error);
@@ -60,9 +65,9 @@ export const getComponentsFromAPI = async (selectedPreview) => {
   }
 };
 
-export const saveComponentsToAPI = async (selectedPreview, components) => {
+export const saveComponentsToAPI = async (projectId, selectedPreview, components) => {
   try {
-    const response = await axios.put(`/previews/${selectedPreview}/components`, { components });
+    const response = await axios.put(`/projects/${projectId}/previews/${selectedPreview}/components`, { components });
     return response.data;
   } catch (error) {
     console.error('Error al guardar componentes:', error);
@@ -70,6 +75,7 @@ export const saveComponentsToAPI = async (selectedPreview, components) => {
   }
 };
 
+// === PREVIEW API Calls ===
 
 export const addPreviewToAPI = async (projectId, previewData) => {
   try {
@@ -96,6 +102,89 @@ export const getAllPreviewsFromAPI = async (projectId) => {
     return response.data;
   } catch (error) {
     console.error('Error al obtener todas las vistas previas:', error);
+    throw error;
+  }
+};
+
+
+// === Color API Calls ===
+
+export const getAllColorsFromAPI = async (projectId) => {
+  try {
+    const response = await axios.get(`/projects/${projectId}/colors`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener todos los colores:', error);
+    throw error;
+  }
+};
+
+export const addColorToAPI = async (projectId, colorData) => {
+  try {
+    const response = await axios.post(`/projects/${projectId}/colors`, colorData);
+    return response.data;
+  } catch (error) {
+    console.error('Error al agregar color:', error);
+    throw error;
+  }
+};
+
+export const editColorInAPI = async (projectId, colorId, updatedColorData) => {
+  try {
+    const response = await axios.put(`/projects/${projectId}/colors/${colorId}`, updatedColorData);
+    return response.data;
+  } catch (error) {
+    console.error('Error al editar color:', error);
+    throw error;
+  }
+};
+
+export const deleteColorFromAPI = async (projectId, colorId) => {
+  try {
+    await axios.delete(`/projects/${projectId}/colors/${colorId}`);
+  } catch (error) {
+    console.error('Error al eliminar color:', error);
+    throw error;
+  }
+};
+
+// === Font API Calls ===
+
+export const getAllFontsFromAPI = async (projectId) => {
+  try {
+    const response = await axios.get(`/projects/${projectId}/fonts`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener todas las fuentes:', error);
+    throw error;
+  }
+};
+
+export const addFontToAPI = async (projectId, fontData) => {
+  try {
+    const response = await axios.post(`/projects/${projectId}/fonts`, fontData);
+    return response.data;
+  } catch (error) {
+    console.error('Error al agregar fuente:', error);
+    throw error;
+  }
+};
+
+export const editFontInAPI = async (projectId, fontId, updatedFontData) => {
+  try {
+    const response = await axios.put(`/projects/${projectId}/fonts/${fontId}`, updatedFontData);
+    return response.data;
+  } catch (error) {
+    console.error('Error al editar fuente:', error);
+    throw error;
+  }
+};
+
+export const deleteFontFromAPI = async (projectId, fontId) => {
+  try {
+    await axios.delete(`/projects/${projectId}/fonts/${fontId}`);
+  } catch (error) {
+    console.error('Error al eliminar fuente:', error);
     throw error;
   }
 };

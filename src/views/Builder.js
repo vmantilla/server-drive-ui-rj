@@ -41,9 +41,11 @@ import {
 } from './actions/dbActions.js';
 
 import { getComponentsFromAPI, saveComponentsToAPI } from './api.js'; 
+import { useParams } from 'react-router-dom';
 
 
 const Builder = () => {
+  const { projectId } = useParams();
   const [activeTab, setActiveTab] = useState('components');
   const [themesData, setThemesData] = useState(null);
   const [selectedView, setSelectedView] = useState(null);
@@ -98,7 +100,7 @@ const Builder = () => {
   useEffect(() => {
   if (selectedPreview && selectedPreview.id) {
     dbActions.handleClearDroppedComponents()
-    getComponentsFromAPI(selectedPreview.id)
+    getComponentsFromAPI(projectId, selectedPreview.id)
       .then(componentsFromServer => {
         setDroppedComponents(componentsFromServer.map(component => SDComponent.fromJSON(component)));
 
@@ -111,12 +113,12 @@ const Builder = () => {
         }, 5000);
       });
   }
-}, [selectedPreview]);
+}, [selectedPreview, projectId]);
 
 
   const saveComponent = useCallback(() => {
     if (selectedPreview && selectedPreview.id) {
-    saveComponentsToAPI(selectedPreview.id, droppedComponents)
+    saveComponentsToAPI(projectId, selectedPreview.id, droppedComponents)
     .then(() => {
       console.log('Componentes guardados con éxito');
     })
@@ -245,17 +247,7 @@ const handleAddComponent = (type) => {
     });
   }, []);
 
-  useEffect(() => {
-    fetchJsonFile('./file.json').then(data => {
-      setPreviewData(data);
-    });
-  }, []);
-
-  useEffect(() => {
-    fetchJsonFile('./components.json').then(data => {
-      setComponents(data.components);
-    });
-  }, []);
+  
 
  const findComponentAndParent = (components, targetId, parent = null) => {
   for (let component of components) {
@@ -467,7 +459,7 @@ const handleEmbedComponent = (parentType, childId) => {
   <div className="row resizable-panel">
   <div className="col-12">
   <span className="panel-title">Panel de vistas</span>
-  <PreviewGrid onPreviewSelect={handlePreviewSelect} />
+  <PreviewGrid onPreviewSelect={handlePreviewSelect} projectId={projectId} />
   </div>
   </div>
   </Tab>

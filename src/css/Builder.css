@@ -88,6 +88,7 @@
   border-radius: 10px;
 }
 
+
 .error-message {
   position: fixed;
   top: 50%;
@@ -110,6 +111,7 @@
   flex-direction: column;
   border: 20px solid #333333; /* O puedes utilizar #C0C0C0 si prefieres */
 }
+
 
 
 
