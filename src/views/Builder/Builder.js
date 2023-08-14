@@ -1,38 +1,37 @@
-import React, { useState } from 'react';
-import '../css/Builder.css';
+import React, { useState, useEffect } from 'react'; 
+import BuilderHeader from './BuilderHeader';
+import '../../css/Builder/Builder.css';
 
 function Builder() {
   const [isComponentsOpen, setIsComponentsOpen] = useState(true); 
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
+  const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
+  const [headerTimeout, setHeaderTimeout] = useState(null);
+
+  useEffect(() => {
+  return () => clearTimeout(headerTimeout);
+}, [headerTimeout]);
+
 
   return (
     <div className="builder">
-      <header className="builder-header">
-        <div className="builder-menu">
-          <button 
-            className="menu-toggle" 
-            onClick={() => setIsComponentsOpen(!isComponentsOpen)}
-          >
-            <i className="bi bi-list"></i>
-            Menu
-          </button>
-          <h1>Builder</h1>
-        </div>
-        <div>
-          <button className="builder-button">
-            <i className="bi bi-cloud-upload-fill"></i>
-            Guardar
-          </button>
-          <button className="builder-button">
-            <i className="bi bi-collection-play-fill"></i>
-            Preview
-          </button>
-          <button className="builder-button">
-            <i className="bi bi-x"></i>
-            Salir
-          </button>
-        </div>
-      </header>
+      <BuilderHeader 
+  isHeaderExpanded={isHeaderExpanded}
+  onMouseEnter={() => {
+    clearTimeout(headerTimeout);
+    setIsHeaderExpanded(true);
+  }}
+  onMouseLeave={() => {
+    const timeout = setTimeout(() => {
+      setIsHeaderExpanded(false);
+    }, 30000);  // 30 segundos
+    setHeaderTimeout(timeout);
+  }}
+  isComponentsOpen={isComponentsOpen} 
+  setIsComponentsOpen={setIsComponentsOpen} 
+/>
+
+
 
       <main className="builder-main">
         <aside className={`builder-components ${isComponentsOpen ? 'open' : 'closed'}`}>
@@ -55,13 +54,6 @@ function Builder() {
           >
             Botón
           </div>
-          <button 
-            className="menu-toggle" 
-            style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
-            onClick={() => setIsComponentsOpen(!isComponentsOpen)}
-          >
-            <i className="bi bi-list"></i>
-          </button>
         </aside>
 
         <section className="builder-workspace">

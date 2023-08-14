@@ -11,7 +11,10 @@
   padding: 1rem 2rem;
   background-color: #292929;
   color: #fff;
+  position: relative; /* para que el botón 'Menu' esté debajo del título */
 }
+
+
 
 .builder-main {
   display: flex;
@@ -106,6 +109,7 @@
 .builder-menu {
   display: flex;
   align-items: center;
+  margin-top: 8px; /* Espaciado entre el título y el menú */
 }
 
 .menu-toggle {
