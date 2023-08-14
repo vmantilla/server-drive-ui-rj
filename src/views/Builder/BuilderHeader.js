@@ -4,6 +4,7 @@ import '../../css/Builder/BuilderHeader.css';
 
 function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, isHeaderExpanded, onMouseEnter, onMouseLeave }) {
   return (
+    
     <header className={`builder-header ${isHeaderExpanded ? 'expanded' : 'collapsed'}`}>
       <div className="left-container">
         <button 

@@ -8,27 +8,23 @@
   display: flex;
   flex: 1;
   background-color: #f6f6f6;
-  overflow: hidden; /* Nuevo - Asegurar que el contenido no se desborde */
-  position: relative; /* Ya estaba, para el panel de propiedades */
+  overflow: hidden;
+  position: relative;
 }
 
 .builder-components {
-  width: 0; /* Nuevo - No tiene ancho inicialmente */
-  flex: 0; /* Nuevo - No ocupará espacio si está oculto */
-  padding: 1rem;
+  width: 0;
   background-color: #ffffff;
   overflow-y: auto;
-  transition: flex 0.3s, transform 0.3s; /* Nuevo - Transición para flex y transform */
+  transition: width 0.3s;
+}
+
+.builder-components-content {
+  padding: 1rem;
 }
 
 .builder-components.open {
-  flex: 0 0 20%; /* Nuevo - Ocupará el 20% del espacio cuando esté abierto */
-  transform: translateX(0); /* Aseguramos que se muestre correctamente */
-}
-
-.builder-components.closed {
-  flex: 0; /* No ocupará espacio si está oculto */
-  transform: translateX(-100%); /* Aseguramos que se oculte correctamente */
+  width: 20%;
 }
 
 .builder-properties {
@@ -50,11 +46,20 @@
 }
 
 .builder-workspace {
-  flex: 1 1 auto; /* Nuevo - Ocupará cualquier espacio disponible */
+  flex: 1 1 auto;
   padding: 1rem;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
-  background-color: #F0F0F0;
+  background-image: 
+    linear-gradient(0deg, rgba(0,0,0,0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  overflow: auto; /* Para hacer scroll */
+}
+
+.workspace-content {
+  background-image: none; 
+  transform-origin: 0 0; 
 }
 
 .builder-properties-header {
@@ -97,7 +102,7 @@
 .builder-menu {
   display: flex;
   align-items: center;
-  margin-top: 8px; /* Espaciado entre el título y el menú */
+  margin-top: 8px;
 }
 
 .menu-toggle {
@@ -119,4 +124,33 @@
 
 .menu-toggle:hover {
   background-color: #4a4a4a;
+}
+
+.zoom-controls {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.zoom-button {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.zoom-button:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.zoom-button:not(:last-child) {
+  margin-bottom: 5px;
 }
