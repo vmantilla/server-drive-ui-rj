@@ -4,6 +4,10 @@
   height: 100vh;
 }
 
+body {
+    touch-action: pan-x pan-y; /* Permite el desplazamiento pero desactiva el zoom */
+}
+
 .builder-main {
   display: flex;
   flex: 1;
@@ -54,7 +58,7 @@
     linear-gradient(0deg, rgba(0,0,0,0.1) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
   background-size: 20px 20px;
-  overflow: auto; /* Para hacer scroll */
+  overflow: auto;
 }
 
 .workspace-content {
@@ -127,12 +131,20 @@
 }
 
 .zoom-controls {
-  position: absolute;
-  right: 10px;
-  top: 10px;
+  position: fixed;
+  left: 50%;
+  bottom: 10px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(-50%);
 }
+
+.zoom-percentage {
+  margin: 0 10px;
+  cursor: pointer;
+}
+
 
 .zoom-button {
   background-color: rgba(255, 255, 255, 0.7);
@@ -154,3 +166,4 @@
 .zoom-button:not(:last-child) {
   margin-bottom: 5px;
 }
+

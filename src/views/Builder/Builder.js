@@ -1,24 +1,38 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useRef } from 'react';
 import BuilderHeader from './BuilderHeader';
 import '../../css/Builder/Builder.css';
 
 function Builder() {
-  const [isComponentsOpen, setIsComponentsOpen] = useState(true); 
+  const [isComponentsOpen, setIsComponentsOpen] = useState(true);
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const zoomIntervalRef = useRef(null);
 
-  function handleWheel(e) {
-  e.stopPropagation(); // Agrega esta línea para detener la propagación del evento
-
-  console.log('Wheel event triggered');
-  if (e.deltaY < 0) {
-    setZoomLevel(prev => Math.min(prev + 0.1, 2));
-  } else {
-    setZoomLevel(prev => Math.max(prev - 0.1, 0.5));
+  function zoomIn() {
+    setZoomLevel(prev => Math.min(prev + 0.05, 2));
   }
-}
 
+  function zoomOut() {
+    setZoomLevel(prev => Math.max(prev - 0.05, 0.5));
+  }
 
+  const handleZoomInPress = () => {
+    zoomIn();
+    zoomIntervalRef.current = setInterval(zoomIn, 100);
+  };
+
+  const handleZoomOutPress = () => {
+    zoomOut();
+    zoomIntervalRef.current = setInterval(zoomOut, 100);
+  };
+
+  const handleZoomButtonRelease = () => {
+    clearInterval(zoomIntervalRef.current);
+  };
+
+  const resetZoom = () => {
+    setZoomLevel(1);
+  };
 
   return (
     <div className="builder">
@@ -51,17 +65,9 @@ function Builder() {
           </div>
         </aside>
 
-        <section className="builder-workspace" onWheel={handleWheel}>
+        <section className="builder-workspace">
           <div className="workspace-content" style={{ transform: `scale(${zoomLevel})` }}>
-            {/* Aquí iría el contenido real del área de trabajo */}
-          </div>
-          <div className="zoom-controls">
-            <button className="zoom-button" onClick={() => setZoomLevel(prev => Math.min(prev + 0.1, 2))}>
-              +
-            </button>
-            <button className="zoom-button" onClick={() => setZoomLevel(prev => Math.max(prev - 0.1, 0.5))}>
-              -
-            </button>
+            Hello World !!
           </div>
         </section>
 
@@ -74,6 +80,31 @@ function Builder() {
           </div>
           {/*... contenido de properties ...*/}
         </aside>
+
+        <div className="zoom-controls">
+          <button 
+            className="zoom-button" 
+            onClick={zoomOut} 
+            onMouseDown={handleZoomOutPress}
+            onMouseUp={handleZoomButtonRelease}
+            onMouseLeave={handleZoomButtonRelease}
+          >
+            -
+          </button>
+          <span 
+            className="zoom-percentage" 
+            onClick={resetZoom}
+          >{Math.round(zoomLevel * 100)}%</span>
+          <button 
+            className="zoom-button" 
+            onClick={zoomIn} 
+            onMouseDown={handleZoomInPress}
+            onMouseUp={handleZoomButtonRelease}
+            onMouseLeave={handleZoomButtonRelease}
+          >
+            +
+          </button>
+        </div>
       </main>
     </div>
   );
