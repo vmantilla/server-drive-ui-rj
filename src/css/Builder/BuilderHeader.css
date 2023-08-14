@@ -2,12 +2,23 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  color: #fff;
+  color: #F3F3FF;
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 60px;
-  background-color: transparent; 
+  background-color: #F0F0F0;
+  position: relative;
+}
+
+.builder-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-color: #292929; /* Usando #292929 en lugar de #000 */
 }
 
 .left-container, .right-container {
@@ -21,31 +32,33 @@
   background-color: #292929;
   border-top-right-radius: 0px;
   border-bottom-right-radius: 10px;
-  padding: 0 40px;
+  padding: 0 0px 0px 12px;
+
 }
 
 .right-container {
   background-color: #292929;
   border-top-left-radius: 0px;
   border-bottom-left-radius: 10px;
-  padding: 0 40px;
-  justify-content: flex-end; /* Alinea los íconos a la derecha */
+  padding: 0 12px 0px 40px;
+  justify-content: flex-end;
 }
 
 .icons-container {
   display: flex;
-  margin: 0.5rem 2rem;
-  background-color: transparent;
+  margin: 0.5rem 2rem 0rem 2rem; 
+  background-color: #F0F0F0; 
   align-items: center;
   height: 100%;
-  padding: 8px;
-  border-top: 1px solid black; /* Agrega una línea superior de color negro */
+  padding: 12px 8px 8px 8px;
 }
 
-
+.rotate-45 {
+  transform: rotate(45deg);
+}
 
 h1 {
-  margin: 0 20px;
+  margin: 0 4px;
 }
 
 .buttons-container {
@@ -71,18 +84,9 @@ h1 {
   background-color: #4a4a4a;
 }
 
-.icons-container {
-  display: flex;
-  margin: 0.5rem 2rem;
-  background-color: transparent; 
-  align-items: center;
-  height: 100%;
-  padding: 8px;
-}
-
 .icon-button {
   background-color: #fff; 
-  border: 1px solid #292929;
+  border: 1px solid #292929; /* Usando #292929 en lugar de #000 */
   margin: 0 10px;
   width: 50px;
   height: 100%;

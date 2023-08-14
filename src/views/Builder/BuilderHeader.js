@@ -10,7 +10,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, isHeaderExpanded
           className={`menu-toggle ${isComponentsOpen ? 'pressed' : ''}`} 
           onClick={() => setIsComponentsOpen(!isComponentsOpen)}
         >
-          <i className="bi bi-list"></i>
+          <i className="bi bi-bezier2"></i>
         </button>
 
         <h1>Workspace</h1>
@@ -19,7 +19,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, isHeaderExpanded
       <div className="icons-container">
         <button className="icon-button"><i className="bi bi-columns-gap"></i></button>
         <button className="icon-button"><i className="bi bi-box"></i></button>
-        <button className="icon-button"><i className="bi bi-bezier2"></i></button>
+        <button className="icon-button"><i className="bi bi-arrows-angle-expand rotate-45 "></i></button>
       </div>
 
       <div className="right-container">
