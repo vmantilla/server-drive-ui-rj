@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import SDComponent from '../models/structs/SDComponent';
 import SDComponentType from '../enums/SDComponentType';
 
-import 'bootstrap-icons/font/bootstrap-icons.css';
-
 const SDComponentTree = ({ component, selectedComponent, setSelectedComponent, handleAddComponent, handleDeleteComponent, handleDuplicateComponent, handleEmbedComponent, handleMoveComponent }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);

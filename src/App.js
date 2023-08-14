@@ -6,7 +6,7 @@ import Preview from './views/Preview';
 import ColorsAndFontsView from './views/ColorsAndFontsView';
 import Dashboard from './views/Dashboard';
 import AuthenticatedLayout from './AuthenticatedLayout';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function App() {
   return (

@@ -1,0 +1,117 @@
+.resizable-handle-bottom,
+.resizable-handle-right {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: 1px solid gray;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999;
+}
+
+.resizable-handle-right {
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.resizable-handle-icon {
+  font-size: 16px;
+}
+
+.resizable-handle-icon-vertical {
+  font-size: 14px;
+  transform: rotate(-90deg);
+  color: gray;
+}
+
+.resizable-panel {
+  border-bottom: 1px solid gray;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  position: relative;
+}
+
+.resizable-preview-panel {
+  border: 1px solid orange;
+  height: 100%;
+}
+
+.nav-tabs .nav-link.active {
+  background-color: transparent;
+  color: #000;
+  border: none;
+}
+
+.nav-tabs .nav-link:focus,
+.nav-tabs .nav-link:hover {
+  background-color: transparent;
+  color: #000;
+  border: none;
+}
+
+
+.panel-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  height: 100%;
+}
+
+.panel-title {
+  text-align: start;
+  font-size: 0.8em;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.add-preview-button {
+  margin-top: 45px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px; 
+  height: 190px; 
+  background-color: #eee;
+  color: #333; 
+  font-size: 24px; 
+  cursor: pointer;
+  border: 5px solid black;
+  display: 'flex';
+  border-radius: 10px;
+}
+
+
+.error-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: orange;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 9999;
+}
+
+.drop-zone {
+  width: 430px;
+  height: 844px;
+  border-radius: 40px;
+  background-color: #F0F0F0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  border: 20px solid #333333; /* O puedes utilizar #C0C0C0 si prefieres */
+}
+
+
+
+

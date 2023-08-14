@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './assets/images/logo_gris.png';
 import './css/SidebarMenu.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function SidebarMenu() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ function SidebarMenu() {
         <i className="bi bi-gear-wide-connected"></i>
         <span className="button-tooltip">Configuración</span>
       </button>
-      <button className="sidebar-button" onClick={() => handleNavigation('/builder')}> 
+      <button className="sidebar-button" onClick={() => handleNavigation('/')}> 
         <i className="bi bi-house-door"></i>
         <span className="button-tooltip">Nombre1</span>
       </button>
