@@ -5,6 +5,9 @@
   align-items: start; /* Alinea los elementos al inicio verticalmente */
   gap: 20px; /* Espacio entre selector y contenido */
 }
+.screen-content.selected {
+  border-color: black;
+}
 
 .screen-selector {
   z-index: 10;

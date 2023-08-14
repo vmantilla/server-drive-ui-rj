@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../../css/Builder/ScreenBuilder.css';
 
-function ScreenBuilder({ children, zoomLevel = 1 }) {
+function ScreenBuilder({ isSelected, children, zoomLevel = 1, onClick }) {
+
   const [screenType, setScreenType] = useState('desktop');
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [selected, setSelected] = useState(false);
   const draggingRef = useRef(false);
   const lastEventRef = useRef(null);
 
@@ -40,30 +42,39 @@ function ScreenBuilder({ children, zoomLevel = 1 }) {
     e.preventDefault();
   }
 
+  const adjustToScreen = () => {
+    // Aquí puedes poner la lógica para ajustar al tamaño de la pantalla
+    setSelected(true);
+  }
 
-
-return (
-  <div 
-    className="screen-container"
-    style={{ left: position.x, top: position.y }}
-  >
+  return (
+    <div 
+      className={`screen-container` }
+      style={{ left: position.x, top: position.y }}
+      onClick={onClick} 
+    >
       <div className="screen-selector">
-        <button onClick={() => setScreenType('mobile')}><i className="bi bi-phone"></i></button> 
-        <button onClick={() => setScreenType('tablet')}><i className="bi bi-tablet"></i></button> 
-        <button onClick={() => setScreenType('desktop')}><i className="bi bi-display"></i></button> 
+          {isSelected && (
+              <>
+                  <button onClick={() => setScreenType('mobile')}><i className="bi bi-phone"></i></button> 
+                  <button onClick={() => setScreenType('tablet')}><i className="bi bi-tablet"></i></button> 
+                  <button onClick={() => setScreenType('desktop')}><i className="bi bi-display"></i></button>
+                  <button onClick={adjustToScreen}><i className="bi bi-arrows-fullscreen"></i></button>
+              </>
+          )}
       </div>
-      <div className={`screen-content ${screenType}`}>
-        <div 
-          className="drag-handle"
-          onMouseDown={handleDragStart}
-        >
-          <i className="bi bi-arrows-move"></i>
-        </div>
+
+      <div className={`screen-content ${screenType} ${isSelected ? 'selected' : ''}`}>
         {children}
       </div>
-      <button className="delete-button"><i className="bi bi-trash"></i></button>
-      
-  </div>
+      <div 
+        className="drag-handle"
+        onMouseDown={handleDragStart}
+      >
+        <i className="bi bi-arrows-move"></i>
+      </div>
+      {isSelected && <button className="delete-button"><i className="bi bi-trash"></i></button>}
+    </div>
   );
 }
 

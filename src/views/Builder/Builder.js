@@ -7,6 +7,7 @@ function Builder() {
   const [isComponentsOpen, setIsComponentsOpen] = useState(true);
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [selectedScreen, setSelectedScreen] = useState(null);
   const zoomIntervalRef = useRef(null);
 
   // Estado para gestionar múltiples ScreenBuilders
@@ -23,6 +24,10 @@ function Builder() {
     setScreens(prevScreens => prevScreens.map(screen => 
       screen.id === id ? { ...screen, position: newPosition } : screen
     ));
+  };
+
+  const handleScreenSelect = (id) => {
+    setSelectedScreen(id);
   };
 
   const handleZoomInPress = () => {
@@ -94,9 +99,11 @@ function Builder() {
             {screens.map(screen => (
               <ScreenBuilder 
                   key={screen.id}
+                  onClick={() => handleScreenSelect(screen.id)}
                   onPositionChange={newPosition => handleScreenPositionChange(screen.id, newPosition)}
                   initialPosition={screen.position}
                   zoomLevel={zoomLevel}
+                  isSelected={selectedScreen === screen.id}
               >
                   {screen.content}
               </ScreenBuilder>
