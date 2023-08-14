@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import BuilderHeader from './BuilderHeader';
+import ScreenBuilder from './ScreenBuilder';
 import '../../css/Builder/Builder.css';
 
 function Builder() {
@@ -8,13 +9,21 @@ function Builder() {
   const [zoomLevel, setZoomLevel] = useState(1);
   const zoomIntervalRef = useRef(null);
 
-  function zoomIn() {
-    setZoomLevel(prev => Math.min(prev + 0.05, 2));
-  }
+  // Estado para gestionar múltiples ScreenBuilders
+  const [screens, setScreens] = useState([
+    { id: 1, content: "Hello World 1!" },
+    { id: 2, content: "Hello World 2!" },
+    { id: 3, content: "Hello World 2!" },
+    { id: 4, content: "Hello World 2!" }
+    // ... puedes agregar más screens si es necesario ...
+  ]);
 
-  function zoomOut() {
-    setZoomLevel(prev => Math.max(prev - 0.05, 0.5));
-  }
+  // Función para actualizar la posición de los ScreenBuilders
+  const handleScreenPositionChange = (id, newPosition) => {
+    setScreens(prevScreens => prevScreens.map(screen => 
+      screen.id === id ? { ...screen, position: newPosition } : screen
+    ));
+  };
 
   const handleZoomInPress = () => {
     zoomIn();
@@ -32,9 +41,26 @@ function Builder() {
 
   const resetZoom = () => {
     setZoomLevel(1);
+    forceReflow()
   };
 
-  return (
+  function zoomIn() {
+    setZoomLevel(prev => Math.min(prev + 0.05, 2));
+    forceReflow();
+  }
+
+  function zoomOut() {
+    setZoomLevel(prev => Math.max(prev - 0.05, 0.1));
+    forceReflow();
+  }
+
+  function forceReflow() {
+    document.body.style.display = 'none';
+    void document.body.offsetHeight; // No es realmente necesario, pero puede ayudar en algunos navegadores
+    document.body.style.display = '';
+  }
+
+   return (
     <div className="builder">
       <BuilderHeader 
         isComponentsOpen={isComponentsOpen} 
@@ -42,8 +68,7 @@ function Builder() {
       />
       <main className="builder-main">
         <aside className={`builder-components ${isComponentsOpen ? 'open' : 'closed'}`}>
-          <div className="builder-components-content">
-            <h2>Componentes</h2>
+          <h2>Componentes</h2>
             <div 
               draggable="true" 
               onClick={() => setIsPropertiesOpen(true)}
@@ -62,12 +87,20 @@ function Builder() {
             >
               Botón
             </div>
-          </div>
         </aside>
 
         <section className="builder-workspace">
           <div className="workspace-content" style={{ transform: `scale(${zoomLevel})` }}>
-            Hello World !!
+            {screens.map(screen => (
+              <ScreenBuilder 
+                  key={screen.id}
+                  onPositionChange={newPosition => handleScreenPositionChange(screen.id, newPosition)}
+                  initialPosition={screen.position}
+                  zoomLevel={zoomLevel}
+              >
+                  {screen.content}
+              </ScreenBuilder>
+            ))}
           </div>
         </section>
 
