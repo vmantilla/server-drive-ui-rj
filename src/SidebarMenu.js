@@ -27,21 +27,13 @@ function SidebarMenu() {
         <i className="bi bi-house-door"></i>
         <span className="button-tooltip">Dashboard</span>
       </button>
+      <button className="sidebar-button" onClick={() => handleNavigation('/')}> 
+        <i className="bi bi-bell"></i>
+        <span className="button-tooltip">Notification</span>
+      </button>
       <button className="sidebar-button" onClick={() => handleNavigation('/configuracion')}>
         <i className="bi bi-gear-wide-connected"></i>
-        <span className="button-tooltip">Configuración</span>
-      </button>
-      <button className="sidebar-button" onClick={() => handleNavigation('/')}> 
-        <i className="bi bi-house-door"></i>
-        <span className="button-tooltip">Nombre1</span>
-      </button>
-      <button className="sidebar-button" onClick={() => handleNavigation('/ruta2')}> 
-        <i className="bi bi-gear-wide-connected"></i>
-        <span className="button-tooltip">Nombre2</span>
-      </button>
-      <button className="sidebar-button" onClick={() => handleNavigation('/ruta3')}> 
-        <i className="bi bi-icon-name3"></i>
-        <span className="button-tooltip">Nombre3</span>
+        <span className="button-tooltip">Configuration</span>
       </button>
       <button className="sidebar-button sidebar-exit" onClick={handleLogout}>
         <i className="bi bi-door-closed"></i>

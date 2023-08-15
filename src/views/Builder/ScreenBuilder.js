@@ -49,49 +49,30 @@ function ScreenBuilder({ isSelected, children, zoomLevel = 1, onClick, position 
   }
 
   return (
-    <div 
-      className="screen-container"
+    <div
+      className={`screen-content ${screenType} ${isSelected ? 'selected' : ''}`}
       style={{ left: position?.x, top: position?.y }}
-      onClick={onClick} 
+      onClick={onClick}
+      onMouseDown={handleDragStart}
     >
-      <div className="screen-selector">
-          <button 
-              style={{ visibility: isSelected ? 'visible' : 'hidden' }} 
-              onClick={() => setScreenType('mobile')}
-          >
-              <i className="bi bi-phone"></i>
-          </button>
-          <button 
-              style={{ visibility: isSelected ? 'visible' : 'hidden' }} 
-              onClick={() => setScreenType('tablet')}
-          >
-              <i className="bi bi-tablet"></i>
-          </button>
-          <button 
-              style={{ visibility: isSelected ? 'visible' : 'hidden' }} 
-              onClick={() => setScreenType('desktop')}
-          >
-              <i className="bi bi-display"></i>
-          </button>
-          <button 
-              style={{ visibility: isSelected ? 'visible' : 'hidden' }} 
-              onClick={adjustToScreen}
-          >
-              <i className="bi bi-arrows-fullscreen"></i>
-          </button>
-      </div>
-
-
-      <div className={`screen-content ${screenType} ${isSelected ? 'selected' : ''}`}>
-        {children}
-      </div>
-      <div 
-        className="drag-handle"
-        onMouseDown={handleDragStart}
-      >
-        <i className="bi bi-arrows-move"></i>
-      </div>
-      {isSelected && <button className="delete-button"><i className="bi bi-trash"></i></button>}
+      {children}
+      {isSelected && (
+        <button
+          className="delete-button"
+          style={{ position: 'absolute', bottom: '20px', right: '20px' }}
+        >
+          <i className="bi bi-trash"></i>
+        </button>
+      )}
+      {isSelected && (
+        <button
+          className="adjust-button"
+          style={{ position: 'absolute', top: '20px', right: '20px' }}
+          onClick={adjustToScreen}
+        >
+          <i className="bi bi-arrows-fullscreen"></i>
+        </button>
+      )}
     </div>
   );
 }

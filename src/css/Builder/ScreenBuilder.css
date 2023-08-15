@@ -5,6 +5,7 @@
   align-items: start; /* Alinea los elementos al inicio verticalmente */
   gap: 20px; /* Espacio entre selector y contenido */
 }
+
 .screen-content.selected {
   border-color: black;
 }
@@ -17,10 +18,10 @@
 }
 
 .screen-selector {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* para asegurarnos que el botón de eliminar esté al final */
-    height: 100%; /* esto asegura que ocupe toda la altura del contenedor */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* para asegurarnos que el botón de eliminar esté al final */
+  height: 100%; /* esto asegura que ocupe toda la altura del contenedor */
 }
 
 button {
@@ -37,26 +38,38 @@ button:hover {
 }
 
 .screen-content {
+  position: relative; /* Configura este contenedor como el referente para el posicionamiento absoluto de los botones */
   background-color: #f0f0f0;
   border-radius: 0px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
   border: 10px solid #d0d0d0;
   overflow: hidden;
-  padding: 2px;                 /* Añadido padding al interior */
+  padding: 2px; /* Añadido padding al interior */
 }
 
 .screen-content.mobile {
-  width: 335px;                  /* Reducido en 40px para acomodar el padding (20px a cada lado) */
-  height: 627px;                 /* Reducido en 40px para acomodar el padding (20px a cada lado) */
+  width: 335px; /* Reducido en 40px para acomodar el padding (20px a cada lado) */
+  height: 627px; /* Reducido en 40px para acomodar el padding (20px a cada lado) */
 }
 
 .screen-content.tablet {
-  width: 728px;                  /* Reducido en 40px */
-  height: 984px;                 /* Reducido en 40px */
+  width: 728px; /* Reducido en 40px */
+  height: 984px; /* Reducido en 40px */
 }
 
 .screen-content.desktop {
-  width: 984px;                  /* Reducido en 40px */
-  height: 728px;                 /* Reducido en 40px */
+  width: 984px; /* Reducido en 40px */
+  height: 728px; /* Reducido en 40px */
 }
 
+.adjust-button {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+}
+
+.delete-button {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+}

@@ -51,6 +51,48 @@ export const addProjectToAPI = async (projectData) => {
   }
 };
 
+// === WORKSPACE API Calls ===
+
+export const getWorkspacesFromAPI = async (projectId) => {
+  try {
+    const response = await axios.get(`/projects/${projectId}/workspaces`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener los workspaces:', error);
+    throw error;
+  }
+};
+
+export const addWorkspaceToAPI = async (projectId, workspaceData) => {
+  try {
+    const response = await axios.post(`/projects/${projectId}/workspaces`, { workspace: workspaceData });
+    return response.data;
+  } catch (error) {
+    console.error('Error al agregar workspace:', error);
+    throw error;
+  }
+};
+
+export const deleteWorkspaceFromAPI = async (projectId, workspaceId) => {
+  try {
+    await axios.delete(`/projects/${projectId}/workspaces/${workspaceId}`);
+  } catch (error) {
+    console.error('Error al eliminar workspace:', error);
+    throw error;
+  }
+};
+
+export const editWorkspaceInAPI = async (projectId, workspaceId, updatedWorkspaceData) => {
+  try {
+    const response = await axios.put(`/projects/${projectId}/workspaces/${workspaceId}`, { workspace: updatedWorkspaceData } );
+    return response.data;
+  } catch (error) {
+    console.error('Error al editar workspace:', error);
+    throw error;
+  }
+};
+
+
 
 // === COMPONENTS API Calls ===
 
@@ -188,3 +230,5 @@ export const deleteFontFromAPI = async (projectId, fontId) => {
     throw error;
   }
 };
+
+

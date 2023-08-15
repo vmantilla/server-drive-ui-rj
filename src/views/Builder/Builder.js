@@ -1,9 +1,13 @@
 import React, { useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import BuilderHeader from './BuilderHeader';
 import ScreenBuilder from './ScreenBuilder';
+import BuilderComponents from './BuilderComponents';
+import BuilderWorkspaces from './BuilderWorkspaces';
 import '../../css/Builder/Builder.css';
 
 function Builder() {
+  const { projectId } = useParams();
   const [isComponentsOpen, setIsComponentsOpen] = useState(true);
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -81,12 +85,10 @@ function Builder() {
 
       <main className="builder-main">
         <aside className={`builder-components ${isComponentsOpen ? 'open' : 'closed'}`}>
-          <h2>Componentes</h2>
-          {['Texto', 'Imagen', 'Botón'].map(component => (
-            <div draggable="true" onClick={() => setIsPropertiesOpen(true)} key={component}>
-              {component}
-            </div>
-          ))}
+          <BuilderWorkspaces projectId={projectId}/>
+            <BuilderComponents
+            setIsPropertiesOpen={setIsPropertiesOpen}
+          />
         </aside>
 
         <section className="builder-workspace" ref={workspaceRef}>
