@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getWorkspacesFromAPI, addWorkspaceToAPI, deleteWorkspaceFromAPI, editWorkspaceInAPI } from '../api';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -6,30 +6,34 @@ import '../../css/Builder/BuilderWorkspaces.css';
 
 function BuilderWorkspaces({ projectId }) {
   const [workspaces, setWorkspaces] = useState([]);
-  const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [editingWorkspaceId, setEditingWorkspaceId] = useState(null);
   const [editingWorkspaceName, setEditingWorkspaceName] = useState('');
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [workspaceToDelete, setWorkspaceToDelete] = useState(null);
   const [confirmDeleteName, setConfirmDeleteName] = useState("");
-  const [showAddWorkspace, setShowAddWorkspace] = useState(false);
+  const editInputRef = useRef(null);
 
   useEffect(() => {
       fetchWorkspaces();
   }, []);
 
+  useEffect(() => {
+    if (editingWorkspaceId !== null && editInputRef.current) {
+      editInputRef.current.focus();
+    }
+  }, [editingWorkspaceId]);
+
   const fetchWorkspaces = async () => {
       const workspacesData = await getWorkspacesFromAPI(projectId);
-      console.log(workspacesData);
       setWorkspaces(workspacesData);
   };
 
   const handleAddWorkspace = async () => {
-      if (newWorkspaceName.trim()) {
-          await addWorkspaceToAPI(projectId, { title: newWorkspaceName });
-          setNewWorkspaceName('');
-          fetchWorkspaces();
-      }
+      const newWorkspaceTitle = `Workspace ${workspaces.length + 1}`;
+      const newWorkspace = await addWorkspaceToAPI(projectId, { title: newWorkspaceTitle });
+      setWorkspaces([...workspaces, newWorkspace]);
+      setSelectedWorkspaceId(newWorkspace.id);
   };
 
   const handleSaveEdit = async (workspaceId) => {
@@ -62,73 +66,76 @@ function BuilderWorkspaces({ projectId }) {
     }
   };
 
+
+
   return (
-      <div className="builder-workspaces">
-          <header className="workspaces-header">
-              <span className="workspaces-title">Workspaces</span>
-              <button className="add-workspace-button" onClick={() => setShowAddWorkspace(!showAddWorkspace)}>+</button>
-          </header>
-          {showAddWorkspace && (
-            <div className="add-workspace-form">
-              <input
-                value={newWorkspaceName}
-                onChange={(e) => setNewWorkspaceName(e.target.value)}
-                placeholder="Nuevo workspace"
-              />
-              <i className="bi bi-x-lg" onClick={() => setShowAddWorkspace(false)}></i>
-              <i className="bi bi-check-lg" onClick={handleAddWorkspace}></i>
-            </div>
-          )}
-          <ul>
-              {workspaces.map(workspace => (
-                  <li key={workspace.id}>
-                      {editingWorkspaceId === workspace.id ? (
-                          <input
-                              type="text"
-                              value={editingWorkspaceName}
-                              onChange={(e) => setEditingWorkspaceName(e.target.value)}
-                              onBlur={() => handleSaveEdit(workspace.id)}
-                          />
-                      ) : (
-                          <span onClick={() => { 
-                              setEditingWorkspaceId(workspace.id);
-                              setEditingWorkspaceName(workspace.title);
-                          }}>
-                              {workspace.title}
-                          </span>
-                      )}
-                      <button onClick={() => handleDeleteModalShow(workspace.id)}>Eliminar</button>
-                  </li>
-              ))}
-          </ul>
-          {showDeleteModal && (
-            <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Confirmar Eliminación</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <p>
-                  Para confirmar la eliminación, escribe el nombre del workspace que deseas eliminar:
-                  <strong> "{workspaces.find(w => w.id === workspaceToDelete)?.title}"</strong>
-                </p>
+    <div className="builder-workspaces">
+      <header className="workspaces-header">
+        <span className="workspaces-title">Workspaces</span>
+        <button className="add-workspace-button" onClick={handleAddWorkspace}>+</button>
+      </header>
+      <ul className="workspace-list">
+        {workspaces.map(workspace => (
+          <li key={workspace.id} className={selectedWorkspaceId === workspace.id ? 'selected' : ''} onClick={() => {setSelectedWorkspaceId(workspace.id); if(editingWorkspaceId !== null) setEditingWorkspaceId(null); }}>
+            {editingWorkspaceId === workspace.id ? (
+              <div className="workspace-form" onClick={(e) => e.stopPropagation()}>
                 <input
+                  ref={editInputRef}
                   type="text"
-                  value={confirmDeleteName}
-                  onChange={e => setConfirmDeleteName(e.target.value)}
-                  placeholder="Nombre del workspace"
+                  value={editingWorkspaceName}
+                  onChange={(e) => setEditingWorkspaceName(e.target.value)}
+                  onBlur={() => handleSaveEdit(workspace.id)}
                 />
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleDeleteModalClose}>
-                  Cancelar
-                </Button>
-                <Button variant="danger" onClick={confirmDelete}>
-                  Confirmar Eliminación
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          )}
-      </div>
+                <i className="bi bi-check-lg" onClick={() => handleSaveEdit(workspace.id)}></i>
+                <i className="bi bi-x-lg" onClick={() => setEditingWorkspaceId(null)}></i>
+              </div>
+            ) : (
+              <React.Fragment>
+                <span>{workspace.title}</span>
+                <div className="workspace-actions">
+                  <i className="bi bi-pen" onClick={(e) => { 
+                    e.stopPropagation();
+                    setEditingWorkspaceId(workspace.id);
+                    setEditingWorkspaceName(workspace.title);
+                  }}></i>
+                  <i className="bi bi-trash" onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteModalShow(workspace.id);
+                  }}></i>
+                </div>
+              </React.Fragment>
+            )}
+          </li>
+        ))}
+      </ul>
+      {showDeleteModal && (
+        <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmar Eliminación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>
+              Para confirmar la eliminación, escribe el nombre del workspace que deseas eliminar:
+              <strong> "{workspaces.find(w => w.id === workspaceToDelete)?.title}"</strong>
+            </p>
+            <input
+              type="text"
+              value={confirmDeleteName}
+              onChange={e => setConfirmDeleteName(e.target.value)}
+              placeholder="Nombre del workspace"
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleDeleteModalClose}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={confirmDelete}>
+              Confirmar Eliminación
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
+    </div>
   );
 }
 
