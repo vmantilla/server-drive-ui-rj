@@ -1,0 +1,42 @@
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  padding: 15px;
+  border-radius: 4px;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notification.success {
+  background-color: #4CAF50;
+}
+
+.notification.warning {
+  background-color: #FFC107;
+}
+
+.notification.error {
+  background-color: #F44336;
+}
+
+.notification.info {
+  background-color: #2196F3;
+}
+
+.notification button {
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.notification button:focus {
+  outline: none;
+}

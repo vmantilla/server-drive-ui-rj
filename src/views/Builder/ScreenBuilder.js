@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../../css/Builder/ScreenBuilder.css';
 
-function ScreenBuilder({ isSelected, children, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange }) {
+function ScreenBuilder({ isSelected, children, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, onDelete }) {
   const [screenType, setScreenType] = useState('desktop');
   const draggingRef = useRef(false);
   const lastEventRef = useRef(null);
@@ -54,6 +54,11 @@ function ScreenBuilder({ isSelected, children, zoomLevel = 1, onClick, position 
     }
   }
 
+   const handleDeleteClick = (e) => {
+    e.stopPropagation(); // Evitar que el evento se propague al padre
+    onDelete();
+  };
+
   return (
     <div
       className={`screen-content ${screenType} ${isSelected ? 'selected' : ''}`}
@@ -66,6 +71,7 @@ function ScreenBuilder({ isSelected, children, zoomLevel = 1, onClick, position 
         <button
           className="delete-button"
           style={{ position: 'absolute', bottom: '20px', right: '20px' }}
+          onClick={handleDeleteClick}
         >
           <i className="bi bi-trash"></i>
         </button>
