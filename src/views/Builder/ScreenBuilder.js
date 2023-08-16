@@ -1,11 +1,12 @@
+// ScreenBuilder.js
 import React, { useState, useRef, useEffect } from 'react';
 import '../../css/Builder/ScreenBuilder.css';
 
-function ScreenBuilder({ isSelected, children, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, onAdjustScreen }) {
-
+function ScreenBuilder({ isSelected, children, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange }) {
   const [screenType, setScreenType] = useState('desktop');
   const draggingRef = useRef(false);
   const lastEventRef = useRef(null);
+  const screenBuilderRef = useRef(null);
 
   useEffect(() => {
     const globalMouseMove = (e) => {
@@ -43,8 +44,13 @@ function ScreenBuilder({ isSelected, children, zoomLevel = 1, onClick, position 
   }
 
   const adjustToScreen = () => {
-    if (onAdjustScreen) {
-      onAdjustScreen();
+    if (screenBuilderRef.current) {
+      const element = screenBuilderRef.current;
+      const rect = element.getBoundingClientRect();
+      const offsetX = window.innerWidth / 2 - (rect.left + rect.width / 2);
+      const offsetY = window.innerHeight / 2 - (rect.top + rect.height / 2);
+
+      window.scrollBy(offsetX, offsetY);
     }
   }
 

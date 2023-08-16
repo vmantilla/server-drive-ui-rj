@@ -1,3 +1,4 @@
+// PreviewWorkspace.js
 import React, { useState, useEffect, useRef } from 'react';
 import ScreenBuilder from './ScreenBuilder';
 import '../../css/Builder/PreviewWorkspace.css';
@@ -9,6 +10,7 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
   const [showDropdown, setShowDropdown] = useState(false);
 
   const zoomIntervalRef = useRef(null);
+  const workspaceSize = Math.max(zoomLevel * 1000, window.innerWidth, window.innerHeight);
 
   useEffect(() => {
     if (workspaceId) {
@@ -47,9 +49,15 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
 
   const handleZoomButtonRelease = () => clearInterval(zoomIntervalRef.current);
 
+  const handleWorkspaceClick = (e) => {
+    if (e.target === e.currentTarget) {
+      setSelectedScreen(null);
+    }
+  };
+
   return (
     <>
-      <div className="workspace-content" style={{ transform: `scale(${zoomLevel})` }}>
+      <div className="workspace-content" style={{ transform: `scale(${zoomLevel})`, width: `${workspaceSize}px`, height: `${workspaceSize}px` }} onClick={handleWorkspaceClick}>
         {previews.map((preview) => (
           <ScreenBuilder
             key={preview.id}
