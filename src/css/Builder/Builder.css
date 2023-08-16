@@ -1,3 +1,5 @@
+/* Builder.css */
+
 .builder {
   display: flex;
   flex-direction: column;
@@ -12,11 +14,15 @@
   position: relative;
 }
 
-.builder-components {
-  width: 0;
+.builder-components,
+.builder-properties {
   background-color: #ffffff;
   overflow-y: auto;
-  transition: width 0.3s;
+  transition: width 0.3s, transform 0.3s;
+}
+
+.builder-components {
+  width: 0;
 }
 
 .builder-components-content {
@@ -30,14 +36,11 @@
 .builder-properties {
   width: 20%;
   padding: 1rem;
-  background-color: #ffffff;
-  overflow-y: auto;
   position: absolute;
   top: 0;
   right: 0;
   height: 100%;
   z-index: 10;
-  transition: transform 0.3s;
   transform: translateX(100%);
 }
 
@@ -57,11 +60,6 @@
   overflow: auto;
 }
 
-.workspace-content {
-  background-image: none; 
-  transform-origin: 0 0; 
-}
-
 .builder-properties-header {
   display: flex;
   justify-content: space-between;
@@ -78,88 +76,3 @@
 .builder-properties-header button:hover {
   color: #555;
 }
-
-.builder-button {
-  background-color: #3a3a3a;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  margin: 0 5px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.builder-button i {
-  margin-right: 8px;
-  color: #fff;
-}
-
-.builder-button:hover {
-  background-color: #4a4a4a;
-}
-
-.builder-menu {
-  display: flex;
-  align-items: center;
-  margin-top: 8px;
-}
-
-.menu-toggle {
-  background-color: #3a3a3a;
-  color: #fff;
-  border: none;
-  padding: 5px 10px;
-  margin-right: 10px;
-  cursor: pointer;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-}
-
-.menu-toggle i {
-  margin-right: 5px;
-  color: #fff;
-}
-
-.menu-toggle:hover {
-  background-color: #4a4a4a;
-}
-
-.zoom-controls {
-  position: fixed;
-  left: 50%;
-  bottom: 0px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: translateX(-50%);
-}
-
-.zoom-percentage {
-  margin: 0 10px;
-  cursor: pointer;
-}
-
-
-.zoom-button {
-  background-color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.zoom-button:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-}
-
-.zoom-button:not(:last-child) {
-  margin-bottom: 5px;
-}
-

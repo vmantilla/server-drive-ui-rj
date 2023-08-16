@@ -1,0 +1,80 @@
+.preview-workspace {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.preview-workspace-main {
+  display: flex;
+  flex: 1;
+  background-color: #f6f6f6;
+  overflow: hidden;
+  position: relative;
+}
+
+.workspace-content {
+  background-image: none;
+  transform-origin: 0 0;
+}
+
+.zoom-controls {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(-50%);
+  z-index: 999;
+}
+
+.zoom-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.zoom-options {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  list-style: none;
+  padding: 0;
+  margin-bottom: 6px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.zoom-options li {
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.zoom-options li:hover {
+  background-color: #f5f5f5;
+}
+
+.zoom-percentage {
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+.zoom-button {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 0%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.zoom-button:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
