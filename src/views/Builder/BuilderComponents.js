@@ -8,7 +8,7 @@ function BuilderComponents({ setIsPropertiesOpen }) {
     { id: 1, type: 'Texto', children: [], expanded: false },
     { id: 2, type: 'Imagen', children: [], expanded: false },
     { id: 3, type: 'Botón', children: [], expanded: false }
-    ]);
+  ]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [componentToDelete, setComponentToDelete] = useState(null);
   const [draggingComponent, setDraggingComponent] = useState(null);
@@ -62,25 +62,38 @@ function BuilderComponents({ setIsPropertiesOpen }) {
 
   const handleDragStart = (event, component) => {
     event.dataTransfer.setData('text/plain', component.type);
-    event.stopPropagation();  // Agrega esta línea para detener la propagación
+    event.stopPropagation();
     setDraggingComponent(component);
   };
 
-  const handleDragOver = (event) => {
+  const handleDragEnter = (event, componentId) => {
+    event.stopPropagation();
+    if (draggingComponent.id !== componentId && !isDescendant(draggingComponent, componentId)) {
+        event.currentTarget.classList.add('ready-for-drop');
+    }
+  };
+
+  const handleDragOver = (event, componentId) => {
     event.preventDefault();
+    event.stopPropagation();
+    if (draggingComponent.id !== componentId && !isDescendant(draggingComponent, componentId)) {
+        event.currentTarget.classList.add('ready-for-drop');
+    } else {
+        event.currentTarget.classList.remove('ready-for-drop');
+    }
+  };
+
+  const handleDragLeave = (event) => {
+    event.stopPropagation();
+    event.currentTarget.classList.remove('ready-for-drop');
   };
 
   const removeComponent = (componentId, currentComponents) => {
     return currentComponents.reduce((acc, component) => {
-        // Si el componente es el que buscamos, no lo incluimos
       if (component.id === componentId) return acc;
-
-        // Si el componente tiene hijos, revisamos dentro de ellos
       if (component.children.length) {
         component.children = removeComponent(componentId, component.children);
       }
-
-        // Incluimos el componente en la lista resultante
       acc.push(component);
       return acc;
     }, []);
@@ -94,57 +107,52 @@ function BuilderComponents({ setIsPropertiesOpen }) {
     return false;
   };
 
-
   const handleDrop = (event, parentId) => {
     event.preventDefault();
     event.stopPropagation();
 
-    // Si el componente que se está arrastrando tiene el mismo ID que parentId
     if (draggingComponent.id === parentId) {
       setDraggingComponent(null);
-        return;  // Terminar la operación de arrastre si intentamos arrastrar un componente dentro de sí mismo.
-      }
+      return;
+    }
 
-    // Verificar si el parentId es un descendiente del componente que se está arrastrando
-      if (isDescendant(draggingComponent, parentId)) {
+    if (isDescendant(draggingComponent, parentId)) {
         setDraggingComponent(null);
-        return; // Detener la ejecución si el parentId es un descendiente
-      }
+        return;
+    }
 
-      if (draggingComponent) {
-        // 1. Eliminar el componente de su posición original
+    if (draggingComponent) {
         const updatedComponents = removeComponent(draggingComponent.id, components);
-        // 2. Agregar el componente al nuevo padre
         const newComponents = addComponentChildRecursive(parentId, updatedComponents, draggingComponent);
         setComponents(newComponents);
         setDraggingComponent(null);
-      }
-    };
+    }
+    event.currentTarget.classList.remove('ready-for-drop');
+  };
 
-
-
-    const renderComponentList = (compArray, parentId = null) => {
-        return compArray.map(comp => (
-            <div 
-                key={comp.id} 
-                draggable={comp.id !== parentId}
-                onDragStart={(event) => handleDragStart(event, comp)}
-                onDragOver={handleDragOver}
-                onDrop={(event) => handleDrop(event, comp.id)}
-                className={`${comp === draggingComponent ? 'dragging' : ''}`}
-            >
-                <div className={`component-item ${draggingComponent && comp.id !== draggingComponent.id ? 'drop-target' : ''}`} 
-                    onClick={() => setIsPropertiesOpen(true)}>
-                        <span className="toggle-btn" onClick={(e) => { e.stopPropagation(); handleToggleExpanded(comp.id); }}>{comp.expanded ? '-' : '+'}</span>
-                    <span>{comp.type}</span>
-                    <Button variant="outline-danger" className="delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>✖</Button>
-                    <Button variant="outline-primary" className="add-child-btn" onClick={(e) => { e.stopPropagation(); addComponentChild(comp.id); }}>+</Button>
-               
-                </div>
-                {comp.expanded && comp.children.length > 0 && <div className="component-children">{renderComponentList(comp.children, comp.id)}</div>}
-            </div>
-        ));
-    };
+  const renderComponentList = (compArray, parentId = null) => {
+    return compArray.map(comp => (
+      <div 
+        
+      >
+        <div key={comp.id} 
+        draggable={comp.id !== parentId}
+        onDragStart={(event) => handleDragStart(event, comp)}
+        onDragOver={(event) => handleDragOver(event, comp.id)}
+        onDrop={(event) => handleDrop(event, comp.id)}
+        onDragEnter={(event) => handleDragEnter(event, comp.id)}
+        onDragLeave={handleDragLeave}
+        className={`${comp === draggingComponent ? 'dragging' : ''}`} className={`component-item ${draggingComponent && comp.id !== draggingComponent.id ? 'drop-target' : ''}`} 
+          onClick={() => setIsPropertiesOpen(true)}>
+          <span className="toggle-btn" onClick={(e) => { e.stopPropagation(); handleToggleExpanded(comp.id); }}>{comp.expanded ? '-' : '+'}</span>
+          <span>{comp.type}</span>
+          <Button variant="outline-danger" className="delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>✖</Button>
+          <Button variant="outline-primary" className="add-child-btn" onClick={(e) => { e.stopPropagation(); addComponentChild(comp.id); }}>+</Button>
+        </div>
+        {comp.expanded && comp.children.length > 0 && <div className="component-children">{renderComponentList(comp.children, comp.id)}</div>}
+      </div>
+    ));
+  };
 
     return (
         <div className="buildercomponents">

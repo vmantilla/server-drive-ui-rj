@@ -70,3 +70,17 @@
     opacity: 0.5;
     pointer-events: none; /* Hace que el componente no pueda recibir eventos de clic o arrastre */
 }
+
+.drop-target.ready-for-drop {
+    border: 2px dashed #4CAF50;
+    background-color: #4CAF50;  /* Añade esta línea */
+}
+
+
+.ready-for-drop {
+  border: 2px solid green;
+  background-color: lightgreen;
+}
+
+
+
