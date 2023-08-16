@@ -13,11 +13,18 @@ function Builder({showNotification}) {
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
   const [addNewPreview, setAddNewPreview] = useState(null);
+  const [workspaceHeight, setWorkspaceHeight] = useState('50%');
 
   const handleWorkspaceClick = (e) => {
     if (e.target === e.currentTarget) {
       setSelectedScreen(null);
     }
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    const newHeight = Math.min(Math.max(e.clientY, 0), window.innerHeight);
+    setWorkspaceHeight(`${newHeight}px`);
   };
 
   const forceReflow = () => {
@@ -36,7 +43,22 @@ function Builder({showNotification}) {
       />
       <main className="builder-main">
         <aside className={`builder-components ${isComponentsOpen ? 'open' : 'closed'}`}>
-          <BuilderWorkspaces projectId={projectId} selectedWorkspace={selectedWorkspace} setSelectedWorkspace={setSelectedWorkspace} />
+          <BuilderWorkspaces
+            projectId={projectId}
+            selectedWorkspace={selectedWorkspace}
+            setSelectedWorkspace={setSelectedWorkspace}
+            style={{ height: workspaceHeight }}
+            className="builder-workspaces"
+          />
+          <div
+            className="resizable-separator"
+            onMouseDown={(e) => {
+              document.addEventListener('mousemove', handleDrag);
+              document.addEventListener('mouseup', () => {
+                document.removeEventListener('mousemove', handleDrag);
+              });
+            }}
+          ></div>
           <BuilderComponents setIsPropertiesOpen={setIsPropertiesOpen} />
         </aside>
         <section className="builder-workspace" onClick={handleWorkspaceClick}>
