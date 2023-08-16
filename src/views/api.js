@@ -63,6 +63,17 @@ export const getWorkspacesFromAPI = async (projectId) => {
   }
 };
 
+export const showWorkspaceFromAPI = async (projectId, workspaceId) => {
+  try {
+    const response = await axios.get(`/projects/${projectId}/workspaces/${workspaceId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al mostrar el espacio de trabajo:', error);
+    throw error;
+  }
+};
+
+
 export const addWorkspaceToAPI = async (projectId, workspaceData) => {
   try {
     const response = await axios.post(`/projects/${projectId}/workspaces`, { workspace: workspaceData });
@@ -92,6 +103,15 @@ export const editWorkspaceInAPI = async (projectId, workspaceId, updatedWorkspac
   }
 };
 
+export const createPreviewInWorkspaceAPI = async (projectId, workspaceId, previewData) => {
+  try {
+    const response = await axios.post(`/projects/${projectId}/workspaces/${workspaceId}/previews`, { preview: previewData });
+    return response.data;
+  } catch (error) {
+    console.error('Error al crear vista previa en el espacio de trabajo:', error);
+    throw error;
+  }
+};
 
 
 // === COMPONENTS API Calls ===

@@ -78,8 +78,10 @@ function Dashboard() {
         image_url: newProjectImage,
         description: newProjectDescription
       };
-      await addProjectToAPI(newProjectData);
-      setProjects(prev => [...prev, newProjectData]);
+
+      const newProject = await addProjectToAPI(newProjectData); 
+      setProjects(prev => [...prev, { ...newProject }]); 
+    
       handleModalClose();
       setSuccessMessage("Proyecto agregado exitosamente.");
       setTimeout(() => setSuccessMessage(null), 3000);
