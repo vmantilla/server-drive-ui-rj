@@ -45,3 +45,28 @@
     width: calc(100% - 20px); /* Descuenta el margen izquierdo */
     overflow-x: auto; /* Añade una barra de desplazamiento horizontal si es necesario */
 }
+
+.dragging {
+    opacity: 0.5;
+}
+
+.drop-target {
+    border: 2px dashed #4CAF50;
+}
+
+.dragging {
+    opacity: 0.5;
+}
+
+.component-item.drop-target {
+    background-color: #e0e0e0; /* O el color que prefieras para el hover */
+}
+
+.component-item.drop-target:hover {
+    background-color: #d1d1d1; /* Un tono más oscuro al estar en hover */
+}
+
+.disabled-drop {
+    opacity: 0.5;
+    pointer-events: none; /* Hace que el componente no pueda recibir eventos de clic o arrastre */
+}
