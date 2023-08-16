@@ -80,8 +80,6 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
     setShowDeleteModal(true);
   };
 
-  
-
   const zoomIn = () => {
     setZoomLevel(prev => Math.min(prev + 0.05, 2));
     forceReflow();
@@ -110,9 +108,15 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
 
   const handleZoomButtonRelease = () => clearInterval(zoomIntervalRef.current);
 
+  const handleWorkspaceClick = (e) => {
+    if (e.target === e.currentTarget) {
+      setSelectedScreen(null);
+    }
+  };
+
   return (
   <>
-    <div className="workspace-content" style={{ transform: `scale(${zoomLevel})`, width: `${workspaceSize}px`, height: `${workspaceSize}px` }} >
+    <div className="workspace-content" style={{ transform: `scale(${zoomLevel})`, width: `${workspaceSize}px`, height: `${workspaceSize}px` }}  onClick={handleWorkspaceClick}>
       {previews.map((preview) => (
         <ScreenBuilder
           key={preview.id}
