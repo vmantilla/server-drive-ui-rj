@@ -1,11 +1,12 @@
 .buildercomponents {
     font-family: 'Rubik', sans-serif;
+    font-size: 14px; 
     color: #333;
     width: 100%;
-    max-width: 100%; /* Asegura que no exceda su contenedor */
-    overflow-x: auto; /* Proporciona una barra de desplazamiento horizontal si es necesario */
-    padding: 10px;
-    box-sizing: border-box; /* Asegura que el padding no añada al ancho total */
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 2px;
+    box-sizing: border-box;
 }
 
 .buildercomponents h2 {
@@ -13,15 +14,32 @@
     margin-bottom: 15px;
 }
 
+.component-title {
+    font-family: 'Rubik', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
 .component-item {
     display: flex;
+    justify-content: space-between; /* Ajustar los elementos al espacio disponible */
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 2px;
     cursor: pointer;
-    padding: 5px;
+    padding: 1px;
     border-radius: 5px;
-    transition: background-color 0.3s ease;
-    width: calc(100% - 10px); /* Descuenta el padding */
+    border: 1px solid transparent;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    width: calc(100% - 10px);
+    margin-left: 5px;
+}
+
+.component-item.selected {
+    background-color: #f2f2f2;
+    border: 1px solid #eee;
 }
 
 .component-item:hover {
@@ -32,18 +50,21 @@
     width: 20px;
     display: inline-block;
     text-align: center;
-    margin-right: 10px;
+}
+
+.component-actions {
+    display: flex; /* Se usa flex para mantener los botones juntos */
 }
 
 .delete-btn, .add-child-btn {
     margin-left: 5px;
-    padding: 0.2rem 0.5rem; /* Reduce el padding para que los botones sean más pequeños */
+    padding: 0.2rem 0.5rem;
 }
 
 .component-children {
     margin-left: 20px;
-    width: calc(100% - 20px); /* Descuenta el margen izquierdo */
-    overflow-x: auto; /* Añade una barra de desplazamiento horizontal si es necesario */
+    width: calc(100% - 20px);
+    overflow-x: auto;
 }
 
 .dragging {
@@ -51,42 +72,27 @@
 }
 
 .drop-target {
-    border: 2px dashed #4CAF50;
+    border: 1px dashed #292929;
 }
 
-.component-item.drop-target {
-    background-color: #e0e0e0; /* Color de fondo cuando es un destino válido de arrastre */
+.ready-for-drop {
+    border-color: #007bff;
+    background-color: #e0e0e0;
 }
 
-.component-item.drop-target:hover {
-    background-color: #d1d1d1; /* Un tono más oscuro al estar en hover */
+.ready-for-drop:hover {
+    background-color: #d1d1d1;
 }
 
 .disabled-drop {
     opacity: 0.5;
-    pointer-events: none; /* Hace que el componente no pueda recibir eventos de clic o arrastre */
+    pointer-events: none;
 }
 
-.ready-for-drop {
-    border: 2px solid green;
-    background-color: lightgreen;
-}
 .icon-btn {
     cursor: pointer;
     border: none;
     background: none;
     padding: 0;
     margin: 0 5px;
-}
-
-.icon-btn i {
-   
-}
-
-.icon-btn.delete-btn i {
-    
-}
-
-.icon-btn.add-child-btn i {
-   
 }

@@ -69,7 +69,7 @@
 /* Estilos agregados */
 .resizable-separator {
   cursor: ns-resize;
-  height: 8px;
+  height: 3px;
   background-color: #ddd;
   width: 100%;
 }

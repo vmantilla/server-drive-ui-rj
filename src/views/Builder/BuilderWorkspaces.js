@@ -78,8 +78,8 @@ function BuilderWorkspaces({ projectId, selectedWorkspace, setSelectedWorkspace 
   return (
     <div className="builder-workspaces">
       <header className="workspaces-header">
-        <span className="workspaces-title">Workspaces</span>
-        <button className="add-workspace-button" onClick={handleAddWorkspace}>+</button>
+        <span className="workspace-title">Workspaces</span>
+        <button className="add-workspace-button workspace-title" onClick={handleAddWorkspace}>+</button>
       </header>
       <ul className="workspace-list">
     {workspaces.map(workspace => (
