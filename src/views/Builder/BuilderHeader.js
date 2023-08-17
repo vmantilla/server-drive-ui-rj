@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../../css/Builder/BuilderHeader.css';
 
-const FloatingMenu = ({ visible, options, onClose, position }) => {
+const FloatingMenu = ({ visible, options, onClose, position, handleDragStart }) => {
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -21,10 +21,12 @@ const FloatingMenu = ({ visible, options, onClose, position }) => {
   if (!visible) return null;
 
   const buttonElements = options.map((option, index) => (
-    <button className="icon-button" key={index} onClick={option.onClick}>
+    <button draggable="true" onDragStart={(e) => handleDragStart(e, "container", option.type)} className="floating-icon-button" key={index} onClick={option.onClick}>
       <i className={option.iconClass}></i>
+      {option.type}
     </button>
   ));
+
 
   return (
     <div
@@ -33,7 +35,7 @@ const FloatingMenu = ({ visible, options, onClose, position }) => {
       style={{
         top: `${position.y}px`,
         left: `${position.x}px`,
-        transform: `translateX(-40%)`,
+        transform: `translateX(-50%)`,
       }}
     >
       {buttonElements}
@@ -50,8 +52,8 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
   const handleButtonPress = (e, componentType) => {
     const options = getOptionsForComponentType(componentType);
     const rect = e.target.getBoundingClientRect();
-    const x = rect.left;
-    const y = 80;
+    const x = rect.left + (rect.width / 2);
+    const y = rect.bottom + 20;
 
     setMenuOptions(options);
     setMenuPosition({ x: x, y: y });
@@ -59,40 +61,48 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
   };
 
   const getOptionsForComponentType = (componentType) => {
-    switch (componentType) {
-      case 'container':
-        return ['Option 1', 'Option 2', 'Option 3'];
-      case 'object':
-        return ['Option A', 'Option B', 'Option C'];
-      case 'space':
-        return ['Option X', 'Option Y', 'Option Z'];
-      default:
-        return [];
-    }
-  };
+  const options = [];
+
+  switch (componentType) {
+    case 'container':
+      options.push(
+        { iconClass: "bi bi-distribute-horizontal", type: "Row", onClick: () => { /* Handle Row */ } },
+        { iconClass: "bi bi-distribute-vertical", type: "Column", onClick: () => { /* Handle Column */ } },
+        { iconClass: "bi bi-stack", type: "Overlay", onClick: () => { /* Handle Overlay */ } },
+        { iconClass: "bi bi-card-text", type: "Scroll", onClick: () => { /* Handle Scroll */ } },
+        { iconClass: "bi bi-square", type: "Button", onClick: () => { /* Handle Button */ } }
+      );
+      break;
+
+    case 'object':
+      options.push(
+        { iconClass: "bi bi-card-text", type: "Text", onClick: () => { /* Handle Text */ } },
+        { iconClass: "bi bi-image", type: "Image", onClick: () => { /* Handle Image */ } },
+        { iconClass: "bi bi-input-cursor", type: "InputText", onClick: () => { /* Handle InputText */ } },
+        { iconClass: "bi bi-list-columns-reverse", type: "TextView", onClick: () => { /* Handle TextView */ } }
+      );
+      break;
+
+    case 'space':
+      options.push(
+        { iconClass: "bi bi-arrows-angle-expand rotate-45", type: "Space", onClick: () => { /* Handle Space */ } }
+      );
+      break;
+
+    default:
+      break;
+  }
+
+  return options;
+};
+
   
-  const handleDragStart = (e, componentType) => {
+  const handleDragStart = (e, componentType, componentTypeName) => {
     e.dataTransfer.setData('text/plain', componentType);
     e.dataTransfer.setData('source', "header");
 
     const uniqueId = Date.now().toString() + Math.random().toString().substr(2, 5);
     const propertiesUniqueId = Date.now().toString() + Math.random().toString().substr(2, 5);
-
-    let componentTypeName = "";
-
-    switch (componentType) {
-      case "container":
-        componentTypeName = "Row";
-        break;
-      case "object":
-        componentTypeName = "Object";
-        break;
-      case "space":
-        componentTypeName = "Space";
-        break;
-      default:
-        break;
-    }
 
     const newComponent = {
       id: uniqueId,
@@ -129,13 +139,13 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
           <button className="icon-button" onClick={addNewPreview}><i className="bi bi-window-plus"></i></button>
         ) : (
           <>
-            <button className="icon-button" draggable="true" onDragStart={(e) => handleDragStart(e, "container")} onClick={(e) => handleButtonPress(e, 'container')}><i className="bi bi-columns-gap"></i></button>
-            <button className="icon-button" draggable="true" onDragStart={(e) => handleDragStart(e, "object")} onClick={(e) => handleButtonPress(e, 'object')}><i className="bi bi-box"></i></button>
-            <button className="icon-button" draggable="true" onDragStart={(e) => handleDragStart(e, "space")} onClick={(e) => handleButtonPress(e, 'space')}><i className="bi bi-arrows-angle-expand rotate-45 "></i></button>
+            <button className="icon-button" draggable="true" onDragStart={(e) => handleDragStart(e, "container", "Row")} onClick={(e) => handleButtonPress(e, 'container')}><i className="bi bi-columns-gap"></i></button>
+            <button className="icon-button" draggable="true" onDragStart={(e) => handleDragStart(e, "object", "Object")} onClick={(e) => handleButtonPress(e, 'object')}><i className="bi bi-box"></i></button>
+            <button className="icon-button" draggable="true" onDragStart={(e) => handleDragStart(e, "space", "Space")} onClick={(e) => handleButtonPress(e, 'space')}><i className="bi bi-arrows-angle-expand rotate-45 "></i></button>
           </>
         )}
       </div>
-      <FloatingMenu visible={menuVisible} onClose={handleClose} position={menuPosition} options={menuOptions} />
+      <FloatingMenu visible={menuVisible} onClose={handleClose} position={menuPosition} options={menuOptions} handleDragStart={handleDragStart} />
 
       <div className="right-container">
         <div className="buttons-container">
