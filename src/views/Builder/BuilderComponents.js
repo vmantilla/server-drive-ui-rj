@@ -8,6 +8,7 @@ function BuilderComponents({ setIsPropertiesOpen }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [componentToDelete, setComponentToDelete] = useState(null);
   const [draggingComponent, setDraggingComponent] = useState(null);
+  const [selectedComponentId, setSelectedComponentId] = useState(null);
 
   function initialComponents() {
     return [
@@ -134,15 +135,24 @@ function BuilderComponents({ setIsPropertiesOpen }) {
           onDragEnter={(e) => handleDragEnterLeaveOrOver(e, comp.id)}
           onDragLeave={handleDragEnterLeaveOrOver}
           className={`component-item ${comp === draggingComponent ? 'dragging' : ''} ${draggingComponent && comp.id !== draggingComponent.id ? 'drop-target' : ''}`}
-          onClick={() => setIsPropertiesOpen(true)}>
+          onClick={() => {
+            setIsPropertiesOpen(true);
+            setSelectedComponentId(comp.id);
+          }}>
           <span className="toggle-btn" onClick={(e) => { e.stopPropagation(); handleToggleExpanded(comp.id); }}>{comp.expanded ? '-' : '+'}</span>
           <span>{comp.type}</span>
-          <span className="icon-btn add-child-btn" onClick={(e) => { e.stopPropagation(); addComponentChild(comp.id); }}>
-              <i className="bi bi-plus-circle"></i>
-          </span>
-          <span className="icon-btn delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>
-            <i className="bi bi-trash"></i>
-          </span>
+          {
+            comp.id === selectedComponentId && (
+              <>
+                <span className="icon-btn add-child-btn" onClick={(e) => { e.stopPropagation(); addComponentChild(comp.id); }}>
+                        <i className="bi bi-plus-circle"></i>
+                    </span>
+                    <span className="icon-btn delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>
+                      <i className="bi bi-trash"></i>
+                    </span>
+              </>
+            )
+          }
          </div>
         {comp.expanded && comp.children.length > 0 && <div className="component-children">{renderComponentList(comp.children, comp.id)}</div>}
       </div>
