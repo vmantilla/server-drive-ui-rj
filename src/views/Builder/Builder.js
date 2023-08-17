@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BuilderHeader from './BuilderHeader';
-import BuilderComponents from './BuilderComponents';
+import PreviewComponents from './Preview/PreviewComponents';
 import BuilderWorkspaces from './BuilderWorkspaces';
-import PreviewWorkspace from './PreviewWorkspace';
+import PreviewWorkspace from './Preview/PreviewWorkspace';
 import '../../css/Builder/Builder.css';
 
 function Builder({showNotification}) {
@@ -59,7 +59,7 @@ function Builder({showNotification}) {
               });
             }}
           ></div>
-          <BuilderComponents setIsPropertiesOpen={setIsPropertiesOpen} />
+          <PreviewComponents setIsPropertiesOpen={setIsPropertiesOpen} />
         </aside>
         <section className="builder-workspace" onClick={handleWorkspaceClick}>
           <PreviewWorkspace

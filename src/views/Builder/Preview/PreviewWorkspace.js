@@ -1,8 +1,8 @@
 // PreviewWorkspace.js
 import React, { useState, useEffect, useRef } from 'react';
-import ScreenBuilder from './ScreenBuilder';
-import '../../css/Builder/PreviewWorkspace.css';
-import { showWorkspaceFromAPI, createPreviewInWorkspaceAPI, deletePreviewFromAPI } from '../api';
+import PreviewScreen from './PreviewScreen';
+import '../../../css/Builder/Preview/PreviewWorkspace.css';
+import { showWorkspaceFromAPI, createPreviewInWorkspaceAPI, deletePreviewFromAPI } from '../../api';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
@@ -118,7 +118,7 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
   <>
     <div className="workspace-content" style={{ transform: `scale(${zoomLevel})`, width: `${workspaceSize}px`, height: `${workspaceSize}px` }}  onClick={handleWorkspaceClick}>
       {previews.map((preview) => (
-        <ScreenBuilder
+        <PreviewScreen
           key={preview.id}
           onClick={() => setSelectedScreen(preview.id)}
           onPositionChange={(newPosition) => {
@@ -131,7 +131,7 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
           onDelete={() => handleDelete(preview.id)}
         >
           {preview.content}
-        </ScreenBuilder>
+        </ PreviewScreen>
       ))}
     {showDeleteModal && (
     <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>

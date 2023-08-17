@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import '../../css/Builder/BuilderComponents.css';
+import '../../../css/Builder/Preview/PreviewComponents.css';
 
-function BuilderComponents({ setIsPropertiesOpen }) {
+function PreviewComponents({ setIsPropertiesOpen }) {
   const [components, setComponents] = useState(initialComponents());
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [componentToDelete, setComponentToDelete] = useState(null);
@@ -180,4 +180,4 @@ function BuilderComponents({ setIsPropertiesOpen }) {
   );
 }
 
-export default BuilderComponents;
+export default PreviewComponents;
