@@ -1,6 +1,6 @@
 // AuthenticatedLayout.js
 import React from 'react';
-import SidebarMenu from './SidebarMenu';
+import SidebarMenu from './views/Dashboard/SidebarMenu';
 
 function AuthenticatedLayout({ children }) {
   return (

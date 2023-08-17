@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import logo from './assets/images/logo_gris.png';
-import './css/SidebarMenu.css';
+import logo from '../../assets/images/logo_gris.png';
+import '../../css/Dashboard/SidebarMenu.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function SidebarMenu() {

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import '../../../css/Builder/Preview/PreviewComponents.css';
+import { toggleExpanded, deleteComponentRecursive, addComponentChildRecursive, removeComponent, isDescendant } from '../../Utils/treeUtils';
+
 
 function PreviewComponents({ setIsPropertiesOpen }) {
   const [components, setComponents] = useState(initialComponents());

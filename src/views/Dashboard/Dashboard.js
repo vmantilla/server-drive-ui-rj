@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import '../css/Dashboard.css';
-import { getProjectsFromAPI, deleteProjectFromAPI, editProjectNameInAPI, addProjectToAPI } from './api.js';
+import '../../css/Dashboard/Dashboard.css';
+import { getProjectsFromAPI, deleteProjectFromAPI, editProjectNameInAPI, addProjectToAPI } from '../api.js';
 import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
 import { Form, Button } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
-import '../../css/Login.css';
+import '../../css/Login/Login.css';
 import logo from '../../assets/images/logo.png';
 
 
