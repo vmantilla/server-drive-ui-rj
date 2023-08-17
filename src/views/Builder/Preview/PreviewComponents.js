@@ -63,6 +63,7 @@ function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, sho
 
   const handleDragStart = (event, component) => {
   event.dataTransfer.setData('text/plain', component.type);
+  event.dataTransfer.setData('source', "tree");
   event.stopPropagation();
   setDraggingComponent(component);
 
@@ -80,21 +81,32 @@ function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, sho
   const handleDragEnterLeaveOrOver = (event, componentId, isOver = false) => {
   event.preventDefault();
   event.stopPropagation();
+  const source = event.dataTransfer.getData('source');
   const currentElement = event.currentTarget;
-  if (draggingComponent.id !== componentId) {
-    if (isDescendant(draggingComponent, componentId)) {
-      // No permitir soltar en un descendiente.
-      currentElement.classList.add('disabled-drop');
-      currentElement.classList.remove('ready-for-drop');
-    } else {
-      if (isOver) {
-        currentElement.classList.remove('disabled-drop');
-        currentElement.classList.add('ready-for-drop');
-      } else {
+
+  if (source === 'header') {
+    if (isOver) {
+          currentElement.classList.remove('disabled-drop');
+          currentElement.classList.add('ready-for-drop');
+        } else {
+          currentElement.classList.remove('ready-for-drop');
+        }
+  
+  } else if (source === 'tree') {
+    if (draggingComponent.id !== componentId) {
+      if (isDescendant(draggingComponent, componentId)) {
+        currentElement.classList.add('disabled-drop');
         currentElement.classList.remove('ready-for-drop');
+      } else {
+        if (isOver) {
+          currentElement.classList.remove('disabled-drop');
+          currentElement.classList.add('ready-for-drop');
+        } else {
+          currentElement.classList.remove('ready-for-drop');
+        }
       }
     }
-  }
+  }  
 };
 
 
@@ -113,12 +125,22 @@ const handleDrop = (event, parentId) => {
   event.preventDefault();
   event.stopPropagation();
 
-  if (draggingComponent) {
-    try {
-      const newComponents = moveComponent(draggingComponent.id, parentId, components);
-      setComponents(newComponents);
-    } catch (error) {
-      console.error(error.message);
+  const source = event.dataTransfer.getData('source');
+
+  if (source === 'header') {
+    const componentData = event.dataTransfer.getData('component');
+    const newComponent = JSON.parse(componentData);
+    console.log(newComponent);
+    setComponents(prevComponents => addComponentChildRecursive(parentId, components, newComponent));
+    setDraggingComponent(null);
+  } else if (source === 'tree') {
+    if (draggingComponent) {
+      try {
+        const newComponents = moveComponent(draggingComponent.id, parentId, components);
+        setComponents(newComponents);
+      } catch (error) {
+        console.error(error.message);
+      }
     }
   }
 

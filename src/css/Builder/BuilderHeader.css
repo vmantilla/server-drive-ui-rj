@@ -1,101 +1,102 @@
 .builder-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  color: #F3F3FF;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-  background-color: #F0F0F0;
-  position: relative;
+    background-color: #2f2f2f;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
 }
 
-.builder-header::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background-color: #292929; /* Usando #292929 en lugar de #000 */
-}
-
-.left-container, .right-container {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  height: 100%;
-}
-
-.left-container {
-  background-color: #292929;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 10px;
-  padding: 0 0px 0px 12px;
-
-}
-
+.left-container,
 .right-container {
-  background-color: #292929;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 10px;
-  padding: 0 12px 0px 60px;
-  justify-content: flex-end;
+    display: flex;
+    align-items: center;
 }
 
-.icons-container {
-  display: flex;
-  margin: 0.5rem 2rem 0rem 2rem; 
-  align-items: center;
-  height: 100%;
-  padding: 12px 8px 8px 8px;
-}
-
-.rotate-45 {
-  transform: rotate(45deg);
-}
-
-h1 {
-  margin: 0 4px;
-}
-
-.buttons-container {
-  display: flex;
-}
-
-.builder-button, .menu-toggle {
-  background-color: #3a3a3a;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 0 5px 5px 0;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.builder-button i, .menu-toggle i {
-  margin-right: 8px;
-  color: #fff;
-}
-
-.builder-button:hover, .menu-toggle:hover {
-  background-color: #4a4a4a;
-}
-
-.icon-button {
-  background-color: #fff; 
-  border: 1px solid #292929; /* Usando #292929 en lugar de #000 */
-  margin: 0 10px;
-  width: 50px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+.left-container h1 {
+    font-size: 20px;
+    margin-left: 16px;
 }
 
 .menu-toggle {
-  background-color: #3a3a3a;
-  border-radius: 5px 0 0 5px;
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.menu-toggle.pressed {
+    color: #007BFF;
+}
+
+.icons-container {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.icon-button:hover {
+    color: #007BFF;
+}
+
+.floating-menu {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    display: flex;
+    gap: 8px;
+    padding: 16px;
+    z-index: 1000;
+}
+
+.buttons-container {
+    display: flex;
+}
+
+.right-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 10px;
+}
+
+.buttons-container {
+    display: flex;
+}
+
+.builder-button {
+    border: none;
+    border-radius: 4px;
+    font-size: 14px; 
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+    background-color: #2f2f2f;
+    color: white;
+}
+
+.builder-button i {
+    font-size: 18px; 
+    margin-right: 4px; 
+}
+
+.builder-button:hover {
+    background-color: #1f1f1f;
+}
+
+.rotate-45 {
+    transform: rotate(45deg);
 }
