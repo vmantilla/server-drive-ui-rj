@@ -6,7 +6,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px;
+    padding: 4px 6px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-family: 'Rubik', sans-serif;
 }
@@ -28,11 +28,16 @@
     color: white;
     font-size: 24px;
     cursor: pointer;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s, box-shadow 0.2s;
 }
 
 .menu-toggle.pressed {
-    color: #007BFF;
+    background-color: black;
+    color: white;
+    box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.5), inset -4px -4px 8px rgba(0, 0, 0, 0.5);
 }
+
 
 .icons-container {
     display: flex;

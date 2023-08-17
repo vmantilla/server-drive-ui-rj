@@ -4,6 +4,7 @@ import BuilderHeader from './BuilderHeader';
 import PreviewComponents from './Preview/PreviewComponents';
 import BuilderWorkspaces from './BuilderWorkspaces';
 import PreviewWorkspace from './Preview/PreviewWorkspace';
+import ComponentProperties from './Component/ComponentProperties';
 import '../../css/Builder/Builder.css';
 
 function Builder({showNotification}) {
@@ -80,12 +81,7 @@ function Builder({showNotification}) {
           />
         </section>
         <aside className={`builder-properties ${isPropertiesOpen ? 'open' : ''}`}>
-          <div className="builder-properties-header">
-            <h2>Propiedades</h2>
-            <button onClick={() => setIsPropertiesOpen(false)}>
-              <i className="bi bi-x"></i>
-            </button>
-          </div>
+          <ComponentProperties isPropertiesOpen={isPropertiesOpen} setIsPropertiesOpen={setIsPropertiesOpen} />
         </aside>
       </main>
     </div>
