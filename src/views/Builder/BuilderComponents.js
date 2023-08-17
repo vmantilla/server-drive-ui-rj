@@ -146,7 +146,7 @@ function BuilderComponents({ setIsPropertiesOpen }) {
 
   return (
     <div className="buildercomponents">
-      <h2>Componentes</h2>
+      <span className="workspaces-title">Components</span>
       {renderComponentList(components)}
       {showDeleteModal && (
         <Modal show={showDeleteModal}>

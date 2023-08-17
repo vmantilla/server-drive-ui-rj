@@ -54,12 +54,8 @@
     border: 2px dashed #4CAF50;
 }
 
-.dragging {
-    opacity: 0.5;
-}
-
 .component-item.drop-target {
-    background-color: #e0e0e0; /* O el color que prefieras para el hover */
+    background-color: #e0e0e0; /* Color de fondo cuando es un destino válido de arrastre */
 }
 
 .component-item.drop-target:hover {
@@ -71,16 +67,7 @@
     pointer-events: none; /* Hace que el componente no pueda recibir eventos de clic o arrastre */
 }
 
-.drop-target.ready-for-drop {
-    border: 2px dashed #4CAF50;
-    background-color: #4CAF50;  /* Añade esta línea */
-}
-
-
 .ready-for-drop {
-  border: 2px solid green;
-  background-color: lightgreen;
+    border: 2px solid green;
+    background-color: lightgreen;
 }
-
-
-
