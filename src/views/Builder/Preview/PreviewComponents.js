@@ -1,23 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import '../../../css/Builder/Preview/PreviewComponents.css';
-import { deleteComponentRecursive, addComponentChildRecursive, removeComponent, moveComponent, isDescendant } from '../../Utils/treeUtils';
+import { deleteComponentRecursive, addComponentChildRecursive, moveComponent, isDescendant } from '../../Utils/treeUtils';
+import { getComponentsFromAPI, saveComponentsToAPI } from '../../api';
 
-function PreviewComponents({ setIsPropertiesOpen }) {
-  const [components, setComponents] = useState(initialComponents());
+function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, showNotification }) {
+  const [components, setComponents] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [componentToDelete, setComponentToDelete] = useState(null);
   const [draggingComponent, setDraggingComponent] = useState(null);
   const [selectedComponentId, setSelectedComponentId] = useState(null);
 
-  function initialComponents() {
-    return [
-      { id: 1, type: 'Texto', children: [], expanded: false },
-      { id: 2, type: 'Imagen', children: [], expanded: false },
-      { id: 3, type: 'Botón', children: [], expanded: false }
-    ];
-  }
+  useEffect(() => {
+    const loadComponents = async () => {
+      try {
+        const componentsData = await getComponentsFromAPI(projectId, selectedScreen);
+        setComponents(componentsData);
+      } catch (error) {
+        console.error('Error al cargar componentes:', error);
+        showNotification('error', 'Error al cargar componentes:');
+      }
+    };
+
+    loadComponents();
+  }, [projectId, selectedScreen]);
+
+  const saveComponents = async () => {
+    try {
+      await saveComponentsToAPI(projectId, selectedScreen, components);
+      showNotification('success', 'Componentes guardados exitosamente.');
+    } catch (error) {
+      console.error('Error al guardar componentes:', error);
+      showNotification('error', 'Error al guardar los componentes.');
+    }
+  };
 
   const toggleExpanded = (targetId, currentComponents) => 
     currentComponents.map(component => {
@@ -130,9 +147,9 @@ const handleDrop = (event, parentId) => {
         >
           <div style={{display: 'flex', alignItems: 'center'}}>
         <span className="toggle-btn" onClick={(e) => { e.stopPropagation(); handleToggleExpanded(comp.id); }}>
-            {comp.expanded ?  <i class="bi bi-node-minus"></i> : <i class="bi bi-node-plus-fill"></i>}
+            {comp.expanded ?  <i className="bi bi-node-minus"></i> : <i className="bi bi-node-plus-fill"></i>}
         </span>
-        <span>{comp.type}</span>
+        <span>{comp.properties.component_type}</span>
     </div>
   {
     comp.id === selectedComponentId && (

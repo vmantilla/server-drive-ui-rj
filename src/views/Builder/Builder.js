@@ -59,7 +59,14 @@ function Builder({showNotification}) {
               });
             }}
           ></div>
-          <PreviewComponents setIsPropertiesOpen={setIsPropertiesOpen} />
+          {selectedScreen && (
+            <PreviewComponents 
+              projectId={projectId}
+              selectedScreen={selectedScreen}
+              setIsPropertiesOpen={setIsPropertiesOpen} 
+              showNotification={showNotification}
+            />
+          )}
         </aside>
         <section className="builder-workspace" onClick={handleWorkspaceClick}>
           <PreviewWorkspace

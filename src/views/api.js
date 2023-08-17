@@ -120,6 +120,7 @@ export const createPreviewInWorkspaceAPI = async (projectId, workspaceId, previe
 export const getComponentsFromAPI = async (projectId, selectedPreview) => {
   try {
     const response = await axios.get(`/projects/${projectId}/previews/${selectedPreview}/components`);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error al obtener componentes:', error);
