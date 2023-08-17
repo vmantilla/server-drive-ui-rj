@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import '../../../css/Builder/Preview/PreviewComponents.css';
-import { toggleExpanded, deleteComponentRecursive, addComponentChildRecursive, removeComponent, isDescendant } from '../../Utils/treeUtils';
-
+import { deleteComponentRecursive, addComponentChildRecursive, removeComponent, isDescendant } from './treeUtils';
 
 function PreviewComponents({ setIsPropertiesOpen }) {
   const [components, setComponents] = useState(initialComponents());
@@ -34,29 +33,11 @@ function PreviewComponents({ setIsPropertiesOpen }) {
   const handleToggleExpanded = (id) => 
     setComponents(prevComponents => toggleExpanded(id, prevComponents));
 
-  const deleteComponentRecursive = (idToDelete, currentComponents) => 
-    currentComponents.filter(comp => comp.id !== idToDelete).map(component => {
-      if (component.children.length > 0) {
-        component.children = deleteComponentRecursive(idToDelete, component.children);
-      }
-      return component;
-    });
-
+  
   const deleteComponent = (compToDelete) => {
     setComponents(prevComponents => deleteComponentRecursive(compToDelete.id, prevComponents));
     setShowDeleteModal(false);
   };
-
-  const addComponentChildRecursive = (parentId, currentComponents, childComponent) => 
-    currentComponents.map(component => {
-      if (component.id === parentId) {
-        return { ...component, children: [...component.children, childComponent] };
-      }
-      if (component.children.length > 0) {
-        return { ...component, children: addComponentChildRecursive(parentId, component.children, childComponent) };
-      }
-      return component;
-    });
 
   const addComponentChild = (parentId) => {
     const child = { id: Date.now(), type: `Hijo`, children: [], expanded: false };
@@ -81,26 +62,7 @@ function PreviewComponents({ setIsPropertiesOpen }) {
     }
   };
 
-  const removeComponent = (componentId, currentComponents) => 
-    currentComponents.reduce((acc, component) => {
-      if (component.id !== componentId) {
-        if (component.children.length) {
-          component.children = removeComponent(componentId, component.children);
-        }
-        acc.push(component);
-      }
-      return acc;
-    }, []);
-
-  const isDescendant = (parentComponent, targetId) => {
-    for (let child of parentComponent.children) {
-      if (child.id === targetId || isDescendant(child, targetId)) {
-        return true;
-      }
-    }
-    return false;
-  };
-
+  
   const handleDrop = (event, parentId) => {
     event.preventDefault();
     event.stopPropagation();
