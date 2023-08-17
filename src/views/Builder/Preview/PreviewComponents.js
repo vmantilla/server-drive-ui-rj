@@ -155,7 +155,9 @@ const handleDrop = (event, parentId) => {
   return (
     <div className="buildercomponents">
       <span className="component-title">Components</span>
+    <div className="components-container">
       {renderComponentList(components)}
+    </div>
       {showDeleteModal && (
         <Modal show={showDeleteModal}>
           <Modal.Header>

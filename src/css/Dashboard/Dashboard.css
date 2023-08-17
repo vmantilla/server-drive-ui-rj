@@ -3,7 +3,6 @@
 .dashboard {
   font-family: 'Rubik', sans-serif;
   padding: 0 2rem 2rem 2rem;
-
   background-color: #FFFFFF;
   height: 100vh;
 }
@@ -19,7 +18,7 @@
   color: #292929;
 }
 
-h2, .project-card h3, .modal h4 {
+h2, .project-card h3 {
   font-family: 'Rubik', sans-serif;
   color: #292929;
 }
@@ -76,7 +75,7 @@ h2, .project-card h3, .modal h4 {
   margin-bottom: 10px;
 }
 
-.button, .modal button {
+.button {
   padding: 0.5rem 1rem;
   border: none;
   background-color: #007aff;
@@ -86,32 +85,8 @@ h2, .project-card h3, .modal h4 {
   transition: background-color 0.3s;
 }
 
-.button:hover, .modal button:hover {
+.button:hover {
   background-color: #005fdd;
-}
-
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 2rem;
-  background-color: rgba(255, 255, 255, 0.9); 
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 1200; /* Incrementando el z-index */
-}
-
-.modal input {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
-.modal, .modal h4, .modal input, .modal button {
-  font-family: 'Rubik', sans-serif;
 }
 
 .error-message, .success-message {

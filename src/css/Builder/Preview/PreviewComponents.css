@@ -7,11 +7,11 @@
     overflow-x: auto;
     padding: 2px;
     box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .buildercomponents h2 {
     font-size: 20px;
-    margin-bottom: 15px;
 }
 
 .component-title {
@@ -20,7 +20,13 @@
     font-weight: 600;
     color: #333;
     padding: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 20px; /* Ya estaba en 20px */
+}
+
+.components-container {
+  margin-top: 10px;
+  overflow-y: auto;
+  overflow-x: auto;
 }
 
 .component-item {
@@ -64,7 +70,7 @@
 .component-children {
     margin-left: 20px;
     width: calc(100% - 20px);
-    overflow-x: auto;
+    overflow-x: hidden;
 }
 
 .dragging {

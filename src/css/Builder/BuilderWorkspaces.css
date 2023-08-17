@@ -12,7 +12,7 @@
   justify-content: space-between;
   align-items: center;
   font-size: 24px;
-  padding: 6px;
+  padding: 0px 6px;
 }
 
 .workspace-title {
@@ -74,7 +74,7 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;
+  padding: 0px 4px;
   border-radius: 5px;
   margin-bottom: 4px;
   cursor: pointer;
