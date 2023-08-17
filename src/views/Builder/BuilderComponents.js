@@ -137,9 +137,13 @@ function BuilderComponents({ setIsPropertiesOpen }) {
           onClick={() => setIsPropertiesOpen(true)}>
           <span className="toggle-btn" onClick={(e) => { e.stopPropagation(); handleToggleExpanded(comp.id); }}>{comp.expanded ? '-' : '+'}</span>
           <span>{comp.type}</span>
-          <Button variant="outline-danger" className="delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>✖</Button>
-          <Button variant="outline-primary" className="add-child-btn" onClick={(e) => { e.stopPropagation(); addComponentChild(comp.id); }}>+</Button>
-        </div>
+          <span className="icon-btn add-child-btn" onClick={(e) => { e.stopPropagation(); addComponentChild(comp.id); }}>
+              <i className="bi bi-plus-circle"></i>
+          </span>
+          <span className="icon-btn delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>
+            <i className="bi bi-trash"></i>
+          </span>
+         </div>
         {comp.expanded && comp.children.length > 0 && <div className="component-children">{renderComponentList(comp.children, comp.id)}</div>}
       </div>
     ));
