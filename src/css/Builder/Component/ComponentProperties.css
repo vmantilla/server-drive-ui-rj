@@ -1,12 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap');
 
-
 .component-properties-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
-  padding: 0px 6px;
+  padding: 0px 4px;
 }
 
 .component-properties-title {
@@ -15,14 +14,31 @@
     font-weight: 600;
     color: #333;
     padding: 0 10px;
-    margin-bottom: 0px;
+}
+
+.component-properties-title .h2 {
+    margin: 0px;
 }
 
 .component-properties-close {
     font-family: 'Rubik', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 800;
     color: #333;
-    padding: 0 4px;
-    margin-bottom: 0px;
+    padding: 4px;
+    border: 0px;
+    margin-bottom: 6px;
 }
+
+.component-properties {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.component-properties-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  height: 200%;
+}
+

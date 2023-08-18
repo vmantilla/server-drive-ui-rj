@@ -15,7 +15,6 @@
 .builder-components,
 .builder-properties {
   background-color: #ffffff;
-  overflow-y: auto;
 }
 
 .builder-components {
@@ -23,8 +22,8 @@
 }
 
 .builder-properties {
-  width: 20%;
-  padding: 1rem;
+  width: 250px;
+  padding: 10px 1px;
   position: absolute;
   top: 0;
   right: 0;
@@ -69,7 +68,7 @@
 /* Estilos agregados */
 .resizable-separator {
   cursor: ns-resize;
-  height: 3px;
+  height: 2px;
   background-color: #ddd;
   width: 100%;
 }
@@ -85,4 +84,5 @@
 
 .builder-components.closed {
   width: 0%;
+  overflow: hidden;
 }

@@ -6,7 +6,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 6px;
+    padding: 0px 6px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-family: 'Rubik', sans-serif;
 }
@@ -20,6 +20,7 @@
 .left-container h1 {
     font-size: 20px;
     margin-left: 16px;
+    margin: 0px;
 }
 
 .menu-toggle {
@@ -124,7 +125,7 @@
     background-color: transparent;
     font-size: 12px;
     font-family: 'Rubik', sans-serif;
-    cursor: pointer;
+    cursor: grab;
     color: #292929;
     transition: border 0.2s ease-in-out;
 }
@@ -135,7 +136,14 @@
 
 .floating-icon-button:hover {
     border: 1px dashed #c2c2c2;
+    cursor: grab;
 }
+.floating-icon-button:active {
+  cursor: grabbing;
+}
+
+
+
 
 
 

@@ -139,9 +139,9 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
           <button className="icon-button" onClick={addNewPreview}><i className="bi bi-window-plus"></i></button>
         ) : (
           <>
-            <button className="icon-button" draggable="true" onDragStart={(e) => handleDragStart(e, "container", "Row")} onClick={(e) => handleButtonPress(e, 'container')}><i className="bi bi-columns-gap"></i></button>
-            <button className="icon-button" draggable="true" onDragStart={(e) => handleDragStart(e, "object", "Object")} onClick={(e) => handleButtonPress(e, 'object')}><i className="bi bi-box"></i></button>
-            <button className="icon-button" draggable="true" onDragStart={(e) => handleDragStart(e, "space", "Space")} onClick={(e) => handleButtonPress(e, 'space')}><i className="bi bi-arrows-angle-expand rotate-45 "></i></button>
+            <button className="icon-button" onClick={(e) => handleButtonPress(e, 'container')}><i className="bi bi-columns-gap"></i></button>
+            <button className="icon-button" onClick={(e) => handleButtonPress(e, 'object')}><i className="bi bi-box"></i></button>
+            <button className="icon-button" onClick={(e) => handleButtonPress(e, 'space')}><i className="bi bi-arrows-angle-expand rotate-45 "></i></button>
           </>
         )}
       </div>

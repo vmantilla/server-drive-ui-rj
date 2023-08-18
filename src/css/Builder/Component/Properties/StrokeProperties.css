@@ -1,0 +1,124 @@
+.stroke-properties {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.stroke-properties-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  padding: 0px 0px;
+  background-color: #292929;
+  color: white;
+}
+
+.stroke-title {
+  font-family: 'Rubik', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  padding: 0 10px;
+  margin-bottom: 0px;
+}
+
+.add-stroke-button {
+  font-size: 18px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 10px;
+  color: white;
+}
+
+.stroke-properties-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stroke-block {
+  display: flex;
+  flex-direction: column;
+}
+.stroke-mini-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f2f2f2;
+  padding: 2px 8px;
+}
+
+.stroke-mini-header .mini-header-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 8px;
+}
+
+.stroke-mini-header .dropdown-icon {
+  font-size: 8px;
+}
+
+/* Añadido para el select */
+.stroke-mini-header select {
+  border: none;
+  font-size: 10px;
+  padding: 2px 4px;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.stroke-mini-header select:focus {
+  outline: none;
+}
+
+.stroke-properties-row {
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  gap: 6px;
+}
+
+.stroke-property {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stroke-property label {
+  font-size: 10px;
+  color: #292929;
+}
+
+.stroke-property input {
+  width: 60px;
+  height: 24px;
+  font-size: 10px;
+}
+
+.delete-stroke-button {
+  font-size: 12px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding-right: 5px;
+  margin: 0;
+  color: #292929;
+}
+
+
+.stroke-property input[type="number"] {
+  width: 50px; /* Establecer el ancho de los campos de entrada de tipo 'number' */
+}
+
+/* También podrías usar una clase específica para cada uno si prefieres un control más detallado. */
+
+.stroke-property .width-input {
+  width: 40px; /* Establecer el ancho del campo de entrada de 'width' */
+}
+
+.stroke-property .opacity-input {
+  width: 30px; /* Establecer el ancho del campo de entrada de 'opacity' */
+}
