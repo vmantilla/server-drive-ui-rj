@@ -17,8 +17,6 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
 	    <FrameProperties/>
 	  	<FontProperties/> 
 	    <StrokeProperties/>
-	    <StrokeProperties/>
-	    <StrokeProperties/>
 	  </div>
 	</div>
   );
