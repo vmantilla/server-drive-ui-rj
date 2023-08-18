@@ -7,7 +7,6 @@
 }
 
 .frame-properties-header {
-  display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 6px 8px;
@@ -33,13 +32,8 @@
 }
 
 .frame-property label {
+  font-size: 10px;
   color: #292929;
-}
-
-.input-wrapper {
-  display: flex;
-  gap: 4px;
-  align-items: center;
 }
 
 .width-options {
@@ -48,16 +42,19 @@
 }
 
 .width-button {
-  padding: 4px 8px;
   border: none;
-  color: white;
-  background-color: #4a4a4a;
+  color: #292929;
+  background-color: #fffff;
   border-radius: 4px;
   cursor: pointer;
+  width: 50px;
+  height: 40px;
+  font-size: 10px;
 }
 
 .width-button.selected {
-  background-color: #007BFF;
+  background-color: #292929;
+  color: #ffffff;
 }
 
 .width-button:focus {
@@ -66,21 +63,15 @@
 
 .input-wrapper {
   display: flex;
-  gap: 4px;
   align-items: center;
-}
-
-.input-wrapper label {
-  font-size: 10px;
-  color: #292929;
-}
-
-.input-wrapper input {
-  width: 60px;
-  height: 24px;
-  font-size: 10px;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 4px;
+  padding: 0px 2px;
   border-radius: 4px;
+  height: 30px;
+}
+
+.width-button-rotate {
+  transform: rotate(90deg);
+  transition: transform 0.3s ease-in-out;
 }
 
