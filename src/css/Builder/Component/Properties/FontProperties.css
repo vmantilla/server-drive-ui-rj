@@ -1,7 +1,6 @@
 .font-properties {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
 }
 
 .font-properties-header {
@@ -92,7 +91,7 @@
 }
 
 .font-property:nth-child(6), .font-property:nth-child(7), .font-style-buttons {
-  /*flex-basis: calc(33.33% - 4px);*/
+  margin-bottom: 2px;
 }
 
 .font-property select {

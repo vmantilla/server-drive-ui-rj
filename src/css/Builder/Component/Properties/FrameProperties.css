@@ -1,34 +1,95 @@
 .frame-properties {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
-  font-family: 'Rubik', sans-serif;
-  font-size: 12px;
 }
 
 .frame-properties-header {
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 8px;
+  font-size: 12px;
+  padding: 0px 0px;
   background-color: #292929;
   color: white;
 }
 
 .frame-title {
+  font-family: 'Rubik', sans-serif;
+  font-size: 12px;
   font-weight: 600;
+  color: white;
+  padding: 0 10px;
+  margin-bottom: 0px;
+}
+
+.add-frame-button {
+  font-size: 18px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 10px;
+  color: white;
 }
 
 .frame-properties-body {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 8px;
+}
+
+.frame-block {
+  display: flex;
+  justify-content: center;
+  border: 1px solid #ddd;
+  padding: 2px;
+  margin-bottom: 4px;
+}
+
+.frame-mini-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f2f2f2;
+  padding: 2px 8px;
+  margin-bottom: 4px;
+}
+
+
+.frame-mini-header .mini-header-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 8px;
+}
+
+.frame-mini-header .dropdown-icon {
+  font-size: 8px;
+}
+
+/* Añadido para el select */
+.frame-mini-header select {
+  border: none;
+  font-size: 10px;
+  padding: 2px 4px;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.frame-mini-header select:focus {
+  outline: none;
+}
+
+.frame-properties-row {
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  gap: 6px;
 }
 
 .frame-property {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  padding: 2px 8px;
 }
 
 .frame-property label {
@@ -75,3 +136,12 @@
   transition: transform 0.3s ease-in-out;
 }
 
+.delete-frame-button {
+  font-size: 12px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding-right: 5px;
+  margin: 0;
+  color: #292929;
+}

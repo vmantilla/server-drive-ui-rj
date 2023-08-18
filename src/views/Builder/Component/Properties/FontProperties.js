@@ -3,13 +3,21 @@ import '../../../../css/Builder/Component/Properties/FontProperties.css';
 
 function FontProperties() {
   const [fonts, setFonts] = useState([]);
-  const [selectedStyles, setSelectedStyles] = useState({italic: false, strikethrough: false, underline: false});
   const states = ["enabled", "disabled", "hover"];
 
   const handleAddFont = () => {
     const availableStates = states.filter(state => !fonts.some(font => font.state === state));
     if (availableStates.length > 0) {
-      setFonts([...fonts, { state: availableStates[0], color: "#000000", opacity: 1, size: 9, lineHeight: 16, letterSpacing: 0.5, weight: 500 }]);
+      setFonts([...fonts, {
+        state: availableStates[0],
+        color: "#000000",
+        opacity: 1,
+        size: 9,
+        lineHeight: 16,
+        letterSpacing: 0.5,
+        weight: 500,
+        selectedStyles: {italic: false, strikethrough: false, underline: false},
+      }]);
     }
   };
 
@@ -30,8 +38,10 @@ function FontProperties() {
     setFonts(newFonts);
   };
 
-  const handleStyleToggle = (style) => {
-    setSelectedStyles({...selectedStyles, [style]: !selectedStyles[style]});
+  const handleStyleToggle = (index, style) => {
+    const newFonts = fonts.slice();
+    newFonts[index].selectedStyles[style] = !newFonts[index].selectedStyles[style];
+    setFonts(newFonts);
   };
 
   const fontNames = ["Arial", "Roboto", "Helvetica", "Tahoma", "Verdana", "Times New Roman", "Georgia", "Garamond"];
@@ -111,9 +121,24 @@ function FontProperties() {
               <div className="font-property">
                 <label>Style:</label>
                 <div className="input-wrapper font-style-buttons">
-                <button className={`font-style-button ${selectedStyles.italic ? 'selected' : ''}`} onClick={() => handleStyleToggle('italic')}><i className="bi bi-type-italic"></i></button>
-                <button className={`font-style-button ${selectedStyles.strikethrough ? 'selected' : ''}`} onClick={() => handleStyleToggle('strikethrough')}><i className="bi bi-type-strikethrough"></i></button>
-                <button className={`font-style-button ${selectedStyles.underline ? 'selected' : ''}`} onClick={() => handleStyleToggle('underline')}><i className="bi bi-type-underline"></i></button>
+                  <button
+                    className={`font-style-button ${font.selectedStyles.italic ? 'selected' : ''}`}
+                    onClick={() => handleStyleToggle(index, 'italic')}
+                  >
+                    <i className="bi bi-type-italic"></i>
+                  </button>
+                  <button
+                    className={`font-style-button ${font.selectedStyles.strikethrough ? 'selected' : ''}`}
+                    onClick={() => handleStyleToggle(index, 'strikethrough')}
+                  >
+                    <i className="bi bi-type-strikethrough"></i>
+                  </button>
+                  <button
+                    className={`font-style-button ${font.selectedStyles.underline ? 'selected' : ''}`}
+                    onClick={() => handleStyleToggle(index, 'underline')}
+                  >
+                    <i className="bi bi-type-underline"></i>
+                  </button>
                 </div>
               </div>
             </div>
