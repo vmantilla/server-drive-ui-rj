@@ -3,15 +3,12 @@ import '../../../../css/Builder/Component/Properties/StrokeProperties.css';
 
 function StrokeProperties() {
   const [strokes, setStrokes] = useState([]);
-  const [color, setColor] = useState("#000000");
-  const [width, setWidth] = useState(1);
-  const [opacity, setOpacity] = useState(1);
   const states = ["enabled", "disabled", "hover"];
 
   const handleAddProperty = () => {
     const availableStates = states.filter(state => !strokes.some(stroke => stroke.state === state));
     if (availableStates.length > 0) {
-      setStrokes([...strokes, { state: availableStates[0], color: "#000000", width, opacity }]);
+      setStrokes([...strokes, { state: availableStates[0], color: "#000000", width: 1, opacity: 1, hexCode: "#000000" }]);
     }
   };
 
@@ -28,6 +25,9 @@ function StrokeProperties() {
       newStrokes[index][property] = isNaN(newValue) ? 0 : newValue;
     } else if (property === "width") {
       newStrokes[index][property] = Math.max(0, parseInt(value, 10));
+    } else if (property === "color") {
+      newStrokes[index][property] = value;
+      newStrokes[index]['hexCode'] = value;
     } else {
       newStrokes[index][property] = value;
     }
@@ -53,17 +53,25 @@ function StrokeProperties() {
             </div>
             <div className="stroke-properties-row">
               <div className="stroke-property">
-                <label>Color:</label>
-                <input type="color" value={stroke.color} onChange={(e) => handlePropertyChange(index, 'color', e.target.value)} />
-              </div>
-              <div className="stroke-property">
-                <label>Opacity:</label>
-                <input type="number" step="0.1" min="0" max="1" value={stroke.opacity} onChange={(e) => handlePropertyChange(index, 'opacity', e.target.value)} />
-              </div>
-              <div className="stroke-property">
-                <label>Width:</label>
-                <input type="number" value={stroke.width} onChange={(e) => handlePropertyChange(index, 'width', e.target.value)} />
-              </div>
+			  <label>Color:</label>
+			  <div className="color-input">
+			    <input type="color" value={stroke.color} onChange={(e) => handlePropertyChange(index, 'color', e.target.value)} />
+			    <input type="text" className="hex-code" value={stroke.color} onChange={(e) => handlePropertyChange(index, 'color', e.target.value)} />
+			  </div>
+			</div>
+
+             <div className="stroke-property">
+			  <label>Opacity:</label>
+			  <div className="input-wrapper">
+			    <input type="number" step="0.1" min="0" max="1" value={stroke.opacity} onChange={(e) => handlePropertyChange(index, 'opacity', e.target.value)} />
+			  </div>
+			</div>
+			<div className="stroke-property">
+			  <label>Width:</label>
+			  <div className="input-wrapper">
+			    <input type="number" value={stroke.width} onChange={(e) => handlePropertyChange(index, 'width', e.target.value)} />
+			  </div>
+			</div>
             </div>
           </div>
         ))}

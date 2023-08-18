@@ -1,10 +1,10 @@
-.stroke-properties {
+.font-properties {
   display: flex;
   flex-direction: column;
   margin-bottom: 16px;
 }
 
-.stroke-properties-header {
+.font-properties-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -14,7 +14,7 @@
   color: white;
 }
 
-.stroke-title {
+.font-title {
   font-family: 'Rubik', sans-serif;
   font-size: 12px;
   font-weight: 600;
@@ -23,7 +23,7 @@
   margin-bottom: 0px;
 }
 
-.add-stroke-button {
+.add-font-button {
   font-size: 18px;
   background-color: transparent;
   border: none;
@@ -32,17 +32,18 @@
   color: white;
 }
 
-.stroke-properties-body {
+.font-properties-body {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.stroke-block {
+.font-block {
   display: flex;
   flex-direction: column;
 }
-.stroke-mini-header {
+
+.font-mini-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -50,19 +51,18 @@
   padding: 2px 8px;
 }
 
-.stroke-mini-header .mini-header-title {
+.font-mini-header .mini-header-title {
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 8px;
 }
 
-.stroke-mini-header .dropdown-icon {
+.font-mini-header .dropdown-icon {
   font-size: 8px;
 }
 
-/* Añadido para el select */
-.stroke-mini-header select {
+.font-mini-header select {
   border: none;
   font-size: 10px;
   padding: 2px 4px;
@@ -70,23 +70,23 @@
   cursor: pointer;
 }
 
-.stroke-mini-header select:focus {
+.font-mini-header select:focus {
   outline: none;
 }
 
-.stroke-properties-row {
+.font-properties-row {
   display: flex;
   align-items: center;
   padding: 4px 10px;
   gap: 6px;
 }
 
-.stroke-property {
+.font-property {
   display: flex;
   flex-direction: column;
 }
 
-.stroke-property label {
+.font-property label {
   font-size: 10px;
   color: #292929;
 }
@@ -118,7 +118,7 @@
   padding: 0;
 }
 
-.stroke-property input {
+.font-property input {
   width: 50px;
   height: 20px;
   font-size: 10px;
@@ -127,10 +127,9 @@
 .input-wrapper {
   display: flex;
   align-items: center;
-  border: 1px solid rgba(0, 0, 0, 0.1); /* Borde suave */
+  border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0px 2px;
   border-radius: 4px;
-
   height: 30px;
 }
 
@@ -143,8 +142,7 @@
   height: 22px;
 }
 
-
-.delete-stroke-button {
+.delete-font-button {
   font-size: 12px;
   background-color: transparent;
   border: none;
@@ -154,15 +152,6 @@
   color: #292929;
 }
 
-
-.stroke-property input[type="number"] {
+.font-property input[type="number"] {
   width: 50px;
-}
-
-.stroke-property .width-input {
-  width: 40px; /* Establecer el ancho del campo de entrada de 'width' */
-}
-
-.stroke-property .opacity-input {
-  width: 30px;
 }

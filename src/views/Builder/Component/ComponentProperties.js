@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../../../css/Builder/Component/ComponentProperties.css';
 import StrokeProperties from './Properties/StrokeProperties';
+import FontProperties from './Properties/FontProperties';
 
 function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
   return (
@@ -11,7 +12,8 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
 	      <i className="bi bi-x"></i>
 	    </button>
 	  </div>
-	  <div className="component-properties-content"> 
+	  <div className="component-properties-content">
+	  	<FontProperties/> 
 	    <StrokeProperties/>
 	    <StrokeProperties/>
 	    <StrokeProperties/>

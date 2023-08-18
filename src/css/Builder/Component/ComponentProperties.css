@@ -42,3 +42,27 @@
   height: 200%;
 }
 
+
+
+/* Personalizar el scrollbar para navegadores Webkit (Chrome, Safari, etc.) */
+.component-properties-content::-webkit-scrollbar {
+  width: 4px; /* Ancho del scrollbar */
+}
+
+.component-properties-content::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.1); /* Color de fondo de la pista del scrollbar */
+  border-radius: 2px; /* Radio de las esquinas de la pista del scrollbar */
+}
+
+.component-properties-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.4); /* Color del deslizador del scrollbar */
+  border-radius: 2px; /* Radio de las esquinas del deslizador del scrollbar */
+}
+
+/* Personalizar el scrollbar para Firefox */
+.component-properties-content {
+  scrollbar-width: thin; /* Hacer el scrollbar más delgado */
+  scrollbar-color: rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.1); /* Color del deslizador y de la pista del scrollbar */
+}
+
+
