@@ -9,6 +9,20 @@ axios.interceptors.request.use(function (config) {
   return config;
 });
 
+export const setupInterceptors = (navigate) => {  // Cambia el parámetro a "navigate"
+  axios.interceptors.response.use(
+    response => {
+      return response;
+    },
+    error => {
+      if (error.response && error.response.status === 401) {
+        navigate('/');
+      }
+      return Promise.reject(error);
+    }
+  );
+};
+
 // === PROJECT API Calls ===
 
 export const getProjectsFromAPI = async () => {

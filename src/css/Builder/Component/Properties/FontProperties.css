@@ -76,6 +76,7 @@
 
 .font-properties-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   padding: 4px 10px;
   gap: 6px;
@@ -84,6 +85,32 @@
 .font-property {
   display: flex;
   flex-direction: column;
+}
+
+.font-property:nth-child(3), .font-property:nth-child(4), .font-property:nth-child(5) {
+  /*flex-basis: calc(33.33% - 4px);*/
+}
+
+.font-property:nth-child(6), .font-property:nth-child(7), .font-style-buttons {
+  /*flex-basis: calc(33.33% - 4px);*/
+}
+
+.font-property select {
+  font-size: 10px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 2px 4px;
+  color: #292929;
+}
+
+.font-property select:focus {
+  outline: none;
+}
+
+.font-property select::placeholder {
+  font-size: 10px;
+  color: #292929;
 }
 
 .font-property label {
@@ -138,8 +165,7 @@
   height: 24px;
   font-size: 10px;
   border: none;
-  padding: 4;
-  height: 22px;
+  padding: 4px;
 }
 
 .delete-font-button {
@@ -154,4 +180,23 @@
 
 .font-property input[type="number"] {
   width: 50px;
+}
+
+.font-style-button {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.font-style-button:hover {
+  background-color: #eeeeee;
+}
+
+.font-style-button.selected {
+  background-color: #292929;
+  color: white;
 }

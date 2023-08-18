@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../../../css/Builder/Component/ComponentProperties.css';
 import StrokeProperties from './Properties/StrokeProperties';
 import FontProperties from './Properties/FontProperties';
+import FrameProperties from './Properties/FrameProperties';
 
 function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
   return (
@@ -13,6 +14,7 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
 	    </button>
 	  </div>
 	  <div className="component-properties-content">
+	    <FrameProperties/>
 	  	<FontProperties/> 
 	    <StrokeProperties/>
 	    <StrokeProperties/>
