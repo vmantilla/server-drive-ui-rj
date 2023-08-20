@@ -1,6 +1,74 @@
 import React, { useState } from 'react';
 import '../../../../css/Builder/Component/Properties/FrameProperties.css';
 
+function DimensionProperty({ label, option, fixedValue, rangeMin, rangeMax, onOptionChange, onInputChange }) {
+
+	const [isEditing, setIsEditing] = useState(false);
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      event.target.blur();
+      setIsEditing(false);
+    }
+  };
+
+  const handleFixedInputChange = (e) => {
+    onInputChange('fixed', e.target.value);
+  };
+
+  const handleFixedClick = () => {
+    setIsEditing(true);
+  };
+  
+  return (
+    <div className="frame-property">
+      <label>{label}:</label>
+      <div className="width-options frame-block">
+        <button className={`width-button ${option === 'full' ? 'selected' : ''}`} onClick={() => onOptionChange('full')}>
+          <div className="width-button-rotate">
+            <i className={`bi bi-arrows-expand width-button-rotate `}></i>
+          </div> Full
+        </button>
+        <button className={`width-button ${option === 'auto' ? 'selected' : ''}`} onClick={() => onOptionChange('auto')}>
+          <div className="width-button-rotate">
+            <i className={`bi bi-arrows-collapse `}></i>
+          </div> Auto
+        </button>
+        <button className={`width-button ${option === 'fixed' ? 'selected' : ''}`} onClick={() => onOptionChange('fixed')}>
+          <i className={`bi bi-pin`}></i>
+          {option === 'fixed' ? (
+      isEditing ? (
+        <input
+          type="text"
+          value={fixedValue}
+          onChange={handleFixedInputChange}
+          onKeyDown={handleKeyPress}
+          onBlur={() => setIsEditing(false)}
+          maxLength="5"
+          style={{width: '5ch'}}
+          autoFocus
+        />
+      ) : (
+        <span onClick={handleFixedClick}>{fixedValue}</span>
+      )
+    ) : "Fixed"}
+        </button>
+        <button className={`width-button ${option === 'range' ? 'selected' : ''}`} onClick={() => onOptionChange('range')}>
+          <i className={`bi bi-arrow-left-right`}></i> Range
+        </button>
+      </div>
+      {option === 'range' && (
+        <div className="input-wrapper frame-block">
+          <label>Min:</label>
+          <input type="number" value={rangeMin} onChange={(e) => onInputChange('min', e.target.value)} min="1" />
+          <label>Max:</label>
+          <input type="number" value={rangeMax} onChange={(e) => onInputChange('max', e.target.value)} min="1" />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function FrameProperties() {
   const [frames, setFrames] = useState([]);
   const frameStates = ["enabled", "disabled", "hover"];
@@ -33,19 +101,11 @@ function FrameProperties() {
   };
 
   const handleFrameChange = (index, property, value) => {
-    const newFrames = frames.slice();
-    newFrames[index][property] = value;
-    setFrames(newFrames);
-  };
-
-  const handleInputChange = (event, index) => {
-    const { name, value } = event.target;
-    handleFrameChange(index, name, value);
-  };
-
-  const handleOptionChange = (optionType, option, index) => {
-    const property = optionType + 'Option';
-    handleFrameChange(index, property, frames[index][property] === option ? '' : option);
+    if (index >= 0 && index < frames.length) {
+      const newFrames = frames.slice();
+      newFrames[index][property] = value;
+      setFrames(newFrames);
+    }
   };
 
   return (
@@ -66,88 +126,34 @@ function FrameProperties() {
               <button className="delete-frame-button" onClick={() => handleDeleteFrame(index)}>-</button>
             </div>
             <div className="frame-property">
-              <label>Width:</label>
-              <div className="width-options frame-block">
-                <button className={`width-button ${frame.widthOption === 'full' ? 'selected' : ''}`} onClick={() => handleOptionChange('width', 'full', index)}>
-                  <div className="width-button-rotate">
-                    <i className={`bi bi-arrows-expand width-button-rotate `}></i>
-                  </div> Full
-                </button>
-                <button className={`width-button ${frame.widthOption === 'auto' ? 'selected' : ''}`} onClick={() => handleOptionChange('width', 'auto', index)}>
-                  <div className="width-button-rotate">
-                    <i className={`bi bi-arrows-collapse `}></i>
-                  </div> Auto
-                </button>
-                <button className={`width-button ${frame.widthOption === 'fixed' ? 'selected' : ''}`} onClick={() => handleOptionChange('width', 'fixed', index)}>
-                  <i className={`bi bi-pin`}></i>
-                  {frame.widthOption === 'fixed' ? (
-                    <input
-                      type="text"
-                      name="widthFixed"
-                      value={frame.widthFixed}
-                      onChange={(e) => handleInputChange(e, index)}
-                      maxLength="5"
-                      style={{width: '5ch'}}
-                    />
-                  ) : "Fixed"}
-                </button>
-                <button className={`width-button ${frame.widthOption === 'range' ? 'selected' : ''}`} onClick={() => handleOptionChange('width', 'range', index)}>
-                  <i className={`bi bi-arrow-left-right`}></i> Range
-                </button>
-              </div>
-              {frame.widthOption === 'range' && (
-                <div className="input-wrapper frame-block">
-                  <label>Min:</label>
-                  <input type="number" name="widthRangeMin" value={frame.widthRangeMin} onChange={(e) => handleInputChange(e, index)} min="1" />
-                  <label>Max:</label>
-                  <input type="number" name="widthRangeMax" value={frame.widthRangeMax} onChange={(e) => handleInputChange(e, index)} min="1" />
-                </div>
-              )}
+              <DimensionProperty
+				  label="Width"
+				  option={frame.widthOption}
+				  fixedValue={frame.widthFixed}
+				  rangeMin={frame.widthRangeMin}
+				  rangeMax={frame.widthRangeMax}
+				  onOptionChange={(option) => handleFrameChange(index, 'widthOption', option)}
+				  onInputChange={(type, value) => handleFrameChange(index, 'width' + type.charAt(0).toUpperCase() + type.slice(1), value)}
+				/>
             </div>
             <div className="frame-property">
-              <label>Height:</label>
-              <div className="width-options frame-block">
-                <button className={`width-button ${frame.heightOption === 'full' ? 'selected' : ''}`} onClick={() => handleOptionChange('height', 'full', index)}>
-                  <div>
-                    <i className={`bi bi-arrows-expand width-button-rotate `}></i>
-                  </div> Full
-                </button>
-                <button className={`width-button ${frame.heightOption === 'auto' ? 'selected' : ''}`} onClick={() => handleOptionChange('height', 'auto', index)}>
-                  <i className={`bi bi-arrows-collapse `}></i>Auto
-                </button>
-                <button className={`width-button ${frame.heightOption === 'fixed' ? 'selected' : ''}`} onClick={() => handleOptionChange('height', 'fixed', index)}>
-                  <i className={`bi bi-pin`}></i>
-                  {frame.heightOption === 'fixed' ? (
-                    <input
-                      type="text"
-                      name="heightFixed"
-                      value={frame.heightFixed}
-                      onChange={(e) => handleInputChange(e, index)}
-                      maxLength="5"
-                      style={{width: '5ch'}}
-                    />
-                  ) : "Fixed"}
-                </button>
-                <button className={`width-button ${frame.heightOption === 'range' ? 'selected' : ''}`} onClick={() => handleOptionChange('height', 'range', index)}>
-                  <i className={`bi bi-arrow-left-right`}></i> Range
-                </button>
-              </div>
-              {frame.heightOption === 'range' && (
-                <div className="input-wrapper frame-block">
-                  <label>Min:</label>
-                  <input type="number" name="heightRangeMin" value={frame.heightRangeMin} onChange={(e) => handleInputChange(e, index)} min="1" />
-                  <label>Max:</label>
-                  <input type="number" name="heightRangeMax" value={frame.heightRangeMax} onChange={(e) => handleInputChange(e, index)} min="1" />
-                </div>
-              )}
+              <DimensionProperty
+				  label="Height"
+				  option={frame.heightOption}
+				  fixedValue={frame.heightFixed}
+				  rangeMin={frame.heightRangeMin}
+				  rangeMax={frame.heightRangeMax}
+				  onOptionChange={(option) => handleFrameChange(index, 'heightOption', option)}
+				  onInputChange={(type, value) => handleFrameChange(index, 'height' + type.charAt(0).toUpperCase() + type.slice(1), value)}
+				/>
             </div>
             <div className="frame-property">
               <label>Padding:</label>
-              <input type="text" name="padding" value={frame.padding} onChange={(e) => handleInputChange(e, index)} />
+              <input type="text" name="padding" value={frame.padding} onChange={(e) => handleFrameChange(index, 'padding', e.target.value)} />
             </div>
             <div className="frame-property">
               <label>Margin:</label>
-              <input type="text" name="margin" value={frame.margin} onChange={(e) => handleInputChange(e, index)} />
+              <input type="text" name="margin" value={frame.margin} onChange={(e) => handleFrameChange(index, 'margin', e.target.value)} />
             </div>
             <div className="frame-property">
               <label>Alignment:</label>
