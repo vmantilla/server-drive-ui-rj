@@ -103,6 +103,10 @@
 }
 
 .width-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   border: none;
   color: #292929;
   background-color: #fffff;
@@ -112,6 +116,7 @@
   height: 40px;
   font-size: 10px;
 }
+
 
 .width-button.selected {
   background-color: #292929;

@@ -2,58 +2,62 @@ import React, { useState } from 'react';
 import '../../../../css/Builder/Component/Properties/FrameProperties.css';
 
 function DimensionProperty({ label, option, fixedValue, rangeMin, rangeMax, onOptionChange, onInputChange }) {
+  const [inputValue, setInputValue] = useState("");
+  const [displayValue, setDisplayValue] = useState("Fixed");
+  const [showInput, setShowInput] = useState(true);
+  const [inputError, setInputError] = useState(false);
 
-	const [isEditing, setIsEditing] = useState(false);
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      event.target.blur();
-      setIsEditing(false);
+      const value = event.target.value.trim();
+      if (value === "" || isNaN(value) || parseFloat(value) <= 0) {
+        setInputError(true);
+      } else {
+        setInputError(false);
+        setDisplayValue(value);
+        setShowInput(false);
+        event.target.blur();
+      }
     }
   };
 
-  const handleFixedInputChange = (e) => {
-    onInputChange('fixed', e.target.value);
+  const handleButtonChange = () => {
+    setDisplayValue("Fixed");
+    setInputError(false);
+    setShowInput(true);
   };
 
-  const handleFixedClick = () => {
-    setIsEditing(true);
-  };
-  
   return (
     <div className="frame-property">
       <label>{label}:</label>
       <div className="width-options frame-block">
-        <button className={`width-button ${option === 'full' ? 'selected' : ''}`} onClick={() => onOptionChange('full')}>
+        <button className={`width-button ${option === 'full' ? 'selected' : ''}`} onClick={() => {onOptionChange('full'); handleButtonChange();}}>
           <div className="width-button-rotate">
             <i className={`bi bi-arrows-expand width-button-rotate `}></i>
           </div> Full
         </button>
-        <button className={`width-button ${option === 'auto' ? 'selected' : ''}`} onClick={() => onOptionChange('auto')}>
+        <button className={`width-button ${option === 'auto' ? 'selected' : ''}`} onClick={() => {onOptionChange('auto'); handleButtonChange();}}>
           <div className="width-button-rotate">
             <i className={`bi bi-arrows-collapse `}></i>
           </div> Auto
         </button>
-        <button className={`width-button ${option === 'fixed' ? 'selected' : ''}`} onClick={() => onOptionChange('fixed')}>
+        <button className={`width-button ${option === 'fixed' ? 'selected' : ''}`} onClick={() => {onOptionChange('fixed'); handleButtonChange();}}>
           <i className={`bi bi-pin`}></i>
-          {option === 'fixed' ? (
-      isEditing ? (
-        <input
-          type="text"
-          value={fixedValue}
-          onChange={handleFixedInputChange}
-          onKeyDown={handleKeyPress}
-          onBlur={() => setIsEditing(false)}
-          maxLength="5"
-          style={{width: '5ch'}}
-          autoFocus
-        />
-      ) : (
-        <span onClick={handleFixedClick}>{fixedValue}</span>
-      )
-    ) : "Fixed"}
+          {option === 'fixed' && showInput ? (
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyPress}
+              onBlur={handleKeyPress}
+              maxLength="5"
+              style={{width: '5ch', borderColor: inputError ? 'red' : 'transparent'}}
+              autoFocus
+            />
+          ) : displayValue}
         </button>
-        <button className={`width-button ${option === 'range' ? 'selected' : ''}`} onClick={() => onOptionChange('range')}>
+        <button className={`width-button ${option === 'range' ? 'selected' : ''}`} onClick={() => {onOptionChange('range'); handleButtonChange();}}>
           <i className={`bi bi-arrow-left-right`}></i> Range
         </button>
       </div>
@@ -68,6 +72,9 @@ function DimensionProperty({ label, option, fixedValue, rangeMin, rangeMax, onOp
     </div>
   );
 }
+
+
+
 
 function FrameProperties() {
   const [frames, setFrames] = useState([]);
