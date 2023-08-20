@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import '../../../css/Builder/Preview/PreviewScreen.css';
 
 function PreviewScreen({ isSelected, children, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, onDelete }) {
-  const [screenType, setScreenType] = useState('desktop');
+  const [screenType, setScreenType] = useState('mobile');
   const draggingRef = useRef(false);
   const lastEventRef = useRef(null);
   const screenBuilderRef = useRef(null);

@@ -145,3 +145,11 @@
   margin: 0;
   color: #292929;
 }
+
+.transparent-input {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: inherit;
+}
+
