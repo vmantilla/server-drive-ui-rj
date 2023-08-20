@@ -10,12 +10,15 @@ function DimensionProperty({ label, option, fixedValue, rangeMin, rangeMax, onOp
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      const value = event.target.value.trim();
-      if (value === "" || isNaN(value) || parseFloat(value) <= 0) {
+      const value = event.target.value;
+      const trimmedValue = value.trim();
+      const regex = /^[0-9]*\.?[0-9]+$/; // Validación para permitir solo números y decimales
+      const containsSpace = /\s/.test(value); // Validación para asegurar que no haya espacios en blanco
+      if (trimmedValue === "" || !regex.test(trimmedValue) || parseFloat(trimmedValue) <= 0 || containsSpace) {
         setInputError(true);
       } else {
         setInputError(false);
-        setDisplayValue(value);
+        setDisplayValue(trimmedValue);
         setShowInput(false);
         event.target.blur();
       }
@@ -72,8 +75,6 @@ function DimensionProperty({ label, option, fixedValue, rangeMin, rangeMax, onOp
     </div>
   );
 }
-
-
 
 
 function FrameProperties() {
