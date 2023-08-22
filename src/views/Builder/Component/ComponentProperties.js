@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import MiniHeader from './MiniHeader';
+import FontProperties from './Properties/FontProperties';
 import StrokeProperties from './Properties/StrokeProperties';
+import FrameProperties from './Properties/FrameProperties';
+import '../../../css/Builder/Component/ComponentProperties.css';
 
 const possibleStates = ["enabled", "disabled", "hover"];
 
@@ -47,12 +50,43 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
   return (
     <div className="component-properties">
       <div className="component-properties-header">
-        <h2 className="component-properties-title" style={{ color: "#292929" }}>Propiedades</h2>
+        <h2 className="component-properties-title">Propiedades</h2>
         <button className="component-properties-close" onClick={() => setIsPropertiesOpen(false)}>
           <i className="bi bi-x"></i>
         </button>
       </div>
       <div className="component-properties-content">
+
+      	<MiniHeader
+                    title="Frame"
+                    states={states.frame}
+                    onAddState={() => handleAddState('frame')}
+                    onDeleteState={(index) => handleDeleteState('frame', index)}
+                    onChangeState={(index, property, value) => handleChangeState('frame', index, property, value)}
+                    renderChildren={(index, state) => (
+                        <FrameProperties
+                            frame={state}
+                            availableStates={getAvailableStates('frame')}
+                            handlePropertyChange={(property, value) => handleChangeState('frame', index, property, value)}
+                        />
+                    )}
+                />
+
+        <MiniHeader
+          title="Font"
+          states={states.font}
+          onAddState={() => handleAddState('font')}
+          onDeleteState={(index) => handleDeleteState('font', index)}
+          onChangeState={(index, property, value) => handleChangeState('font', index, property, value)}
+          renderChildren={(index, state) => (
+            <FontProperties
+              font={state}
+              availableStates={getAvailableStates('font')}
+              handlePropertyChange={(property, value) => handleChangeState('font', index, property, value)}
+            />
+          )}
+        />
+
         <MiniHeader
           title="Stroke"
           states={states.stroke}

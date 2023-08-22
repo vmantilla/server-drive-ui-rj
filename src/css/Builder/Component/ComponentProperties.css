@@ -5,7 +5,7 @@
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
-  padding: 0px 4px;
+  padding: 0px;
 }
 
 .component-properties-title {
@@ -14,10 +14,7 @@
     font-weight: 600;
     color: #333;
     padding: 0 10px;
-}
-
-.component-properties-title .h2 {
-    margin: 0px;
+    margin: 0;
 }
 
 .component-properties-close {
@@ -26,8 +23,9 @@
     font-weight: 800;
     color: #333;
     padding: 4px;
-    border: 0px;
-    margin-bottom: 6px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
 }
 
 .component-properties {
@@ -39,30 +37,24 @@
 .component-properties-content {
   flex-grow: 1;
   overflow-y: auto;
-  height: 200%;
+  height: 100%;
 }
 
-
-
-/* Personalizar el scrollbar para navegadores Webkit (Chrome, Safari, etc.) */
 .component-properties-content::-webkit-scrollbar {
-  width: 4px; /* Ancho del scrollbar */
+  width: 4px;
 }
 
 .component-properties-content::-webkit-scrollbar-track {
-  background-color: rgba(0, 0, 0, 0.1); /* Color de fondo de la pista del scrollbar */
-  border-radius: 2px; /* Radio de las esquinas de la pista del scrollbar */
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
 }
 
 .component-properties-content::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.4); /* Color del deslizador del scrollbar */
-  border-radius: 2px; /* Radio de las esquinas del deslizador del scrollbar */
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 2px;
 }
 
-/* Personalizar el scrollbar para Firefox */
 .component-properties-content {
-  scrollbar-width: thin; /* Hacer el scrollbar más delgado */
-  scrollbar-color: rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.1); /* Color del deslizador y de la pista del scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.1);
 }
-
-
