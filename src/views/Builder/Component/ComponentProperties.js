@@ -3,6 +3,7 @@ import MiniHeader from './MiniHeader';
 import FontProperties from './Properties/FontProperties';
 import StrokeProperties from './Properties/StrokeProperties';
 import FrameProperties from './Properties/FrameProperties';
+import AlignmentProperties from './Properties/AlignmentProperties';
 import '../../../css/Builder/Component/ComponentProperties.css';
 
 const possibleStates = ["enabled", "disabled", "hover"];
@@ -57,20 +58,33 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
       </div>
       <div className="component-properties-content">
 
-      	<MiniHeader
-                    title="Frame"
-                    states={states.frame}
-                    onAddState={() => handleAddState('frame')}
-                    onDeleteState={(index) => handleDeleteState('frame', index)}
-                    onChangeState={(index, property, value) => handleChangeState('frame', index, property, value)}
-                    renderChildren={(index, state) => (
-                        <FrameProperties
-                            frame={state}
-                            availableStates={getAvailableStates('frame')}
-                            handlePropertyChange={(property, value) => handleChangeState('frame', index, property, value)}
-                        />
-                    )}
-                />
+<MiniHeader
+			  title="Frame"
+			  states={states.frame}
+			  onAddState={() => handleAddState('frame')}
+			  onDeleteState={(index) => handleDeleteState('frame', index)}
+			  onChangeState={(index, property, value) => handleChangeState('frame', index, property, value)}
+			  renderChildren={(index, state) => (
+			    <FrameProperties
+			      alignment={state}
+			      handleAlignmentChange={(property, value) => handleChangeState('frame', index, property, value)}
+			    />
+			  )}
+			/>
+
+      <MiniHeader
+			  title="Alignment"
+			  states={states.alignment}
+			  onAddState={() => handleAddState('alignment')}
+			  onDeleteState={(index) => handleDeleteState('alignment', index)}
+			  onChangeState={(index, property, value) => handleChangeState('alignment', index, property, value)}
+			  renderChildren={(index, state) => (
+			    <AlignmentProperties
+			      alignment={state}
+			      handleAlignmentChange={(property, value) => handleChangeState('alignment', index, property, value)}
+			    />
+			  )}
+			/>
 
         <MiniHeader
           title="Font"

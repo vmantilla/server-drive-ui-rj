@@ -1,59 +1,124 @@
 import React, { useState } from 'react';
 import '../../../../css/Builder/Component/Properties/FrameProperties.css';
 
-function DimensionProperty({ label, dimension, value, handleDimensionChange }) {
-  const [inputValue, setInputValue] = useState(value || "");
+function FrameProperties({ onWidthChange, onHeightChange }) {
+  const [widthOption, setWidthOption] = useState('auto');
+  const [heightOption, setHeightOption] = useState('auto');
+  const [fixedWidth, setFixedWidth] = useState('');
+  const [fixedHeight, setFixedHeight] = useState('');
+  const [rangeWidth, setRangeWidth] = useState({min: '', max: ''});
+  const [rangeHeight, setRangeHeight] = useState({min: '', max: ''});
 
-  const handleButtonChange = (option) => {
-    handleDimensionChange(label.toLowerCase(), option, inputValue);
-    if (option !== 'fixed') setInputValue("");
+  const handleWidthChange = (option, value) => {
+    setWidthOption(option);
+    onWidthChange && onWidthChange(value);
   };
 
-  return (
-    <div className="frame-property">
-      <label>{label}:</label>
-      <div className="width-options frame-block">
-        <button className={`width-button ${dimension === 'full' ? 'selected' : ''}`} onClick={() => handleButtonChange('full')}>Full</button>
-        <button className={`width-button ${dimension === 'auto' ? 'selected' : ''}`} onClick={() => handleButtonChange('auto')}>Auto</button>
-        <button className={`width-button ${dimension === 'fixed' ? 'selected' : ''}`} onClick={() => handleButtonChange('fixed')}>
-          {dimension === 'fixed' ? (
-            <input 
-              type="text" 
-              value={inputValue} 
-              onChange={(e) => setInputValue(e.target.value)} 
-              onBlur={(e) => handleDimensionChange(label.toLowerCase(), 'fixed', e.target.value)}
-              autoFocus 
-            />
-          ) : "Fixed"}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function FrameProperties({ frame, handlePropertyChange }) {
-  const handleDimensionChange = (dimension, option, value) => {
-    handlePropertyChange(`${dimension}Option`, option);
-    if (option === 'fixed') {
-      handlePropertyChange(dimension, value);
-    }
+  const handleHeightChange = (option, value) => {
+    setHeightOption(option);
+    onHeightChange && onHeightChange(value);
   };
 
   return (
     <div className="frame-properties">
-      <div className="frame-properties-body">
-        <DimensionProperty
-          label="Width"
-          dimension={frame.widthOption}
-          value={frame.width}
-          handleDimensionChange={handleDimensionChange}
-        />
-        <DimensionProperty
-          label="Height"
-          dimension={frame.heightOption}
-          value={frame.height}
-          handleDimensionChange={handleDimensionChange}
-        />
+      <div className="frame-property">
+        <label>Width:</label>
+        <div className="frame-input-wrapper">
+          <button 
+            onClick={() => handleWidthChange('auto', 'auto')}
+            className={widthOption === 'auto' ? 'selected' : ''}
+          >
+            Auto
+          </button>
+          <button 
+            onClick={() => handleWidthChange('full', 'full')}
+            className={widthOption === 'full' ? 'selected' : ''}
+          >
+            Full
+          </button>
+          <input 
+            type="text" 
+            placeholder="Fixed" 
+            onFocus={() => handleWidthChange('fixed')}
+            onChange={(e) => setFixedWidth(e.target.value)} 
+            value={widthOption === 'fixed' ? fixedWidth : ''} 
+            className={widthOption === 'fixed' ? 'selected' : ''} 
+          />
+          <button onClick={() => handleWidthChange('range')} 
+            className={widthOption === 'range' ? 'selected' : ''}>
+            Range
+          </button>
+        </div>
+        {widthOption === 'range' && (
+          <div className="range-controls">
+            <label className="range-label">Min:</label>
+            <input 
+              type="text" 
+              placeholder="Min" 
+              onChange={(e) => setRangeWidth({ ...rangeWidth, min: e.target.value })} 
+              value={rangeWidth.min} 
+              className={widthOption === 'range' ? 'selected' : ''} 
+            />
+            <label className="range-label">Max:</label>
+            <input 
+              type="text" 
+              placeholder="Max" 
+              onChange={(e) => setRangeWidth({ ...rangeWidth, max: e.target.value })} 
+              value={rangeWidth.max} 
+              className={widthOption === 'range' ? 'selected' : ''} 
+            />
+          </div>
+        )}
+      </div>
+      
+      <div className="frame-property">
+        <label>Height:</label>
+        <div className="frame-input-wrapper">
+          <button 
+            onClick={() => handleHeightChange('auto', 'auto')}
+            className={heightOption === 'auto' ? 'selected' : ''}
+          >
+            Auto
+          </button>
+          <button 
+            onClick={() => handleHeightChange('full', 'full')}
+            className={heightOption === 'full' ? 'selected' : ''}
+          >
+            Full
+          </button>
+          <input 
+            type="text" 
+            placeholder="Fixed" 
+            onFocus={() => handleHeightChange('fixed')} 
+            onChange={(e) => setFixedHeight(e.target.value)} 
+            value={heightOption === 'fixed' ? fixedHeight : ''} 
+            className={heightOption === 'fixed' ? 'selected' : ''} 
+          />
+          <button onClick={() => handleHeightChange('range')}
+            className={heightOption === 'range' ? 'selected' : ''}>
+            Range
+          </button>
+        </div>
+        {heightOption === 'range' && (
+          <div className="range-controls">
+            <label className="range-label">Min:</label>
+            <input 
+              type="text" 
+              placeholder="Min" 
+              onChange={(e) => setRangeHeight({ ...rangeHeight, min: e.target.value })} 
+              value={rangeHeight.min} 
+              className={heightOption === 'range' ? 'selected' : ''} 
+            />
+            <label className="range-label">Max:</label>
+            <input 
+              type="text" 
+              placeholder="Max" 
+              onChange={(e) => setRangeHeight({ ...rangeHeight, max: e.target.value })} 
+              value={rangeHeight.max} 
+              className={heightOption === 'range' ? 'selected' : ''} 
+            />
+          </div>
+        )}
       </div>
     </div>
   );

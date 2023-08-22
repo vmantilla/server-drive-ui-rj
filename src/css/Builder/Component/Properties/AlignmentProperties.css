@@ -1,6 +1,8 @@
 .alignment-properties {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .alignment-properties-header {
@@ -22,6 +24,9 @@
 .alignment-properties-body {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   padding: 10px;
 }
 
@@ -30,13 +35,19 @@
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
   gap: 10px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  width: 100%;
+  align-items: center;      /* Centra los elementos verticalmente dentro de su celda */
+  justify-items: center;    /* Centra los elementos horizontalmente dentro de su celda */
+  padding: 10px;
 }
+
 
 .alignment-button {
   width: 30px;
   height: 30px;
   background-color: transparent;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: none; /* Quitar el borde */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -54,5 +65,5 @@
 }
 
 .alignment-button i {
-  font-size: 12px;
+  font-size: 16px;
 }
