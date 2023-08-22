@@ -1,0 +1,58 @@
+.alignment-properties {
+  display: flex;
+  flex-direction: column;
+}
+
+.alignment-properties-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #292929;
+  padding: 5px 10px;
+}
+
+.alignment-title {
+  font-family: 'Rubik', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.alignment-properties-body {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.alignment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.alignment-button {
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.alignment-button:hover {
+  background-color: #f2f2f2;
+}
+
+.alignment-button.selected {
+  background-color: #292929;
+  color: white;
+}
+
+.alignment-button i {
+  font-size: 12px;
+}
