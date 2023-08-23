@@ -4,6 +4,7 @@ import FontProperties from './Properties/FontProperties';
 import StrokeProperties from './Properties/StrokeProperties';
 import FrameProperties from './Properties/FrameProperties';
 import AlignmentProperties from './Properties/AlignmentProperties';
+import ImageProperties from './Properties/ImageProperties';
 import '../../../css/Builder/Component/ComponentProperties.css';
 
 const possibleStates = ["enabled", "disabled", "hover"];
@@ -14,6 +15,7 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
     frame: [],
     font: [],
     stroke: [],
+    image: [],
   });
 
   const getAvailableStates = (type) => {
@@ -61,7 +63,22 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
       </div>
       <div className="component-properties-content">
 
-<MiniHeader
+      <MiniHeader
+	      title="Image"
+	      states={states.image}
+	      onAddState={() => handleAddState('image')}
+	      onDeleteState={(index) => handleDeleteState('image', index)}
+	      onChangeState={(index, property, value) => handleChangeState('image', index, property, value)}
+	      renderChildren={(index, state) => (
+	        <ImageProperties
+	          key={state.state}
+	          image={state}
+	          handleImagePropertyChange={(property, value) => handleChangeState('image', index, property, value)}
+	        />
+	      )}
+	    />
+
+			<MiniHeader
 			  title="Frame"
 			  states={states.frame}
 			  onAddState={() => handleAddState('frame')}

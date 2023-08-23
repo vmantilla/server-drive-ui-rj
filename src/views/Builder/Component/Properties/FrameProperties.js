@@ -12,7 +12,10 @@ const RangeControls = ({ rangeValue, setRangeValue, dimension, onDimensionChange
   const updateRangeValue = (key, value) => {
     const newRangeValue = { ...rangeValue, [key]: value };
     setRangeValue(newRangeValue);
-    onDimensionChange(dimension, { option: 'range', ...newRangeValue });
+    let updatedValue = { option: 'range' };
+    if (newRangeValue.min) updatedValue.min = newRangeValue.min;
+    if (newRangeValue.max) updatedValue.max = newRangeValue.max;
+    onDimensionChange(dimension.toLowerCase(), updatedValue);
   };
 
   return (
@@ -58,22 +61,17 @@ const DimensionControl = ({ dimension, initialDimension, onDimensionChange }) =>
   const handleOptionChange = (option) => {
     setSelectedOption(option);
     let updatedValue = { option };
-
-    if (option === 'fixed' && fixedValue) {
-      updatedValue.value = fixedValue;
-    } 
-    else if (option === 'range') {
+    if (option === 'fixed' && fixedValue) updatedValue.value = fixedValue;
+    if (option === 'range') {
       if (rangeValue.min) updatedValue.min = rangeValue.min;
       if (rangeValue.max) updatedValue.max = rangeValue.max;
     }
-
     onDimensionChange(dimension.toLowerCase(), updatedValue);
   };
 
-
   const updateFixedValue = (value) => {
     setFixedValue(value);
-    onDimensionChange(dimension, { option: 'fixed', value });
+    onDimensionChange(dimension.toLowerCase(), { option: 'fixed', value });
   };
 
   return (
@@ -123,17 +121,11 @@ function FrameProperties({ frame, handlePropertyChange }) {
 
   const [width, setWidth] = useState(frame ? frame.width || { option: 'auto' } : { option: 'auto' });
   const [height, setHeight] = useState(frame ? frame.height || { option: 'auto' } : { option: 'auto' });
-  
-  console.log("FrameProperties", frame)
 
   const handleDimensionChange = (dimension, updatedValue) => {
-    const lowerDimension = dimension.toLowerCase();
-    if (lowerDimension === 'width') {
-      setWidth(updatedValue);
-    } else if (lowerDimension === 'height') {
-      setHeight(updatedValue);
-    }
-    handlePropertyChange(lowerDimension, updatedValue);
+    if (dimension === 'width') setWidth(updatedValue);
+    if (dimension === 'height') setHeight(updatedValue);
+    handlePropertyChange(dimension, updatedValue);
   };
 
   useEffect(() => {
