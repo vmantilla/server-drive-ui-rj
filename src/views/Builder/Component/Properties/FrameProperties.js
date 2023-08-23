@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../../../css/Builder/Component/Properties/FrameProperties.css';
 
 const options = [
@@ -8,43 +8,72 @@ const options = [
   { id: 'range', label: 'Flexible' }
 ];
 
-const RangeControls = ({ rangeValue, setRangeValue }) => (
-  <div className="frame-range-controls">
-    <label className="frame-range-label">Min:</label>
-    <div className="frame-frame-input-wrapper">
-      <input 
-        type="number"
-        className="frame-input-number"
-        min="1"
-        maxLength="4"
-        placeholder="Min"
-        onChange={(e) => setRangeValue({ ...rangeValue, min: e.target.value })} 
-        value={rangeValue.min} 
-      />
-    </div>
-    <label className="frame-range-label">Max:</label>
-    <div className="frame-frame-input-wrapper">
-      <input 
-        type="number"
-        className="frame-input-number"
-        min="1"
-        maxLength="4"
-        placeholder="Max"
-        onChange={(e) => setRangeValue({ ...rangeValue, max: e.target.value })} 
-        value={rangeValue.max} 
-      />
-    </div>
-  </div>
-);
+const RangeControls = ({ rangeValue, setRangeValue, dimension, onDimensionChange }) => {
+  const updateRangeValue = (key, value) => {
+    const newRangeValue = { ...rangeValue, [key]: value };
+    setRangeValue(newRangeValue);
+    onDimensionChange(dimension, { option: 'range', ...newRangeValue });
+  };
 
-const DimensionControl = ({ dimension, onDimensionChange }) => {
-  const [selectedOption, setSelectedOption] = useState('auto');
-  const [fixedValue, setFixedValue] = useState('');
-  const [rangeValue, setRangeValue] = useState({min: '', max: ''});
+  return (
+    <div className="frame-range-controls">
+      <label className="frame-range-label">Min:</label>
+      <div className="frame-frame-input-wrapper">
+        <input 
+          type="number"
+          className="frame-input-number"
+          min="1"
+          maxLength="4"
+          placeholder=""
+          onChange={(e) => updateRangeValue('min', e.target.value)}
+          value={rangeValue.min} 
+        />
+      </div>
+      <label className="frame-range-label">Max:</label>
+      <div className="frame-frame-input-wrapper">
+        <input 
+          type="number"
+          className="frame-input-number"
+          min="1"
+          maxLength="4"
+          placeholder=""
+          onChange={(e) => updateRangeValue('max', e.target.value)}
+          value={rangeValue.max} 
+        />
+      </div>
+    </div>
+  );
+};
+
+const DimensionControl = ({ dimension, initialDimension, onDimensionChange }) => {
+  const [selectedOption, setSelectedOption] = useState(initialDimension.option || 'auto');
+  const [fixedValue, setFixedValue] = useState(initialDimension.fixedValue || '');
+  const [rangeValue, setRangeValue] = useState(initialDimension.rangeValue || { min: '', max: '' });
+
+  useEffect(() => {
+    setFixedValue('');
+    setRangeValue({ min: '', max: '' });
+  }, [selectedOption]);
 
   const handleOptionChange = (option) => {
     setSelectedOption(option);
-    onDimensionChange && onDimensionChange(option, fixedValue, rangeValue);
+    let updatedValue = { option };
+
+    if (option === 'fixed' && fixedValue) {
+      updatedValue.value = fixedValue;
+    } 
+    else if (option === 'range') {
+      if (rangeValue.min) updatedValue.min = rangeValue.min;
+      if (rangeValue.max) updatedValue.max = rangeValue.max;
+    }
+
+    onDimensionChange(dimension.toLowerCase(), updatedValue);
+  };
+
+
+  const updateFixedValue = (value) => {
+    setFixedValue(value);
+    onDimensionChange(dimension, { option: 'fixed', value });
   };
 
   return (
@@ -71,13 +100,18 @@ const DimensionControl = ({ dimension, onDimensionChange }) => {
                 min="1"
                 maxLength="4"
                 placeholder="Fixed" 
-                onChange={(e) => setFixedValue(e.target.value)} 
+                onChange={(e) => updateFixedValue(e.target.value)} 
                 value={fixedValue} 
               />
             </div>
           )}
           {selectedOption === 'range' && (
-            <RangeControls rangeValue={rangeValue} setRangeValue={setRangeValue} />
+            <RangeControls 
+              rangeValue={rangeValue} 
+              setRangeValue={setRangeValue} 
+              dimension={dimension}
+              onDimensionChange={onDimensionChange} 
+            />
           )}
         </div>
       </div>
@@ -85,11 +119,40 @@ const DimensionControl = ({ dimension, onDimensionChange }) => {
   );
 };
 
-function FrameProperties({ onWidthChange, onHeightChange }) {
+function FrameProperties({ frame, handlePropertyChange }) {
+
+  const [width, setWidth] = useState(frame ? frame.width || { option: 'auto' } : { option: 'auto' });
+  const [height, setHeight] = useState(frame ? frame.height || { option: 'auto' } : { option: 'auto' });
+  
+  console.log("FrameProperties", frame)
+
+  const handleDimensionChange = (dimension, updatedValue) => {
+    const lowerDimension = dimension.toLowerCase();
+    if (lowerDimension === 'width') {
+      setWidth(updatedValue);
+    } else if (lowerDimension === 'height') {
+      setHeight(updatedValue);
+    }
+    handlePropertyChange(lowerDimension, updatedValue);
+  };
+
+  useEffect(() => {
+    handlePropertyChange('width', width);
+    handlePropertyChange('height', height);
+  }, []);
+
   return (
     <div className="frame-properties">
-      <DimensionControl dimension="Width" onDimensionChange={onWidthChange} />
-      <DimensionControl dimension="Height" onDimensionChange={onHeightChange} />
+      <DimensionControl 
+        dimension="Width" 
+        initialDimension={width}
+        onDimensionChange={handleDimensionChange} 
+      />
+      <DimensionControl 
+        dimension="Height" 
+        initialDimension={height}
+        onDimensionChange={handleDimensionChange} 
+      />
     </div>
   );
 }

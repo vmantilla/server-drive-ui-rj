@@ -16,10 +16,6 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
     stroke: [],
   });
 
-  useEffect(() => {
-    console.log("El estado actual de stroke es:", states.stroke);
-  }, [states.stroke]);
-
   const getAvailableStates = (type) => {
     return possibleStates.filter(state => !states[type].some(s => s.state === state));
   };
@@ -74,8 +70,8 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
 			  renderChildren={(index, state) => (
 			    <FrameProperties
 			    	key={state.state}
-			      alignment={state}
-			      handleAlignmentChange={(property, value) => handleChangeState('frame', index, property, value)}
+			      frame={state}
+			      handlePropertyChange={(property, value) => handleChangeState('frame', index, property, value)}
 			    />
 			  )}
 			/>
