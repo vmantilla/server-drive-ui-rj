@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MiniHeader from './MiniHeader';
 import FontProperties from './Properties/FontProperties';
 import StrokeProperties from './Properties/StrokeProperties';
@@ -16,6 +16,10 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
     stroke: [],
   });
 
+  useEffect(() => {
+    console.log("El estado actual de stroke es:", states.stroke);
+  }, [states.stroke]);
+
   const getAvailableStates = (type) => {
     return possibleStates.filter(state => !states[type].some(s => s.state === state));
   };
@@ -31,15 +35,18 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
   };
 
   const handleDeleteState = (type, index) => {
-    const newStates = states[type].slice();
-    newStates.splice(index, 1);
-    setStates({
-      ...states,
-      [type]: newStates
-    });
-  };
+  console.log(`handleDeleteState invoked with type: ${type} and index: ${index}`);
+  const newStates = states[type].slice();
+  newStates.splice(index, 1);
+  setStates({
+    ...states,
+    [type]: newStates
+  });
+};
+
 
   const handleChangeState = (type, index, property, value) => {
+  	console.log(`handleChangeState invoked with type: ${type} and index: ${index} and property: ${property} and value: ${value}`);
     const newStates = states[type].slice();
     newStates[index][property] = value;
     setStates({
@@ -66,6 +73,7 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
 			  onChangeState={(index, property, value) => handleChangeState('frame', index, property, value)}
 			  renderChildren={(index, state) => (
 			    <FrameProperties
+			    	key={state.state}
 			      alignment={state}
 			      handleAlignmentChange={(property, value) => handleChangeState('frame', index, property, value)}
 			    />
@@ -80,6 +88,7 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
 			  onChangeState={(index, property, value) => handleChangeState('alignment', index, property, value)}
 			  renderChildren={(index, state) => (
 			    <AlignmentProperties
+			    	key={state.state}
 			      alignment={state}
 			      handleAlignmentChange={(property, value) => handleChangeState('alignment', index, property, value)}
 			    />
@@ -94,8 +103,8 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
           onChangeState={(index, property, value) => handleChangeState('font', index, property, value)}
           renderChildren={(index, state) => (
             <FontProperties
+            	key={state.state}
               font={state}
-              availableStates={getAvailableStates('font')}
               handlePropertyChange={(property, value) => handleChangeState('font', index, property, value)}
             />
           )}
@@ -108,12 +117,12 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
           onDeleteState={(index) => handleDeleteState('stroke', index)}
           onChangeState={(index, property, value) => handleChangeState('stroke', index, property, value)}
           renderChildren={(index, state) => (
-            <StrokeProperties
-              stroke={state}
-              availableStates={getAvailableStates('stroke')}
-              handlePropertyChange={(property, value) => handleChangeState('stroke', index, property, value)}
-            />
-          )}
+				  <StrokeProperties 
+				    key={state.state}
+				    stroke={state}
+				    handlePropertyChange={(property, value) => handleChangeState('stroke', index, property, value)}
+				  />
+				)}
         />
       </div>
     </div>

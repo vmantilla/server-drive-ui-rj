@@ -1,26 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../../../css/Builder/Component/Properties/AlignmentProperties.css';
 
 function AlignmentProperties({ alignment, handleAlignmentChange }) {
-  const [alignments, setAlignments] = useState([]);
-  const [selectedAlignment, setSelectedAlignment] = useState(null);
-  const alignmentStates = ["enabled", "disabled", "hover"];
+
+  console.log("AlignmentProperties", alignment);
+
+   const [selectedAlignment, setSelectedAlignment] = useState(alignment.alignment || 'center');
+  
   const alignmentOptions = [
     'top-start', 'top-center', 'top-end',
     'center-start', 'center', 'center-end',
     'bottom-start', 'bottom-center', 'bottom-end'
   ];
-  const handleLocalAlignmentChange = (index, property, value) => {
-    if (handleAlignmentChange) {
-      handleAlignmentChange(property, value);
-    }
-    const newAlignments = alignments.slice();
-    newAlignments[index][property] = value;
-    setAlignments(newAlignments);
-  };
+
+  useEffect(() => {
+    handleAlignmentChange('alignment', selectedAlignment);
+  }, [selectedAlignment]);
+
 
   const handleSelectAlignment = (align) => {
-    setSelectedAlignment(align);
+    handleAlignmentChange('alignment', align);
   };
 
   return (
@@ -30,18 +29,13 @@ function AlignmentProperties({ alignment, handleAlignmentChange }) {
           {alignmentOptions.map((align, index) => (
             <button
               key={index}
-              onClick={() => handleSelectAlignment(align)}
+              onClick={() => setSelectedAlignment(align)}
               className={`alignment-button ${selectedAlignment === align ? 'selected' : ''}`}
             >
               <i className={`bi bi-dot`}></i>
             </button>
           ))}
         </div>
-        {alignments.map((alignment, index) => (
-          <div key={index}>
-            
-          </div>
-        ))}
       </div>
     </div>
   );
