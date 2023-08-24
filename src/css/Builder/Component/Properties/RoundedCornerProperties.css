@@ -1,0 +1,43 @@
+.corner-properties-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100px;
+}
+
+.corner-grid {
+  position: relative;
+  width: 120px;
+  height: 40px;
+  border: 1px solid #ccc;
+}
+
+.corner-input {
+  position: absolute;
+  width: 40px;
+  height: 20px;
+  text-align: center;
+  color: #000;
+  font-size: 10px;
+}
+
+.corner-input.top-left {
+  top: -10px;
+  left: -10px;
+}
+
+.corner-input.top-right {
+  top: -10px;
+  right: -10px;
+}
+
+.corner-input.bottom-left {
+  bottom: -10px;
+  left: -10px;
+}
+
+.corner-input.bottom-right {
+  bottom: -10px;
+  right: -10px;
+}

@@ -76,15 +76,6 @@ function PreviewScreen({ isSelected, children, zoomLevel = 1, onClick, position 
           <i className="bi bi-trash"></i>
         </button>
       )}
-      {isSelected && (
-        <button
-          className="adjust-button"
-          style={{ position: 'absolute', top: '20px', right: '20px' }}
-          onClick={adjustToScreen}
-        >
-          <i className="bi bi-arrows-fullscreen"></i>
-        </button>
-      )}
     </div>
   );
 }

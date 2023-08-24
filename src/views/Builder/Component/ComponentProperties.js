@@ -5,6 +5,9 @@ import StrokeProperties from './Properties/StrokeProperties';
 import FrameProperties from './Properties/FrameProperties';
 import AlignmentProperties from './Properties/AlignmentProperties';
 import ImageProperties from './Properties/ImageProperties';
+import RoundedCornerProperties from './Properties/RoundedCornerProperties'; 
+import MarginProperties from './Properties/MarginProperties';
+
 import '../../../css/Builder/Component/ComponentProperties.css';
 
 const possibleStates = ["enabled", "disabled", "hover"];
@@ -16,6 +19,8 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
     font: [],
     stroke: [],
     image: [],
+    corner: [],
+    margin: []
   });
 
   const getAvailableStates = (type) => {
@@ -62,6 +67,37 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
         </button>
       </div>
       <div className="component-properties-content">
+
+      <MiniHeader
+			  title="Margin"
+			  states={states.margin}
+			  onAddState={() => handleAddState('margin')}
+			  onDeleteState={(index) => handleDeleteState('margin', index)}
+			  onChangeState={(index, property, value) => handleChangeState('margin', index, property, value)}
+			  renderChildren={(index, state) => (
+			    <MarginProperties
+			      key={state.state}
+			      margin={state}
+			      handlePropertyChange={(property, value) => handleChangeState('margin', index, property, value)}
+			    />
+			  )}
+			/>
+
+
+      <MiniHeader
+			  title="Rounded Corners"
+			  states={states.corner}
+			  onAddState={() => handleAddState('corner')}
+			  onDeleteState={(index) => handleDeleteState('corner', index)}
+			  onChangeState={(index, property, value) => handleChangeState('corner', index, property, value)}
+			  renderChildren={(index, state) => (
+			    <RoundedCornerProperties
+			      key={state.state}
+			      corner={state}
+			      handlePropertyChange={(property, value) => handleChangeState('corner', index, property, value)}
+			    />
+			  )}
+			/>
 
       <MiniHeader
 	      title="Image"

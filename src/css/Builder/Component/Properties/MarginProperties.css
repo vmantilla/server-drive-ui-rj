@@ -1,0 +1,43 @@
+.margin-properties-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100px;
+}
+
+.margin-grid {
+  position: relative;
+  width: 120px;
+  height: 40px;
+  border: 1px solid #ccc;
+}
+
+.margin-input {
+  position: absolute;
+  width: 40px;
+  height: 20px;
+  text-align: center;
+  color: #000;
+  font-size: 10px;
+}
+
+.margin-input.top {
+  top: -10px;
+  left: 40px;
+}
+
+.margin-input.right {
+  top: 10px;
+  right: -20px;
+}
+
+.margin-input.bottom {
+  bottom: -10px;
+  left: 40px;
+}
+
+.margin-input.left {
+  top: 10px;
+  left: -20px;
+}
