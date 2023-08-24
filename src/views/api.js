@@ -127,6 +127,12 @@ export const createPreviewInWorkspaceAPI = async (projectId, workspaceId, previe
   }
 };
 
+export const batchUpdatePreviewsInWorkspaceAPI = async (projectId, workspaceId, previews) => {
+  const response = await axios.put(`/projects/${projectId}/workspaces/${workspaceId}/batch_update_previews`, {
+    previews: previews,
+  });
+  return response.data;
+};
 
 // === COMPONENTS API Calls ===
 
@@ -179,6 +185,16 @@ export const getAllPreviewsFromAPI = async (projectId) => {
     return response.data;
   } catch (error) {
     console.error('Error al obtener todas las vistas previas:', error);
+    throw error;
+  }
+};
+
+export const updatePreviewInWorkspaceAPI = async (projectId, previewId, updatedData) => {
+  try {
+    const response = await axios.put(`/projects/${projectId}/previews/${previewId}`, { preview: updatedData });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating preview in workspace:', error);
     throw error;
   }
 };

@@ -14,6 +14,8 @@ function Builder({showNotification}) {
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
   const [addNewPreview, setAddNewPreview] = useState(null);
+  const [updatePreview, setUpdatePreview] = useState(null);
+  const [onDelete, setOnDelete] = useState(null);
   const [workspaceHeight, setWorkspaceHeight] = useState('50%');
 
   const handleWorkspaceClick = (e) => {
@@ -41,6 +43,8 @@ function Builder({showNotification}) {
         setIsComponentsOpen={setIsComponentsOpen}
         selectedScreen={selectedScreen}
         addNewPreview={addNewPreview}
+        updatePreview={updatePreview}
+        onDelete={onDelete}
       />
       <main className="builder-main">
         <aside className={`builder-components ${isComponentsOpen ? 'open' : 'closed'}`}>
@@ -76,6 +80,8 @@ function Builder({showNotification}) {
             setSelectedScreen={setSelectedScreen}
             selectedScreen={selectedScreen}
             setAddNewPreview={setAddNewPreview}
+            setUpdatePreview={setUpdatePreview}
+            setOnDelete={setOnDelete}
             forceReflow={forceReflow}
             showNotification={showNotification}
           />

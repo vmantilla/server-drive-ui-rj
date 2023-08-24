@@ -56,11 +56,6 @@ function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, sho
     setShowDeleteModal(false);
   };
 
-  const addComponentChild = (parentId) => {
-    const child = { id: Date.now(), type: `Hijo`, children: [], expanded: false };
-    setComponents(prevComponents => addComponentChildRecursive(parentId, prevComponents, child));
-  };
-
   const handleDragStart = (event, component) => {
   event.dataTransfer.setData('text/plain', component.type);
   event.dataTransfer.setData('source', "tree");
@@ -176,9 +171,6 @@ const handleDrop = (event, parentId) => {
   {
     comp.id === selectedComponentId && (
       <div className="component-actions">
-        <span className="icon-btn add-child-btn" onClick={(e) => { e.stopPropagation(); addComponentChild(comp.id); }}>
-          <i className="bi bi-plus-circle"></i>
-        </span>
         <span className="icon-btn delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>
           <i className="bi bi-trash"></i>
         </span>

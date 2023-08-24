@@ -2,8 +2,8 @@
   position: relative;
   padding: 20px;
   display: flex;
-  align-items: start; /* Alinea los elementos al inicio verticalmente */
-  gap: 20px; /* Espacio entre selector y contenido */
+  align-items: start;
+  gap: 20px;
 }
 
 .screen-content.selected {
@@ -13,54 +13,54 @@
 .screen-selector {
   z-index: 10;
   display: flex;
-  flex-direction: column; /* Alinear verticalmente */
-  gap: 10px; /* Espaciado entre botones */
+  flex-direction: column;
+  gap: 10px;
 }
 
 .screen-selector {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* para asegurarnos que el botón de eliminar esté al final */
-  height: 100%; /* esto asegura que ocupe toda la altura del contenedor */
+  justify-content: space-between;
+  height: 100%;
 }
 
 button {
-  padding: 5px 10px; /* Padding para hacer los botones más grandes y cómodos */
-  cursor: pointer; /* Estilo de cursor para indicar clickeabilidad */
-  background-color: white; /* Color de fondo */
-  border: 1px solid black; /* Borde */
-  border-radius: 5px; /* Borde redondeado */
-  transition: background-color 0.3s; /* Transición suave al cambiar el color de fondo */
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 5px;
+  transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #f0f0f0; /* Color de fondo al pasar el cursor sobre el botón */
+  background-color: #f0f0f0;
 }
 
 .screen-content {
-  position: relative; /* Configura este contenedor como el referente para el posicionamiento absoluto de los botones */
+  position: relative;
   background-color: #f0f0f0;
   border-radius: 0px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
-  border: 2px solid #d0d0d0;
+  border: 1px solid #d0d0d0;
   overflow: hidden;
   padding: 2px;
   margin: 10px;
 }
 
 .screen-content.mobile {
-  width: 335px; /* Reducido en 40px para acomodar el padding (20px a cada lado) */
-  height: 627px; /* Reducido en 40px para acomodar el padding (20px a cada lado) */
+  width: 335px;
+  height: 627px;
 }
 
 .screen-content.tablet {
-  width: 728px; /* Reducido en 40px */
-  height: 984px; /* Reducido en 40px */
+  width: 728px;
+  height: 984px;
 }
 
 .screen-content.desktop {
-  width: 984px; /* Reducido en 40px */
-  height: 728px; /* Reducido en 40px */
+  width: 984px;
+  height: 728px;
 }
 
 .adjust-button {
@@ -73,4 +73,16 @@ button:hover {
   position: absolute;
   bottom: 40px;
   right: 40px;
+}
+
+.title-text {
+  margin: 0;
+  cursor: pointer;
+  font-size: small;
+}
+
+.title-input {
+  margin: 0;
+  font-size: small;
+  text-align: center;
 }

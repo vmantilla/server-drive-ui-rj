@@ -1,13 +1,13 @@
-// ScreenBuilder.js
 import React, { useState, useRef, useEffect } from 'react';
 import '../../../css/Builder/Preview/PreviewScreen.css';
 
-function PreviewScreen({ isSelected, children, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, onDelete }) {
+function PreviewScreen({ initialTitle, onTitleChange, isSelected, children, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange }) {
   const [screenType, setScreenType] = useState('mobile');
+  const [title, setTitle] = useState(initialTitle);
+  const [isEditing, setIsEditing] = useState(false);
   const draggingRef = useRef(false);
   const lastEventRef = useRef(null);
-  const screenBuilderRef = useRef(null);
-
+  
   useEffect(() => {
     const globalMouseMove = (e) => {
       if (draggingRef.current && lastEventRef.current) {
@@ -22,60 +22,76 @@ function PreviewScreen({ isSelected, children, zoomLevel = 1, onClick, position 
         }
         lastEventRef.current = e;
       }
-    }
-
+    };
     const globalMouseUp = () => {
       draggingRef.current = false;
-    }
-
+    };
     document.addEventListener('mousemove', globalMouseMove);
     document.addEventListener('mouseup', globalMouseUp);
-
+    
     return () => {
       document.removeEventListener('mousemove', globalMouseMove);
       document.removeEventListener('mouseup', globalMouseUp);
     };
   }, [zoomLevel, position, onPositionChange]);
-
+  
   const handleDragStart = (e) => {
     draggingRef.current = true;
     lastEventRef.current = e;
     e.preventDefault();
-  }
+  };
 
-  const adjustToScreen = () => {
-    if (screenBuilderRef.current) {
-      const element = screenBuilderRef.current;
-      const rect = element.getBoundingClientRect();
-      const offsetX = window.innerWidth / 2 - (rect.left + rect.width / 2);
-      const offsetY = window.innerHeight / 2 - (rect.top + rect.height / 2);
+  const handleDoubleClick = () => {
+    setIsEditing(true);
+  };
 
-      window.scrollBy(offsetX, offsetY);
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const handleTitleBlur = () => {
+    setIsEditing(false);
+    if (onTitleChange) {
+      onTitleChange(title);
     }
-  }
+  };
 
-   const handleDeleteClick = (e) => {
-    e.stopPropagation(); // Evitar que el evento se propague al padre
-    onDelete();
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleTitleBlur();
+    }
   };
 
   return (
-    <div
-      className={`screen-content ${screenType} ${isSelected ? 'selected' : ''}`}
-      style={{ left: position?.x, top: position?.y }}
-      onClick={onClick}
+    <div 
+      style={{ 
+        left: position?.x, 
+        top: position?.y, 
+        position: 'absolute',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      }}
       onMouseDown={handleDragStart}
     >
-      {children}
-      {isSelected && (
-        <button
-          className="delete-button"
-          style={{ position: 'absolute', bottom: '20px', right: '20px' }}
-          onClick={handleDeleteClick}
-        >
-          <i className="bi bi-trash"></i>
-        </button>
+      {isEditing ? (
+        <input
+          type="text"
+          value={title}
+          onChange={handleTitleChange}
+          onBlur={handleTitleBlur}
+          onKeyDown={handleKeyDown}
+          autoFocus
+          style={{ fontSize: 'small', textAlign: 'center' }}
+        />
+      ) : (
+        <h4 onDoubleClick={handleDoubleClick} className="title-text">
+          {title}
+        </h4>
       )}
+      <div className={`screen-content ${screenType} ${isSelected ? 'selected' : ''}`} onClick={onClick}>
+        {children}
+      </div>
     </div>
   );
 }

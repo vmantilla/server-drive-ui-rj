@@ -43,7 +43,7 @@ const FloatingMenu = ({ visible, options, onClose, position, handleDragStart }) 
   );
 };
 
-function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, addNewPreview }) {
+function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, addNewPreview, updatePreview, onDelete }) {
 
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
@@ -148,10 +148,15 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
       <FloatingMenu visible={menuVisible} onClose={handleClose} position={menuPosition} options={menuOptions} handleDragStart={handleDragStart} />
 
       <div className="right-container">
+      { selectedScreen !== null && (
         <div className="buttons-container">
-          <button className="builder-button">
+          <button className="builder-button" onClick={() => updatePreview(selectedScreen)}>
             <i className="bi bi-cloud-upload-fill"></i>
             Guardar
+          </button>
+          <button className="builder-button" onClick={() => onDelete(selectedScreen)}>
+            <i className="bi bi-trash"></i>
+            Eliminar
           </button>
           <button className="builder-button">
             <i className="bi bi-collection-play-fill"></i>
@@ -162,6 +167,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
             Salir
           </button>
         </div>
+        )}
       </div>
     </header>
   );

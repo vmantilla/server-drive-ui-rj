@@ -39,10 +39,12 @@
     box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.5), inset -4px -4px 8px rgba(0, 0, 0, 0.5);
 }
 
-
 .icons-container {
     display: flex;
-    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1; 
+    gap: 10px;
 }
 
 .icon-button {
@@ -58,8 +60,8 @@
 }
 
 .floating-menu {
-    background-color: rgba(255, 255, 255, 1); /* Fondo semi-transparente */
-    border: 1px solid #292929; /* Borde sutil */
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid #292929;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: absolute;
@@ -68,7 +70,7 @@
     gap: 8px;
     padding: 16px;
     z-index: 1000;
-    font-family: 'Rubik', sans-serif; /* Fuente Rubi */
+    font-family: 'Rubik', sans-serif;
 }
 
 .buttons-container {
@@ -76,20 +78,17 @@
 }
 
 .right-container {
+    width: 200px;
     display: flex;
     justify-content: flex-end;
     align-items: center;
     padding-right: 10px;
 }
 
-.buttons-container {
-    display: flex;
-}
-
 .builder-button {
     border: none;
     border-radius: 4px;
-    font-size: 14px; 
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     display: flex;
@@ -101,8 +100,8 @@
 }
 
 .builder-button i {
-    font-size: 18px; 
-    margin-right: 4px; 
+    font-size: 18px;
+    margin-right: 4px;
 }
 
 .builder-button:hover {
@@ -138,12 +137,7 @@
     border: 1px dashed #c2c2c2;
     cursor: grab;
 }
+
 .floating-icon-button:active {
-  cursor: grabbing;
+    cursor: grabbing;
 }
-
-
-
-
-
-
