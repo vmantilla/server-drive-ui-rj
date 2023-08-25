@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import '../../../css/Builder/Preview/PreviewComponents.css';
-import { deleteComponentRecursive, addComponentChildRecursive, moveComponent, isDescendant, toggleExpanded } from '../../Utils/treeUtils';
-import { getComponentsFromAPI, saveComponentsToAPI } from '../../api';
+import { deleteComponentRecursive, addComponentChildRecursive, moveComponent, isDescendant } from '../../Utils/treeUtils';
+import { getComponentsFromAPI, addComponentToAPI, deleteComponentToAPI } from '../../api';
 
 function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, showNotification }) {
   const [components, setComponents] = useState([]);
@@ -15,7 +15,7 @@ function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, sho
   useEffect(() => {
     const loadComponents = async () => {
       try {
-        const componentsData = await getComponentsFromAPI(projectId, selectedScreen);
+        const componentsData = await getComponentsFromAPI(selectedScreen);
         setComponents(componentsData);
       } catch (error) {
         console.error('Error al cargar componentes:', error);
@@ -26,10 +26,11 @@ function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, sho
     loadComponents();
   }, [projectId, selectedScreen]);
 
-  const saveComponents = async () => {
+
+  const deleteComponentToApi = async (compToDeleteId) => {
     try {
-      await saveComponentsToAPI(projectId, selectedScreen, components);
-      showNotification('success', 'Componentes guardados exitosamente.');
+      await deleteComponentToAPI(compToDeleteId);
+      showNotification('success', 'Componentes eliminado exitosamente.');
     } catch (error) {
       console.error('Error al guardar componentes:', error);
       showNotification('error', 'Error al guardar los componentes.');
@@ -42,8 +43,20 @@ function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, sho
   
   const deleteComponent = (compToDelete) => {
     setComponents(prevComponents => deleteComponentRecursive(compToDelete.id, prevComponents));
+    deleteComponentToApi(compToDelete.id)
     setShowDeleteModal(false);
   };
+
+ const toggleExpanded = (targetId, currentComponents) => 
+  currentComponents.map(component => {
+    if (component.id === targetId) {
+      return { ...component, expanded: !component.expanded };
+    }
+    if (component.children.length > 0) {
+      return { ...component, children: toggleExpanded(targetId, component.children) };
+    }
+    return component;
+  });
 
   const handleDragStart = (event, component) => {
   event.dataTransfer.setData('text/plain', component.type);
@@ -104,7 +117,7 @@ const handleDragEnd = () => {
   });
 };
 
-const handleDrop = (event, parentId) => {
+const handleDrop = async (event, parentId) => {
   event.preventDefault();
   event.stopPropagation();
 
@@ -113,28 +126,52 @@ const handleDrop = (event, parentId) => {
   if (source === 'header') {
     const componentData = event.dataTransfer.getData('component');
     const newComponent = JSON.parse(componentData);
-    console.log(newComponent);
+
+    // Actualizamos primero el estado local
     setComponents(prevComponents => addComponentChildRecursive(parentId, components, newComponent));
     setDraggingComponent(null);
+
+    // Luego llamamos a la API para sincronizar el estado
+    try {
+      newComponent["parent_id"] = parentId;
+      await addComponentToAPI(selectedScreen, newComponent);  // Asumiendo que tienes una función para hacer esto
+      showNotification('success', 'Componente agregado exitosamente.');
+    } catch (error) {
+      console.error('Error al agregar el componente:', error);
+      showNotification('error', 'Error al agregar el componente.');
+      // Aquí puedes decidir si deseas revertir el cambio en el estado local
+    }
+
   } else if (source === 'tree') {
     if (draggingComponent) {
       try {
         const newComponents = moveComponent(draggingComponent.id, parentId, components);
         setComponents(newComponents);
+        // Aquí también puedes llamar a tu API si necesitas sincronizar este cambio
       } catch (error) {
         console.error(error.message);
       }
     }
   }
 
-  event.currentTarget.classList.remove('ready-for-drop');
+  if (event.currentTarget) {
+    event.currentTarget.classList.remove('ready-for-drop');
+  }
+
   setDraggingComponent(null);
 };
 
 
 
   const renderComponentList = (compArray, parentId = null) => 
-    compArray.map(comp => (
+  compArray.map(comp => {
+    // Safety check: if comp or comp.property is undefined, log an error and skip this iteration.
+    if (!comp || !comp.property) {
+      console.error('Invalid component:', comp);
+      return null;
+    }
+
+    return (
       <div key={comp.id}>
         <div
           draggable={comp.id !== parentId}
@@ -151,24 +188,31 @@ const handleDrop = (event, parentId) => {
           }}
         >
           <div style={{display: 'flex', alignItems: 'center'}}>
-        <span className="toggle-btn" onClick={(e) => { e.stopPropagation(); handleToggleExpanded(comp.id); }}>
-            {comp.expanded ?  <i className="bi bi-node-minus"></i> : <i className="bi bi-node-plus-fill"></i>}
-        </span>
-        <span>{comp.properties.component_type}</span>
-    </div>
-  {
-    comp.id === selectedComponentId && (
-      <div className="component-actions">
-        <span className="icon-btn delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>
-          <i className="bi bi-trash"></i>
-        </span>
+            <span className="toggle-btn" onClick={(e) => { e.stopPropagation(); handleToggleExpanded(comp.id); }}>
+              {comp.expanded ?  <i className="bi bi-node-minus"></i> : <i className="bi bi-node-plus-fill"></i>}
+            </span>
+            <span>{comp.property ? comp.property.data.component_type : 'N/A'}</span>
+          </div>
+
+          {comp.id === selectedComponentId && (
+            <div className="component-actions">
+              <span className="icon-btn delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>
+                <i className="bi bi-trash"></i>
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Safety check: before accessing the length property of children, ensure that comp.children is defined */}
+        {comp.expanded && comp.children && comp.children.length > 0 && 
+          <div className="component-children">
+            {renderComponentList(comp.children, comp.id)}
+          </div>
+        }
       </div>
-    )
-  }
-         </div>
-        {comp.expanded && comp.children.length > 0 && <div className="component-children">{renderComponentList(comp.children, comp.id)}</div>}
-      </div>
-    ));
+    );
+  });
+
 
 
   return (

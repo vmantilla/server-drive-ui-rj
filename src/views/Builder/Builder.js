@@ -75,7 +75,6 @@ function Builder({showNotification}) {
         </aside>
         <section className="builder-workspace" onClick={handleWorkspaceClick}>
           <PreviewWorkspace
-            projectId={projectId}
             workspaceId={selectedWorkspace?.id}
             setSelectedScreen={setSelectedScreen}
             selectedScreen={selectedScreen}

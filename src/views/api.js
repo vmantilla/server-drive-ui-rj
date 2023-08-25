@@ -36,11 +36,12 @@ export const getProjectsFromAPI = async () => {
   }
 };
 
-export const deleteProjectFromAPI = async (id) => {
+export const addProjectToAPI = async (projectData) => {
   try {
-    await axios.delete(`/projects/${id}`);
+    const response = await axios.post('/projects', { project: projectData });
+    return response.data;
   } catch (error) {
-    console.error('Error al eliminar proyecto:', error);
+    console.error('Error al agregar proyecto:', error);
     throw error;
   }
 };
@@ -55,12 +56,11 @@ export const editProjectNameInAPI = async (id, projectData) => {
   }
 };
 
-export const addProjectToAPI = async (projectData) => {
+export const deleteProjectFromAPI = async (id) => {
   try {
-    const response = await axios.post('/projects', { project: projectData });
-    return response.data;
+    await axios.delete(`/projects/${id}`);
   } catch (error) {
-    console.error('Error al agregar proyecto:', error);
+    console.error('Error al eliminar proyecto:', error);
     throw error;
   }
 };
@@ -77,17 +77,6 @@ export const getWorkspacesFromAPI = async (projectId) => {
   }
 };
 
-export const showWorkspaceFromAPI = async (projectId, workspaceId) => {
-  try {
-    const response = await axios.get(`/projects/${projectId}/workspaces/${workspaceId}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error al mostrar el espacio de trabajo:', error);
-    throw error;
-  }
-};
-
-
 export const addWorkspaceToAPI = async (projectId, workspaceData) => {
   try {
     const response = await axios.post(`/projects/${projectId}/workspaces`, { workspace: workspaceData });
@@ -98,18 +87,9 @@ export const addWorkspaceToAPI = async (projectId, workspaceData) => {
   }
 };
 
-export const deleteWorkspaceFromAPI = async (projectId, workspaceId) => {
+export const editWorkspaceInAPI = async (workspaceId, updatedWorkspaceData) => {
   try {
-    await axios.delete(`/projects/${projectId}/workspaces/${workspaceId}`);
-  } catch (error) {
-    console.error('Error al eliminar workspace:', error);
-    throw error;
-  }
-};
-
-export const editWorkspaceInAPI = async (projectId, workspaceId, updatedWorkspaceData) => {
-  try {
-    const response = await axios.put(`/projects/${projectId}/workspaces/${workspaceId}`, { workspace: updatedWorkspaceData } );
+    const response = await axios.put(`/workspaces/${workspaceId}`, { workspace: updatedWorkspaceData } );
     return response.data;
   } catch (error) {
     console.error('Error al editar workspace:', error);
@@ -117,29 +97,63 @@ export const editWorkspaceInAPI = async (projectId, workspaceId, updatedWorkspac
   }
 };
 
-export const createPreviewInWorkspaceAPI = async (projectId, workspaceId, previewData) => {
+export const deleteWorkspaceFromAPI = async (workspaceId) => {
   try {
-    const response = await axios.post(`/projects/${projectId}/workspaces/${workspaceId}/previews`, { preview: previewData });
-    return response.data;
+    await axios.delete(`/workspaces/${workspaceId}`);
   } catch (error) {
-    console.error('Error al crear vista previa en el espacio de trabajo:', error);
+    console.error('Error al eliminar workspace:', error);
     throw error;
   }
 };
 
-export const batchUpdatePreviewsInWorkspaceAPI = async (projectId, workspaceId, previews) => {
-  const response = await axios.put(`/projects/${projectId}/workspaces/${workspaceId}/batch_update_previews`, {
-    previews: previews,
-  });
-  return response.data;
+// === PREVIEW API Calls ===
+
+export const getAllPreviewsFromAPI = async (workspaceId) => {
+  try {
+    const response = await axios.get(`/workspaces/${workspaceId}/previews`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener todas las vistas previas:', error);
+    throw error;
+  }
 };
+
+export const addPreviewToAPI = async (workspaceId, previewData) => {
+  try {
+    const response = await axios.post(`/workspaces/${workspaceId}/previews`, previewData);
+    console.log("getAllPreviewsFromAPI", response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error al agregar vista previa:', error);
+    throw error;
+  }
+};
+
+export const editPreviewInAPI = async (previewId, updatedData) => {
+  try {
+    const response = await axios.put(`/previews/${previewId}`, { preview: updatedData });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating preview in workspace:', error);
+    throw error;
+  }
+};
+
+export const deletePreviewFromAPI = async (previewId) => {
+  try {
+    await axios.delete(`/previews/${previewId}`);
+  } catch (error) {
+    console.error('Error al eliminar vista previa:', error);
+    throw error;
+  }
+};
+
 
 // === COMPONENTS API Calls ===
 
-
-export const getComponentsFromAPI = async (projectId, selectedPreview) => {
+export const getComponentsFromAPI = async (previewId) => {
   try {
-    const response = await axios.get(`/projects/${projectId}/previews/${selectedPreview}/components`);
+    const response = await axios.get(`/previews/${previewId}/components`);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -148,136 +162,32 @@ export const getComponentsFromAPI = async (projectId, selectedPreview) => {
   }
 };
 
-export const saveComponentsToAPI = async (projectId, selectedPreview, components) => {
+export const addComponentToAPI = async (previewId, component) => {
   try {
-    const response = await axios.put(`/projects/${projectId}/previews/${selectedPreview}/components`, { components });
+    const response = await axios.post(`/previews/${previewId}/components`, {component});
     return response.data;
   } catch (error) {
-    console.error('Error al guardar componentes:', error);
+    console.error('Error al guardar componente:', error);
     throw error;
   }
 };
 
-// === PREVIEW API Calls ===
-
-export const addPreviewToAPI = async (projectId, previewData) => {
+export const editComponentToAPI = async (componentId, updatedComponent) => {
   try {
-    const response = await axios.post(`/projects/${projectId}/previews`, previewData);
+    const response = await axios.put(`/components/${componentId}`, {updatedComponent});
     return response.data;
   } catch (error) {
-    console.error('Error al agregar vista previa:', error);
+    console.error('Error al actualizar componente:', error);
     throw error;
   }
 };
 
-export const deletePreviewFromAPI = async (projectId, previewId) => {
+export const deleteComponentToAPI = async (componentId) => {
   try {
-    await axios.delete(`/projects/${projectId}/previews/${previewId}`);
-  } catch (error) {
-    console.error('Error al eliminar vista previa:', error);
-    throw error;
-  }
-};
-
-export const getAllPreviewsFromAPI = async (projectId) => {
-  try {
-    const response = await axios.get(`/projects/${projectId}/previews`);
+    const response = await axios.delete(`/components/${componentId}`);
     return response.data;
   } catch (error) {
-    console.error('Error al obtener todas las vistas previas:', error);
-    throw error;
-  }
-};
-
-export const updatePreviewInWorkspaceAPI = async (projectId, previewId, updatedData) => {
-  try {
-    const response = await axios.put(`/projects/${projectId}/previews/${previewId}`, { preview: updatedData });
-    return response.data;
-  } catch (error) {
-    console.error('Error updating preview in workspace:', error);
-    throw error;
-  }
-};
-
-
-// === Color API Calls ===
-
-export const getAllColorsFromAPI = async (projectId) => {
-  try {
-    const response = await axios.get(`/projects/${projectId}/colors`);
-    return response.data;
-  } catch (error) {
-    console.error('Error al obtener todos los colores:', error);
-    throw error;
-  }
-};
-
-export const addColorToAPI = async (projectId, colorData) => {
-  try {
-    const response = await axios.post(`/projects/${projectId}/colors`, colorData);
-    return response.data;
-  } catch (error) {
-    console.error('Error al agregar color:', error);
-    throw error;
-  }
-};
-
-export const editColorInAPI = async (projectId, colorId, updatedColorData) => {
-  try {
-    const response = await axios.put(`/projects/${projectId}/colors/${colorId}`, updatedColorData);
-    return response.data;
-  } catch (error) {
-    console.error('Error al editar color:', error);
-    throw error;
-  }
-};
-
-export const deleteColorFromAPI = async (projectId, colorId) => {
-  try {
-    await axios.delete(`/projects/${projectId}/colors/${colorId}`);
-  } catch (error) {
-    console.error('Error al eliminar color:', error);
-    throw error;
-  }
-};
-
-// === Font API Calls ===
-
-export const getAllFontsFromAPI = async (projectId) => {
-  try {
-    const response = await axios.get(`/projects/${projectId}/fonts`);
-    return response.data;
-  } catch (error) {
-    console.error('Error al obtener todas las fuentes:', error);
-    throw error;
-  }
-};
-
-export const addFontToAPI = async (projectId, fontData) => {
-  try {
-    const response = await axios.post(`/projects/${projectId}/fonts`, fontData);
-    return response.data;
-  } catch (error) {
-    console.error('Error al agregar fuente:', error);
-    throw error;
-  }
-};
-
-export const editFontInAPI = async (projectId, fontId, updatedFontData) => {
-  try {
-    const response = await axios.put(`/projects/${projectId}/fonts/${fontId}`, updatedFontData);
-    return response.data;
-  } catch (error) {
-    console.error('Error al editar fuente:', error);
-    throw error;
-  }
-};
-
-export const deleteFontFromAPI = async (projectId, fontId) => {
-  try {
-    await axios.delete(`/projects/${projectId}/fonts/${fontId}`);
-  } catch (error) {
-    console.error('Error al eliminar fuente:', error);
+    console.error('Error al eliminar componente:', error);
     throw error;
   }
 };

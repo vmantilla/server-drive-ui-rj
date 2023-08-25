@@ -2,16 +2,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PreviewScreen from './PreviewScreen';
 import '../../../css/Builder/Preview/PreviewWorkspace.css';
-import { showWorkspaceFromAPI, createPreviewInWorkspaceAPI, deletePreviewFromAPI, updatePreviewInWorkspaceAPI, batchUpdatePreviewsInWorkspaceAPI } from '../../api';
+import { getAllPreviewsFromAPI, addPreviewToAPI, deletePreviewFromAPI, editPreviewInAPI } from '../../api';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 
-function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedScreen, setAddNewPreview, setUpdatePreview, setOnDelete, forceReflow, showNotification }) {
+function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setAddNewPreview, setUpdatePreview, setOnDelete, forceReflow, showNotification }) {
   const [previews, setPreviews] = useState([]);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [changedPreviews, setChangedPreviews] = useState(new Set());
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [previewToDelete, setPreviewToDelete] = useState(null);
   const [confirmDeleteName, setConfirmDeleteName] = useState('');
@@ -21,9 +20,9 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
   
   useEffect(() => {
     if (workspaceId) {
-      showWorkspaceFromAPI(projectId, workspaceId)
-      .then((workspace) => {
-        setPreviews(workspace.previews);
+      getAllPreviewsFromAPI(workspaceId)
+      .then((previews) => {
+        setPreviews(previews);
         setSelectedScreen(null);
         forceReflow();
       })
@@ -41,7 +40,7 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
       };
 
       try {
-        const newPreview = await createPreviewInWorkspaceAPI(projectId, workspaceId, previewData);
+        const newPreview = await addPreviewToAPI(workspaceId, previewData);
         setPreviews(prev => [...prev, newPreview]);
       } catch (error) {
         showNotification('error', 'Error al agregar nueva vista previa.');
@@ -51,7 +50,7 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
 
     setAddNewPreview(() => addNewPreview);
     setOnDelete(() => handleDelete);
-  }, [projectId, workspaceId, setAddNewPreview]);
+  }, [workspaceId, setAddNewPreview]);
 
 
   const handlePositionChange = (newPosition, previewId) => {
@@ -62,7 +61,6 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
       return p;
     });
     setPreviews(updatedPreviews);
-    setChangedPreviews(prev => new Set([...prev, previewId]));
   };
 
   useEffect(() => {
@@ -82,7 +80,7 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
       };
 
       try {
-        const updatedPreview = await updatePreviewInWorkspaceAPI(projectId, previewId, updatedData);
+        const updatedPreview = await editPreviewInAPI(previewId, updatedData);
         
         setPreviews(prevPreviews => {
           return prevPreviews.map(preview => {
@@ -92,11 +90,6 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
             return preview;
           });
         });
-        if (changedPreviews.size > 0) {
-          setTimeout(() => {
-            batchUpdatePreviews();
-        }, 2000);
-        }
         showNotification('success', 'Preview updated successfully.');
       } catch (error) {
         showNotification('error', 'Error updating preview.');
@@ -105,31 +98,12 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
     };
 
     setUpdatePreview(() => updatePreview);
-  }, [projectId, workspaceId, setUpdatePreview, previews]);
-
-  const batchUpdatePreviews = async () => {
-        const updates = Array.from(changedPreviews).map(previewId => {
-          const preview = previews.find(p => p.id === previewId);
-          if (!preview) {
-            console.error(`No se pudo encontrar el preview con id: ${previewId}`);
-        return null;
-      }
-      return { id: previewId, position_x: preview.position_x, position_y: preview.position_y, title: preview.title };
-    }).filter(Boolean);
-
-    try {
-      await batchUpdatePreviewsInWorkspaceAPI(projectId, workspaceId, updates);
-      setChangedPreviews(new Set());
-    } catch (error) {
-      // Manejar el error
-    }
-  };
-
+  }, [workspaceId, setUpdatePreview, previews]);
 
   const confirmDelete = async () => {
     if (previewToDelete && confirmDeleteName === previews.find(p => p.id === previewToDelete)?.title) {
       try {
-        await deletePreviewFromAPI(projectId, previewToDelete);
+        await deletePreviewFromAPI(previewToDelete);
         setPreviews(prev => prev.filter(p => p.id !== previewToDelete));
         setSelectedScreen(null);
       } catch (error) {
@@ -195,7 +169,7 @@ function PreviewWorkspace({ projectId, workspaceId, setSelectedScreen, selectedS
     return p;
   });
   setPreviews(updatedPreviews);
-  setChangedPreviews(prev => new Set([...prev, previewId]));
+  setUpdatePreview();
 };
 
   return (

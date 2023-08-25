@@ -39,7 +39,7 @@ function BuilderWorkspaces({ projectId, selectedWorkspace, setSelectedWorkspace 
 
   const handleSaveEdit = async (workspaceId) => {
   	if (editingWorkspaceName.trim()) {
-  		const updatedWorkspace = await editWorkspaceInAPI(projectId, workspaceId, { title: editingWorkspaceName });
+  		const updatedWorkspace = await editWorkspaceInAPI(workspaceId, { title: editingWorkspaceName });
   		const index = workspaces.findIndex(w => w.id === workspaceId);
   		if (index !== -1) {
   			const updatedWorkspaces = [...workspaces];
@@ -54,7 +54,7 @@ function BuilderWorkspaces({ projectId, selectedWorkspace, setSelectedWorkspace 
   	if (workspaceToDelete) {
   		const workspace = workspaces.find(w => w.id === workspaceToDelete);
   		if (workspace.title === confirmDeleteName) {
-  			await deleteWorkspaceFromAPI(projectId, workspaceToDelete);
+  			await deleteWorkspaceFromAPI(workspaceToDelete);
   			const updatedWorkspaces = workspaces.filter(w => w.id !== workspaceToDelete);
   			setWorkspaces(updatedWorkspaces);
   			setSelectedWorkspace(updatedWorkspaces[0] || null);

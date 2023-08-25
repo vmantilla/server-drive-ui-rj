@@ -1,16 +1,5 @@
 // treeUtils.js
 
-export const toggleExpanded = (targetId, currentComponents) => 
-  currentComponents.map(component => {
-    if (component.id === targetId) {
-      return { ...component, expanded: !component.expanded };
-    }
-    if (component.children.length > 0) {
-      return { ...component, children: toggleExpanded(targetId, component.children) };
-    }
-    return component;
-  });
-
 export const deleteComponentRecursive = (idToDelete, currentComponents) => 
   currentComponents.filter(comp => comp.id !== idToDelete).map(component => {
     if (component.children.length > 0) {

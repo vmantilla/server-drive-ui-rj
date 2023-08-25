@@ -21,7 +21,7 @@ const FloatingMenu = ({ visible, options, onClose, position, handleDragStart }) 
   if (!visible) return null;
 
   const buttonElements = options.map((option, index) => (
-    <button draggable="true" onDragStart={(e) => handleDragStart(e, "container", option.type)} className="floating-icon-button" key={index} onClick={option.onClick}>
+    <button draggable="true" onDragStart={(e) => handleDragStart(e, "ContainerView", option.type)} className="floating-icon-button" key={index} onClick={option.onClick}>
       <i className={option.iconClass}></i>
       {option.type}
     </button>
@@ -106,12 +106,14 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
 
     const newComponent = {
       id: uniqueId,
-      type: componentType,
+      component_type: componentType,
       children: [],
       expanded: false,
-      properties: {
-        id: propertiesUniqueId,
-        component_type: componentTypeName,
+      property: {
+        data: {
+          component_type: componentTypeName
+        },
+        id: propertiesUniqueId
       },
     };
     e.dataTransfer.setData('component', JSON.stringify(newComponent));
