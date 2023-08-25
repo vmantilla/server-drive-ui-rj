@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import '../../../css/Builder/Preview/PreviewComponents.css';
-import { deleteComponentRecursive, addComponentChildRecursive, moveComponent, isDescendant } from '../../Utils/treeUtils';
+import { deleteComponentRecursive, addComponentChildRecursive, moveComponent, isDescendant, toggleExpanded } from '../../Utils/treeUtils';
 import { getComponentsFromAPI, saveComponentsToAPI } from '../../api';
 
 function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, showNotification }) {
@@ -36,17 +36,6 @@ function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, sho
     }
   };
 
-  const toggleExpanded = (targetId, currentComponents) => 
-    currentComponents.map(component => {
-      if (component.id === targetId) {
-        return { ...component, expanded: !component.expanded };
-      }
-      if (component.children.length > 0) {
-        return { ...component, children: toggleExpanded(targetId, component.children) };
-      }
-      return component;
-    });
-
   const handleToggleExpanded = (id) => 
     setComponents(prevComponents => toggleExpanded(id, prevComponents));
 
@@ -62,7 +51,6 @@ function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, sho
   event.stopPropagation();
   setDraggingComponent(component);
 
-  // Aplicar el estilo disabled-drop a los componentes que no pueden recibir el componente que se está arrastrando.
   const componentItems = document.querySelectorAll('.component-item');
   componentItems.forEach(item => {
     const componentId = parseInt(item.getAttribute('data-id'));

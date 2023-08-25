@@ -7,6 +7,7 @@ import AlignmentProperties from './Properties/AlignmentProperties';
 import ImageProperties from './Properties/ImageProperties';
 import RoundedCornerProperties from './Properties/RoundedCornerProperties'; 
 import MarginProperties from './Properties/MarginProperties';
+import BackgroundProperties from './Properties/BackgroundProperties';
 
 import '../../../css/Builder/Component/ComponentProperties.css';
 
@@ -20,7 +21,8 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
     stroke: [],
     image: [],
     corner: [],
-    margin: []
+    margin: [],
+    background: []
   });
 
   const getAvailableStates = (type) => {
@@ -67,6 +69,22 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
         </button>
       </div>
       <div className="component-properties-content">
+
+      <MiniHeader
+			  title="Background"
+			  states={states.background}
+			  onAddState={() => handleAddState('background')}
+			  onDeleteState={(index) => handleDeleteState('background', index)}
+			  onChangeState={(index, property, value) => handleChangeState('background', index, property, value)}
+			  renderChildren={(index, state) => (
+			    <BackgroundProperties
+			      key={state.state}
+			      background={state}
+			      handlePropertyChange={(property, value) => handleChangeState('background', index, property, value)}
+			    />
+			  )}
+			/>
+
 
       <MiniHeader
 			  title="Margin"
