@@ -2,10 +2,11 @@
 
 export const deleteComponentRecursive = (idToDelete, currentComponents) => 
   currentComponents.filter(comp => comp.id !== idToDelete).map(component => {
-    if (component.children.length > 0) {
-      component.children = deleteComponentRecursive(idToDelete, component.children);
+    const newComponent = { ...component }; // Create a copy
+    if (newComponent.children && newComponent.children.length > 0) {
+      newComponent.children = deleteComponentRecursive(idToDelete, newComponent.children);
     }
-    return component;
+    return newComponent;
   });
 
 export const addComponentChildRecursive = (parentId, currentComponents, child) => {
@@ -13,10 +14,10 @@ export const addComponentChildRecursive = (parentId, currentComponents, child) =
     if (component.id === parentId) {
       return {
         ...component,
-        children: [...component.children, child],
+        children: [...(component.children || []), child], // Make sure children is iterable
         expanded: true 
       };
-    } else if (component.children.length > 0) {
+    } else if (component.children && component.children.length > 0) {
       return {
         ...component,
         children: addComponentChildRecursive(parentId, component.children, child)
@@ -28,23 +29,28 @@ export const addComponentChildRecursive = (parentId, currentComponents, child) =
 
 export const removeComponent = (componentId, currentComponents) => 
   currentComponents.reduce((acc, component) => {
-    if (component.id !== componentId) {
-      if (component.children.length) {
-        component.children = removeComponent(componentId, component.children);
+    const newComponent = { ...component }; // Create a copy
+    if (newComponent.id !== componentId) {
+      if (newComponent.children && newComponent.children.length) {
+        newComponent.children = removeComponent(componentId, newComponent.children);
       }
-      acc.push(component);
+      acc.push(newComponent);
     }
     return acc;
   }, []);
 
+
 export const isDescendant = (parentComponent, targetId) => {
-  for (let child of parentComponent.children) {
-    if (child.id === targetId || isDescendant(child, targetId)) {
-      return true;
+  if (parentComponent.children && Array.isArray(parentComponent.children)) {
+    for (let child of parentComponent.children) {
+      if (child.id === targetId || isDescendant(child, targetId)) {
+        return true;
+      }
     }
   }
   return false;
 };
+
 
 export const moveComponent = (componentId, parentId, currentComponents) => {
   // Primero, verificamos que el componente no se esté moviendo dentro de sí mismo.
@@ -74,7 +80,7 @@ const findComponentById = (id, currentComponents) => {
   for (let component of currentComponents) {
     if (component.id === id) {
       return component;
-    } else if (component.children.length > 0) {
+    } else if (component.children && component.children.length > 0) {
       const result = findComponentById(id, component.children);
       if (result) return result;
     }

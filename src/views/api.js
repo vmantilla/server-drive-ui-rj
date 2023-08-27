@@ -9,7 +9,7 @@ axios.interceptors.request.use(function (config) {
   return config;
 });
 
-export const setupInterceptors = (navigate) => {  // Cambia el parámetro a "navigate"
+export const setupInterceptors = (navigate) => { 
   axios.interceptors.response.use(
     response => {
       return response;
