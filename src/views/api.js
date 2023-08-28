@@ -151,6 +151,17 @@ export const deletePreviewFromAPI = async (previewId) => {
 
 // === COMPONENTS API Calls ===
 
+const removeComponentsUnpermittedParams = (component) => {
+  const sanitizedComponent = { ...component };
+  
+  delete sanitizedComponent.id;
+  delete sanitizedComponent.children;
+  delete sanitizedComponent.expanded;
+  delete sanitizedComponent.loading;
+
+  return sanitizedComponent;
+};
+
 export const getComponentsFromAPI = async (previewId) => {
   try {
     const response = await axios.get(`/previews/${previewId}/components`);
@@ -164,7 +175,7 @@ export const getComponentsFromAPI = async (previewId) => {
 
 export const addComponentToAPI = async (previewId, component) => {
   try {
-    const response = await axios.post(`/previews/${previewId}/components`, {component});
+    const response = await axios.post(`/previews/${previewId}/components`, { component: removeComponentsUnpermittedParams(component) });
     return response.data;
   } catch (error) {
     console.error('Error al guardar componente:', error);
@@ -174,7 +185,7 @@ export const addComponentToAPI = async (previewId, component) => {
 
 export const editComponentToAPI = async (componentId, updatedComponent) => {
   try {
-    const response = await axios.put(`/components/${componentId}`, updatedComponent);
+    const response = await axios.put(`/components/${componentId}`, { component:  removeComponentsUnpermittedParams(updatedComponent) });
     return response.data;
   } catch (error) {
     console.error('Error al actualizar componente:', error);

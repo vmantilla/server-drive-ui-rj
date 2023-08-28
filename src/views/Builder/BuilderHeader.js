@@ -112,8 +112,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
       property: {
         data: {
           component_type: componentTypeName
-        },
-        id: propertiesUniqueId
+        }
       },
     };
     e.dataTransfer.setData('component', JSON.stringify(newComponent));

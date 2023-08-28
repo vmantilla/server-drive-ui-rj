@@ -6,12 +6,16 @@ import '../../../css/Builder/Preview/PreviewComponents.css';
 import { deleteComponentRecursive, addComponentChildRecursive, moveComponent, removeComponent, isDescendant } from '../../Utils/treeUtils';
 import { getComponentsFromAPI, addComponentToAPI, editComponentToAPI, deleteComponentToAPI } from '../../api';
 
-function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, showNotification }) {
+function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, showNotification, setSelectedComponents  }) {
   const [components, setComponents] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [componentToDelete, setComponentToDelete] = useState(null);
   const [draggingComponent, setDraggingComponent] = useState(null);
   const [selectedComponentId, setSelectedComponentId] = useState(null);
+
+  useEffect(() => {
+    setSelectedComponents(components);
+  }, [components]);
 
   useEffect(() => {
     const loadComponents = async () => {
@@ -177,7 +181,7 @@ const handleDrop = async (event, parentId) => {
         });
 
         // Llamar al API para editar
-        await editComponentToAPI(draggingComponent.id, { component: { parent_id: parentId } });
+        await editComponentToAPI(draggingComponent.id, { parent_id: parentId });
 
         // Finalizar la operación de carga y actualizar el árbol de componentes
         setComponents(newComponents.map(comp => {

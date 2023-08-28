@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { RavitBuilder } from 'ravit-builder';
+
 import '../../../css/Builder/Preview/PreviewScreen.css';
 
-function PreviewScreen({ initialTitle, onTitleChange, isSelected, children, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange }) {
+function PreviewScreen({ initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, selectedComponents }) {
   const [screenType, setScreenType] = useState('mobile');
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
@@ -90,7 +92,7 @@ function PreviewScreen({ initialTitle, onTitleChange, isSelected, children, zoom
         </h4>
       )}
       <div className={`screen-content ${screenType} ${isSelected ? 'selected' : ''}`} onClick={onClick}>
-        {children}
+        <RavitBuilder appId="12345" layoutJson={selectedComponents} />
       </div>
     </div>
   );

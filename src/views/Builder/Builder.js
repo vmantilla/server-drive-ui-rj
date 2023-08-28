@@ -12,6 +12,7 @@ function Builder({showNotification}) {
   const [isComponentsOpen, setIsComponentsOpen] = useState(true);
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
   const [selectedScreen, setSelectedScreen] = useState(null);
+  const [selectedComponents, setSelectedComponents] = useState([]);
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
   const [addNewPreview, setAddNewPreview] = useState(null);
   const [updatePreview, setUpdatePreview] = useState(null);
@@ -70,6 +71,7 @@ function Builder({showNotification}) {
               selectedScreen={selectedScreen}
               setIsPropertiesOpen={setIsPropertiesOpen} 
               showNotification={showNotification}
+              setSelectedComponents={setSelectedComponents}
             />
           )}
         </aside>
@@ -83,6 +85,7 @@ function Builder({showNotification}) {
             setOnDelete={setOnDelete}
             forceReflow={forceReflow}
             showNotification={showNotification}
+            selectedComponents={selectedComponents}
           />
         </section>
         <aside className={`builder-properties ${isPropertiesOpen ? 'open' : ''}`}>
