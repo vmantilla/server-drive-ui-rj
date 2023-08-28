@@ -102,3 +102,27 @@
     padding: 0;
     margin: 0 5px;
 }
+
+.component-type-header {
+  border: 1px dashed #ccc;
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
+.component-type-body {
+  border: 1px dashed #ccc;
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
+.component-type-footer {
+  border: 1px dashed #ccc;
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
+.custom-label {
+  font-size: 0.8em;
+  font-weight: bold;
+  color: grey;
+}

@@ -33,6 +33,9 @@ function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, sho
 
 
   const deleteComponentToApi = async (compToDelete) => {
+    if (['Header', 'Body', 'Footer'].includes(compToDelete.component_type)) {
+      return;
+    }
     compToDelete["loading"] = true;
     await new Promise(resolve => setTimeout(resolve, 500));
 
@@ -52,6 +55,9 @@ function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, sho
 
   
   const deleteComponent = (compToDelete) => {
+    if (['Header', 'Body', 'Footer'].includes(compToDelete.component_type)) {
+      return;
+    }
     deleteComponentToApi(compToDelete)
     setShowDeleteModal(false);
   };
@@ -68,20 +74,23 @@ function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, sho
   });
 
   const handleDragStart = (event, component) => {
-  event.dataTransfer.setData('text/plain', component.type);
-  event.dataTransfer.setData('source', "tree");
-  event.stopPropagation();
-  setDraggingComponent(component);
+      if (['Header', 'Body', 'Footer'].includes(component.component_type)) {
+        return;
+      }
+      event.dataTransfer.setData('text/plain', component.type);
+      event.dataTransfer.setData('source', "tree");
+      event.stopPropagation();
+      setDraggingComponent(component);
 
-  const componentItems = document.querySelectorAll('.component-item');
-  componentItems.forEach(item => {
-    const componentId = parseInt(item.getAttribute('data-id'));
-    if (isDescendant(component, componentId)) {
-      item.classList.add('disabled-drop');
-      item.classList.remove('ready-for-drop');
-    }
-  });
-};
+      const componentItems = document.querySelectorAll('.component-item');
+      componentItems.forEach(item => {
+        const componentId = parseInt(item.getAttribute('data-id'));
+        if (isDescendant(component, componentId)) {
+          item.classList.add('disabled-drop');
+          item.classList.remove('ready-for-drop');
+        }
+      });
+    };
 
   const handleDragEnterLeaveOrOver = (event, componentId, isOver = false) => {
   event.preventDefault();
@@ -217,8 +226,25 @@ const renderComponentList = (compArray, parentId = null) =>
       return null;
     }
 
+    let customClass = '';
+    let customLabel = '';
+
+    if (comp.component_type === 'Header') {
+          customClass = 'component-type-header';
+          customLabel = 'HEADER';
+        } else if (comp.component_type === 'Body') {
+          customClass = 'component-type-body';
+          customLabel = 'BODY';
+        } else if (comp.component_type === 'Footer') {
+          customClass = 'component-type-footer';
+          customLabel = 'FOOTER';
+        }
+
     return (
-      <div key={comp.id}>
+      <div key={comp.id} className={customClass}>
+        {customLabel && (
+          <div className="custom-label">{customLabel}</div>
+        )}
         <div
           draggable={comp.id !== parentId}
           onDragStart={(e) => handleDragStart(e, comp)}
@@ -247,7 +273,7 @@ const renderComponentList = (compArray, parentId = null) =>
                 <Spinner animation="border" size="sm" />
               </div>
             )}
-          {comp.id === selectedComponentId && !comp.loading && (
+          {comp.id === selectedComponentId && !comp.loading && !['Header', 'Body', 'Footer'].includes(comp.component_type) && (
             <div className="component-actions">
               <span className="icon-btn delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>
                 <i className="bi bi-trash"></i>

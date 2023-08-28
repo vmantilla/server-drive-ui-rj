@@ -178,6 +178,8 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
       {previews.map((preview) => (
         <PreviewScreen
           key={preview.id}
+          previewScreenId={preview.id}
+          selectedScreen={selectedScreen}
           initialTitle={preview.title}
           onClick={() => setSelectedScreen(preview.id)}
           onPositionChange={(newPosition) => handlePositionChange(newPosition, preview.id)}
