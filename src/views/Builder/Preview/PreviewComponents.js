@@ -127,6 +127,7 @@ const handleDrop = async (event, parentId) => {
   event.stopPropagation();
 
   const source = event.dataTransfer.getData('source');
+  let previousComponents = null;
 
   if (source === 'header') {
     const componentData = event.dataTransfer.getData('component');
@@ -159,10 +160,41 @@ const handleDrop = async (event, parentId) => {
   } else if (source === 'tree') {
     if (draggingComponent) {
       try {
+        // Guardar el estado anterior del árbol de componentes
+        previousComponents = [...components];
+
+        // Intentar mover el componente
         const newComponents = moveComponent(draggingComponent.id, parentId, components);
-        setComponents(newComponents);
+
+        // Poner el componente en estado de carga
+        setComponents(prevComponents => {
+          return prevComponents.map(comp => {
+            if (comp.id === draggingComponent.id) {
+              return { ...comp, loading: true };
+            }
+            return comp;
+          });
+        });
+
+        // Llamar al API para editar
+        await editComponentToAPI(draggingComponent.id, { component: { parent_id: parentId } });
+
+        // Finalizar la operación de carga y actualizar el árbol de componentes
+        setComponents(newComponents.map(comp => {
+          if (comp.id === draggingComponent.id) {
+            return { ...comp, loading: false };
+          }
+          return comp;
+        }));
+
+        showNotification('success', 'Componente movido exitosamente.');
       } catch (error) {
-        console.error(error.message);
+        console.error('Error al mover el componente:', error);
+        
+        // Restaurar el árbol de componentes al estado anterior
+        setComponents(previousComponents);
+
+        showNotification('error', 'Error al mover el componente.');
       }
     }
   }

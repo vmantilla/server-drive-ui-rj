@@ -174,7 +174,7 @@ export const addComponentToAPI = async (previewId, component) => {
 
 export const editComponentToAPI = async (componentId, updatedComponent) => {
   try {
-    const response = await axios.put(`/components/${componentId}`, {updatedComponent});
+    const response = await axios.put(`/components/${componentId}`, updatedComponent);
     return response.data;
   } catch (error) {
     console.error('Error al actualizar componente:', error);
