@@ -80,10 +80,18 @@ function PreviewScreen({ previewScreenId, selectedScreen, initialTitle, onTitleC
         const data = imageData.data;
         for (let i = 0; i < data.length; i += 4) {
           const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-          data[i] = avg;     // rojo
-          data[i + 1] = avg; // verde
-          data[i + 2] = avg; // azul
+          
+          if (avg < 10) { // Si es cercano a negro
+            data[i] = 204;     // Establecer a #CCC (gris claro)
+            data[i + 1] = 204;
+            data[i + 2] = 204;
+          } else {
+            data[i] = avg;     // De lo contrario, establecer a escala de grises
+            data[i + 1] = avg;
+            data[i + 2] = avg;
+          }
         }
+
         ctx.putImageData(imageData, 0, 0);
 
         const imgData = canvas.toDataURL('image/png');

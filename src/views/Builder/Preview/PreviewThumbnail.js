@@ -90,7 +90,7 @@ function PreviewThumbnail({ previewScreenId, initialTitle, onTitleChange, zoomLe
           {title}
         </h4>
       )}
-      <div className={`screen-content ${screenType}`} onClick={onClick} style={{ justifyContent: 'flex-start' }}>
+      <div className={`screen-content ${screenType} notSelected`} onClick={onClick} style={{ justifyContent: 'flex-start' }}>
 		  {localStorage.getItem(`${previewScreenId}-screenshot`) && (
 		    <img src={localStorage.getItem(`${previewScreenId}-screenshot`)} alt="Captured content" />
 		  )}
