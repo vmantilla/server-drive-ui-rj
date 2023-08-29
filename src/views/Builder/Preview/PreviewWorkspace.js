@@ -1,6 +1,8 @@
 // PreviewWorkspace.js
 import React, { useState, useEffect, useRef } from 'react';
 import PreviewScreen from './PreviewScreen';
+import PreviewThumbnail from './PreviewThumbnail';
+
 import '../../../css/Builder/Preview/PreviewWorkspace.css';
 import { getAllPreviewsFromAPI, addPreviewToAPI, deletePreviewFromAPI, editPreviewInAPI } from '../../api';
 import Button from 'react-bootstrap/Button';
@@ -175,23 +177,45 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
   return (
   <>
     <div className="workspace-content" style={{ transform: `scale(${zoomLevel})`, width: `${workspaceSize}px`, height: `${workspaceSize}px` }}  onClick={handleWorkspaceClick}>
-      {previews.map((preview) => (
-        <PreviewScreen
-          key={preview.id}
-          previewScreenId={preview.id}
-          selectedScreen={selectedScreen}
-          initialTitle={preview.title}
-          onClick={() => setSelectedScreen(preview.id)}
-          onPositionChange={(newPosition) => handlePositionChange(newPosition, preview.id)}
-          position={{ x: preview.position_x || 0, y: preview.position_y || 0 }}
-          zoomLevel={zoomLevel}
-          isSelected={selectedScreen === preview.id}
-          onTitleChange={(newTitle) => handleTitleChange(newTitle, preview.id)}
-          selectedComponents={selectedComponents}
-        >
-          {preview.content}
-        </ PreviewScreen>
-      ))}
+      {previews.map((preview) => {
+        if (selectedScreen === preview.id) {
+          return (
+            <PreviewScreen
+                key={preview.id}
+                previewScreenId={preview.id}
+                selectedScreen={selectedScreen}
+                initialTitle={preview.title}
+                onClick={() => setSelectedScreen(preview.id)}
+                onPositionChange={(newPosition) => handlePositionChange(newPosition, preview.id)}
+                position={{ x: preview.position_x || 0, y: preview.position_y || 0 }}
+                zoomLevel={zoomLevel}
+                isSelected={selectedScreen === preview.id}
+                onTitleChange={(newTitle) => handleTitleChange(newTitle, preview.id)}
+                selectedComponents={selectedComponents}
+              >
+                {preview.content}
+              </ PreviewScreen>
+          );
+        } else {
+          return (
+            <PreviewThumbnail
+                key={preview.id}
+                previewScreenId={preview.id}
+                selectedScreen={selectedScreen}
+                initialTitle={preview.title}
+                onClick={() => setSelectedScreen(preview.id)}
+                onPositionChange={(newPosition) => handlePositionChange(newPosition, preview.id)}
+                position={{ x: preview.position_x || 0, y: preview.position_y || 0 }}
+                zoomLevel={zoomLevel}
+                isSelected={selectedScreen === preview.id}
+                onTitleChange={(newTitle) => handleTitleChange(newTitle, preview.id)}
+                selectedComponents={selectedComponents}
+              >
+                {preview.content}
+              </ PreviewThumbnail>
+          );
+        }
+      })}
     {showDeleteModal && (
     <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
       <Modal.Header closeButton>
