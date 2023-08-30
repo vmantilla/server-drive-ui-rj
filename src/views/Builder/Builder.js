@@ -18,6 +18,7 @@ function Builder({showNotification}) {
   const [updatePreview, setUpdatePreview] = useState(null);
   const [onDelete, setOnDelete] = useState(null);
   const [workspaceHeight, setWorkspaceHeight] = useState('50%');
+  const [selectedComponent, setSelectedComponent] = useState(null);
 
   const handleWorkspaceClick = (e) => {
     if (e.target === e.currentTarget) {
@@ -72,6 +73,7 @@ function Builder({showNotification}) {
               setIsPropertiesOpen={setIsPropertiesOpen} 
               showNotification={showNotification}
               setSelectedComponents={setSelectedComponents}
+              selectedComponent={selectedComponent} setSelectedComponent={setSelectedComponent}
             />
           )}
         </aside>
@@ -86,10 +88,12 @@ function Builder({showNotification}) {
             forceReflow={forceReflow}
             showNotification={showNotification}
             selectedComponents={selectedComponents}
+            selectedComponent={selectedComponent} 
+            setSelectedComponent={setSelectedComponent}
           />
         </section>
         <aside className={`builder-properties ${isPropertiesOpen ? 'open' : ''}`}>
-          <ComponentProperties isPropertiesOpen={isPropertiesOpen} setIsPropertiesOpen={setIsPropertiesOpen} />
+          <ComponentProperties isPropertiesOpen={isPropertiesOpen} setIsPropertiesOpen={setIsPropertiesOpen} selectedComponent={selectedComponent} setSelectedComponent={setSelectedComponent} />
         </aside>
       </main>
     </div>

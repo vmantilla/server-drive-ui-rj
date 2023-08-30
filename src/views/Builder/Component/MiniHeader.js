@@ -15,7 +15,7 @@ function MiniHeader({ title, states, onAddState, onDeleteState, onChangeState, r
         <button className="add-property-button properties-title" onClick={onAddState}>+</button>
       </header>
       <div className="properties-body">
-        {states.map((state, index) => (
+      {Array.isArray(states) ? states.map((state, index) => (
           <div className="property-block" key={index}>
             <div className="property-mini-header">
               <select className="mini-header-dropdown" value={state.state} onChange={(e) => onChangeState(index, 'state', e.target.value)}>
@@ -27,7 +27,7 @@ function MiniHeader({ title, states, onAddState, onDeleteState, onChangeState, r
             </div>
             {renderChildren(index, state)}
           </div>
-        ))}
+        )): null}
       </div>
     </div>
   );

@@ -38,6 +38,7 @@
   flex-grow: 1;
   overflow-y: auto;
   height: 100%;
+  padding-bottom: 100px;
 }
 
 .component-properties-content::-webkit-scrollbar {
@@ -58,3 +59,5 @@
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.1);
 }
+
+

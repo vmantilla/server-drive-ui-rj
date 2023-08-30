@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 
-function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setAddNewPreview, setUpdatePreview, setOnDelete, forceReflow, showNotification, selectedComponents }) {
+function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setAddNewPreview, setUpdatePreview, setOnDelete, forceReflow, showNotification, selectedComponents, selectedComponent, setSelectedComponent }) {
   const [previews, setPreviews] = useState([]);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [showDropdown, setShowDropdown] = useState(false);

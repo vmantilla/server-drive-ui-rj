@@ -6,13 +6,12 @@ import '../../../css/Builder/Preview/PreviewComponents.css';
 import { deleteComponentRecursive, addComponentChildRecursive, moveComponent, removeComponent, isDescendant } from '../../Utils/treeUtils';
 import { getComponentsFromAPI, addComponentToAPI, editComponentToAPI, deleteComponentToAPI } from '../../api';
 
-function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, showNotification, setSelectedComponents  }) {
+function PreviewComponents({ setIsPropertiesOpen, projectId, selectedScreen, showNotification, setSelectedComponents, selectedComponent, setSelectedComponent  }) {
   const [components, setComponents] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [componentToDelete, setComponentToDelete] = useState(null);
   const [draggingComponent, setDraggingComponent] = useState(null);
-  const [selectedComponentId, setSelectedComponentId] = useState(null);
-
+  
   useEffect(() => {
     setSelectedComponents(components);
   }, [components]);
@@ -253,10 +252,10 @@ const renderComponentList = (compArray, parentId = null) =>
           onDrop={(e) => handleDrop(e, comp.id)}
           onDragEnter={(e) => handleDragEnterLeaveOrOver(e, comp.id)}
           onDragLeave={handleDragEnterLeaveOrOver}
-          className={`component-item ${comp === draggingComponent ? 'dragging' : ''} ${draggingComponent && comp.id !== draggingComponent.id ? 'drop-target' : ''} ${selectedComponentId === comp.id ? 'selected' : ''}`}
+          className={`component-item ${comp === draggingComponent ? 'dragging' : ''} ${draggingComponent && comp.id !== draggingComponent.id ? 'drop-target' : ''} ${selectedComponent && selectedComponent.id === comp.id ? 'selected' : ''}`}
           onClick={() => {
             setIsPropertiesOpen(true);
-            setSelectedComponentId(comp.id);
+            setSelectedComponent(comp);
           }}
         >
           <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -273,7 +272,7 @@ const renderComponentList = (compArray, parentId = null) =>
                 <Spinner animation="border" size="sm" />
               </div>
             )}
-          {comp.id === selectedComponentId && !comp.loading && !['Header', 'Body', 'Footer'].includes(comp.component_type) && (
+          {selectedComponent && comp.id === selectedComponent.id && !comp.loading && !['Header', 'Body', 'Footer'].includes(comp.component_type) && (
             <div className="component-actions">
               <span className="icon-btn delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>
                 <i className="bi bi-trash"></i>

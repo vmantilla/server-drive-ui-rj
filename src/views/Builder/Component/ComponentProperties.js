@@ -8,12 +8,15 @@ import ImageProperties from './Properties/ImageProperties';
 import RoundedCornerProperties from './Properties/RoundedCornerProperties'; 
 import MarginProperties from './Properties/MarginProperties';
 import BackgroundProperties from './Properties/BackgroundProperties';
+import { deepEqual } from '../../Utils/deepEqual';
+
 
 import '../../../css/Builder/Component/ComponentProperties.css';
 
 const possibleStates = ["enabled", "disabled", "hover"];
 
-function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
+function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen, selectedComponent, setSelectedComponent }) {
+  
   const [states, setStates] = useState({
     alignment: [],
     frame: [],
@@ -24,6 +27,52 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen }) {
     margin: [],
     background: []
   });
+
+  useEffect(() => {
+	  if (selectedComponent && selectedComponent.property && selectedComponent.property.data) {
+	    const newStates = {};
+	    
+	    Object.keys(states).forEach(key => {
+	      if (selectedComponent.property.data[key]) {
+	        newStates[key] = selectedComponent.property.data[key];
+	      } else {
+	        newStates[key] = [];
+	      }
+	    });
+	    
+	    setStates(newStates);
+	  }
+	}, [selectedComponent]);
+
+
+  useEffect(() => {
+    console.error('selectedComponent:', selectedComponent);
+  }, [selectedComponent]);
+
+  useEffect(() => {
+	  const updatedComponent = { ...selectedComponent };
+
+	  if (!updatedComponent.property) {
+	    updatedComponent.property = {};
+	  }
+
+	  if (!updatedComponent.property.data) {
+	    updatedComponent.property.data = {};
+	  }
+
+	  Object.keys(states).forEach(key => {
+	    if (states[key].length === 0) {
+	      delete updatedComponent.property.data[key];
+	    } else {
+	      updatedComponent.property.data[key] = states[key];
+	    }
+	  });
+
+	  if (!deepEqual(updatedComponent, selectedComponent)) {
+    	setSelectedComponent(updatedComponent);
+  	}
+	}, [states]); 
+
 
   const getAvailableStates = (type) => {
     return possibleStates.filter(state => !states[type].some(s => s.state === state));
