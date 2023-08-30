@@ -110,12 +110,16 @@ function PreviewScreen({ previewScreenId, selectedScreen, initialTitle, onTitleC
 
 
 useEffect(() => {
-    const timer = setTimeout(() => {
-      if(isSelected) {
-        captureImage();
-      }
-    }, 5000); 
-  }, [previewScreenId, selectedComponents]); 
+  const timer = setTimeout(() => {
+    if(isSelected) {
+      captureImage();
+    }
+  }, 5000);
+
+  return () => {
+    clearTimeout(timer);
+  };
+}, [previewScreenId, selectedComponents, isSelected]); 
 
 
   return (
@@ -146,9 +150,7 @@ useEffect(() => {
         </h4>
       )}
       <div className={`screen-content ${screenType} ${isSelected ? 'selected' : ''}`} onClick={onClick}>
-        <div>
         <RavitBuilder layoutJson={selectedComponents} />
-     </div>
       </div>
     </div>
   );
