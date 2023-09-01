@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import '../../../../css/Builder/Component/Properties/RoundedCornerProperties.css';
 
-function RoundedCornerProperties({ corner, handlePropertyChange }) {
+function RoundedCornerProperties({ property, handlePropertyChange }) {
   const [cornerValues, setCornerValues] = useState({
-    'top-left': corner['top-left'] || 0,
-    'top-right': corner['top-right'] || 0,
-    'bottom-left': corner['bottom-left'] || 0,
-    'bottom-right': corner['bottom-right'] || 0
+    'top-left': property['top-left'] || 0,
+    'top-right': property['top-right'] || 0,
+    'bottom-left': property['bottom-left'] || 0,
+    'bottom-right': property['bottom-right'] || 0
   });
 
   const handleInputChange = (e, cornerName) => {

@@ -3,6 +3,8 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import Modal from 'react-bootstrap/Modal';
 import '../../../css/Builder/Preview/PreviewComponents.css';
+import { debounce } from 'lodash';
+
 import { deleteComponentRecursive, addComponentChildRecursive, moveComponent, removeComponent, isDescendant } from '../../Utils/treeUtils';
 import { getComponentsFromAPI, addComponentToAPI, editComponentToAPI, deleteComponentToAPI } from '../../api';
 
@@ -133,6 +135,7 @@ const handleDragEnd = () => {
     target.classList.remove('ready-for-drop');
   });
 };
+
 
 const handleDrop = async (event, parentId) => {
   event.preventDefault();

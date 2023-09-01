@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import '../../../../css/Builder/Component/Properties/StrokeProperties.css';
 
-function StrokeProperties({ stroke, handlePropertyChange }) {
+function StrokeProperties({ property, handlePropertyChange }) {
 
-  const [colorInput, setColorInput] = useState(stroke.color || "#000000");
-  const [opacityInput, setOpacityInput] = useState(stroke.opacity || "1");
-  const [widthInput, setWidthInput] = useState(stroke.width || "1");
+  const [colorInput, setColorInput] = useState(property.color || "#000000");
+  const [opacityInput, setOpacityInput] = useState(property.opacity || "1");
+  const [widthInput, setWidthInput] = useState(property.width || "1");
 
   useEffect(() => {
     if (isValidHexColor(colorInput)) {

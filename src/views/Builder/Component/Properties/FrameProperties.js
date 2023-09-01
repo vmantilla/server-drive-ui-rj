@@ -50,13 +50,8 @@ const RangeControls = ({ rangeValue, setRangeValue, dimension, onDimensionChange
 
 const DimensionControl = ({ dimension, initialDimension, onDimensionChange }) => {
   const [selectedOption, setSelectedOption] = useState(initialDimension.option || 'auto');
-  const [fixedValue, setFixedValue] = useState(initialDimension.fixedValue || '');
+  const [fixedValue, setFixedValue] = useState(initialDimension.value || '');
   const [rangeValue, setRangeValue] = useState(initialDimension.rangeValue || { min: '', max: '' });
-
-  useEffect(() => {
-    setFixedValue('');
-    setRangeValue({ min: '', max: '' });
-  }, [selectedOption]);
 
   const handleOptionChange = (option) => {
     setSelectedOption(option);
@@ -117,10 +112,10 @@ const DimensionControl = ({ dimension, initialDimension, onDimensionChange }) =>
   );
 };
 
-function FrameProperties({ frame, handlePropertyChange }) {
+function FrameProperties({ property, handlePropertyChange }) {
 
-  const [width, setWidth] = useState(frame ? frame.width || { option: 'auto' } : { option: 'auto' });
-  const [height, setHeight] = useState(frame ? frame.height || { option: 'auto' } : { option: 'auto' });
+  const [width, setWidth] = useState(property ? property.width || { option: 'auto' } : { option: 'auto' });
+  const [height, setHeight] = useState(property ? property.height || { option: 'auto' } : { option: 'auto' });
 
   const handleDimensionChange = (dimension, updatedValue) => {
     if (dimension === 'width') setWidth(updatedValue);

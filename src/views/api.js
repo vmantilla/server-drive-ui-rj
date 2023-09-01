@@ -158,6 +158,12 @@ const removeComponentsUnpermittedParams = (component) => {
   delete sanitizedComponent.children;
   delete sanitizedComponent.expanded;
   delete sanitizedComponent.loading;
+  if (sanitizedComponent.property) {
+    delete sanitizedComponent.property.id;
+    delete sanitizedComponent.property.component_id;
+    delete sanitizedComponent.property.created_at;
+    delete sanitizedComponent.property.updated_at;
+  }
 
   return sanitizedComponent;
 };

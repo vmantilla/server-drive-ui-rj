@@ -1,113 +1,142 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import MiniHeader from './MiniHeader';
 import FontProperties from './Properties/FontProperties';
 import StrokeProperties from './Properties/StrokeProperties';
 import FrameProperties from './Properties/FrameProperties';
 import AlignmentProperties from './Properties/AlignmentProperties';
 import ImageProperties from './Properties/ImageProperties';
-import RoundedCornerProperties from './Properties/RoundedCornerProperties'; 
+import RoundedCornerProperties from './Properties/RoundedCornerProperties';
 import MarginProperties from './Properties/MarginProperties';
 import BackgroundProperties from './Properties/BackgroundProperties';
 import { deepEqual } from '../../Utils/deepEqual';
-
-
+import { debounce } from 'lodash';
 import '../../../css/Builder/Component/ComponentProperties.css';
 
-const possibleStates = ["enabled", "disabled", "hover"];
+import { editComponentToAPI } from '../../api';
 
-function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen, selectedComponent, setSelectedComponent }) {
-  
-  const [states, setStates] = useState({
-    alignment: [],
-    frame: [],
-    font: [],
-    stroke: [],
-    image: [],
-    corner: [],
-    margin: [],
-    background: []
-  });
+const possibleStates = ["default","iOS", "android"];
 
-  useEffect(() => {
-	  if (selectedComponent && selectedComponent.property && selectedComponent.property.data) {
-	    const newStates = {};
-	    
-	    Object.keys(states).forEach(key => {
-	      if (selectedComponent.property.data[key]) {
-	        newStates[key] = selectedComponent.property.data[key];
-	      } else {
-	        newStates[key] = [];
-	      }
-	    });
-	    
-	    setStates(newStates);
-	  }
+const MiniHeaderWithProperties = ({ title, states, propertyComponent: PropertyComponent, handleChangeState, handleAddState, handleDeleteState }) => (
+  <MiniHeader
+    possibleStates={possibleStates}
+    title={title}
+    states={states}
+    onAddState={() => handleAddState(title.toLowerCase())}
+		onDeleteState={(index) => handleDeleteState(title.toLowerCase(), index)}
+		onChangeState={(index, property, value) => handleChangeState(title.toLowerCase(), index, property, value)}
+		renderChildren={(index, state) => (
+      <PropertyComponent
+        key={state.state}
+        property={state}
+        handlePropertyChange={(property, value) => handleChangeState(title.toLowerCase(), index, property, value)}
+      />
+    )}
+  />
+);
+
+function ComponentProperties({ setIsPropertiesOpen, selectedComponent, setSelectedComponent, showNotification }) {
+
+	const lastUpdatedAt = useRef(null);
+
+	const [states, setStates] = useState({
+		alignment: [],
+		frame: [],
+		font: [],
+		stroke: [],
+		image: [],
+		corner: [],
+		margin: [],
+		background: []
+	});
+
+	useEffect(() => {
+		if (selectedComponent && selectedComponent.property && selectedComponent.property.data) {
+			if (lastUpdatedAt.current !== selectedComponent.updatedAt) {
+				lastUpdatedAt.current = selectedComponent.updatedAt;
+
+				const newStates = Object.keys(states).reduce((acc, key) => {
+					acc[key] = selectedComponent.property.data[key] || [];
+					return acc;
+				}, {});
+				setStates(newStates);
+			}
+		} else {
+			setIsPropertiesOpen(false);
+		}
 	}, [selectedComponent]);
 
+	const handleChangeState = debounce((type, index, property, value) => {
+		console.log("handleChangeState", type);
+		const newStates = [...states[type]];
+		newStates[index][property] = value;
+		setStates(prev => ({ ...prev, [type]: newStates }));
 
-  useEffect(() => {
-    console.error('selectedComponent:', selectedComponent);
-  }, [selectedComponent]);
-
-  useEffect(() => {
-	  const updatedComponent = { ...selectedComponent };
-
-	  if (!updatedComponent.property) {
-	    updatedComponent.property = {};
-	  }
-
-	  if (!updatedComponent.property.data) {
-	    updatedComponent.property.data = {};
-	  }
-
-	  Object.keys(states).forEach(key => {
-	    if (states[key].length === 0) {
-	      delete updatedComponent.property.data[key];
-	    } else {
-	      updatedComponent.property.data[key] = states[key];
-	    }
-	  });
-
-	  if (!deepEqual(updatedComponent, selectedComponent)) {
-    	setSelectedComponent(updatedComponent);
-  	}
-	}, [states]); 
-
-
-  const getAvailableStates = (type) => {
-    return possibleStates.filter(state => !states[type].some(s => s.state === state));
-  };
-
-  const handleAddState = (type) => {
-    const availableStates = getAvailableStates(type);
-    if (availableStates.length > 0) {
-      setStates({
-        ...states,
-        [type]: [...states[type], { state: availableStates[0] }]
-      });
-    }
-  };
-
-  const handleDeleteState = (type, index) => {
-  console.log(`handleDeleteState invoked with type: ${type} and index: ${index}`);
-  const newStates = states[type].slice();
-  newStates.splice(index, 1);
-  setStates({
-    ...states,
-    [type]: newStates
-  });
-};
+		setTimeout(() => {
+			if (selectedComponent && selectedComponent.property && selectedComponent.property.data) {
+				const updatedData = { ...selectedComponent.property.data };
+				Object.keys(states).forEach(key => {
+					if (states[key].length > 0) {
+						updatedData[key] = states[key];
+					}
+				});
+				const updatedComponent = { ...selectedComponent, 
+				updatedAt: new Date(),  
+				property: { ...selectedComponent.property, data: updatedData } };
+				if (selectedComponent && selectedComponent.property) {
+			    try {
+			      editComponentToAPI(selectedComponent.id, { property: selectedComponent.property });
+			      setSelectedComponent(updatedComponent);
+			      showNotification('success', 'Propiedades del componente guardadas exitosamente.');
+			    } catch (error) {
+			      console.error('Error al guardar las propiedades del componente:', error);
+			      showNotification('error', 'Error al guardar las propiedades del componente.');
+			    }
+			  }
+				
+			}
+		}, 200); 
+	}, 600);
 
 
-  const handleChangeState = (type, index, property, value) => {
-  	console.log(`handleChangeState invoked with type: ${type} and index: ${index} and property: ${property} and value: ${value}`);
-    const newStates = states[type].slice();
-    newStates[index][property] = value;
-    setStates({
-      ...states,
-      [type]: newStates
-    });
-  };
+	const getAvailableStates = (type) => {
+		if(states[type]) {
+			return possibleStates.filter(state => !states[type].some(s => s.state === state));
+		}
+		return possibleStates;
+	};
+
+	const handleAddState = (type) => {
+		const availableStates = getAvailableStates(type);
+		if (availableStates.length > 0) {
+			setStates({
+				...states,
+				[type]: [...states[type], { state: availableStates[0] }]
+			});
+		}
+	};
+
+	const handleDeleteState = (type, index) => {
+		const newStates = states[type].slice();
+		newStates.splice(index, 1);
+		setStates({
+			...states,
+			[type]: newStates
+		});
+		setTimeout(() => {
+			if (selectedComponent && selectedComponent.property && selectedComponent.property.data) {
+				const updatedData = { ...selectedComponent.property.data };
+				Object.keys(states).forEach(key => {
+					if (states[key].length > 0) {
+						updatedData[key] = states[key];
+					}
+				});
+				const updatedComponent = { ...selectedComponent, 
+				updatedAt: new Date(),  
+				property: { ...selectedComponent.property, data: updatedData } };
+				setSelectedComponent(updatedComponent);
+			}
+		}, 200); 
+	};
 
   return (
     <div className="component-properties">
@@ -118,128 +147,14 @@ function ComponentProperties({ isPropertiesOpen, setIsPropertiesOpen, selectedCo
         </button>
       </div>
       <div className="component-properties-content">
-
-      <MiniHeader
-			  title="Background"
-			  states={states.background}
-			  onAddState={() => handleAddState('background')}
-			  onDeleteState={(index) => handleDeleteState('background', index)}
-			  onChangeState={(index, property, value) => handleChangeState('background', index, property, value)}
-			  renderChildren={(index, state) => (
-			    <BackgroundProperties
-			      key={state.state}
-			      background={state}
-			      handlePropertyChange={(property, value) => handleChangeState('background', index, property, value)}
-			    />
-			  )}
-			/>
-
-
-      <MiniHeader
-			  title="Margin"
-			  states={states.margin}
-			  onAddState={() => handleAddState('margin')}
-			  onDeleteState={(index) => handleDeleteState('margin', index)}
-			  onChangeState={(index, property, value) => handleChangeState('margin', index, property, value)}
-			  renderChildren={(index, state) => (
-			    <MarginProperties
-			      key={state.state}
-			      margin={state}
-			      handlePropertyChange={(property, value) => handleChangeState('margin', index, property, value)}
-			    />
-			  )}
-			/>
-
-
-      <MiniHeader
-			  title="Rounded Corners"
-			  states={states.corner}
-			  onAddState={() => handleAddState('corner')}
-			  onDeleteState={(index) => handleDeleteState('corner', index)}
-			  onChangeState={(index, property, value) => handleChangeState('corner', index, property, value)}
-			  renderChildren={(index, state) => (
-			    <RoundedCornerProperties
-			      key={state.state}
-			      corner={state}
-			      handlePropertyChange={(property, value) => handleChangeState('corner', index, property, value)}
-			    />
-			  )}
-			/>
-
-      <MiniHeader
-	      title="Image"
-	      states={states.image}
-	      onAddState={() => handleAddState('image')}
-	      onDeleteState={(index) => handleDeleteState('image', index)}
-	      onChangeState={(index, property, value) => handleChangeState('image', index, property, value)}
-	      renderChildren={(index, state) => (
-	        <ImageProperties
-	          key={state.state}
-	          image={state}
-	          handleImagePropertyChange={(property, value) => handleChangeState('image', index, property, value)}
-	        />
-	      )}
-	    />
-
-			<MiniHeader
-			  title="Frame"
-			  states={states.frame}
-			  onAddState={() => handleAddState('frame')}
-			  onDeleteState={(index) => handleDeleteState('frame', index)}
-			  onChangeState={(index, property, value) => handleChangeState('frame', index, property, value)}
-			  renderChildren={(index, state) => (
-			    <FrameProperties
-			    	key={state.state}
-			      frame={state}
-			      handlePropertyChange={(property, value) => handleChangeState('frame', index, property, value)}
-			    />
-			  )}
-			/>
-
-      <MiniHeader
-			  title="Alignment"
-			  states={states.alignment}
-			  onAddState={() => handleAddState('alignment')}
-			  onDeleteState={(index) => handleDeleteState('alignment', index)}
-			  onChangeState={(index, property, value) => handleChangeState('alignment', index, property, value)}
-			  renderChildren={(index, state) => (
-			    <AlignmentProperties
-			    	key={state.state}
-			      alignment={state}
-			      handleAlignmentChange={(property, value) => handleChangeState('alignment', index, property, value)}
-			    />
-			  )}
-			/>
-
-        <MiniHeader
-          title="Font"
-          states={states.font}
-          onAddState={() => handleAddState('font')}
-          onDeleteState={(index) => handleDeleteState('font', index)}
-          onChangeState={(index, property, value) => handleChangeState('font', index, property, value)}
-          renderChildren={(index, state) => (
-            <FontProperties
-            	key={state.state}
-              font={state}
-              handlePropertyChange={(property, value) => handleChangeState('font', index, property, value)}
-            />
-          )}
-        />
-
-        <MiniHeader
-          title="Stroke"
-          states={states.stroke}
-          onAddState={() => handleAddState('stroke')}
-          onDeleteState={(index) => handleDeleteState('stroke', index)}
-          onChangeState={(index, property, value) => handleChangeState('stroke', index, property, value)}
-          renderChildren={(index, state) => (
-				  <StrokeProperties 
-				    key={state.state}
-				    stroke={state}
-				    handlePropertyChange={(property, value) => handleChangeState('stroke', index, property, value)}
-				  />
-				)}
-        />
+        <MiniHeaderWithProperties title="Background" states={states.background} propertyComponent={BackgroundProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Margin" states={states.margin} propertyComponent={MarginProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Corner" states={states.corner} propertyComponent={RoundedCornerProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Image" states={states.image} propertyComponent={ImageProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Frame" states={states.frame} propertyComponent={FrameProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Alignment" states={states.alignment} propertyComponent={AlignmentProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Font" states={states.font} propertyComponent={FontProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Stroke" states={states.stroke} propertyComponent={StrokeProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
       </div>
     </div>
   );

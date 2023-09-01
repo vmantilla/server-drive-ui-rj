@@ -1,9 +1,9 @@
 import React from 'react';
 import '../../../css/Builder/Component/MiniHeader.css';
 
-function MiniHeader({ title, states, onAddState, onDeleteState, onChangeState, renderChildren }) {
+function MiniHeader({ possibleStates, title, states, onAddState, onDeleteState, onChangeState, renderChildren }) {
   const getAvailableStates = (currentState) => {
-    return ["enabled", "disabled", "hover"].filter(
+    return possibleStates.filter(
       state => !states.some(s => s.state === state) || state === currentState
     );
   };
@@ -18,7 +18,7 @@ function MiniHeader({ title, states, onAddState, onDeleteState, onChangeState, r
       {Array.isArray(states) ? states.map((state, index) => (
           <div className="property-block" key={index}>
             <div className="property-mini-header">
-              <select className="mini-header-dropdown" value={state.state} onChange={(e) => onChangeState(index, 'state', e.target.value)}>
+              <select className="mini-header-dropdown" value={state.state} onChange={(e) => onChangeState(index, 'platform', e.target.value)}>
                 {getAvailableStates(state.state).map((optionState, optionIndex) => (
                   <option key={optionIndex} value={optionState}>{optionState}</option>
                 ))}

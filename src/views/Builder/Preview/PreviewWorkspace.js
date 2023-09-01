@@ -26,6 +26,7 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
       .then((previews) => {
         setPreviews(previews);
         setSelectedScreen(null);
+        setSelectedComponent(null);
         forceReflow();
       })
       .catch((error) => {
@@ -160,6 +161,7 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
   const handleWorkspaceClick = (e) => {
     if (e.target === e.currentTarget) {
       setSelectedScreen(null);
+      setSelectedComponent(null);
     }
   };
 

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import '../../../../css/Builder/Component/Properties/FontProperties.css';
 
-function FontProperties({ font, handlePropertyChange }) {
+function FontProperties({ property, handlePropertyChange }) {
 
-  const [isItalic, setIsItalic] = useState(font ? font.italic || false : false);
-  const [isStrikethrough, setIsStrikethrough] = useState(font ? font.strikethrough || false : false);
-  const [isUnderline, setIsUnderline] = useState(font ? font.underline || false : false);
+  const [isItalic, setIsItalic] = useState(property ? property.italic || false : false);
+  const [isStrikethrough, setIsStrikethrough] = useState(property ? property.strikethrough || false : false);
+  const [isUnderline, setIsUnderline] = useState(property ? property.underline || false : false);
 
-  const [colorInput, setColorInput] = useState(font.color || "#000000");
-  const [opacityInput, setOpacityInput] = useState(font.opacity || "1");
-  const [sizeInput, setSizeInput] = useState(font.size || "16");
+  const [colorInput, setColorInput] = useState(property.color || "#000000");
+  const [opacityInput, setOpacityInput] = useState(property.opacity || "1");
+  const [sizeInput, setSizeInput] = useState(property.size || "16");
 
   useEffect(() => {
     handlePropertyChange('color', colorInput);
@@ -64,7 +64,7 @@ function FontProperties({ font, handlePropertyChange }) {
             <div className="font-property">
               <label>Name:</label>
               <div className="input-wrapper">
-                <select value={font.name || "Arial"} onChange={(e) => handlePropertyChange('name', e.target.value)}>
+                <select value={property.name || "Arial"} onChange={(e) => handlePropertyChange('name', e.target.value)}>
                   {fontNames.map((name) => <option key={name} value={name}>{name}</option>)}
                 </select>
               </div>
@@ -72,7 +72,7 @@ function FontProperties({ font, handlePropertyChange }) {
             <div className="font-property">
               <label>Weight:</label>
               <div className="input-wrapper">
-                <select value={font.weight || "normal"} onChange={(e) => handlePropertyChange('weight', e.target.value)}>
+                <select value={property.weight || "normal"} onChange={(e) => handlePropertyChange('weight', e.target.value)}>
                   {fontWeights.map((weight) => <option key={weight} value={weight.toLowerCase()}>{weight}</option>)}
                 </select>
               </div>
@@ -93,7 +93,7 @@ function FontProperties({ font, handlePropertyChange }) {
               <div className="input-wrapper">
                 <input
                   type="number"
-                  value={font.lineHeight || "1.5"}
+                  value={property.lineHeight || "1.5"}
                   onChange={(e) => handlePropertyChange('lineHeight', e.target.value)}
                   pattern="\d+(\.\d+)?"
                 />
@@ -104,7 +104,7 @@ function FontProperties({ font, handlePropertyChange }) {
               <div className="input-wrapper">
                 <input
                   type="number"
-                  value={font.letterSpacing || "1"}
+                  value={property.letterSpacing || "1"}
                   onChange={(e) => handlePropertyChange('letterSpacing', e.target.value)}
                   pattern="\d+(\.\d+)?"
                 />

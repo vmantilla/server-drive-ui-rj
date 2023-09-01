@@ -20,12 +20,6 @@ function Builder({showNotification}) {
   const [workspaceHeight, setWorkspaceHeight] = useState('50%');
   const [selectedComponent, setSelectedComponent] = useState(null);
 
-  const handleWorkspaceClick = (e) => {
-    if (e.target === e.currentTarget) {
-      setSelectedScreen(null);
-    }
-  };
-
   const handleDrag = (e) => {
     e.preventDefault();
     const newHeight = Math.min(Math.max(e.clientY, 0), window.innerHeight);
@@ -77,7 +71,7 @@ function Builder({showNotification}) {
             />
           )}
         </aside>
-        <section className="builder-workspace" onClick={handleWorkspaceClick}>
+        <section className="builder-workspace">
           <PreviewWorkspace
             workspaceId={selectedWorkspace?.id}
             setSelectedScreen={setSelectedScreen}
@@ -93,7 +87,11 @@ function Builder({showNotification}) {
           />
         </section>
         <aside className={`builder-properties ${isPropertiesOpen ? 'open' : ''}`}>
-          <ComponentProperties isPropertiesOpen={isPropertiesOpen} setIsPropertiesOpen={setIsPropertiesOpen} selectedComponent={selectedComponent} setSelectedComponent={setSelectedComponent} />
+          <ComponentProperties 
+            showNotification={showNotification}
+            setIsPropertiesOpen={setIsPropertiesOpen} 
+            selectedComponent={selectedComponent} 
+            setSelectedComponent={setSelectedComponent} />
         </aside>
       </main>
     </div>

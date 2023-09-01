@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../../../../css/Builder/Component/Properties/BackgroundProperties.css';
 
-function BackgroundProperties({ background, handlePropertyChange }) {
+function BackgroundProperties({ property, handlePropertyChange }) {
 
-  const [colorInput, setColorInput] = useState(background.color || "#FFFFFF");
-  const [opacityInput, setOpacityInput] = useState(background.opacity || "1");
+  const [colorInput, setColorInput] = useState(property.color || "#FFFFFF");
+  const [opacityInput, setOpacityInput] = useState(property.opacity || "1");
 
   useEffect(() => {
     if (isValidHexColor(colorInput)) {

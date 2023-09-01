@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import '../../../../css/Builder/Component/Properties/MarginProperties.css';
 
-function MarginProperties({ margin, handlePropertyChange }) {
+function MarginProperties({ property, handlePropertyChange }) {
   const [marginValues, setMarginValues] = useState({
-    'top': margin['top'] || 0,
-    'right': margin['right'] || 0,
-    'bottom': margin['bottom'] || 0,
-    'left': margin['left'] || 0
+    'top': property['top'] || 0,
+    'right': property['right'] || 0,
+    'bottom': property['bottom'] || 0,
+    'left': property['left'] || 0
   });
 
   const handleInputChange = (e, marginName) => {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import '../../../../css/Builder/Component/Properties/AlignmentProperties.css';
 
-function AlignmentProperties({ alignment, handleAlignmentChange }) {
+function AlignmentProperties({ property, handlePropertyChange }) {
 
-  const [selectedAlignment, setSelectedAlignment] = useState(alignment.alignment || 'center');
+  const [selectedAlignment, setSelectedAlignment] = useState(property.alignment || 'center');
 
   const alignmentOptions = [
     'top-start', 'top-center', 'top-end',
@@ -12,12 +12,12 @@ function AlignmentProperties({ alignment, handleAlignmentChange }) {
   ];
 
   useEffect(() => {
-    handleAlignmentChange('alignment', selectedAlignment);
+    handlePropertyChange('alignment', selectedAlignment);
   }, [selectedAlignment]);
 
   const handleSelectAlignment = (align) => {
     setSelectedAlignment(align);
-    handleAlignmentChange('alignment', align);
+    handlePropertyChange('alignment', align);
   };
 
   return (

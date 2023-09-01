@@ -7,16 +7,16 @@ import '../../../../css/Builder/Component/Properties/ImageProperties.css';
 
 const contentModes = ['fill', 'contain', 'cover', 'none', 'scale-down'];
 
-function ImageProperties({ image, handleImagePropertyChange }) {
-  const [selectedContentMode, setSelectedContentMode] = useState(image.contentMode || 'fill');
-  const [imageUrl, setImageUrl] = useState(image.url || '');
+function ImageProperties({ property, handlePropertyChange }) {
+  const [selectedContentMode, setSelectedContentMode] = useState(property.contentMode || 'fill');
+  const [imageUrl, setImageUrl] = useState(property.url || '');
   const [uploadedImages, setUploadedImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    handleImagePropertyChange('contentMode', selectedContentMode);
-    handleImagePropertyChange('url', imageUrl);
+    handlePropertyChange('contentMode', selectedContentMode);
+    handlePropertyChange('url', imageUrl);
   }, [selectedContentMode, imageUrl]);
 
   const handleFileChange = (e) => {
