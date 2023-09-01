@@ -1,34 +1,61 @@
+const TTL = 20000; // 60 seconds to load from api.
+
 class ComponentManager {
-  constructor(previewId, initialData = []) {
+  constructor(previewId) {
     this.previewId = previewId;
-    this.components = initialData;
   }
 
   static getDBKey(previewId) {
     return `components_${previewId}`;
   }
 
-  deleteComponent(idToDelete) {
-    this.components = this.deleteComponentRecursive(idToDelete, this.components);
-    this.saveToDB();
+  static getLastUpdatedKey(previewId) {
+    return `lastUpdated_${previewId}`;
   }
 
-  deleteComponentRecursive(idToDelete, currentComponents) {
-    return currentComponents.filter(comp => comp.id !== idToDelete).map(component => {
-      const newComponent = { ...component };
-      if (newComponent.children && newComponent.children.length > 0) {
-        newComponent.children = this.deleteComponentRecursive(idToDelete, newComponent.children);
+  static getLastApiUpdatedKey(previewId) {
+  	return `lastComponentApiUpdated`;
+  }
+
+  get components() {
+  	return JSON.parse(localStorage.getItem(ComponentManager.getDBKey(this.previewId))) || [];
+  }
+
+  set components(data) {
+  	localStorage.setItem(ComponentManager.getDBKey(this.previewId), JSON.stringify(data));
+  }
+
+  isUpdateRequired() {
+  	const now = Date.now();
+    const lastUpdatedKey = ComponentManager.getLastUpdatedKey(this.previewId);
+    const lastUpdated = parseInt(localStorage.getItem(lastUpdatedKey)) || null;
+    return (!lastUpdated || (now - lastUpdated > TTL))
+  }
+
+  saveLastUpdatedTime() {
+  	const lastUpdatedKey = ComponentManager.getLastUpdatedKey(this.previewId);
+    localStorage.setItem(lastUpdatedKey, Date.now().toString());
+  }
+
+
+  #findComponentByIdRecursive(id) {
+    for (let component of this.components) {
+      if (component.id === id) {
+        return component;
+      } else if (component.children && component.children.length > 0) {
+        const result = this.#findComponentByIdRecursive(id, component.children);
+        if (result) return result;
       }
-      return newComponent;
-    });
+    }
+    return null;
   }
-
+  
   addComponentChild(parentId, child) {
-    this.components = this.addComponentChildRecursive(parentId, this.components, child);
+    this.components = this.#addComponentChildRecursive(parentId, this.components, child);
     this.saveToDB();
   }
 
-  addComponentChildRecursive(parentId, currentComponents, child) {
+  #addComponentChildRecursive(parentId, currentComponents, child) {
     return currentComponents.map(component => {
       if (component.id === parentId) {
         return {
@@ -39,7 +66,7 @@ class ComponentManager {
       } else if (component.children && component.children.length > 0) {
         return {
           ...component,
-          children: this.addComponentChildRecursive(parentId, component.children, child)
+          children: this.#addComponentChildRecursive(parentId, component.children, child)
         };
       }
       return component;
@@ -47,16 +74,16 @@ class ComponentManager {
   }
 
   removeComponent(componentId) {
-    this.components = this.removeComponent(componentId, this.components);
+    this.components = this.#removeComponentRecursive(componentId, this.components);
     this.saveToDB();
   }
 
-  removeComponent(componentId, currentComponents) {
+  #removeComponentRecursive(componentId, currentComponents) {
     return currentComponents.reduce((acc, component) => {
       const newComponent = { ...component };
       if (newComponent.id !== componentId) {
         if (newComponent.children && newComponent.children.length) {
-          newComponent.children = this.removeComponent(componentId, newComponent.children);
+          newComponent.children = this.#removeComponentRecursive(componentId, newComponent.children);
         }
         acc.push(newComponent);
       }
@@ -80,7 +107,7 @@ class ComponentManager {
       throw new Error('No se puede mover un componente dentro de sí mismo.');
     }
 
-    const componentToMove = this.findComponentById(componentId);
+    const componentToMove = this.#findComponentByIdRecursive(componentId);
     if (!componentToMove) {
       throw new Error(`No se encontró el componente con ID ${componentId}`);
     }
@@ -89,22 +116,11 @@ class ComponentManager {
       throw new Error('No se puede mover un componente dentro de sí mismo o dentro de un descendiente.');
     }
 
-    this.components = this.addComponentChildRecursive(parentId, this.removeComponent(componentId, this.components), componentToMove);
+    this.components = this.#addComponentChildRecursive(parentId, this.removeComponent(componentId, this.components), componentToMove);
     this.saveToDB();
   }
 
-  findComponentById(id) {
-    for (let component of this.components) {
-      if (component.id === id) {
-        return component;
-      } else if (component.children && component.children.length > 0) {
-        const result = this.findComponentById(id, component.children);
-        if (result) return result;
-      }
-    }
-    return null;
-  }
-
+  
   saveToDB() {
     const key = ComponentManager.getDBKey(this.previewId);
     localStorage.setItem(key, JSON.stringify(this.components));

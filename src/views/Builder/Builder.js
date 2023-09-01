@@ -62,12 +62,10 @@ function Builder({showNotification}) {
           ></div>
           {selectedScreen && (
             <PreviewComponents 
-              projectId={projectId}
-              selectedScreen={selectedScreen}
-              setIsPropertiesOpen={setIsPropertiesOpen} 
+              previewId={selectedScreen}
+              selectedComponent={selectedComponent} 
+              setSelectedComponent={setSelectedComponent}
               showNotification={showNotification}
-              setSelectedComponents={setSelectedComponents}
-              selectedComponent={selectedComponent} setSelectedComponent={setSelectedComponent}
             />
           )}
         </aside>
@@ -86,10 +84,9 @@ function Builder({showNotification}) {
             setSelectedComponent={setSelectedComponent}
           />
         </section>
-        <aside className={`builder-properties ${isPropertiesOpen ? 'open' : ''}`}>
+        <aside className={`builder-properties ${selectedComponent ? 'open' : ''}`}>
           <ComponentProperties 
             showNotification={showNotification}
-            setIsPropertiesOpen={setIsPropertiesOpen} 
             selectedComponent={selectedComponent} 
             setSelectedComponent={setSelectedComponent} />
         </aside>

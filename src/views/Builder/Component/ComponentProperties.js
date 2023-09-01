@@ -34,7 +34,7 @@ const MiniHeaderWithProperties = ({ title, states, propertyComponent: PropertyCo
   />
 );
 
-function ComponentProperties({ setIsPropertiesOpen, selectedComponent, setSelectedComponent, showNotification }) {
+function ComponentProperties({ selectedComponent, setSelectedComponent, showNotification }) {
 
 	const lastUpdatedAt = useRef(null);
 
@@ -61,12 +61,11 @@ function ComponentProperties({ setIsPropertiesOpen, selectedComponent, setSelect
 				setStates(newStates);
 			}
 		} else {
-			setIsPropertiesOpen(false);
+			setSelectedComponent(null);
 		}
 	}, [selectedComponent]);
 
 	const handleChangeState = debounce((type, index, property, value) => {
-		console.log("handleChangeState", type);
 		const newStates = [...states[type]];
 		newStates[index][property] = value;
 		setStates(prev => ({ ...prev, [type]: newStates }));
@@ -142,7 +141,7 @@ function ComponentProperties({ setIsPropertiesOpen, selectedComponent, setSelect
     <div className="component-properties">
       <div className="component-properties-header">
         <h2 className="component-properties-title">Propiedades</h2>
-        <button className="component-properties-close" onClick={() => setIsPropertiesOpen(false)}>
+        <button className="component-properties-close" onClick={() => setSelectedComponent(null)}>
           <i className="bi bi-x"></i>
         </button>
       </div>

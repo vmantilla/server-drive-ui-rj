@@ -171,7 +171,6 @@ const removeComponentsUnpermittedParams = (component) => {
 export const getComponentsFromAPI = async (previewId) => {
   try {
     const response = await axios.get(`/previews/${previewId}/components`);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error al obtener componentes:', error);

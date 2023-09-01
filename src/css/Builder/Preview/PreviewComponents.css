@@ -45,7 +45,6 @@
 
 .component-item.selected {
     background-color: #f2f2f2;
-    border: 1px solid #eee;
 }
 
 .component-item:hover {
@@ -83,14 +82,16 @@
 
 .ready-for-drop {
     border-color: #007bff;
-    background-color: #e0e0e0;
-}
-
-.ready-for-drop:hover {
-    background-color: #d1d1d1;
+    color: #fff;
+    background-color: #292929;
 }
 
 .disabled-drop {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.disabled-drop .component-item{
     opacity: 0.5;
     pointer-events: none;
 }
