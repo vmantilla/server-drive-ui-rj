@@ -38,17 +38,18 @@ class ComponentManager {
   }
 
 
-  #findComponentByIdRecursive(id) {
-    for (let component of this.components) {
-      if (component.id === id) {
-        return component;
-      } else if (component.children && component.children.length > 0) {
-        const result = this.#findComponentByIdRecursive(id, component.children);
-        if (result) return result;
-      }
-    }
-    return null;
-  }
+  #findComponentByIdRecursive(id, currentComponents = this.components) {
+	  for (let component of currentComponents) {
+	    if (component.id === id) {
+	      return component;
+	    } else if (component.children && component.children.length > 0) {
+	      const result = this.#findComponentByIdRecursive(id, component.children);
+	      if (result) return result;
+	    }
+	  }
+	  return null;
+	}
+
   
   addComponentChild(parentId, child) {
     this.components = this.#addComponentChildRecursive(parentId, this.components, child);
@@ -76,6 +77,7 @@ class ComponentManager {
   removeComponent(componentId) {
     this.components = this.#removeComponentRecursive(componentId, this.components);
     this.saveToDB();
+    return this.components
   }
 
   #removeComponentRecursive(componentId, currentComponents) {
@@ -107,7 +109,7 @@ class ComponentManager {
       throw new Error('No se puede mover un componente dentro de sí mismo.');
     }
 
-    const componentToMove = this.#findComponentByIdRecursive(componentId);
+    const componentToMove = this.#findComponentByIdRecursive(componentId, this.components);
     if (!componentToMove) {
       throw new Error(`No se encontró el componente con ID ${componentId}`);
     }

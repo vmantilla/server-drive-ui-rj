@@ -8,7 +8,7 @@ import { debounce } from 'lodash';
 import ComponentManager from '../ComponentManager';
 import { getComponentsFromAPI, addComponentToAPI, editComponentToAPI, deleteComponentToAPI } from '../../api';
 
-function PreviewComponents({ previewId, selectedComponent, setSelectedComponent, showNotification }) {
+function PreviewComponents({ previewId, selectedComponent, setSelectedComponent, showNotification, componentToAdd }) {
   const [components, setComponents] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [componentToDelete, setComponentToDelete] = useState(null);
@@ -26,6 +26,11 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
       componentManager.components = components;
     }
   }, [components]);
+
+  useEffect(() => {
+    console.log("componentToAdd", componentToAdd);
+    setDraggingComponent(componentToAdd);
+  }, [componentToAdd]);
 
 
   const loadComponents = async () => {
@@ -85,25 +90,59 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
 
   const handleDragStart = (event, component) => {
       if (['Header', 'Body', 'Footer'].includes(component.component_type)) {
-        console.log("handleDragStart", component.component_type);
         return;
       }
-      event.dataTransfer.setData('text/plain', component.type);
-      event.dataTransfer.setData('source', "tree");
       event.stopPropagation();
-      console.log("setDraggingComponent", component)
       setDraggingComponent(component);
     };
 
   const handleDragEnd = () => {
-      setDraggingComponent(null);
-    };
+    setDraggingComponent(null);
+  };
 
   const handleDragEnterLeaveOrOver = (event, componentId) => {
+    event.preventDefault();
     setDraggingComponentOver(componentId);
   };
 
-  const handleDrop = async (event, parentId) => { };
+  const handleDrop = async (event, parentId) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    draggingComponent["loading"] = true;
+    draggingComponent["parent_id"] = parentId;
+
+    if (draggingComponent.isNew) {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        const savedComponent = await addComponentToAPI(previewId, draggingComponent);
+
+        savedComponent.isNew = false;
+
+        componentManager.removeComponent(draggingComponent.id);
+        componentManager.addComponentChild(parentId, savedComponent);
+        setComponents(componentManager.components);
+
+        showNotification('success', 'Componente agregado exitosamente.');
+      } catch (error) {
+        console.error('Error al agregar el componente:', error);
+        showNotification('error', 'Error al agregar el componente.');
+        componentManager.removeComponent(draggingComponent.id);
+        setComponents(componentManager.components);
+      }
+    } else {
+      try {
+        await editComponentToAPI(draggingComponent.id, { parent_id: parentId });
+        componentManager.moveComponent(draggingComponent.id, parentId);
+        setComponents(componentManager.components);
+        showNotification('success', 'Componente movido exitosamente.');
+      } catch (error) {
+        console.error('Error al mover el componente:', error);
+        showNotification('error', 'Error al mover el componente.');
+      }
+    }
+  };
+
 
 //   const handleDragEnterLeaveOrOver = (event, componentId, isOver = false) => {
 //   event.preventDefault();
@@ -175,20 +214,20 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
 //   }
 // };
 
-// const handleTreeDrop = async (parentId) => {
-//   if (!draggingComponent) return;
+const handleTreeDrop = async (parentId) => {
+  if (!draggingComponent) return;
 
-//   try {
-//     componentManager.moveComponent(draggingComponent.id, parentId);
-//     setComponents(componentManager.components);
+  try {
+    componentManager.moveComponent(draggingComponent.id, parentId);
+    setComponents(componentManager.components);
 
-//     await editComponentToAPI(draggingComponent.id, { parent_id: parentId });
-//     showNotification('success', 'Componente movido exitosamente.');
-//   } catch (error) {
-//     console.error('Error al mover el componente:', error);
-//     showNotification('error', 'Error al mover el componente.');
-//   }
-// };
+    await editComponentToAPI(draggingComponent.id, { parent_id: parentId });
+    showNotification('success', 'Componente movido exitosamente.');
+  } catch (error) {
+    console.error('Error al mover el componente:', error);
+    showNotification('error', 'Error al mover el componente.');
+  }
+};
 
 // const handleDrop = async (event, parentId) => {
 //   event.preventDefault();
@@ -226,7 +265,6 @@ const getCustomizations = (component_type) => {
  const computeClassNames = (comp, draggingComponent, selectedComponent, draggingComponentOver) => {
     let classes = "component-item ";
 
-    // Logic for drag-and-drop states
     if (draggingComponent) {
       if (comp.id === draggingComponent.id) {
         classes += "disabled-drop ";
@@ -236,7 +274,7 @@ const getCustomizations = (component_type) => {
     }
 
     // Logic for ready-for-drop state
-    if (draggingComponentOver && comp.id === draggingComponentOver) {
+    if (draggingComponent && draggingComponentOver && comp.id === draggingComponentOver && draggingComponent != comp.id) {
       classes += "ready-for-drop ";
     } else {
       // Logic for selected state (applied only if there's no draggingComponentOver)
@@ -248,7 +286,7 @@ const getCustomizations = (component_type) => {
     return classes;
   };
 
-  const renderComponentList = (compArray, parentId = null) => 
+const renderComponentList = (compArray, parentId = null) => 
   compArray.map(comp => {
     if (!comp || !comp.property) {
       console.error('Invalid component:', comp);
@@ -258,16 +296,23 @@ const getCustomizations = (component_type) => {
     const { id, component_type, property } = comp;
     const { class: customClass, label: customLabel, enableDrag } = getCustomizations(component_type);
 
-    const CommonContent = (
-      <>
-        <div
-          draggable={id !== parentId && enableDrag}
-          onDragStart={(e) => handleDragStart(e, comp)}
-          onDragEnd={handleDragEnd}
-          onDragOver={(e) => handleDragEnterLeaveOrOver(e, id)}
-          onDrop={(e) => handleDrop(e, id)}
+    return (
+      <div key={comp.id} className={customClass} 
+        draggable={comp.id !== parentId && enableDrag}
+        onDragStart={(e) => handleDragStart(e, comp)}
+        onDragEnd={handleDragEnd}
+        onDrop={(e) => handleDrop(e, comp.id)}
+        >
+        
+        {customLabel && (
+          <div className="custom-label">{customLabel}</div>
+        )}
+        <div 
+          onDragOver={(e) => handleDragEnterLeaveOrOver(e, comp.id)}
+          onDrop={(e) => handleDrop(e, comp.id)}
+
           onDragLeave={(e) => handleDragEnterLeaveOrOver(e, null)}
-          className={`${computeClassNames(comp, draggingComponent, selectedComponent, draggingComponentOver)}`}
+          className={`component-item ${computeClassNames(comp, draggingComponent, selectedComponent, draggingComponentOver)}`}
           onClick={() => {
             setSelectedComponent(comp);
           }}
@@ -294,25 +339,13 @@ const getCustomizations = (component_type) => {
             </div>
           )}
         </div>
+
         {comp.expanded && comp.children && comp.children.length > 0 && 
           <div className="component-children">
-            {renderComponentList(comp.children, id)}
+            {renderComponentList(comp.children, comp.id)}
           </div>
         }
-      </>
-    );
-
-    return (
-      <>
-        {customLabel ? (
-          <div key={id} className={customClass}>
-            <div className="custom-label">{customLabel}</div>
-            {CommonContent}
-          </div>
-        ) : (
-          CommonContent
-        )}
-      </>
+      </div>
     );
   });
 

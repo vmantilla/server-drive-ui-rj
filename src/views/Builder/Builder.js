@@ -19,6 +19,7 @@ function Builder({showNotification}) {
   const [onDelete, setOnDelete] = useState(null);
   const [workspaceHeight, setWorkspaceHeight] = useState('50%');
   const [selectedComponent, setSelectedComponent] = useState(null);
+  const [componentToAdd, setComponentToAdd] = useState(null);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -41,6 +42,7 @@ function Builder({showNotification}) {
         addNewPreview={addNewPreview}
         updatePreview={updatePreview}
         onDelete={onDelete}
+        setComponentToAdd={setComponentToAdd}
       />
       <main className="builder-main">
         <aside className={`builder-components ${isComponentsOpen ? 'open' : 'closed'}`}>
@@ -66,6 +68,7 @@ function Builder({showNotification}) {
               selectedComponent={selectedComponent} 
               setSelectedComponent={setSelectedComponent}
               showNotification={showNotification}
+              componentToAdd={componentToAdd}
             />
           )}
         </aside>

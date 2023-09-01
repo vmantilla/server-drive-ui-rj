@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../../css/Builder/BuilderHeader.css';
 
-const FloatingMenu = ({ visible, options, onClose, position, handleDragStart }) => {
+const FloatingMenu = ({ visible, options, onClose, position, handleDragStart, handleDragEnd }) => {
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const FloatingMenu = ({ visible, options, onClose, position, handleDragStart }) 
   if (!visible) return null;
 
   const buttonElements = options.map((option, index) => (
-    <button draggable="true" onDragStart={(e) => handleDragStart(e, "ContainerView", option.type)} className="floating-icon-button" key={index} onClick={option.onClick}>
+    <button draggable="true" onDragEnd={handleDragEnd} onDragStart={(e) => handleDragStart(e, "ContainerView", option.type)} className="floating-icon-button" key={index} onClick={option.onClick}>
       <i className={option.iconClass}></i>
       {option.type}
     </button>
@@ -43,7 +43,7 @@ const FloatingMenu = ({ visible, options, onClose, position, handleDragStart }) 
   );
 };
 
-function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, addNewPreview, updatePreview, onDelete }) {
+function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, addNewPreview, updatePreview, onDelete, setComponentToAdd }) {
 
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
@@ -98,9 +98,6 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
 
   
   const handleDragStart = (e, componentType, componentTypeName) => {
-    e.dataTransfer.setData('text/plain', componentType);
-    e.dataTransfer.setData('source', "header");
-
     const uniqueId = Date.now().toString() + Math.random().toString().substr(2, 5);
     const propertiesUniqueId = Date.now().toString() + Math.random().toString().substr(2, 5);
 
@@ -109,14 +106,19 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
       component_type: componentType,
       children: [],
       expanded: false,
+      isNew: true,
       property: {
         data: {
           component_type: componentTypeName
         }
       },
     };
-    e.dataTransfer.setData('component', JSON.stringify(newComponent));
+    setComponentToAdd(newComponent);
   };
+
+  const handleDragEnd = () => {
+      setComponentToAdd(null);
+    };
 
   const handleClose = () => {
     setMenuVisible(false);
@@ -146,7 +148,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
           </>
         )}
       </div>
-      <FloatingMenu visible={menuVisible} onClose={handleClose} position={menuPosition} options={menuOptions} handleDragStart={handleDragStart} />
+      <FloatingMenu visible={menuVisible} onClose={handleClose} position={menuPosition} options={menuOptions} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />
 
       <div className="right-container">
       { selectedScreen !== null && (
