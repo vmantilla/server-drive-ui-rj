@@ -151,7 +151,7 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
         setComponentLoading(null);
         setDraggingComponent(null);
         console.error('Error al mover el componente:', error);
-        showNotification('error', 'Error al mover el componente.');
+        showNotification('error', error.message);
       }
     }
   };
