@@ -14,6 +14,7 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
   const [componentToDelete, setComponentToDelete] = useState(null);
   const [draggingComponent, setDraggingComponent] = useState(null);
   const [draggingComponentOver, setDraggingComponentOver] = useState(null);
+  const [componentLoading, setComponentLoading] = useState(null);
   
   let componentManager = new ComponentManager(previewId);
 
@@ -56,18 +57,19 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
 
     setShowDeleteModal(false);
 
-    setComponentToDelete({ ...compToDelete, loading: true });
+    setComponentToDelete(compToDelete);
+    setComponentLoading(compToDelete.id);
     
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     try {
       await deleteComponentToAPI(componentToDelete.id);
       componentManager.removeComponent(componentToDelete.id);
       setComponents([...componentManager.components]);
       showNotification('success', 'Componentes eliminado exitosamente.');
-      setComponentToDelete({ ...compToDelete, loading: false });
+      setComponentLoading(null);
     } catch (error) {
-      setComponentToDelete({ ...compToDelete, loading: false });
+      setComponentLoading(null);
       console.error('Error al eliminar el componente:', error);
       showNotification('error', 'Error al eliminar el componente.');
     }
@@ -109,22 +111,27 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     event.preventDefault();
     event.stopPropagation();
 
-    draggingComponent["loading"] = true;
     draggingComponent["parent_id"] = parentId;
+    setComponentLoading(draggingComponent.id);
 
     if (draggingComponent.isNew) {
       try {
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        componentManager.addComponentChild(parentId, draggingComponent);
+        setComponents(componentManager.components);
+        
+        await new Promise(resolve => setTimeout(resolve, 500));
         const savedComponent = await addComponentToAPI(previewId, draggingComponent);
 
         savedComponent.isNew = false;
-
+        setComponentLoading(null);
+        setDraggingComponent(null);
         componentManager.removeComponent(draggingComponent.id);
         componentManager.addComponentChild(parentId, savedComponent);
         setComponents(componentManager.components);
-
         showNotification('success', 'Componente agregado exitosamente.');
       } catch (error) {
+        setComponentLoading(null);
+        setDraggingComponent(null);
         console.error('Error al agregar el componente:', error);
         showNotification('error', 'Error al agregar el componente.');
         componentManager.removeComponent(draggingComponent.id);
@@ -132,123 +139,22 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
       }
     } else {
       try {
-        await editComponentToAPI(draggingComponent.id, { parent_id: parentId });
         componentManager.moveComponent(draggingComponent.id, parentId);
         setComponents(componentManager.components);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await editComponentToAPI(draggingComponent.id, { parent_id: parentId });
+        setComponents(componentManager.components);
+        setComponentLoading(null);
+        setDraggingComponent(null);
         showNotification('success', 'Componente movido exitosamente.');
       } catch (error) {
+        setComponentLoading(null);
+        setDraggingComponent(null);
         console.error('Error al mover el componente:', error);
         showNotification('error', 'Error al mover el componente.');
       }
     }
   };
-
-
-//   const handleDragEnterLeaveOrOver = (event, componentId, isOver = false) => {
-//   event.preventDefault();
-//   event.stopPropagation();
-//   const source = event.dataTransfer.getData('source');
-//   const currentElement = event.currentTarget;
-
-//   if (source === 'header') {
-//     if (isOver) {
-//           currentElement.classList.remove('disabled-drop');
-//           currentElement.classList.add('ready-for-drop');
-//         } else {
-//           currentElement.classList.remove('ready-for-drop');
-//         }
-  
-//   } else if (source === 'tree') {
-//     if (draggingComponent.id !== componentId) {
-//       if (componentManager.isDescendant(draggingComponent, componentId)) {
-//         currentElement.classList.add('disabled-drop');
-//         currentElement.classList.remove('ready-for-drop');
-//       } else {
-//         if (isOver) {
-//           currentElement.classList.remove('disabled-drop');
-//           currentElement.classList.add('ready-for-drop');
-//         } else {
-//           currentElement.classList.remove('ready-for-drop');
-//         }
-//       }
-//     }
-//   }  
-// };
-
-
-// const handleDragEnd = () => {
-//   // Limpiar el estado del componente que se está arrastrando.
-//   setDraggingComponent(null);
-
-//   // Limpiar las clases de cualquier componente que se haya resaltado como destino de soltado.
-//   const dropTargets = document.querySelectorAll('.ready-for-drop');
-//   dropTargets.forEach(target => {
-//     target.classList.remove('ready-for-drop');
-//   });
-// };
-
-
-// const handleComponentDrop = async (event, parentId, newComponent) => {
-//   const tempId = Date.now();
-//   newComponent["id"] = tempId;
-//   newComponent["loading"] = true;
-//   newComponent["parent_id"] = parentId;
-
-//   componentManager.addComponentChild(parentId, newComponent);
-//   setComponents(componentManager.components);
-
-//   try {
-//     await new Promise(resolve => setTimeout(resolve, 500));
-//     const savedComponent = await addComponentToAPI(previewId, newComponent);
-
-//     componentManager.removeComponent(tempId);
-//     componentManager.addComponentChild(parentId, savedComponent);
-//     setComponents(componentManager.components);
-
-//     showNotification('success', 'Componente agregado exitosamente.');
-//   } catch (error) {
-//     console.error('Error al agregar el componente:', error);
-//     showNotification('error', 'Error al agregar el componente.');
-//     componentManager.removeComponent(tempId);
-//     setComponents(componentManager.components);
-//   }
-// };
-
-const handleTreeDrop = async (parentId) => {
-  if (!draggingComponent) return;
-
-  try {
-    componentManager.moveComponent(draggingComponent.id, parentId);
-    setComponents(componentManager.components);
-
-    await editComponentToAPI(draggingComponent.id, { parent_id: parentId });
-    showNotification('success', 'Componente movido exitosamente.');
-  } catch (error) {
-    console.error('Error al mover el componente:', error);
-    showNotification('error', 'Error al mover el componente.');
-  }
-};
-
-// const handleDrop = async (event, parentId) => {
-//   event.preventDefault();
-//   event.stopPropagation();
-
-//   const source = event.dataTransfer.getData('source');
-
-//   if (source === 'header') {
-//     const componentData = event.dataTransfer.getData('component');
-//     const newComponent = JSON.parse(componentData);
-//     await handleComponentDrop(event, parentId, newComponent);
-//   } else if (source === 'tree') {
-//     await handleTreeDrop(parentId);
-//   }
-
-//   if (event.currentTarget) {
-//     event.currentTarget.classList.remove('ready-for-drop');
-//   }
-
-//   setDraggingComponent(null);
-// };
 
 
 const getCustomizations = (component_type) => {
@@ -326,12 +232,12 @@ const renderComponentList = (compArray, parentId = null) =>
             </div>
             
           </div>
-            {componentToDelete && comp.id === componentToDelete.id && componentToDelete.loading && (
+            {componentLoading && comp.id === componentLoading && (
               <div className="component-actions">
                 <Spinner animation="border" size="sm" />
               </div>
             )}
-          {selectedComponent && comp.id === selectedComponent.id && !(componentToDelete && componentToDelete.id === comp.id && componentToDelete.loading) && !['Header', 'Body', 'Footer'].includes(comp.component_type) && (
+          {selectedComponent && comp.id === selectedComponent.id && !(componentToDelete && componentToDelete.id === comp.id && componentLoading != null) && !['Header', 'Body', 'Footer'].includes(comp.component_type) && (
             <div className="component-actions">
               <span className="icon-btn delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>
                 <i className="bi bi-trash"></i>
