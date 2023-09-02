@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../../../css/Builder/Preview/PreviewScreen.css';
 
-function PreviewThumbnail({ previewScreenId, initialTitle, onTitleChange, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange }) {
+function PreviewThumbnail({ previewId, initialTitle, onTitleChange, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange }) {
   const [screenType, setScreenType] = useState('mobile');
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
@@ -91,8 +91,8 @@ function PreviewThumbnail({ previewScreenId, initialTitle, onTitleChange, zoomLe
         </h4>
       )}
       <div className={`screen-content ${screenType} notSelected`} onClick={onClick} style={{ justifyContent: 'flex-start' }}>
-		  {localStorage.getItem(`${previewScreenId}-screenshot`) && (
-		    <img src={localStorage.getItem(`${previewScreenId}-screenshot`)} alt="Captured content" />
+		  {localStorage.getItem(`${previewId}-screenshot`) && (
+		    <img src={localStorage.getItem(`${previewId}-screenshot`)} alt="Captured content" />
 		  )}
 		</div>
     </div>

@@ -184,7 +184,7 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
           return (
             <PreviewScreen
                 key={preview.id}
-                previewScreenId={preview.id}
+                previewId={preview.id}
                 selectedScreen={selectedScreen}
                 initialTitle={preview.title}
                 onClick={() => setSelectedScreen(preview.id)}
@@ -202,7 +202,7 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
           return (
             <PreviewThumbnail
                 key={preview.id}
-                previewScreenId={preview.id}
+                previewId={preview.id}
                 selectedScreen={selectedScreen}
                 initialTitle={preview.title}
                 onClick={() => setSelectedScreen(preview.id)}

@@ -3,13 +3,16 @@ import { RavitBuilder } from 'ravit-builder';
 import html2canvas from 'html2canvas';
 
 import '../../../css/Builder/Preview/PreviewScreen.css';
+import ComponentManager from '../ComponentManager';
 
-function PreviewScreen({ previewScreenId, selectedScreen, initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, selectedComponents }) {
+function PreviewScreen({ previewId, selectedScreen, initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange }) {
   const [screenType, setScreenType] = useState('mobile');
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
   const draggingRef = useRef(false);
   const lastEventRef = useRef(null);
+
+  let componentManager = new ComponentManager(previewId);
   
   useEffect(() => {
     const globalMouseMove = (e) => {
@@ -96,7 +99,7 @@ function PreviewScreen({ previewScreenId, selectedScreen, initialTitle, onTitleC
 
         const imgData = canvas.toDataURL('image/png');
         if(isSelected) {
-          localStorage.setItem(`${previewScreenId}-screenshot`, imgData);
+          localStorage.setItem(`${previewId}-screenshot`, imgData);
         } else {
           console.log("previewScreenId es undefined o null");
         }
@@ -119,7 +122,7 @@ useEffect(() => {
   return () => {
     clearTimeout(timer);
   };
-}, [previewScreenId, selectedComponents, isSelected]); 
+}, [previewId, isSelected]); 
 
 
   return (
@@ -150,7 +153,7 @@ useEffect(() => {
         </h4>
       )}
       <div className={`screen-content ${screenType} ${isSelected ? 'selected' : ''}`} onClick={onClick}>
-        <RavitBuilder layoutJson={selectedComponents} />
+        <RavitBuilder layoutJson={componentManager.components} />
       </div>
     </div>
   );
