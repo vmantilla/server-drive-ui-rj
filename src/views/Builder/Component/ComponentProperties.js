@@ -11,7 +11,7 @@ import MarginProperties from './Properties/MarginProperties';
 import BackgroundProperties from './Properties/BackgroundProperties';
 import '../../../css/Builder/Component/ComponentProperties.css';
 
-const possibleStates = ["default", "iOS", "android"];
+const possibleStates = ["multiplataforma", "iOS", "android", "web"];
 
 const MiniHeaderWithProperties = ({ title, states, propertyComponent: PropertyComponent, handleChangeState, handleAddState, handleDeleteState }) => (
   <MiniHeader
