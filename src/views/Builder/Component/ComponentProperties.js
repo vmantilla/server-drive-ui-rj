@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import debounce from 'lodash/debounce';
 import MiniHeader from './MiniHeader';
 import FontProperties from './Properties/FontProperties';
 import StrokeProperties from './Properties/StrokeProperties';
@@ -8,13 +9,9 @@ import ImageProperties from './Properties/ImageProperties';
 import RoundedCornerProperties from './Properties/RoundedCornerProperties';
 import MarginProperties from './Properties/MarginProperties';
 import BackgroundProperties from './Properties/BackgroundProperties';
-import { deepEqual } from '../../Utils/deepEqual';
-import { debounce } from 'lodash';
 import '../../../css/Builder/Component/ComponentProperties.css';
 
-import { editComponentToAPI } from '../../api';
-
-const possibleStates = ["default","iOS", "android"];
+const possibleStates = ["default", "iOS", "android"];
 
 const MiniHeaderWithProperties = ({ title, states, propertyComponent: PropertyComponent, handleChangeState, handleAddState, handleDeleteState }) => (
   <MiniHeader
@@ -22,9 +19,9 @@ const MiniHeaderWithProperties = ({ title, states, propertyComponent: PropertyCo
     title={title}
     states={states}
     onAddState={() => handleAddState(title.toLowerCase())}
-		onDeleteState={(index) => handleDeleteState(title.toLowerCase(), index)}
-		onChangeState={(index, property, value) => handleChangeState(title.toLowerCase(), index, property, value)}
-		renderChildren={(index, state) => (
+    onDeleteState={(index) => handleDeleteState(title.toLowerCase(), index)}
+    onChangeState={(index, property, value) => handleChangeState(title.toLowerCase(), index, property, value)}
+    renderChildren={(index, state) => (
       <PropertyComponent
         key={state.state}
         property={state}
@@ -34,108 +31,80 @@ const MiniHeaderWithProperties = ({ title, states, propertyComponent: PropertyCo
   />
 );
 
-function ComponentProperties({ selectedComponent, setSelectedComponent, showNotification }) {
-
-	const lastUpdatedAt = useRef(null);
-
-	const [states, setStates] = useState({
-		alignment: [],
-		frame: [],
-		font: [],
-		stroke: [],
-		image: [],
-		corner: [],
-		margin: [],
-		background: []
+function ComponentProperties({ selectedComponent, setSelectedComponent, triggerUpdateProperties }) {
+  
+  const [viewStates, setViewStates] = useState({
+  	component_type: "",
+	  alignment: [],
+	  frame: [],
+	  font: [],
+	  stroke: [],
+	  image: [],
+	  corner: [],
+	  margin: [],
+	  background: []
 	});
 
-	useEffect(() => {
-		if (selectedComponent && selectedComponent.property && selectedComponent.property.data) {
-			if (lastUpdatedAt.current !== selectedComponent.updatedAt) {
-				lastUpdatedAt.current = selectedComponent.updatedAt;
+  useEffect(() => {
+	  setViewStates({
+	    component_type: "",
+	    alignment: [],
+	    frame: [],
+	    font: [],
+	    stroke: [],
+	    image: [],
+	    corner: [],
+	    margin: [],
+	    background: []
+	  });
 
-				const newStates = Object.keys(states).reduce((acc, key) => {
-					acc[key] = selectedComponent.property.data[key] || [];
-					return acc;
-				}, {});
-				setStates(newStates);
-			}
-		} else {
-			setSelectedComponent(null);
-		}
+	  const timerId = setTimeout(() => {
+	    if (selectedComponent?.property?.data) {
+	      const newStates = Object.keys(viewStates).reduce((acc, key) => {
+	        if (Array.isArray(viewStates[key])) {
+	          acc[key] = selectedComponent.property.data[key] || [];
+	        } else {
+	          acc[key] = selectedComponent.property.data[key] || "";
+	        }
+	        return acc;
+	      }, {});
+	      setViewStates(newStates);
+	    }
+	  }, 100);
+
+	  return () => {
+	    clearTimeout(timerId);
+	  };
 	}, [selectedComponent]);
 
-	const handleChangeState = debounce((type, index, property, value) => {
-		const newStates = [...states[type]];
-		newStates[index][property] = value;
-		setStates(prev => ({ ...prev, [type]: newStates }));
-
-		setTimeout(() => {
-			if (selectedComponent && selectedComponent.property && selectedComponent.property.data) {
-				const updatedData = { ...selectedComponent.property.data };
-				Object.keys(states).forEach(key => {
-					if (states[key].length > 0) {
-						updatedData[key] = states[key];
-					}
-				});
-				const updatedComponent = { ...selectedComponent, 
-				updatedAt: new Date(),  
-				property: { ...selectedComponent.property, data: updatedData } };
-				if (selectedComponent && selectedComponent.property) {
-			    try {
-			      editComponentToAPI(selectedComponent.id, { property: selectedComponent.property });
-			      setSelectedComponent(updatedComponent);
-			      showNotification('success', 'Propiedades del componente guardadas exitosamente.');
-			    } catch (error) {
-			      console.error('Error al guardar las propiedades del componente:', error);
-			      showNotification('error', 'Error al guardar las propiedades del componente.');
-			    }
-			  }
-				
-			}
-		}, 200); 
-	}, 600);
 
 
-	const getAvailableStates = (type) => {
-		if(states[type]) {
-			return possibleStates.filter(state => !states[type].some(s => s.state === state));
-		}
-		return possibleStates;
-	};
+  const handleChangeState = (type, index, property, value) => {
+	  const updatedStates = [...viewStates[type]];
+	  updatedStates[index][property] = value;
+	  const newStates = { ...viewStates, [type]: updatedStates };
+	  triggerUpdateProperties(selectedComponent, newStates);
+	}
 
 	const handleAddState = (type) => {
-		const availableStates = getAvailableStates(type);
-		if (availableStates.length > 0) {
-			setStates({
-				...states,
-				[type]: [...states[type], { state: availableStates[0] }]
-			});
-		}
+	  console.log("handleAddState");
+	  const availableStates = possibleStates.filter(state => !viewStates[type].some(s => s.state === state));
+	  if (availableStates.length > 0) {
+	    const newStates = { ...viewStates, [type]: [...viewStates[type], { state: availableStates[0] }] };
+	    triggerUpdateProperties(selectedComponent, newStates);
+	    setViewStates(newStates);
+	  }
 	};
 
 	const handleDeleteState = (type, index) => {
-		const newStates = states[type].slice();
-		newStates.splice(index, 1);
-		setStates({
-			...states,
-			[type]: newStates
-		});
-		setTimeout(() => {
-			if (selectedComponent && selectedComponent.property && selectedComponent.property.data) {
-				const updatedData = { ...selectedComponent.property.data };
-				Object.keys(states).forEach(key => {
-					if (states[key].length > 0) {
-						updatedData[key] = states[key];
-					}
-				});
-				const updatedComponent = { ...selectedComponent, 
-				updatedAt: new Date(),  
-				property: { ...selectedComponent.property, data: updatedData } };
-				setSelectedComponent(updatedComponent);
-			}
-		}, 200); 
+	  console.log("handleDeleteState");
+	  const updatedStates = [...viewStates[type]];
+	  updatedStates.splice(index, 1);
+	  const newStates = { ...viewStates, [type]: updatedStates };
+	  triggerUpdateProperties(selectedComponent, newStates);
+	  setViewStates(newStates);
 	};
+
 
   return (
     <div className="component-properties">
@@ -146,14 +115,14 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, showNoti
         </button>
       </div>
       <div className="component-properties-content">
-        <MiniHeaderWithProperties title="Background" states={states.background} propertyComponent={BackgroundProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Margin" states={states.margin} propertyComponent={MarginProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Corner" states={states.corner} propertyComponent={RoundedCornerProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Image" states={states.image} propertyComponent={ImageProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Frame" states={states.frame} propertyComponent={FrameProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Alignment" states={states.alignment} propertyComponent={AlignmentProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Font" states={states.font} propertyComponent={FontProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Stroke" states={states.stroke} propertyComponent={StrokeProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Background" states={viewStates.background} propertyComponent={BackgroundProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Margin" states={viewStates.margin} propertyComponent={MarginProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Corner" states={viewStates.corner} propertyComponent={RoundedCornerProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Image" states={viewStates.image} propertyComponent={ImageProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Frame" states={viewStates.frame} propertyComponent={FrameProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Alignment" states={viewStates.alignment} propertyComponent={AlignmentProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Font" states={viewStates.font} propertyComponent={FontProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+        <MiniHeaderWithProperties title="Stroke" states={viewStates.stroke} propertyComponent={StrokeProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
       </div>
     </div>
   );

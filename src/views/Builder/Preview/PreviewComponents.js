@@ -8,7 +8,7 @@ import { debounce } from 'lodash';
 import ComponentManager from '../ComponentManager';
 import { getComponentsFromAPI, addComponentToAPI, editComponentToAPI, deleteComponentToAPI } from '../../api';
 
-function PreviewComponents({ previewId, selectedComponent, setSelectedComponent, showNotification, componentToAdd }) {
+function PreviewComponents({ previewId, selectedComponent, setSelectedComponent, showNotification, componentToAdd, updateProperties }) {
   const [components, setComponents] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [componentToDelete, setComponentToDelete] = useState(null);
@@ -29,9 +29,15 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
   }, [components]);
 
   useEffect(() => {
-    console.log("componentToAdd", componentToAdd);
     setDraggingComponent(componentToAdd);
   }, [componentToAdd]);
+
+  useEffect(() => {
+    if (updateProperties !== null) {
+      componentManager.updateComponentProperties(updateProperties.component.id, updateProperties.newProperties);
+      setComponents([...componentManager.components]);
+    }
+  }, [updateProperties]);
 
 
   const loadComponents = async () => {
@@ -155,7 +161,6 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
       }
     }
   };
-
 
 const getCustomizations = (component_type) => {
   const customizations = {

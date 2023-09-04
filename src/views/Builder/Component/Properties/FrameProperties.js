@@ -51,7 +51,11 @@ const RangeControls = ({ rangeValue, setRangeValue, dimension, onDimensionChange
 const DimensionControl = ({ dimension, initialDimension, onDimensionChange }) => {
   const [selectedOption, setSelectedOption] = useState(initialDimension.option || 'auto');
   const [fixedValue, setFixedValue] = useState(initialDimension.value || '');
-  const [rangeValue, setRangeValue] = useState(initialDimension.rangeValue || { min: '', max: '' });
+  const [rangeValue, setRangeValue] = useState({ 
+    min: initialDimension.min || '', 
+    max: initialDimension.max || '' 
+  });
+
 
   const handleOptionChange = (option) => {
     setSelectedOption(option);

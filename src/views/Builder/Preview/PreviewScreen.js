@@ -5,7 +5,7 @@ import html2canvas from 'html2canvas';
 import '../../../css/Builder/Preview/PreviewScreen.css';
 import ComponentManager from '../ComponentManager';
 
-function PreviewScreen({ previewId, selectedScreen, initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange }) {
+function PreviewScreen({ previewId, selectedScreen, initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, setUpdateComponentProperties }) {
   const [screenType, setScreenType] = useState('mobile');
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);

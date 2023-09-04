@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import BuilderHeader from './BuilderHeader';
 import PreviewComponents from './Preview/PreviewComponents';
@@ -6,6 +6,8 @@ import BuilderWorkspaces from './BuilderWorkspaces';
 import PreviewWorkspace from './Preview/PreviewWorkspace';
 import ComponentProperties from './Component/ComponentProperties';
 import '../../css/Builder/Builder.css';
+import ComponentManager from './ComponentManager';
+import { batchUpdateComponentsToAPI } from '../api';
 
 function Builder({showNotification}) {
   const { projectId } = useParams();
@@ -20,6 +22,11 @@ function Builder({showNotification}) {
   const [workspaceHeight, setWorkspaceHeight] = useState('50%');
   const [selectedComponent, setSelectedComponent] = useState(null);
   const [componentToAdd, setComponentToAdd] = useState(null);
+  const [updateComponentProperties, setUpdateComponentProperties] = useState(null);
+
+  let componentManager = new ComponentManager(null);
+
+
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -32,6 +39,46 @@ function Builder({showNotification}) {
     void document.body.offsetHeight;
     document.body.style.display = '';
   };
+
+  const triggerUpdateComponentProperties = (selectedComponent, newProperties) => {
+    setUpdateComponentProperties({component: selectedComponent, newProperties: newProperties});
+  };
+
+  useEffect(() => {
+    if (updateComponentProperties !== null) {
+      setUpdateComponentProperties(null);
+    }
+  }, [updateComponentProperties]);
+
+  useEffect(() => {
+    componentManager.clearUpdateQueue();
+  }, []);
+
+  useEffect(() => {
+    const checkUpdatesAndSave = async () => { 
+      let componentsToUpdate = componentManager.getUpdateQueue()
+      if (componentsToUpdate.length > 0) {
+        try {
+          await batchUpdateComponentsToAPI(projectId, componentsToUpdate);
+          componentManager.clearUpdateQueue();
+          showNotification('success', 'Componentes actualizados exitosamente.');
+        } catch (error) {
+          console.error('Error al actualizar los componentes:', error);
+          showNotification('error', error.message);
+        }
+      }
+      setTimeout(checkUpdatesAndSave, 10000); 
+    };
+
+    const timerId = setTimeout(checkUpdatesAndSave, 10000);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, []);
+
+
+
 
   return (
     <div className="builder">
@@ -69,6 +116,7 @@ function Builder({showNotification}) {
               setSelectedComponent={setSelectedComponent}
               showNotification={showNotification}
               componentToAdd={componentToAdd}
+              updateProperties={updateComponentProperties}
             />
           )}
         </aside>
@@ -85,13 +133,14 @@ function Builder({showNotification}) {
             selectedComponents={selectedComponents}
             selectedComponent={selectedComponent} 
             setSelectedComponent={setSelectedComponent}
+
           />
         </section>
         <aside className={`builder-properties ${selectedComponent ? 'open' : ''}`}>
           <ComponentProperties 
-            showNotification={showNotification}
             selectedComponent={selectedComponent} 
-            setSelectedComponent={setSelectedComponent} />
+            setSelectedComponent={setSelectedComponent}
+            triggerUpdateProperties={triggerUpdateComponentProperties}  />
         </aside>
       </main>
     </div>

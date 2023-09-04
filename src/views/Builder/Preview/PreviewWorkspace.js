@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 
-function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setAddNewPreview, setUpdatePreview, setOnDelete, forceReflow, showNotification, selectedComponents, selectedComponent, setSelectedComponent }) {
+function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setAddNewPreview, setUpdatePreview, setOnDelete, forceReflow, showNotification, selectedComponents, selectedComponent, setSelectedComponent, setUpdateComponentProperties }) {
   const [previews, setPreviews] = useState([]);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -194,6 +194,7 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
                 isSelected={selectedScreen === preview.id}
                 onTitleChange={(newTitle) => handleTitleChange(newTitle, preview.id)}
                 selectedComponents={selectedComponents}
+                setUpdateComponentProperties={setUpdateComponentProperties}
               >
                 {preview.content}
               </ PreviewScreen>

@@ -162,7 +162,9 @@ const removeComponentsUnpermittedParams = (component) => {
   delete sanitizedComponent.updated_at;
   delete sanitizedComponent.user_id;
   delete sanitizedComponent.project_id;
+  delete sanitizedComponent.isNew;
   if (sanitizedComponent.property) {
+    delete sanitizedComponent.property.isNew;
     delete sanitizedComponent.property.id;
     delete sanitizedComponent.property.component_id;
     delete sanitizedComponent.property.created_at;
@@ -211,5 +213,22 @@ export const deleteComponentToAPI = async (componentId) => {
     throw error;
   }
 };
+
+export const batchUpdateComponentsToAPI = async (projectId, components) => {
+  try {
+    const sanitizedComponents = components.map(comp => removeComponentsUnpermittedParams(comp));
+    
+    const response = await axios.put(`/components/batch_update`, { component: {
+        components: sanitizedComponents,
+        project_id: projectId
+      }});
+
+    return response.data;
+  } catch (error) {
+    console.error('Error en la actualización por lotes de componentes:', error);
+    throw error;
+  }
+};
+
 
 

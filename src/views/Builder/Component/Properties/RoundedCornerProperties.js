@@ -3,10 +3,10 @@ import '../../../../css/Builder/Component/Properties/RoundedCornerProperties.css
 
 function RoundedCornerProperties({ property, handlePropertyChange }) {
   const [cornerValues, setCornerValues] = useState({
-    'top-left': property['top-left'] || 0,
-    'top-right': property['top-right'] || 0,
-    'bottom-left': property['bottom-left'] || 0,
-    'bottom-right': property['bottom-right'] || 0
+    'top_left': property['top_left'] || 0,
+    'top_right': property['top_right'] || 0,
+    'bottom_left': property['bottom_left'] || 0,
+    'bottom_right': property['bottom_right'] || 0
   });
 
   const handleInputChange = (e, cornerName) => {
@@ -18,6 +18,13 @@ function RoundedCornerProperties({ property, handlePropertyChange }) {
     handlePropertyChange(cornerName, value);
   };
 
+  const cornerToCssClass = {
+    top_left: 'top-left',
+    top_right: 'top-right',
+    bottom_left: 'bottom-left',
+    bottom_right: 'bottom-right',
+  };
+
   return (
     <div className="corner-properties">
       <div className="corner-properties-body">
@@ -26,7 +33,7 @@ function RoundedCornerProperties({ property, handlePropertyChange }) {
             <input 
               key={corner}
               type="text"
-              className={`corner-input ${corner}`}
+              className={`corner-input ${cornerToCssClass[corner]}`}
               value={cornerValues[corner]}
               onChange={(e) => handleInputChange(e, corner)}
             />
