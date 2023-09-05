@@ -143,6 +143,8 @@
 }
 
 
+
+
 .delete-stroke-button {
   font-size: 12px;
   background-color: transparent;
@@ -165,3 +167,22 @@
 .stroke-property .opacity-input {
   width: 30px;
 }
+
+.stroke-property select {
+  font-size: 10px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 2px 4px;
+  color: #292929;
+}
+
+.stroke-property select:focus {
+  outline: none;
+}
+
+.stroke-property select::placeholder {
+  font-size: 10px;
+  color: #292929;
+}
+

@@ -1,0 +1,66 @@
+.row-properties {
+  display: flex;
+  flex-direction: column;
+}
+
+.row-properties-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row-properties-row {
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  gap: 6px;
+}
+
+.row-property {
+  display: flex;
+  flex-direction: column;
+}
+
+.row-property label {
+  font-size: 10px;
+  color: #292929;
+}
+
+.row-property-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0px 2px;
+  border-radius: 4px;
+  height: 30px;
+}
+
+.row-property-input-wrapper select {
+  width: 80px;
+  height: 24px;
+  font-size: 10px;
+  border: none;
+  padding: 4px;
+  height: 22px;
+}
+
+.row-property-input-wrapper input[type="number"] {
+  width: 40px;
+  height: 24px;
+  font-size: 10px;
+  border: none;
+  height: 22px;
+}
+
+.row-property-input-wrapperselect {
+  font-size: 10px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 2px 4px;
+  color: #292929;
+}
+
+.row-property-input-wrapper select:focus {
+  outline: none;
+}

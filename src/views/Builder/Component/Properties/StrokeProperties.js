@@ -4,8 +4,8 @@ import '../../../../css/Builder/Component/Properties/StrokeProperties.css';
 function StrokeProperties({ property, handlePropertyChange }) {
 
   const [colorInput, setColorInput] = useState(property.color || "#000000");
-  const [opacityInput, setOpacityInput] = useState(property.opacity || "1");
   const [widthInput, setWidthInput] = useState(property.width || "1");
+  const [borderStyle, setBorderStyle] = useState(property.border_style || "Solid");
 
   useEffect(() => {
     if (isValidHexColor(colorInput)) {
@@ -14,24 +14,17 @@ function StrokeProperties({ property, handlePropertyChange }) {
   }, [colorInput]);
 
   useEffect(() => {
-    if (isValidOpacity(opacityInput)) {
-      handlePropertyChange('opacity', opacityInput);
-    }
-  }, [opacityInput]);
-
-  useEffect(() => {
     if (isValidWidth(widthInput)) {
       handlePropertyChange('width', widthInput);
     }
   }, [widthInput]);
 
+  useEffect(() => {
+    handlePropertyChange('border_style', borderStyle);
+  }, [borderStyle]);
+
   const isValidHexColor = (hexColor) => {
     return /^#([0-9A-Fa-f]{3}){1,2}$/.test(hexColor);
-  };
-
-  const isValidOpacity = (opacity) => {
-    const parsedOpacity = parseFloat(opacity);
-    return parsedOpacity >= 0 && parsedOpacity <= 1;
   };
 
   const isValidWidth = (width) => {
@@ -62,17 +55,18 @@ function StrokeProperties({ property, handlePropertyChange }) {
               </div>
             </div>
             <div className="stroke-property">
-              <label>Opacity:</label>
+              <label>Style:</label> {/* New label */}
               <div className="input-wrapper">
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="1"
-                  value={opacityInput}
-                  onChange={(e) => setOpacityInput(e.target.value)}
-                  pattern="\d+(\.\d{1})?"
-                />
+                <select
+                  value={borderStyle}
+                  onChange={(e) => setBorderStyle(e.target.value)}
+                >
+                  <option value="Solid">Solid</option>
+                  <option value="Dotted">Dotted</option>
+                  <option value="Dashed">Dashed</option>
+                  <option value="Groove">Groove</option>
+                  <option value="Ridge">Ridge</option>
+                </select>
               </div>
             </div>
             <div className="stroke-property">

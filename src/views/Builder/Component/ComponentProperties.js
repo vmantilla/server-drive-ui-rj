@@ -9,6 +9,8 @@ import ImageProperties from './Properties/ImageProperties';
 import RoundedCornerProperties from './Properties/RoundedCornerProperties';
 import MarginProperties from './Properties/MarginProperties';
 import BackgroundProperties from './Properties/BackgroundProperties';
+import RowProperties from './Properties/RowProperties';
+import ColumnProperties from './Properties/ColumnProperties';
 import '../../../css/Builder/Component/ComponentProperties.css';
 
 const possibleStates = ["multiplataforma", "iOS", "android", "web"];
@@ -42,7 +44,9 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, triggerU
 		image: [],
 		corner: [],
 		margin: [],
-		background: []
+		background: [],
+		row: [],
+		column: [],
 	});
 
 	useEffect(() => {
@@ -55,7 +59,9 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, triggerU
 			image: [],
 			corner: [],
 			margin: [],
-			background: []
+			background: [],
+			row: [],
+			column: [],
 		});
 
 		const timerId = setTimeout(() => {
@@ -141,6 +147,78 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, triggerU
 		return true;
 	};
 
+	const showPropertiesBasedOnComponentType = (component) => {
+    const propertyComponents = [
+    	{title: "Row", component: RowProperties},
+      {title: "Column", component: ColumnProperties},
+      {title: "Background", component: BackgroundProperties},
+      {title: "Margin", component: MarginProperties},
+      {title: "Corner", component: RoundedCornerProperties},
+      {title: "Image", component: ImageProperties},
+      {title: "Frame", component: FrameProperties},
+      {title: "Alignment", component: AlignmentProperties},
+      {title: "Font", component: FontProperties},
+      {title: "Stroke", component: StrokeProperties},
+      
+    ];
+
+    const isNotAllowedForHeaderBodyFooter = (title) => ['Alignment', 'Image', 'Font'].includes(title);
+		const isNotAllowedForButton = (title) => ['Image', 'Font'].includes(title);
+		const isNotAllowedForImage = (title) => ['Row', 'Column', 'Font'].includes(title);
+		const isNotAllowedForRow = (title) => ['Image', 'Font', "Column"].includes(title);
+		const isNotAllowedForColumn = (title) => ['Image', 'Font', "Row"].includes(title);
+
+		const allowedProperties = propertyComponents.filter(({ title }) => {
+		  const mainComponentType = component.component_type;
+		  const propertyComponentType = component.property.data.component_type;
+
+		  let isAllowedForMainComponent = true;
+		  let isAllowedForPropertyComponent = true;
+
+		  switch (mainComponentType) {
+		    case 'Header':
+		    case 'Body':
+		    case 'Footer':
+		      isAllowedForMainComponent = !isNotAllowedForHeaderBodyFooter(title);
+		      break;
+		    case 'Button':
+		      isAllowedForMainComponent = !isNotAllowedForButton(title);
+		      break;
+		  }
+
+		  switch (propertyComponentType) {
+		    case 'Row':
+		      isAllowedForPropertyComponent = !isNotAllowedForRow(title);
+		      break;
+		    case 'Column':
+		      isAllowedForPropertyComponent = !isNotAllowedForColumn(title);
+		      break;
+		    case 'Image':
+		      isAllowedForPropertyComponent = !isNotAllowedForImage(title);
+		      break;
+		    default:
+		      isAllowedForPropertyComponent = true;
+		      break;
+		  }
+
+		  return isAllowedForMainComponent && isAllowedForPropertyComponent;
+		});
+
+
+
+    return allowedProperties.map(({ title, component }) => (
+      <MiniHeaderWithProperties
+        key={title}
+        title={title}
+        states={viewStates[title.toLowerCase()]}
+        propertyComponent={component}
+        handleChangeState={handleChangeState}
+        handleAddState={handleAddState}
+        handleDeleteState={handleDeleteState}
+      />
+    ));
+  };
+
   return (
     <div className="component-properties">
       <div className="component-properties-header">
@@ -150,14 +228,7 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, triggerU
         </button>
       </div>
       <div className="component-properties-content">
-        <MiniHeaderWithProperties title="Background" states={viewStates.background} propertyComponent={BackgroundProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Margin" states={viewStates.margin} propertyComponent={MarginProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Corner" states={viewStates.corner} propertyComponent={RoundedCornerProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Image" states={viewStates.image} propertyComponent={ImageProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Frame" states={viewStates.frame} propertyComponent={FrameProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Alignment" states={viewStates.alignment} propertyComponent={AlignmentProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Font" states={viewStates.font} propertyComponent={FontProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
-        <MiniHeaderWithProperties title="Stroke" states={viewStates.stroke} propertyComponent={StrokeProperties} handleChangeState={handleChangeState} handleAddState={handleAddState} handleDeleteState={handleDeleteState}/>
+      	 {selectedComponent !== null && showPropertiesBasedOnComponentType(selectedComponent)}
       </div>
     </div>
   );
