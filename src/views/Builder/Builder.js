@@ -23,10 +23,10 @@ function Builder({showNotification}) {
   const [selectedComponent, setSelectedComponent] = useState(null);
   const [componentToAdd, setComponentToAdd] = useState(null);
   const [updateComponentProperties, setUpdateComponentProperties] = useState(null);
+  const [shouldUpdate, setShouldUpdate] = useState(false);
 
   let componentManager = new ComponentManager(null);
-
-
+  let timerId;
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -46,6 +46,7 @@ function Builder({showNotification}) {
 
   useEffect(() => {
     if (updateComponentProperties !== null) {
+      setShouldUpdate(true);
       setUpdateComponentProperties(null);
     }
   }, [updateComponentProperties]);
@@ -54,31 +55,35 @@ function Builder({showNotification}) {
     componentManager.clearUpdateQueue();
   }, []);
 
-  useEffect(() => {
-    const checkUpdatesAndSave = async () => { 
-      let componentsToUpdate = componentManager.getUpdateQueue()
-      if (componentsToUpdate.length > 0) {
-        try {
-          await batchUpdateComponentsToAPI(projectId, componentsToUpdate);
-          componentManager.clearUpdateQueue();
-          showNotification('success', 'Componentes actualizados exitosamente.');
-        } catch (error) {
-          console.error('Error al actualizar los componentes:', error);
-          showNotification('error', error.message);
-        }
+  const checkUpdatesAndSave = async () => { 
+    let componentsToUpdate = componentManager.getUpdateQueue();
+    if (componentsToUpdate.length > 0) {
+      try {
+        await batchUpdateComponentsToAPI(projectId, componentsToUpdate);
+        componentManager.clearUpdateQueue();
+        setShouldUpdate(false);
+      } catch (error) {
+        console.error('Error al actualizar los componentes:', error);
+        showNotification('error', error.message);
       }
-      setTimeout(checkUpdatesAndSave, 10000); 
-    };
+    }
+    timerId = setTimeout(checkUpdatesAndSave, 60000);
+  };
 
-    const timerId = setTimeout(checkUpdatesAndSave, 10000);
-
+  useEffect(() => {
+    checkUpdatesAndSave();
+    
     return () => {
       clearTimeout(timerId);
     };
   }, []);
 
-
-
+  useEffect(() => {
+    if (updatePreview !== null) {
+      clearTimeout(timerId);
+      checkUpdatesAndSave();
+    }
+  }, [updatePreview]);
 
   return (
     <div className="builder">
@@ -90,6 +95,7 @@ function Builder({showNotification}) {
         updatePreview={updatePreview}
         onDelete={onDelete}
         setComponentToAdd={setComponentToAdd}
+        shouldUpdate={shouldUpdate}
       />
       <main className="builder-main">
         <aside className={`builder-components ${isComponentsOpen ? 'open' : 'closed'}`}>
@@ -99,6 +105,7 @@ function Builder({showNotification}) {
             setSelectedWorkspace={setSelectedWorkspace}
             style={{ height: workspaceHeight }}
             className="builder-workspaces"
+            setShouldUpdate={setShouldUpdate}
           />
           <div
             className="resizable-separator"

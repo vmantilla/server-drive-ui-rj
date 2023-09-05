@@ -43,7 +43,7 @@ const FloatingMenu = ({ visible, options, onClose, position, handleDragStart, ha
   );
 };
 
-function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, addNewPreview, updatePreview, onDelete, setComponentToAdd }) {
+function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, addNewPreview, updatePreview, onDelete, setComponentToAdd, shouldUpdate }) {
 
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
@@ -153,7 +153,9 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
       <div className="right-container">
       { selectedScreen !== null && (
         <div className="buttons-container">
-          <button className="builder-button" onClick={() => updatePreview(selectedScreen)}>
+          <button className={`builder-button ${shouldUpdate ? 'update-needed' : 'disabled-button'}`}
+           onClick={() => updatePreview(selectedScreen)}
+           disabled={!shouldUpdate}>
             <i className="bi bi-cloud-upload-fill"></i>
             Guardar
           </button>

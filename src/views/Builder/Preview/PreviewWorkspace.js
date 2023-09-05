@@ -4,12 +4,12 @@ import PreviewScreen from './PreviewScreen';
 import PreviewThumbnail from './PreviewThumbnail';
 
 import '../../../css/Builder/Preview/PreviewWorkspace.css';
-import { getAllPreviewsFromAPI, addPreviewToAPI, deletePreviewFromAPI, editPreviewInAPI } from '../../api';
+import { getAllPreviewsFromAPI, addPreviewToAPI, deletePreviewFromAPI, editPreviewInAPI, batchUpdatePreviewsToAPI } from '../../api';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 
-function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setAddNewPreview, setUpdatePreview, setOnDelete, forceReflow, showNotification, selectedComponents, selectedComponent, setSelectedComponent, setUpdateComponentProperties }) {
+function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setAddNewPreview, setUpdatePreview, setOnDelete, forceReflow, showNotification, selectedComponents, selectedComponent, setSelectedComponent, setUpdateComponentProperties, setShouldUpdate }) {
   const [previews, setPreviews] = useState([]);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -17,8 +17,20 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
   const [previewToDelete, setPreviewToDelete] = useState(null);
   const [confirmDeleteName, setConfirmDeleteName] = useState('');
 
+  
   const zoomIntervalRef = useRef(null);
   const workspaceSize = Math.max(zoomLevel * 1000, window.innerWidth, window.innerHeight);
+
+  let timerId;
+  // Moved to function to manage pending updates
+  const getPendingUpdates = () => JSON.parse(localStorage.getItem('pendingUpdates')) || [];
+  const setPendingUpdates = (updates) => localStorage.setItem('pendingUpdates', JSON.stringify(updates));
+
+  useEffect(() => {
+    if (workspaceId) {
+      setPendingUpdates([]);
+    }
+  }, [workspaceId]);
   
   useEffect(() => {
     if (workspaceId) {
@@ -56,15 +68,62 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
   }, [workspaceId, setAddNewPreview]);
 
 
-  const handlePositionChange = (newPosition, previewId) => {
-    const updatedPreviews = previews.map((p) => {
-      if (p.id === previewId) {
-        return { ...p, position_x: newPosition.x, position_y: newPosition.y };
+  const checkUpdatesAndSave = async () => {
+    const pendingUpdates = getPendingUpdates();
+
+    if (pendingUpdates.length > 0 && workspaceId) {
+      try {
+        await batchUpdatePreviewsToAPI(workspaceId, pendingUpdates);
+        setPendingUpdates([]);
+      } catch (error) {
+        showNotification('error', error.message);
+        console.error('Error al actualizar los previews:', error);
       }
-      return p;
-    });
-    setPreviews(updatedPreviews);
+    }
+
+    timerId = setTimeout(checkUpdatesAndSave, 10000);
   };
+
+  useEffect(() => {
+    timerId = setTimeout(checkUpdatesAndSave, 10000);
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, []);
+
+  const enqueueUpdate = (newPosition, previewId) => {
+    const pendingUpdates = getPendingUpdates();
+    const existingIndex = pendingUpdates.findIndex((p) => p.preview_id === previewId);
+
+    if (existingIndex !== -1) {
+      pendingUpdates[existingIndex] = {
+        preview_id: previewId,
+        position_x: newPosition.x,
+        position_y: newPosition.y,
+      };
+    } else {
+      pendingUpdates.push({
+        preview_id: previewId,
+        position_x: newPosition.x,
+        position_y: newPosition.y,
+      });
+    }
+
+    setPendingUpdates(pendingUpdates);
+  };
+
+  const handlePositionChange = (newPosition, previewId) => {
+  const updatedPreviews = previews.map((p) => {
+    if (p.id === previewId) {
+      return { ...p, position_x: newPosition.x, position_y: newPosition.y };
+    }
+    return p;
+  });
+
+  enqueueUpdate(newPosition, previewId);
+
+  setPreviews(updatedPreviews);
+};
 
   useEffect(() => {
     const updatePreview = async (previewId) => {
@@ -167,14 +226,20 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
 
   const handleTitleChange = (newTitle, previewId) => {
   const updatedPreviews = previews.map((p) => {
-    if (p.id === previewId) {
-      return { ...p, title: newTitle };
-    }
-    return p;
-  });
-  setPreviews(updatedPreviews);
-  setUpdatePreview();
-};
+      if (p.id === previewId) {
+        return { ...p, title: newTitle };
+      }
+      return p;
+    });
+    setPreviews(updatedPreviews);
+    setUpdatePreview();
+  };
+
+  const handleClick = (preview) => {
+    setSelectedComponent(null);
+    setSelectedScreen(preview.id);
+  };
+
 
   return (
   <>
@@ -187,7 +252,7 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
                 previewId={preview.id}
                 selectedScreen={selectedScreen}
                 initialTitle={preview.title}
-                onClick={() => setSelectedScreen(preview.id)}
+                onClick={() => handleClick(preview)}
                 onPositionChange={(newPosition) => handlePositionChange(newPosition, preview.id)}
                 position={{ x: preview.position_x || 0, y: preview.position_y || 0 }}
                 zoomLevel={zoomLevel}
@@ -206,7 +271,7 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
                 previewId={preview.id}
                 selectedScreen={selectedScreen}
                 initialTitle={preview.title}
-                onClick={() => setSelectedScreen(preview.id)}
+                onClick={() => handleClick(preview)}
                 onPositionChange={(newPosition) => handlePositionChange(newPosition, preview.id)}
                 position={{ x: preview.position_x || 0, y: preview.position_y || 0 }}
                 zoomLevel={zoomLevel}

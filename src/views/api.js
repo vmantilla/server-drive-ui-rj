@@ -106,6 +106,33 @@ export const deleteWorkspaceFromAPI = async (workspaceId) => {
   }
 };
 
+const removePreviewsUnpermittedParams = (preview) => {
+  const sanitizedPreview = { ...preview };
+  
+  delete sanitizedPreview.created_at;
+  delete sanitizedPreview.updated_at;
+  
+  return sanitizedPreview;
+};
+
+export const batchUpdatePreviewsToAPI = async (workspaceId, previews) => {
+  try {
+    const sanitizedPreviews = previews.map(preview => removePreviewsUnpermittedParams(preview));
+    console.log(`/workspaces/${workspaceId}/batch_update`)
+    const response = await axios.put(`/workspaces/${workspaceId}/batch_update`, {
+      workspace: {
+        previews: sanitizedPreviews
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error en la actualización por lotes de previews:', error);
+    throw error;
+  }
+};
+
+
 // === PREVIEW API Calls ===
 
 export const getAllPreviewsFromAPI = async (workspaceId) => {

@@ -141,3 +141,13 @@
 .floating-icon-button:active {
     cursor: grabbing;
 }
+
+.builder-button.update-needed {
+  color: lightgreen;  
+}
+
+.disabled-button {
+  color: grey; 
+  cursor: not-allowed;
+}
+

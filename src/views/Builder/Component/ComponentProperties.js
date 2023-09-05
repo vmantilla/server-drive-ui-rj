@@ -32,79 +32,114 @@ const MiniHeaderWithProperties = ({ title, states, propertyComponent: PropertyCo
 );
 
 function ComponentProperties({ selectedComponent, setSelectedComponent, triggerUpdateProperties }) {
-  
-  const [viewStates, setViewStates] = useState({
-  	component_type: "",
-	  alignment: [],
-	  frame: [],
-	  font: [],
-	  stroke: [],
-	  image: [],
-	  corner: [],
-	  margin: [],
-	  background: []
+
+	const [viewStates, setViewStates] = useState({
+		component_type: "",
+		alignment: [],
+		frame: [],
+		font: [],
+		stroke: [],
+		image: [],
+		corner: [],
+		margin: [],
+		background: []
 	});
 
-  useEffect(() => {
-	  setViewStates({
-	    component_type: "",
-	    alignment: [],
-	    frame: [],
-	    font: [],
-	    stroke: [],
-	    image: [],
-	    corner: [],
-	    margin: [],
-	    background: []
-	  });
+	useEffect(() => {
+		setViewStates({
+			component_type: "",
+			alignment: [],
+			frame: [],
+			font: [],
+			stroke: [],
+			image: [],
+			corner: [],
+			margin: [],
+			background: []
+		});
 
-	  const timerId = setTimeout(() => {
-	    if (selectedComponent?.property?.data) {
-	      const newStates = Object.keys(viewStates).reduce((acc, key) => {
-	        if (Array.isArray(viewStates[key])) {
-	          acc[key] = selectedComponent.property.data[key] || [];
-	        } else {
-	          acc[key] = selectedComponent.property.data[key] || "";
-	        }
-	        return acc;
-	      }, {});
-	      setViewStates(newStates);
-	    }
-	  }, 100);
+		const timerId = setTimeout(() => {
+			if (selectedComponent?.property?.data) {
+				const newStates = Object.keys(viewStates).reduce((acc, key) => {
+					if (Array.isArray(viewStates[key])) {
+						acc[key] = selectedComponent.property.data[key] || [];
+					} else {
+						acc[key] = selectedComponent.property.data[key] || "";
+					}
+					return acc;
+				}, {});
+				setViewStates(newStates);
+			}
+		}, 100);
 
-	  return () => {
-	    clearTimeout(timerId);
-	  };
+		return () => {
+			clearTimeout(timerId);
+		};
 	}, [selectedComponent]);
 
+	const handleChangeState = (type, index, property, value) => {
+	  // Copia profunda del objeto específico dentro del array
+		const updatedState = JSON.parse(JSON.stringify(viewStates[type][index]));
+		updatedState[property] = value;
 
+	  // Copia superficial del array y reemplazo del objeto actualizado
+		const updatedStates = [...viewStates[type]];
+		updatedStates[index] = updatedState;
 
-  const handleChangeState = (type, index, property, value) => {
-	  const updatedStates = [...viewStates[type]];
-	  updatedStates[index][property] = value;
-	  const newStates = { ...viewStates, [type]: updatedStates };
-	  triggerUpdateProperties(selectedComponent, newStates);
-	}
+		const newStates = { ...viewStates, [type]: updatedStates };
+		triggerIfNotEqual(selectedComponent, viewStates, newStates);
+	};
+
 
 	const handleAddState = (type) => {
-	  console.log("handleAddState");
-	  const availableStates = possibleStates.filter(state => !viewStates[type].some(s => s.state === state));
-	  if (availableStates.length > 0) {
-	    const newStates = { ...viewStates, [type]: [...viewStates[type], { state: availableStates[0] }] };
-	    triggerUpdateProperties(selectedComponent, newStates);
-	    setViewStates(newStates);
-	  }
+		const availableStates = possibleStates.filter(state => !viewStates[type].some(s => s.state === state));
+		if (availableStates.length > 0) {
+			const newStates = { ...viewStates, [type]: [...viewStates[type], { state: availableStates[0] }] };
+			triggerIfNotEqual(selectedComponent, viewStates, newStates);
+			setViewStates(newStates);
+		}
 	};
 
 	const handleDeleteState = (type, index) => {
-	  console.log("handleDeleteState");
-	  const updatedStates = [...viewStates[type]];
-	  updatedStates.splice(index, 1);
-	  const newStates = { ...viewStates, [type]: updatedStates };
-	  triggerUpdateProperties(selectedComponent, newStates);
-	  setViewStates(newStates);
+		const updatedStates = [...viewStates[type]];
+		updatedStates.splice(index, 1);
+		const newStates = { ...viewStates, [type]: updatedStates };
+		triggerIfNotEqual(selectedComponent, viewStates, newStates);
+		setViewStates(newStates);
 	};
 
+	const triggerIfNotEqual = (selectedComponent, oldState, newState) => {
+		if (!deepEqual(oldState, newState)) {
+			const filteredProperties = Object.entries(newState)
+			.filter(([key, value]) => !(Array.isArray(value) && value.length === 0))
+			.reduce((acc, [key, value]) => {
+				acc[key] = value;
+				return acc;
+			}, {});
+
+			if (Object.keys(filteredProperties).length > 0) {
+				triggerUpdateProperties(selectedComponent, filteredProperties);
+			}
+
+			setViewStates(newState);
+		}
+	};
+
+	const deepEqual = (obj1, obj2) => {
+		if (obj1 === obj2) return true;
+		if (typeof obj1 !== 'object' || obj1 === null || typeof obj2 !== 'object' || obj2 === null) {
+			return false;
+		}
+		const keys1 = Object.keys(obj1);
+		const keys2 = Object.keys(obj2);
+		if (keys1.length !== keys2.length) return false;
+		for (const key of keys1) {
+			if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
+				return false;
+			}
+		}
+		return true;
+	};
 
   return (
     <div className="component-properties">
