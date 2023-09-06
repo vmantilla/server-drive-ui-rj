@@ -1,4 +1,4 @@
-const TTL = 60000; // 60 seconds to load from api.
+const TTL = 6000; // 60 seconds to load from api.
 
 class ComponentManager {
 	constructor(previewId) {
@@ -60,6 +60,7 @@ class ComponentManager {
 
 	removeComponent(componentId) {
 		this.components = this.#removeComponentRecursive(componentId, this.components);
+		this.#removeFromUpdateQueue(componentId);
 		this.saveToDB();
 		return this.components
 	}
@@ -80,7 +81,7 @@ class ComponentManager {
 			throw new Error('No se puede mover un componente dentro de sí mismo.');
 		}
 
-		const componentToMove = this.#findComponentByIdRecursive(componentId, this.components);
+		const componentToMove = this.findComponentByIdRecursive(componentId, this.components);
 		if (!componentToMove) {
 			throw new Error(`No se encontró el componente con ID ${componentId}`);
 		}
@@ -92,7 +93,6 @@ class ComponentManager {
 		this.components = this.#addComponentChildRecursive(parentId, this.removeComponent(componentId, this.components), componentToMove);
 		this.saveToDB();
 	}
-
 
 	saveToDB() {
 		const key = ComponentManager.getDBKey(this.previewId);
@@ -107,7 +107,7 @@ class ComponentManager {
 	}
 
 	updateComponentProperties(id, newProperties) {
-	  const component = this.#findComponentByIdRecursive(id);
+	  const component = this.findComponentByIdRecursive(id);
 	  if (!component) {
 	    throw new Error(`No se encontró el componente con ID ${id}`);
 	  }
@@ -118,7 +118,7 @@ class ComponentManager {
 
 	  component.property.data = { ...component.property.data, ...newProperties };
 
-	  const newComponents = this.#updateComponentInTree(component);
+	  const newComponents = this.updateComponentInTree(component);
 	  if (!newComponents) {
 	    throw new Error(`Error al actualizar el componente con ID ${id}`);
 	  }
@@ -128,15 +128,19 @@ class ComponentManager {
 	  this.saveToDB();
 	}
 
-
   //PRIVATE METHODS
 
-	#findComponentByIdRecursive(id, currentComponents = this.components) {
+	#removeFromUpdateQueue(componentId) {
+	  this.updateQueue = this.updateQueue.filter(update => update.component_id !== componentId);
+	  localStorage.setItem("updateQueue", JSON.stringify(this.updateQueue));
+	}
+
+	findComponentByIdRecursive(id, currentComponents = this.components) {
 		for (let component of currentComponents) {
 			if (component.id === id) {
 				return component;
 			} else if (component.children && component.children.length > 0) {
-				const result = this.#findComponentByIdRecursive(id, component.children);
+				const result = this.findComponentByIdRecursive(id, component.children);
 				if (result) return result;
 			}
 		}
@@ -174,14 +178,14 @@ class ComponentManager {
 		}, []);
 	}
 
-	#updateComponentInTree(updatedComponent, currentComponents = this.components) {
+	updateComponentInTree(updatedComponent, currentComponents = this.components) {
 		for (let i = 0; i < currentComponents.length; i++) {
 			if (currentComponents[i].id === updatedComponent.id) {
 				currentComponents[i] = updatedComponent;
 				return currentComponents;
 			}
 			if (currentComponents[i].children && currentComponents[i].children.length > 0) {
-				if (this.#updateComponentInTree(updatedComponent, currentComponents[i].children)) {
+				if (this.updateComponentInTree(updatedComponent, currentComponents[i].children)) {
 					return currentComponents;
 				}
 			}

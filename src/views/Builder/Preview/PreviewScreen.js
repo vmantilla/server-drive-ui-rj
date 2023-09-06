@@ -5,7 +5,7 @@ import html2canvas from 'html2canvas';
 import '../../../css/Builder/Preview/PreviewScreen.css';
 import ComponentManager from '../ComponentManager';
 
-function PreviewScreen({ previewId, selectedScreen, initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, setUpdateComponentProperties }) {
+function PreviewScreen({ previewId, selectedScreen, selectedComponent, initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, setUpdateComponentProperties, orderUpdated }) {
   const [screenType, setScreenType] = useState('mobile');
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
@@ -113,14 +113,17 @@ function PreviewScreen({ previewId, selectedScreen, initialTitle, onTitleChange,
 
 
 useEffect(() => {
-  const timer = setTimeout(() => {
-    if(isSelected) {
+  let timer;
+  if (isSelected) {
+    timer = setInterval(() => {
       captureImage();
-    }
-  }, 5000);
+    }, 5000);
+  } else {
+    clearInterval(timer);
+  }
 
   return () => {
-    clearTimeout(timer);
+    clearInterval(timer);
   };
 }, [previewId, isSelected]); 
 
@@ -152,8 +155,8 @@ useEffect(() => {
           {title}
         </h4>
       )}
-      <div className={`screen-content ${screenType} ${isSelected ? 'selected' : ''}`} onClick={onClick}>
-        <RavitBuilder layoutJson={componentManager.components} />
+      <div key={orderUpdated} className={`screen-content ${screenType} ${isSelected ? 'selected' : ''}`} onClick={onClick}>
+        <RavitBuilder layoutJson={componentManager.components} selectedComponent={selectedComponent} />
       </div>
     </div>
   );

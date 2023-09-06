@@ -126,3 +126,9 @@
   font-weight: bold;
   color: grey;
 }
+
+.reorder-component-selected {
+  background-color: #ccc;
+  border: 2px solid blue;
+  box-shadow: 0px 0px 10px #000;
+}

@@ -2,19 +2,27 @@ import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import Modal from 'react-bootstrap/Modal';
+import { Menu, Item, Separator, Submenu, useContextMenu } from 'react-contexify';
+import 'react-contexify/ReactContexify.css';
+
 import '../../../css/Builder/Preview/PreviewComponents.css';
-import { debounce } from 'lodash';
 
 import ComponentManager from '../ComponentManager';
-import { getComponentsFromAPI, addComponentToAPI, editComponentToAPI, deleteComponentToAPI } from '../../api';
+import { getComponentsFromAPI, addComponentToAPI, editComponentToAPI, deleteComponentToAPI, duplicateComponentToAPI } from '../../api';
 
-function PreviewComponents({ previewId, selectedComponent, setSelectedComponent, showNotification, componentToAdd, updateProperties }) {
+
+const MENU_ID = 'blahblah';
+
+function PreviewComponents({ previewId, selectedComponent, setSelectedComponent, showNotification, componentToAdd, updateProperties, onOrderUpdated }) {
   const [components, setComponents] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [componentToDelete, setComponentToDelete] = useState(null);
   const [draggingComponent, setDraggingComponent] = useState(null);
   const [draggingComponentOver, setDraggingComponentOver] = useState(null);
   const [componentLoading, setComponentLoading] = useState(null);
+  const [orderableComponent, setOrderableComponent] = useState(null);
+  const [originalIndex, setOriginalIndex] = useState(null);
+  const [contextMenuComponentId, setContextMenuComponentId] = useState(null);
   
   let componentManager = new ComponentManager(previewId);
 
@@ -39,12 +47,99 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     }
   }, [updateProperties]);
 
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (orderableComponent) {
+        const parentId = orderableComponent.parent_id;
+        const parentComponent = componentManager.findComponentByIdRecursive(parentId, componentManager.components);
+
+        if (!parentComponent || !parentComponent.children) {
+          return;
+        }
+
+        const siblings = parentComponent.children;
+        let currentIndex = siblings.findIndex(comp => comp.id === orderableComponent.id);
+
+        if (currentIndex === -1) {
+          return;
+        }
+
+        if (e.key === "ArrowUp" && currentIndex > 0) {
+          const [moved] = siblings.splice(currentIndex, 1);
+          siblings.splice(currentIndex - 1, 0, moved);
+          onOrderUpdated(new Date().toISOString());
+        } else if (e.key === "ArrowDown" && currentIndex < siblings.length - 1) {
+          const [moved] = siblings.splice(currentIndex, 1);
+          siblings.splice(currentIndex + 1, 0, moved);
+          onOrderUpdated(new Date().toISOString());
+        } else if (e.key === "Enter") {
+          handleEditComponentOrder(currentIndex);
+        } else if (e.key === "Escape") {
+          if (originalIndex !== null) {
+            const parentId = orderableComponent.parent_id;
+            const parentComponent = componentManager.findComponentByIdRecursive(parentId, componentManager.components);
+            if (parentComponent && parentComponent.children) {
+              const currentIndex = parentComponent.children.findIndex(comp => comp.id === orderableComponent.id);
+              const [moved] = parentComponent.children.splice(currentIndex, 1);
+              parentComponent.children.splice(originalIndex, 0, moved);
+              parentComponent.children = siblings;
+              componentManager.components = componentManager.updateComponentInTree(parentComponent);
+              setComponents(componentManager.components);
+            }
+          }
+          setSelectedComponent(orderableComponent);
+          setOrderableComponent(null);
+          setOriginalIndex(null);
+        }
+        
+        parentComponent.children = siblings;
+        componentManager.components = componentManager.updateComponentInTree(parentComponent);
+        setComponents(componentManager.components);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [orderableComponent]);
+
+
+  const handleEditComponentOrder = async (newIndex) => {
+      setComponentLoading(orderableComponent.id);
+      setOrderableComponent(null);
+        
+      try {
+        await editComponentToAPI(orderableComponent.id, { index: newIndex });
+        setSelectedComponent(orderableComponent);
+        setComponentLoading(null);
+      } catch (error) {
+        setComponentLoading(null);
+        setOrderableComponent(null);
+        console.error('Error al mover el componente:', error);
+        showNotification('error', error.message);
+      }
+    };
+
+
+  const makeComponentOrderable = (component) => {
+    const parentId = component.parent_id;
+    const parentComponent = componentManager.findComponentByIdRecursive(parentId, componentManager.components);
+    if (parentComponent && parentComponent.children) {
+      const index = parentComponent.children.findIndex(comp => comp.id === component.id);
+      setOriginalIndex(index);
+    }
+    
+    setOrderableComponent(component);
+    setSelectedComponent(null);
+  };
 
   const loadComponents = async () => {
     try {
       if(componentManager.isUpdateRequired()) {
         const componentsData = await getComponentsFromAPI(previewId);
         componentManager.saveLastUpdatedTime();
+        componentManager.components = componentsData
         setComponents(componentsData);
       } else {
         setComponents(componentManager.components);
@@ -162,19 +257,44 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     }
   };
 
-const getCustomizations = (component_type) => {
-  const customizations = {
-    'Header': { class: 'component-type-header', label: 'HEADER', enableDrag: false },
-    'Body': { class: 'component-type-body', label: 'BODY', enableDrag: false },
-    'Footer': { class: 'component-type-footer', label: 'FOOTER', enableDrag: false },
-    'default': { class: '', label: '', enableDrag: true },
+  const duplicateComponent = async (compId) => {
+    const compToDuplicate = componentManager.findComponentByIdRecursive(compId, componentManager.components);
+
+    if (!compToDuplicate) {
+      showNotification('error', 'Error duplicating component. Component not found.');
+      return;
+    }
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const componentsData = await duplicateComponentToAPI(compToDuplicate.id);
+      componentManager.saveLastUpdatedTime();
+      componentManager.components = componentsData
+      setComponents(componentsData);
+      showNotification('success', 'Component duplicated successfully.');
+    } catch (error) {
+      console.error('Error duplicating component:', error);
+      showNotification('error', 'Error duplicating component.');
+    }
   };
 
-  return customizations[component_type] || customizations['default'];
-};
+  const getCustomizations = (component_type) => {
+    const customizations = {
+      'Header': { class: 'component-type-header', label: 'HEADER', enableDrag: false },
+      'Body': { class: 'component-type-body', label: 'BODY', enableDrag: false },
+      'Footer': { class: 'component-type-footer', label: 'FOOTER', enableDrag: false },
+      'default': { class: '', label: '', enableDrag: true },
+    };
 
- const computeClassNames = (comp, draggingComponent, selectedComponent, draggingComponentOver) => {
+    return customizations[component_type] || customizations['default'];
+  };
+
+  const computeClassNames = (comp, draggingComponent, selectedComponent, draggingComponentOver, orderableComponent) => {
     let classes = "component-item ";
+
+    if (orderableComponent && comp.id === orderableComponent.id) {
+      return "reorder-component-selected";
+    }
 
     if (draggingComponent) {
       if (comp.id === draggingComponent.id) {
@@ -197,6 +317,51 @@ const getCustomizations = (component_type) => {
     return classes;
   };
 
+  const { show } = useContextMenu({
+    id: MENU_ID,
+  });
+
+  function handleContextMenu(event, component){
+
+    if (component && ['Header', 'Body', 'Footer'].includes(component.component_type)) {
+      return; 
+    }
+    setContextMenuComponentId(component.id);
+    setSelectedComponent(component)
+    setDraggingComponent(null);
+    setOrderableComponent(null);
+    show({
+      event,
+      props: {
+        key: 'value'
+      }
+    })
+  }
+
+  function handleItemClick(e, itemID) {
+    if (contextMenuComponentId !== null) {
+      switch(itemID) {
+      case 'duplicate':
+        duplicateComponent(contextMenuComponentId);
+        break;
+      case 'move':
+        if (selectedComponent && selectedComponent.id !== null) {
+          makeComponentOrderable(selectedComponent);
+        }
+        break;
+      case 'delete':
+        if (selectedComponent && selectedComponent.id !== null) {
+          setShowDeleteModal(true);
+          setComponentToDelete(selectedComponent);
+        }
+        break;
+      default:
+        break;
+      }
+    }
+  }
+
+
 const renderComponentList = (compArray, parentId = null) => 
   compArray.map(comp => {
     if (!comp || !comp.property) {
@@ -214,7 +379,6 @@ const renderComponentList = (compArray, parentId = null) =>
         onDragEnd={handleDragEnd}
         onDrop={(e) => handleDrop(e, comp.id)}
         >
-        
         {customLabel && (
           <div className="custom-label">{customLabel}</div>
         )}
@@ -223,10 +387,11 @@ const renderComponentList = (compArray, parentId = null) =>
           onDrop={(e) => handleDrop(e, comp.id)}
 
           onDragLeave={(e) => handleDragEnterLeaveOrOver(e, null)}
-          className={`component-item ${computeClassNames(comp, draggingComponent, selectedComponent, draggingComponentOver)}`}
+          className={`component-item ${computeClassNames(comp, draggingComponent, selectedComponent, draggingComponentOver, orderableComponent)}`}
           onClick={() => {
             setSelectedComponent(comp);
           }}
+          onContextMenu={(e) => handleContextMenu(e, comp)}
         >
           <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
             <div style={{display: 'flex', alignItems: 'center'}}>
@@ -242,13 +407,6 @@ const renderComponentList = (compArray, parentId = null) =>
                 <Spinner animation="border" size="sm" />
               </div>
             )}
-          {selectedComponent && comp.id === selectedComponent.id && !(componentToDelete && componentToDelete.id === comp.id && componentLoading != null) && !['Header', 'Body', 'Footer'].includes(comp.component_type) && (
-            <div className="component-actions">
-              <span className="icon-btn delete-btn" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setComponentToDelete(comp); }}>
-                <i className="bi bi-trash"></i>
-              </span>
-            </div>
-          )}
         </div>
 
         {comp.expanded && comp.children && comp.children.length > 0 && 
@@ -256,7 +414,14 @@ const renderComponentList = (compArray, parentId = null) =>
             {renderComponentList(comp.children, comp.id)}
           </div>
         }
-      </div>
+
+        <Menu id={MENU_ID}>
+        <Item id="copy" onClick={(e) => handleItemClick(e, 'duplicate')}><i className="bi bi-files"></i>&nbsp;Duplicate</Item>
+        <Item id="move" onClick={(e) => handleItemClick(e, 'move')}><i className="bi bi-arrows-move"></i>&nbsp;Reorder</Item>
+        <Separator />
+          <Item id="delete" onClick={(e) => handleItemClick(e, 'delete')}><i className="bi bi-trash"></i>&nbsp;Delete</Item>
+      </Menu>
+      </div>                
     );
   });
 

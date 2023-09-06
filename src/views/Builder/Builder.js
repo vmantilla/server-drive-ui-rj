@@ -24,6 +24,7 @@ function Builder({showNotification}) {
   const [componentToAdd, setComponentToAdd] = useState(null);
   const [updateComponentProperties, setUpdateComponentProperties] = useState(null);
   const [shouldUpdate, setShouldUpdate] = useState(false);
+  const [orderUpdated, setOrderUpdated] = useState(false);
 
   let componentManager = new ComponentManager(null);
   let timerId;
@@ -85,6 +86,10 @@ function Builder({showNotification}) {
     }
   }, [updatePreview]);
 
+  const handleComponentsOrderUpdated = (date) => {
+    setOrderUpdated(date);
+  }
+
   return (
     <div className="builder">
       <BuilderHeader
@@ -101,6 +106,7 @@ function Builder({showNotification}) {
         <aside className={`builder-components ${isComponentsOpen ? 'open' : 'closed'}`}>
           <BuilderWorkspaces
             projectId={projectId}
+            selectedComponent={selectedComponent} 
             selectedWorkspace={selectedWorkspace}
             setSelectedWorkspace={setSelectedWorkspace}
             style={{ height: workspaceHeight }}
@@ -124,6 +130,7 @@ function Builder({showNotification}) {
               showNotification={showNotification}
               componentToAdd={componentToAdd}
               updateProperties={updateComponentProperties}
+              onOrderUpdated={handleComponentsOrderUpdated}
             />
           )}
         </aside>
@@ -140,7 +147,7 @@ function Builder({showNotification}) {
             selectedComponents={selectedComponents}
             selectedComponent={selectedComponent} 
             setSelectedComponent={setSelectedComponent}
-
+            orderUpdated={orderUpdated}
           />
         </section>
         <aside className={`builder-properties ${selectedComponent ? 'open' : ''}`}>

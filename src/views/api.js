@@ -257,5 +257,16 @@ export const batchUpdateComponentsToAPI = async (projectId, components) => {
   }
 };
 
+export const duplicateComponentToAPI = async (componentId) => {
+  try {
+    const response = await axios.post(`/components/${componentId}/duplicate`, {});
+    return response.data;
+  } catch (error) {
+    console.error('Error al duplicar el componente:', error);
+    throw error;
+  }
+};
+
+
 
 
