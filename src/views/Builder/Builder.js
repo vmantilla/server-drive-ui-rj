@@ -68,7 +68,7 @@ function Builder({showNotification}) {
         showNotification('error', error.message);
       }
     }
-    timerId = setTimeout(checkUpdatesAndSave, 60000);
+    timerId = setTimeout(checkUpdatesAndSave, 6000);
   };
 
   useEffect(() => {

@@ -1,0 +1,36 @@
+.text-properties {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-properties-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+}
+
+.text-property {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-property label {
+  font-size: 10px;
+  color: #292929;
+}
+
+.text-property-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0px 2px;
+  border-radius: 4px;
+  height: 30px;
+}
+
+.text-property-input-wrapper input[type="text"] {
+  font-size: 10px;
+  border: none;
+  outline: none;
+}

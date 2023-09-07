@@ -1,4 +1,4 @@
-const TTL = 6000; // 60 seconds to load from api.
+const TTL = 6000; 
 
 class ComponentManager {
 	constructor(previewId) {
@@ -33,11 +33,6 @@ class ComponentManager {
 
 	getUpdateQueue() {
 	  return JSON.parse(localStorage.getItem("updateQueue")) || [];
-	}
-
-	clearUpdateQueue() {
-	  this.updateQueue = [];
-	  localStorage.setItem("updateQueue", JSON.stringify(this.updateQueue));
 	}
 
 	isUpdateRequired() {

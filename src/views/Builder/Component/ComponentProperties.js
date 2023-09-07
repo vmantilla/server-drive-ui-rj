@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import debounce from 'lodash/debounce';
 import MiniHeader from './MiniHeader';
+import HeaderProperties from './Properties/HeaderProperties';
+import FooterProperties from './Properties/FooterProperties';
 import FontProperties from './Properties/FontProperties';
 import StrokeProperties from './Properties/StrokeProperties';
 import FrameProperties from './Properties/FrameProperties';
@@ -11,6 +13,9 @@ import MarginProperties from './Properties/MarginProperties';
 import BackgroundProperties from './Properties/BackgroundProperties';
 import RowProperties from './Properties/RowProperties';
 import ColumnProperties from './Properties/ColumnProperties';
+import TextProperties from './Properties/TextProperties';
+
+
 import '../../../css/Builder/Component/ComponentProperties.css';
 
 const possibleStates = ["multiplataforma", "iOS", "android", "web"];
@@ -47,6 +52,9 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, triggerU
 		background: [],
 		row: [],
 		column: [],
+		text: [],
+		header: [],
+		footer: [],
 	});
 
 	useEffect(() => {
@@ -62,6 +70,9 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, triggerU
 			background: [],
 			row: [],
 			column: [],
+			text: [],
+			header: [],
+			footer: [],
 		});
 
 		const timerId = setTimeout(() => {
@@ -149,8 +160,11 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, triggerU
 
 	const showPropertiesBasedOnComponentType = (component) => {
     const propertyComponents = [
+    	{title: "Header", component: HeaderProperties},
+    	{title: "Footer", component: FooterProperties},
     	{title: "Row", component: RowProperties},
       {title: "Column", component: ColumnProperties},
+      {title: "Text", component: TextProperties},
       {title: "Background", component: BackgroundProperties},
       {title: "Margin", component: MarginProperties},
       {title: "Corner", component: RoundedCornerProperties},
@@ -162,11 +176,13 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, triggerU
       
     ];
 
-    const isNotAllowedForHeaderBodyFooter = (title) => ['Alignment', 'Image', 'Font'].includes(title);
-		const isNotAllowedForButton = (title) => ['Image', 'Font'].includes(title);
-		const isNotAllowedForImage = (title) => ['Row', 'Column', 'Font'].includes(title);
-		const isNotAllowedForRow = (title) => ['Image', 'Font', "Column"].includes(title);
-		const isNotAllowedForColumn = (title) => ['Image', 'Font', "Row"].includes(title);
+    const isNotAllowedForHeaderBodyFooter = (title) => ['Frame','Alignment', 'Image', 'Font'].includes(title);
+		const isNotAllowedForButton = (title) => ['Header', 'Footer','Alignment','Image', 'Font', "Text"].includes(title);
+		const isNotAllowedForText = (title) => ['Header', 'Footer','Alignment','Row', 'Column', 'Image'].includes(title);
+		const isNotAllowedForImage = (title) => ['Header', 'Footer','Alignment','Row', 'Column', 'Font', "Text"].includes(title);
+		const isNotAllowedForRow = (title) => ['Header', 'Footer','Alignment','Image', 'Font', "Column", "Text"].includes(title);
+		const isNotAllowedForColumn = (title) => ['Header', 'Footer','Alignment','Image', 'Font', "Row", "Text"].includes(title);
+		const isNotAllowedForOverlay = (title) => ['Header', 'Footer','Alignment','Image', 'Font', "Row", "Column", "Text"].includes(title);
 
 		const allowedProperties = propertyComponents.filter(({ title }) => {
 		  const mainComponentType = component.component_type;
@@ -184,27 +200,32 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, triggerU
 		    case 'Button':
 		      isAllowedForMainComponent = !isNotAllowedForButton(title);
 		      break;
+		    // ... otros casos si los hay
 		  }
 
 		  switch (propertyComponentType) {
 		    case 'Row':
-		      isAllowedForPropertyComponent = !isNotAllowedForRow(title);
+		      isAllowedForPropertyComponent = !isNotAllowedForRow(title) || (mainComponentType === title);
 		      break;
 		    case 'Column':
 		      isAllowedForPropertyComponent = !isNotAllowedForColumn(title);
 		      break;
+		    case 'Overlay':
+		      isAllowedForPropertyComponent = !isNotAllowedForOverlay(title);
+		      break;
 		    case 'Image':
 		      isAllowedForPropertyComponent = !isNotAllowedForImage(title);
 		      break;
+		    case 'Text':
+		      isAllowedForPropertyComponent = !isNotAllowedForText(title);
+		      break;
 		    default:
-		      isAllowedForPropertyComponent = true;
+		      isAllowedForPropertyComponent = false;
 		      break;
 		  }
 
 		  return isAllowedForMainComponent && isAllowedForPropertyComponent;
 		});
-
-
 
     return allowedProperties.map(({ title, component }) => (
       <MiniHeaderWithProperties

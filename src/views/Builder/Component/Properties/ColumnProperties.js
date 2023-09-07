@@ -27,9 +27,10 @@ function ColumnProperties({ property, handlePropertyChange }) {
               <select 
                 value={alignment} 
                 onChange={(e) => setAlignment(e.target.value)}>
-                <option value="Top">Top</option>
+                <option value="none">None</option>
+                <option value="start">Left</option>
                 <option value="center">Center</option>
-                <option value="bottom">Bottom</option>
+                <option value="end">Right</option>
               </select>
             </div>
           </div>

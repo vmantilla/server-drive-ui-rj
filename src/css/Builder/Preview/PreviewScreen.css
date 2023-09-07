@@ -49,7 +49,7 @@ button:hover {
   border: 1px solid #d0d0d0;
   overflow: hidden;
   padding: 2px;
-  margin: 10px;
+  margin-top: 10px;
 }
 
 .screen-content.mobile {
@@ -65,6 +65,32 @@ button:hover {
 .screen-content.desktop {
   width: 984px;
   height: 728px;
+}
+
+/* Desktop en orientación landscape */
+.screen-content.desktop-landscape {
+  width: 1024px;
+  height: 768px;
+}
+
+/* Desktop en orientación portrait */
+.screen-content.desktop-portrait {
+  width: 768px;
+  height: 1024px;
+}
+
+/* Clases para Mobile */
+
+/* Mobile en orientación landscape */
+.screen-content.mobile-landscape {
+  width: 627px;
+  height: 335px;
+}
+
+/* Mobile en orientación portrait */
+.screen-content.mobile-portrait {
+  width: 335px;
+  height: 627px;
 }
 
 .adjust-button {

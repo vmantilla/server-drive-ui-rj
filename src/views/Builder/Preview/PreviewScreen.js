@@ -9,6 +9,7 @@ function PreviewScreen({ previewId, selectedScreen, selectedComponent, initialTi
   const [screenType, setScreenType] = useState('mobile');
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
+  const [orientation, setOrientation] = useState('portrait');
   const draggingRef = useRef(false);
   const lastEventRef = useRef(null);
 
@@ -127,6 +128,13 @@ useEffect(() => {
   };
 }, [previewId, isSelected]); 
 
+  const toggleOrientation = () => {
+    setOrientation(prevOrientation => prevOrientation === 'portrait' ? 'landscape' : 'portrait');
+  };
+
+  const toggleScreenType = () => {
+    setScreenType(prevScreenType => prevScreenType === 'mobile' ? 'desktop' : 'mobile');
+  };
 
   return (
     <div 
@@ -140,6 +148,11 @@ useEffect(() => {
       }}
       onMouseDown={handleDragStart}
     >
+    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+        <button onClick={toggleOrientation}>
+          {orientation === 'portrait' ? <i className="bi bi-phone-landscape"></i> : <i className="bi bi-phone"></i>}
+        </button>
+      
       {isEditing ? (
         <input
           type="text"
@@ -155,7 +168,12 @@ useEffect(() => {
           {title}
         </h4>
       )}
-      <div key={orderUpdated} className={`screen-content ${screenType} ${isSelected ? 'selected' : ''}`} onClick={onClick}>
+      <button onClick={toggleScreenType}>
+        {screenType === 'mobile' ? <i className="bi bi-arrows-fullscreen"></i> : <i className="bi bi-arrows-angle-contract"></i>}
+      </button>
+
+      </div>
+      <div key={orderUpdated} className={`screen-content ${screenType}-${orientation} ${isSelected ? 'selected' : ''}`} onClick={onClick}>
         <RavitBuilder layoutJson={componentManager.components} selectedComponent={selectedComponent} />
       </div>
     </div>

@@ -1,0 +1,49 @@
+.header-properties {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-properties-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.header-properties-row {
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  gap: 6px;
+}
+
+.header-property {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-property label {
+  font-size: 10px;
+  color: #292929;
+}
+
+.header-property-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0px 2px;
+  border-radius: 4px;
+  height: 30px;
+}
+
+.header-property-input-wrapper select {
+  width: 80px;
+  height: 24px;
+  font-size: 10px;
+  border: none;
+  padding: 4px;
+  height: 22px;
+}
+
+.header-property-input-wrapper select:focus {
+  outline: none;
+}
