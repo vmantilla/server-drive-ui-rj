@@ -73,7 +73,7 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
           siblings.splice(currentIndex + 1, 0, moved);
           onOrderUpdated(new Date().toISOString());
         } else if (e.key === "Enter") {
-          handleEditComponentOrder(currentIndex);
+          handleEditComponentOrder(currentIndex + 1);
         } else if (e.key === "Escape") {
           if (originalIndex !== null) {
             const parentId = orderableComponent.parent_id;
@@ -110,7 +110,7 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
       setOrderableComponent(null);
         
       try {
-        await editComponentToAPI(orderableComponent.id, { index: newIndex });
+        await editComponentToAPI(orderableComponent.id, { position: newIndex });
         setSelectedComponent(orderableComponent);
         setComponentLoading(null);
       } catch (error) {
@@ -126,8 +126,8 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     const parentId = component.parent_id;
     const parentComponent = componentManager.findComponentByIdRecursive(parentId, componentManager.components);
     if (parentComponent && parentComponent.children) {
-      const index = parentComponent.children.findIndex(comp => comp.id === component.id);
-      setOriginalIndex(index);
+      const position = parentComponent.children.findIndex(comp => comp.id === component.id);
+      setOriginalIndex(position);
     }
     
     setOrderableComponent(component);
@@ -139,7 +139,7 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
       if(componentManager.isUpdateRequired()) {
         const componentsData = await getComponentsFromAPI(previewId);
         componentManager.saveLastUpdatedTime();
-        componentManager.components = componentsData
+        componentManager.components = componentsData[0].children
         setComponents(componentsData);
       } else {
         setComponents(componentManager.components);
@@ -268,9 +268,9 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
       const componentsData = await duplicateComponentToAPI(compToDuplicate.id);
+      console.log("duplicateComponentToAPI",componentsData);
+    
       componentManager.saveLastUpdatedTime();
-      componentManager.components = componentsData
-      setComponents(componentsData);
       showNotification('success', 'Component duplicated successfully.');
     } catch (error) {
       console.error('Error duplicating component:', error);
@@ -361,6 +361,25 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     }
   }
 
+  const exportComponents = () => {
+  const componentsJSON = JSON.stringify(components);
+  const blob = new Blob([componentsJSON], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'componentes.json'; // Nombre del archivo JSON
+  a.style.display = 'none';
+  document.body.appendChild(a);
+
+  a.click();
+
+  // Limpia y revierte los cambios en el DOM
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+
 
 const renderComponentList = (compArray, parentId = null) => 
   compArray.map(comp => {
@@ -398,7 +417,7 @@ const renderComponentList = (compArray, parentId = null) =>
               <span className="toggle-btn" onClick={(e) => { e.stopPropagation(); handleToggleExpanded(comp.id); }}>
                 {comp.expanded ?  <i className="bi bi-node-minus"></i> : <i className="bi bi-node-plus-fill"></i>}
               </span>
-              <span>{comp.property ? comp.property.data.component_type : 'N/A'}</span>
+              <span>{comp.property ? comp.property.component_type : 'N/A'}</span>
             </div>
             
           </div>
@@ -409,7 +428,7 @@ const renderComponentList = (compArray, parentId = null) =>
             )}
         </div>
 
-        {comp.expanded && comp.children && comp.children.length > 0 && 
+        {comp && comp.expanded && comp.children && comp.children.length > 0 && 
           <div className="component-children">
             {renderComponentList(comp.children, comp.id)}
           </div>
@@ -429,8 +448,13 @@ const renderComponentList = (compArray, parentId = null) =>
   return (
     <div className="buildercomponents">
       <span className="component-title">Components</span>
+      <span onClick={exportComponents}>
+      <i className="bi bi-cloud-upload"></i>
+      </span>
     <div className="components-container">
-      {renderComponentList(components)}
+    {components && components.length > 0 && 
+          renderComponentList(components)
+        }
     </div>
       {showDeleteModal && (
         <Modal show={showDeleteModal}>

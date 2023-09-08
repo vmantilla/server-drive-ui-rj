@@ -107,11 +107,11 @@ class ComponentManager {
 	    throw new Error(`No se encontró el componente con ID ${id}`);
 	  }
 
-	  if (!component.property.data) {
+	  if (!component.property) {
 	    throw new Error(`No se encontró el componente con ID ${id}`);
 	  }
 
-	  component.property.data = { ...component.property.data, ...newProperties };
+	  component.property = { ...component.property, ...newProperties };
 
 	  const newComponents = this.updateComponentInTree(component);
 	  if (!newComponents) {

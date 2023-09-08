@@ -76,12 +76,12 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, triggerU
 		});
 
 		const timerId = setTimeout(() => {
-			if (selectedComponent?.property?.data) {
+			if (selectedComponent?.property) {
 				const newStates = Object.keys(viewStates).reduce((acc, key) => {
 					if (Array.isArray(viewStates[key])) {
-						acc[key] = selectedComponent.property.data[key] || [];
+						acc[key] = selectedComponent.property[key] || [];
 					} else {
-						acc[key] = selectedComponent.property.data[key] || "";
+						acc[key] = selectedComponent.property[key] || "";
 					}
 					return acc;
 				}, {});
@@ -186,7 +186,7 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, triggerU
 
 		const allowedProperties = propertyComponents.filter(({ title }) => {
 		  const mainComponentType = component.component_type;
-		  const propertyComponentType = component.property.data.component_type;
+		  const propertyComponentType = component.property.component_type;
 
 		  let isAllowedForMainComponent = true;
 		  let isAllowedForPropertyComponent = true;

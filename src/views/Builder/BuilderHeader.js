@@ -20,8 +20,17 @@ const FloatingMenu = ({ visible, options, onClose, position, handleDragStart, ha
 
   if (!visible) return null;
 
+  const containerTypes = ["Row", "Column", "Overlay", "Scroll", "Button"];
+
   const buttonElements = options.map((option, index) => (
-    <button draggable="true" onDragEnd={handleDragEnd} onDragStart={(e) => handleDragStart(e, "ContainerView", option.type)} className="floating-icon-button" key={index} onClick={option.onClick}>
+    <button 
+    draggable="true" 
+    onDragEnd={handleDragEnd} 
+    onDragStart={(e) => handleDragStart(e, 
+      containerTypes.includes(option.type) ? "ContainerView" : "Object", 
+      option.type)} className="floating-icon-button" 
+    key={index} 
+    onClick={option.onClick}>
       <i className={option.iconClass}></i>
       {option.type}
     </button>
