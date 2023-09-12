@@ -4,6 +4,8 @@ import LoginPage from './views/Login/LoginPage';
 import Builder from './views/Builder/Builder';
 import Dashboard from './views/Dashboard/Dashboard';
 import AuthenticatedLayout from './AuthenticatedLayout';
+import ProjectWizard from './views/Wizard/ProjectWizard';
+
 import Notification from './Notification'; 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { setupInterceptors } from './views/api';
@@ -59,6 +61,7 @@ function AppInner() {
           path="/builder/:projectId"
           element={<AuthenticatedLayout><Builder showNotification={showNotification} /></AuthenticatedLayout>}
         />
+        <Route path="/wizard/:projectId" element={<AuthenticatedLayout><ProjectWizard /></AuthenticatedLayout>} />
       </Routes>
     </div>
   );

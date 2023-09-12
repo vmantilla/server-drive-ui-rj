@@ -245,7 +245,7 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
   <>
     <div className="workspace-content" style={{ transform: `scale(${zoomLevel})`, width: `${workspaceSize}px`, height: `${workspaceSize}px` }}  onClick={handleWorkspaceClick}>
       {previews.map((preview) => {
-        if (selectedScreen === preview.id) {
+        if (true) {
           return (
             <PreviewScreen
                 key={preview.id}

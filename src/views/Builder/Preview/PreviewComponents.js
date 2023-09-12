@@ -361,6 +361,103 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     }
   }
 
+  // Exporta el arreglo 'components' como un archivo JSON
+const exportComponents = () => {
+  console.log(components)
+  const componentsJSON = JSON.stringify(convertToNewStructure(components));
+  const blob = new Blob([componentsJSON], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'componentes.json'; // Nombre del archivo JSON
+  a.style.display = 'none';
+  document.body.appendChild(a);
+
+  a.click();
+
+  // Limpia y revierte los cambios en el DOM
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+// Importa un archivo JSON y lo convierte en el arreglo 'components'
+const importComponents = async () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json';
+  input.style.display = 'none';
+  document.body.appendChild(input);
+
+  return new Promise((resolve, reject) => {
+    input.onchange = async () => {
+      const file = input.files[0];
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const newJson = JSON.parse(reader.result);
+        const oldComponents = convertToOldStructure(newJson);
+        resolve(oldComponents);
+      };
+
+      reader.onerror = () => {
+        reject(new Error('Error reading file'));
+      };
+
+      reader.readAsText(file);
+    };
+
+    input.click();
+    document.body.removeChild(input);
+  });
+};
+
+// Convierte de la primera estructura a la nueva
+function convertOldToNew(oldComponent) {
+  if (!oldComponent) return null;
+
+  const newComponent = {
+    id: oldComponent.id.toString(),
+    widgetType: oldComponent.property?.data?.component_type || oldComponent.component_type,
+    commonStyleIds: [], // Puedes añadir aquí según necesites
+    children: oldComponent.children.map(convertOldToNew)
+  };
+
+  return newComponent;
+}
+
+function convertToNewStructure(oldJson) {
+  const uiWidgets = oldJson.map(convertOldToNew);
+  const newJson = {
+    uiWidgets,
+    sharedStyles: {}, // Completar según las necesidades
+    localizedTexts: {} // Completar según las necesidades
+  };
+
+  return newJson;
+}
+
+// Convierte de la nueva estructura a la primera
+function convertNewToOld(newComponent) {
+  if (!newComponent) return null;
+
+  const oldComponent = {
+    id: parseInt(newComponent.id),
+    component_type: newComponent.widgetType,
+    parent_id: null, // Esto tendrás que ajustarlo según tu lógica
+    children: newComponent.children.map(convertNewToOld),
+    property: {} // Completar según las necesidades
+  };
+
+  return oldComponent;
+}
+
+function convertToOldStructure(newJson) {
+  const oldComponents = newJson.uiWidgets.map(convertNewToOld);
+  return oldComponents;
+}
+
+
 
 const renderComponentList = (compArray, parentId = null) => 
   compArray.map(comp => {
@@ -429,6 +526,9 @@ const renderComponentList = (compArray, parentId = null) =>
   return (
     <div className="buildercomponents">
       <span className="component-title">Components</span>
+      <span onClick={exportComponents}>
+      <i className="bi bi-cloud-upload"></i>
+      </span>
     <div className="components-container">
       {renderComponentList(components)}
     </div>

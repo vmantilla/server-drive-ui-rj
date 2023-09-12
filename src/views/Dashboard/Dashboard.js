@@ -4,6 +4,7 @@ import { getProjectsFromAPI, deleteProjectFromAPI, editProjectNameInAPI, addProj
 import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import TemplateWizard from '../Wizard/TemplateWizard';
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -18,9 +19,15 @@ function Dashboard() {
   const [projectToDelete, setProjectToDelete] = useState(null); // Almacenar el ID del proyecto a eliminar
   const [confirmDeleteName, setConfirmDeleteName] = useState(""); // Nombre que el usuario introduce para confirmar la eliminación
   const [editingProjectId, setEditingProjectId] = useState(null);
+  const [showWizardModal, setShowWizardModal] = useState(false);
 
   const handleRemoveImage = () => {
     setNewProjectImage('');
+  };
+
+  const handleTemplateSelect = (template) => {
+    // Aquí manejas la plantilla seleccionada
+    setShowWizardModal(false);
   };
 
   const handleModalShow = (id) => {
@@ -173,6 +180,7 @@ function Dashboard() {
 
 
   const handleProjectSelect = (id) => {
+    //navigate(`/wizard/${id}`);
     navigate(`/builder/${id}`);
   };
 
@@ -207,11 +215,20 @@ function Dashboard() {
             </div>
           </div>
         ))}
-        <div className="project-card add-project-card clickable" onClick={() => handleModalShow()}>
+        <div className="project-card add-project-card clickable" onClick={() => setShowWizardModal(true)}>
           <i className="bi bi-plus-lg add-project-icon"></i>
           <div className="add-project-title">Agregar Proyecto</div>
         </div>
       </div>
+
+      <Modal show={showWizardModal} onHide={() => setShowWizardModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Selecciona una plantilla</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <TemplateWizard onSelect={handleTemplateSelect} />
+        </Modal.Body>
+      </Modal>
       
       {showModal && (
         <Modal show={showModal} onHide={handleModalClose}>
