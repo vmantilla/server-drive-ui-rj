@@ -1,31 +1,55 @@
 import React, { useState } from 'react';
-import TemplateSelection from './TemplateSelection';  // Asegúrate de que la ruta de importación sea la correcta
+import TemplateWizard from './TemplateWizard';
+import TemplateSelection from './TemplateSelection';
+import TemplateViews from './TemplateViews';
 
-// Este es el componente principal del asistente
+const steps = [TemplateWizard, TemplateSelection, TemplateViews];
+
 const ProjectWizard = () => {
-  const [currentStep, setCurrentStep] = useState('templateSelection'); // Controla el paso actual del asistente
+  const [currentStep, setCurrentStep] = useState(0); // Controla el paso actual del asistente
   const [selectedTemplate, setSelectedTemplate] = useState(null); // Almacena la plantilla seleccionada
+
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      // Has alcanzado el último paso, puedes realizar alguna acción o finalizar el asistente
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    } else {
+      // Estás en el primer paso, puedes manejar esto según tus necesidades
+    }
+  };
 
   const handleTemplateSelect = (template) => {
     setSelectedTemplate(template);
-    setCurrentStep('generalConfiguration'); // Avanza al siguiente paso
+    handleNext(); // Avanza al siguiente paso
   };
+
+  const CurrentStepComponent = steps[currentStep];
 
   return (
     <div>
-      {currentStep === 'templateSelection' && (
-        <TemplateSelection onSelect={handleTemplateSelect} />
-      )}
-
-      {currentStep === 'generalConfiguration' && (
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2>Configuración General</h2>
-          <p>Plantilla seleccionada: {selectedTemplate}</p>
-          {/* Aquí podría ir la lógica para la configuración general */}
+          {currentStep > 0 && (
+            <button onClick={handleBack}>Atrás</button>
+          )}
         </div>
-      )}
+        <div>
+          {currentStep < steps.length - 1 && (
+            <button onClick={handleNext}>Siguiente</button>
+          )}
+        </div>
+      </div>
 
-      {/* Aquí podrías añadir más pasos según tus necesidades */}
+      <div>
+        <CurrentStepComponent onSelect={handleTemplateSelect} />
+      </div>
     </div>
   );
 };

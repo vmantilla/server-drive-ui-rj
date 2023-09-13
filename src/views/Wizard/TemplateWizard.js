@@ -4,51 +4,50 @@ import '../../css/Wizard/TemplateWizard.css';
 const TemplateWizard = ({ onSelect }) => {
   const templates = [
   {
-    title: "Selecciona una plantilla básica",
-    views: ["Proyecto en blanco", "Plantilla Tabulador", "Plantilla Tablet", "Plantilla Juego"]
+    title: "Plantillas Básicas",
+    views: ["Proyecto en Blanco", "Tabulador", "Tablet", "Juego"]
   },
   {
     title: "Medios y Contenido",
-    views: ["Blog / Revista Digital", "Noticias y Medios", "Biblioteca Digital", "Streaming de Contenidos"]
+    views: ["Blog", "Noticias", "Biblioteca Digital", "Streaming"]
   },
   {
-    title: "Comercio y Ventas",
-    views: ["Tienda en Línea / E-commerce", "Reserva de Eventos / Ticketing", "Servicio de Entrega / Envío", "Cafetería y Restaurantes", "Gestión de Restaurantes"]
+    title: "Comercio",
+    views: ["Tienda en Línea", "Reserva de Eventos", "Servicio de Entrega", "Restaurante"]
   },
   {
-    title: "Social y Comunidad",
-    views: ["Red Social / Comunidad", "Foro de Discusión", "ONG / Recaudación de Fondos", "Recaudación de Fondos y Crowdfunding"]
+    title: "Social",
+    views: ["Red Social", "Foro", "ONG", "Crowdfunding"]
   },
   {
-    title: "Corporativo y Negocios",
-    views: ["Aplicación de Empresa / Corporativa", "Servicios de Consultoría", "Portafolio / CV", "Legal / Abogados", "Tecnología y Startups", "Inversión y Mercado de Valores", "Servicios de Suscripción", "Servicios de Impresión y Diseño", "Servicios de Seguridad y Vigilancia"]
+    title: "Corporativo",
+    views: ["Empresa", "Consultoría", "Portafolio", "Legal", "Startup", "Inversión", "Suscripción", "Impresión", "Seguridad"]
   },
   {
-    title: "Educación y Aprendizaje",
-    views: ["Educación y Aprendizaje en Línea", "Idiomas y Aprendizaje de Culturas", "Educación Preescolar y Cuidado de Niños"]
+    title: "Educación",
+    views: ["Aprendizaje en Línea", "Idiomas", "Preescolar"]
   },
   {
-    title: "Salud y Bienestar",
-    views: ["Salud y Bienestar", "Servicios Médicos y Clínicas", "Deporte y Fitness", "Salud Mental y Bienestar"]
+    title: "Salud",
+    views: ["Bienestar", "Clínica Médica", "Fitness", "Salud Mental"]
   },
   {
-    title: "Inmuebles y Propiedades",
-    views: ["Inmobiliaria", "Gestión de Propiedades y Alquileres", "Construcción y Renovación"]
+    title: "Inmuebles",
+    views: ["Inmobiliaria", "Gestión de Propiedades", "Construcción"]
   },
   {
-    title: "Viajes y Hospitalidad",
-    views: ["Viajes y Turismo", "Hoteles y Alojamiento"]
+    title: "Viajes",
+    views: ["Turismo", "Hoteles"]
   },
   {
     title: "Servicios Específicos",
-    views: ["Automovilismo y Transporte", "Rastreo y Logística", "Servicios de Mudanza y Almacenamiento", "Gobierno y Servicios Públicos"]
+    views: ["Transporte", "Logística", "Mudanza", "Servicios Públicos"]
   },
   {
-    title: "Otros nichos",
-    views: ["Agricultura y Alimentos", "Belleza y Cosmética", "Boda y Eventos Especiales", "Crianza y Cuidado Infantil", "Música y Artistas", "Animales y Mascotas", "Fotografía y Videografía", "Arte y Fotografía", "Actividades al Aire Libre y Aventura", "Anuncios y Clasificados", "Veterinaria y Cuidado de Mascotas", "Moda y Estilo", "Salón de Eventos y Fiestas", "Reciclaje y Medio Ambiente", "Religión y Espiritualidad", "Cocina y Entrega de Comidas", "Música en Vivo y Conciertos", "Bienes de Consumo / Catálogo", "Seguros y Servicios Financieros"]
+    title: "Otros Nichos",
+    views: ["Agricultura", "Cosmética", "Eventos Especiales", "Cuidado Infantil", "Música", "Mascotas", "Fotografía", "Arte", "Aventura", "Anuncios", "Veterinaria", "Moda", "Salón de Eventos", "Reciclaje", "Espiritualidad", "Cocina", "Conciertos", "Consumo", "Finanzas"]
   }
 ];
-
 
   return (
     <div className="template-container">

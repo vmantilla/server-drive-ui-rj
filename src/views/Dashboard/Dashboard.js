@@ -19,17 +19,12 @@ function Dashboard() {
   const [projectToDelete, setProjectToDelete] = useState(null); // Almacenar el ID del proyecto a eliminar
   const [confirmDeleteName, setConfirmDeleteName] = useState(""); // Nombre que el usuario introduce para confirmar la eliminación
   const [editingProjectId, setEditingProjectId] = useState(null);
-  const [showWizardModal, setShowWizardModal] = useState(false);
-
+  
   const handleRemoveImage = () => {
     setNewProjectImage('');
   };
 
-  const handleTemplateSelect = (template) => {
-    // Aquí manejas la plantilla seleccionada
-    setShowWizardModal(false);
-  };
-
+  
   const handleModalShow = (id) => {
     if (id) {
       const projectToEdit = projects.find(p => p.id === id);
@@ -184,6 +179,10 @@ function Dashboard() {
     navigate(`/builder/${id}`);
   };
 
+  const handleNewProjectSelected = () => {
+    navigate(`/wizard`);
+  };
+
   return (
     <div className="dashboard">
       {errorMessage && <div className="float-message error-message">{errorMessage}</div>}
@@ -215,21 +214,12 @@ function Dashboard() {
             </div>
           </div>
         ))}
-        <div className="project-card add-project-card clickable" onClick={() => setShowWizardModal(true)}>
+        <div className="project-card add-project-card clickable" onClick={handleNewProjectSelected}>
           <i className="bi bi-plus-lg add-project-icon"></i>
           <div className="add-project-title">Agregar Proyecto</div>
         </div>
       </div>
 
-      <Modal show={showWizardModal} onHide={() => setShowWizardModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Selecciona una plantilla</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <TemplateWizard onSelect={handleTemplateSelect} />
-        </Modal.Body>
-      </Modal>
-      
       {showModal && (
         <Modal show={showModal} onHide={handleModalClose}>
             <Modal.Header closeButton>

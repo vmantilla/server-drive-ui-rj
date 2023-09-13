@@ -140,3 +140,9 @@ h2, .project-card h3 {
   background-color: rgba(128, 128, 128, 0.5);
   height: 100%;
 }
+
+.custom-wizard-modal {
+  max-width: 800px; /* Establece el ancho máximo deseado */
+  margin: 0 auto; /* Centra el modal horizontalmente */
+}
+

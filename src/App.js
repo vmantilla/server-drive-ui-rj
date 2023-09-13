@@ -61,7 +61,7 @@ function AppInner() {
           path="/builder/:projectId"
           element={<AuthenticatedLayout><Builder showNotification={showNotification} /></AuthenticatedLayout>}
         />
-        <Route path="/wizard/:projectId" element={<AuthenticatedLayout><ProjectWizard /></AuthenticatedLayout>} />
+        <Route path="/wizard" element={<AuthenticatedLayout><ProjectWizard /></AuthenticatedLayout>} />
       </Routes>
     </div>
   );
