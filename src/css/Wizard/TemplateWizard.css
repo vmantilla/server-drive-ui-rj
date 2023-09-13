@@ -1,63 +1,49 @@
-/* TemplateWizard.css */
-.template-container {
-  margin-top: 20px;
+.template-wizard-container {
+  padding: 20px;
+  background-color: #FFFFFF;
+}
+
+.template-categories {
   display: flex;
   flex-direction: column;
 }
 
-.title {
-  font-size: 24px;
-  margin-bottom: 15px;
+.template-category {
+  margin-bottom: 20px;
 }
 
-.template-group {
-  border: 1px solid #d1d1d1;
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+.template-category h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #333; /* Color del texto del título de la sección */
+  border-bottom: 1px solid #292929; /* Línea inferior para separar el título de la sección */
+  padding-bottom: 5px; /* Espacio entre el título y la línea inferior */
 }
 
-.grid-container {
+.template-list {
   display: flex;
-  flex-wrap: wrap; /* Permite que los elementos se muevan a la siguiente fila si no caben */
-  gap: 16px; /* Espacio entre las vistas */
+  overflow-x: auto;
+  gap: 15px;
+  min-width: 100%; /* Ancho mínimo para que el contenedor ocupe el 100% del espacio disponible */
 }
 
-.grid-item {
-  background-color: #FFF;
-  padding: 16px;
-  border-radius: 10px;
+.template-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.2s;
-  flex: 1; /* Hace que cada elemento ocupe un espacio igual en la fila */
-  max-width: calc(25% - 16px); /* 20% para 5 elementos por fila con 16px de espacio entre ellos */
+  white-space: nowrap;
+  min-width: 150px; /* Ancho mínimo para cada miniatura de plantilla */
 }
 
-.grid-item:hover {
-  transform: scale(1.05);
+.template-thumbnail img {
+  width: 100%; /* Ajusta el ancho de la imagen al 100% del contenedor */
+  max-height: 150px; /* Altura máxima para evitar distorsiones */
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 5px;
 }
 
-.icon-container {
-  background-color: #007aff;
-  width: 80px;
-  height: 80px;
-  border-radius: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.grid-item img {
-  max-width: 100%;
-}
-
-.grid-item span {
-  margin-top: 10px;
-  font-size: 14px;
-  text-align: center;
-  color: #292929;
+button {
+  margin-top: 20px;
 }

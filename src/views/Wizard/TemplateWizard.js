@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../../css/Wizard/TemplateWizard.css';
+import { useNavigate } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
 
 const TemplateWizard = ({ onSelect }) => {
+  const navigate = useNavigate();
+
   const templates = [
   {
     title: "Plantillas Básicas",
@@ -49,23 +53,36 @@ const TemplateWizard = ({ onSelect }) => {
   }
 ];
 
+  const handleTemplateSelect = (view) => {
+    onSelect(view);
+    navigate('/builder'); // Ajusta la ruta según tu configuración
+  };
+
   return (
-    <div className="template-container">
-      {templates.map((templateGroup, index) => (
-        <div className="template-group" key={index}>
-          <div className="title">{templateGroup.title}</div>
-          <div className="grid-container">
-            {templateGroup.views.map((view, i) => (
-              <div className="grid-item" key={i} onClick={() => onSelect(view)}>
-                <div className="icon-container">
-                  <img src="https://via.placeholder.com/150" alt={`${view}`} />
+    <div className="template-wizard-container">
+      <h2>Selecciona una plantilla</h2>
+
+      <div className="template-categories">
+        {templates.map((templateGroup, index) => (
+          <div className="template-category" key={index}>
+            <h3>{templateGroup.title}</h3>
+            <div className="template-list">
+              {templateGroup.views.map((view, i) => (
+                <div className="template-item" key={i} onClick={() => handleTemplateSelect(view)}>
+                  <div className="template-thumbnail">
+                    <img src="https://via.placeholder.com/150" alt={view} />
+                  </div>
+                  <span>{view}</span>
                 </div>
-                <span>{view}</span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+
+      <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+        Atrás
+      </Button>
     </div>
   );
 };
