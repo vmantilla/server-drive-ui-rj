@@ -1,6 +1,8 @@
 /* TemplateWizard.css */
 .template-container {
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .title {
@@ -8,19 +10,45 @@
   margin-bottom: 15px;
 }
 
+.template-group {
+  border: 1px solid #d1d1d1;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+}
+
 .grid-container {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap; /* Permite que los elementos se muevan a la siguiente fila si no caben */
+  gap: 16px; /* Espacio entre las vistas */
 }
 
 .grid-item {
-  background-color: lightgrey;
-  padding: 10px;
-  border-radius: 5px;
+  background-color: #FFF;
+  padding: 16px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+  flex: 1; /* Hace que cada elemento ocupe un espacio igual en la fila */
+  max-width: calc(25% - 16px); /* 20% para 5 elementos por fila con 16px de espacio entre ellos */
+}
+
+.grid-item:hover {
+  transform: scale(1.05);
+}
+
+.icon-container {
+  background-color: #007aff;
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .grid-item img {
@@ -29,4 +57,7 @@
 
 .grid-item span {
   margin-top: 10px;
+  font-size: 14px;
+  text-align: center;
+  color: #292929;
 }

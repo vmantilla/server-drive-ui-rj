@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Configura axios para usar "http://localhost:3000" como URL base
-axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.baseURL = "http://localhost:3002";
 
 axios.interceptors.request.use(function (config) {
   const token = localStorage.getItem('token');
