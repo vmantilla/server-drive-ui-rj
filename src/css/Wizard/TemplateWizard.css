@@ -1,49 +1,63 @@
-.template-wizard-container {
-  padding: 20px;
-  background-color: #FFFFFF;
-}
-
-.template-categories {
-  display: flex;
-  flex-direction: column;
-}
-
-.template-category {
-  margin-bottom: 20px;
-}
-
-.template-category h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #333; /* Color del texto del título de la sección */
-  border-bottom: 1px solid #292929; /* Línea inferior para separar el título de la sección */
-  padding-bottom: 5px; /* Espacio entre el título y la línea inferior */
-}
-
-.template-list {
-  display: flex;
-  overflow-x: auto;
-  gap: 15px;
-  min-width: 100%; /* Ancho mínimo para que el contenedor ocupe el 100% del espacio disponible */
-}
-
-.template-item {
+.template-list .template-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  white-space: nowrap;
-  min-width: 150px; /* Ancho mínimo para cada miniatura de plantilla */
-}
-
-.template-thumbnail img {
-  width: 100%; /* Ajusta el ancho de la imagen al 100% del contenedor */
-  max-height: 150px; /* Altura máxima para evitar distorsiones */
-  object-fit: cover;
+  width: 200px;
+  border: 2px solid #ddd;
   border-radius: 5px;
-  margin-bottom: 5px;
+  padding: 8px;
+  transition: border-color 0.3s ease;
 }
 
-button {
-  margin-top: 20px;
+.template-list .template-item.selected {
+  border: 3px solid #292929;
+}
+
+.template-thumbnail i {
+  font-size: 4rem;
+  color: #333;
+}
+
+.template-title {
+  font-size: 14px;
+  margin-top: 10px;
+  color: #333;
+  font-weight: bold;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; /* Cambiado a normal para permitir múltiples líneas de texto */
+}
+
+.template-description {
+  font-size: 12px;
+  margin-top: 5px;
+  color: #666;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; /* Cambiado a normal para permitir múltiples líneas de texto */
+}
+
+.template-category h3 {
+  font-size: 16px;
+  margin-top: 30px;
+  color: #292929;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.template-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  min-width: 100%;
+}
+
+
+.template-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

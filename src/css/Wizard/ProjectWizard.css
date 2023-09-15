@@ -1,0 +1,105 @@
+.stepper-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Alinea verticalmente los elementos */
+}
+
+.stepper {
+  display: flex;
+  align-items: center; /* Alinea verticalmente los pasos */
+}
+
+.step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  white-space: nowrap;
+  padding: 20px 20px 0px 20px;
+}
+
+.step-circle {
+  width: 30px;
+  height: 30px;
+  background-color: #FFFFFF; /* Fondo blanco por defecto */
+  color: #292929; /* Color del número y borde */
+  border: 1px solid #292929; /* Borde del círculo */
+  border-radius: 50%;
+  line-height: 29px;
+  font-weight: bold;
+  margin: 0 auto 5px;
+}
+
+.step-title {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Estilos para el paso seleccionado */
+.step.active .step-circle {
+  background-color: #292929; /* Color de fondo del paso activo */
+  color: #FFFFFF; /* Color del número y borde del paso activo */
+}
+
+.step.active .step-title {
+  color: #292929; /* Color del título del paso activo */
+}
+
+/* Estilos para el contenido de cada paso */
+.step-content {
+  border: 1px solid #ddd; /* Borde muy sutil */
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #FFFFFF;
+  height: 600px; /* Establece la altura máxima para permitir el desplazamiento vertical */
+  overflow-y: auto; /* Agrega una barra de desplazamiento vertical cuando sea necesario */
+}
+
+/* Estilos para el contenedor de botones */
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #FFFFFF;
+  padding: 10px 20px;
+  border-bottom: 1px solid #292929; /* Borde inferior para separar los botones del contenido */
+  position: sticky;
+  bottom: 0;
+}
+
+.button-container button {
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.button-container button.space {
+  width: 0px; /* Ancho del espacio entre botones */
+  border: none; /* Sin borde */
+  padding: 10px;
+  background-color: transparent; /* Fondo transparente */
+}
+
+.button-container button.cancel {
+  background-color: #E0E0E0;
+  color: #292929;
+  margin-right: 20px;
+}
+.button-container button.active {
+  background-color: #292929; /* Color de fondo para los botones "Atrás" y "Siguiente" */
+  color: #FFFFFF; /* Color del texto para los botones "Atrás" y "Siguiente" */
+}
+
+.button-container button.finish {
+  background-color: #292929; /* Color de fondo para el botón "Finalizar" */
+  color: #FFFFFF; /* Color del texto para el botón "Finalizar" */
+}
+
+.step-description {
+  color: #292929; /* Color del texto del paso */
+  position: relative; /* Cambia 'absolute' a 'relative' */
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
