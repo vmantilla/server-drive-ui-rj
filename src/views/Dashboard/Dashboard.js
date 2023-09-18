@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../../css/Dashboard/Dashboard.css';
+import '../../css/Wizard/TemplateConfiguration.css'; 
 import { getProjectsFromAPI, deleteProjectFromAPI, editProjectNameInAPI, addProjectToAPI } from '../api.js';
 import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
@@ -208,7 +209,6 @@ function Dashboard() {
             <div className="project-title-actions d-flex align-items-center justify-content-between">
               <h3 onClick={() => handleProjectSelect(project.id)}>{project.title}</h3>
               <div>
-                <i className="bi bi-pencil-square icon-pencil" onClick={() => handleModalShow(project.id)}></i>
                 <i className="bi bi-trash icon-trash" onClick={() => handleDeleteModalShow(project.id)}></i>
               </div>
             </div>

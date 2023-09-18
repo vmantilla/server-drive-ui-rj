@@ -1,21 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../css/Wizard/ProjectWizard.css'; 
 import TemplateWizard from './TemplateWizard';
-import TemplateSelection from './TemplateSelection';
-import TemplateViews from './TemplateViews';
+import TemplatePreview from './TemplatePreview';
+import TemplateConfiguration from './TemplateConfiguration';
+import { fetchTemplates, addProjectToAPI } from '../api.js'; 
 
-const steps = [TemplateWizard, TemplateSelection, TemplateViews];
+const steps = [TemplateWizard, TemplatePreview, TemplateConfiguration];
 
 const stepTitles = [
   "Explora Plantillas para tu Proyecto",
-  "2 An application in Okta represents an integration with the software you're building. Choose your platform, and we'll recommend settings on the next step.",
-  "3 An application in Okta represents an integration with the software you're building. Choose your platform, and we'll recommend settings on the next step.",
+  "Vista Previa de Plantillas Disponibles",
+  "Configura Tu Proyecto",
   // Agrega los títulos correspondientes a cada paso aquí
 ];
 
 const ProjectWizard = () => {
   const [currentStep, setCurrentStep] = useState(0); // Controla el paso actual del asistente
   const [selectedTemplate, setSelectedTemplate] = useState(null); // Almacena la plantilla seleccionada
+  const [modules, setModules] = useState([]);
+  const [configuration, setConfiguration] = useState({
+    selectedPlatform: [], // Almacena las plataformas seleccionadas
+    projectName: 'Mi Proyecto', // Establece el nombre del proyecto predeterminado
+  });
+
+  useEffect(() => {
+    // Realiza la solicitud a la API para obtener los módulos
+    fetchTemplates()
+      .then((data) => {
+        setModules(data);
+        if (data.length > 0) {
+          setSelectedTemplate(data[0]);
+        }
+      })
+      .catch((error) => {
+        console.error('Error al cargar los módulos:', error);
+      });
+  }, []);
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -37,12 +57,25 @@ const ProjectWizard = () => {
     // Agrega lógica para cancelar el wizard o redirigir a otra página
   };
 
-  const handleFinish = () => {
-    // Agrega lógica para cancelar el wizard o redirigir a otra página
-  };
+  const handleFinish = async () => {
 
-  const handleTemplateSelect = (template) => {
-    setSelectedTemplate(template);
+    try {
+      if (!configuration.projectName.trim()) {
+        return;
+      }
+
+      const newProjectData = {
+        title: configuration.projectName,
+        image_url: null,
+        description: ""
+      };
+
+console.log("handleFinish", newProjectData)
+      const newProject = await addProjectToAPI(newProjectData); 
+      
+    } catch (error) {
+      
+    }
   };
 
   const CurrentStepComponent = steps[currentStep];
@@ -64,7 +97,13 @@ const ProjectWizard = () => {
         {stepTitles[currentStep]}
       </div>
       <div className="step-content">
-        <CurrentStepComponent onSelect={handleTemplateSelect} />
+        <CurrentStepComponent
+          modules={modules}
+          setSelectedTemplate={setSelectedTemplate}
+          selectedTemplate={selectedTemplate}
+          configuration={configuration} // Pasa la configuración completa
+          setConfiguration={setConfiguration} // Función para actualizar la configuración
+        />
       </div>
       <div className="button-container">
         <div>

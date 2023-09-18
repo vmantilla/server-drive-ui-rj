@@ -110,7 +110,7 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
       setOrderableComponent(null);
         
       try {
-        await editComponentToAPI(orderableComponent.id, { index: newIndex });
+        await editComponentToAPI(orderableComponent.id, { position: newIndex });
         setSelectedComponent(orderableComponent);
         setComponentLoading(null);
       } catch (error) {

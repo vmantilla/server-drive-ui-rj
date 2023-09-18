@@ -1,0 +1,69 @@
+/* TemplatePreview.css */
+
+/* Contenedor principal del componente */
+.TemplatePreview {
+  text-align: center;
+}
+
+/* Título */
+.TemplatePreview h2 {
+  padding-top: 0px;
+  font-size: 24px;
+}
+
+/* Carrusel de imágenes */
+.TemplatePreview .carousel {
+  margin: 0 auto;
+}
+
+/* Imágenes del carrusel */
+.TemplatePreview .carousel .carousel-item img {
+  max-height: 500px; /* Ajusta la altura máxima según tus preferencias */
+  margin: 0 auto;
+}
+
+/* Botón */
+.TemplatePreview .carousel-caption button {
+  background-color: #007bff; /* Color de fondo del botón */
+  color: #fff; /* Color del texto del botón */
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.TemplatePreview .carousel-caption button:hover {
+  background-color: #0056b3; /* Cambia el color de fondo al pasar el cursor sobre el botón */
+}/* Estilos para los botones de control del carrusel */
+
+
+/* Estilos para los botones de control del carrusel */
+.carousel-control-prev,
+.carousel-control-next {
+  background-color: #eee;
+  width: 15%;
+  max-width: 40px; /* Ancho máximo de los controles */
+  /* Añade estos estilos para centrar verticalmente los controles */
+  display: flex;
+  align-items: center;
+}
+
+/* Estilos para los iconos de los botones de control del carrusel */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  color: #292929;
+  font-size: 24px;
+  width: 15%;
+  max-width: 20px; /* Ancho máximo de los iconos */
+  /* Añade estos estilos para centrar verticalmente los iconos */
+  display: flex;
+  align-items: center;
+}
+
+/* Estilos adicionales para los iconos de las flechas */
+.carousel-control-prev-icon::before,
+.carousel-control-next-icon::before {
+  /* Añade estos estilos para ajustar la posición vertical de los iconos de flechas */
+  transform: translateY(0);
+}

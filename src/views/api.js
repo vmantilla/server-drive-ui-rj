@@ -25,6 +25,18 @@ export const setupInterceptors = (navigate) => {
 
 // === PROJECT API Calls ===
 
+export const fetchTemplates = async () => {
+  try {
+    const response = await axios.get('/templates');
+    const templates = response.data;
+    console.log(templates);
+    return response.data;
+  } catch (error) {
+    // Manejar errores aquí.
+    console.error('Error al obtener plantillas:', error);
+  }
+}
+
 export const getProjectsFromAPI = async () => {
   try {
     const response = await axios.get('/projects');

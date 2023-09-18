@@ -1,8 +1,9 @@
 import React from 'react';
-import '../../css/Wizard/TemplateSelection.css';
+import '../../css/Wizard/TemplatePreview.css';
 import { Carousel } from 'react-bootstrap';
 
-const TemplateSelection = ({ onSelect }) => {
+const TemplatePreview = ({ selectedTemplate }) => {
+  console.log(selectedTemplate);
   const templates = [
     {
       name: 'Plantilla 1',
@@ -18,11 +19,10 @@ const TemplateSelection = ({ onSelect }) => {
     }
   ];
 
-
-    return (
-    <div>
-      <h2 style={{ textAlign: 'center' }}>Selecciona una plantilla</h2>
-      <Carousel>
+  return (
+    <div className="TemplatePreview">
+      <h2 style={{ textAlign: 'center' }}>{selectedTemplate && selectedTemplate.name}</h2>
+      <Carousel interval={5000} pause="hover" mouseEnter={true}>
         {templates.map((template, index) => (
           <Carousel.Item key={index}>
             <img
@@ -30,10 +30,6 @@ const TemplateSelection = ({ onSelect }) => {
               src={template.imageUrl}
               alt={template.name}
             />
-            <Carousel.Caption>
-              <h3>{template.name}</h3>
-              <button onClick={() => onSelect(template.name)}>Elegir esta plantilla</button>
-            </Carousel.Caption>
           </Carousel.Item>
         ))}
       </Carousel>
@@ -41,4 +37,4 @@ const TemplateSelection = ({ onSelect }) => {
   );
 };
 
-export default TemplateSelection;
+export default TemplatePreview;
