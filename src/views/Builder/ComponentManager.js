@@ -48,8 +48,8 @@ class ComponentManager {
 	}
 
 
-	addComponentChild(parentId, child) {
-		this.components = this.#addComponentChildRecursive(parentId, this.components, child);
+	addComponentChild(parentId, child, position = null) {
+		this.components = this.#addComponentChildRecursive(parentId, this.components, child, position = position);
 		this.saveToDB();
 	}
 
@@ -71,7 +71,7 @@ class ComponentManager {
 		return false;
 	}
 
-	moveComponent(componentId, parentId) {
+	moveComponent(componentId, parentId, position = null) {
 		if (componentId === parentId) {
 			throw new Error('No se puede mover un componente dentro de sí mismo.');
 		}
@@ -85,7 +85,7 @@ class ComponentManager {
 			throw new Error('No se puede mover un componente dentro de sí mismo o dentro de un descendiente.');
 		}
 
-		this.components = this.#addComponentChildRecursive(parentId, this.removeComponent(componentId, this.components), componentToMove);
+		this.components = this.#addComponentChildRecursive(parentId, this.removeComponent(componentId, this.components), componentToMove, position);
 		this.saveToDB();
 	}
 
@@ -130,35 +130,45 @@ class ComponentManager {
 	  localStorage.setItem("updateQueue", JSON.stringify(this.updateQueue));
 	}
 
-	findComponentByIdRecursive(id, currentComponents = this.components) {
-		for (let component of currentComponents) {
-			if (component.id === id) {
-				return component;
-			} else if (component.children && component.children.length > 0) {
-				const result = this.findComponentByIdRecursive(id, component.children);
-				if (result) return result;
-			}
-		}
-		return null;
+	findComponentByIdRecursive(id, currentComponents = this.components, parentArray = null) {
+	    for (let i = 0; i < currentComponents.length; i++) {
+	        const component = currentComponents[i];
+	        if (component.id === id) {
+	        	component.position = i;
+	            return component;
+	        } else if (component.children && component.children.length > 0) {
+	            const result = this.findComponentByIdRecursive(id, component.children, currentComponents);
+	            if (result) return result;
+	        }
+	    }
+	    return null;
 	}
 
-	#addComponentChildRecursive(parentId, currentComponents, child) {
-		return currentComponents.map(component => {
-			if (component.id === parentId) {
-				return {
-					...component,
-					children: [...(component.children || []), child],
-					expanded: true 
-				};
-			} else if (component.children && component.children.length > 0) {
-				return {
-					...component,
-					children: this.#addComponentChildRecursive(parentId, component.children, child)
-				};
+	#addComponentChildRecursive(parentId, currentComponents, child, position = null) {
+		console.log("addComponentChildRecursive", position);
+	return currentComponents.map(component => {
+		if (component.id === parentId) {
+			const newChildren = [...(component.children || [])];
+			if (position !== null) {
+				newChildren.splice(position, 0, child); // inserta 'child' en la posición específica
+			} else {
+				newChildren.push(child); // añade 'child' al final si no se especifica una posición
 			}
-			return component;
-		});
-	}
+			return {
+				...component,
+				children: newChildren,
+				expanded: true 
+			};
+		} else if (component.children && component.children.length > 0) {
+			return {
+				...component,
+				children: this.#addComponentChildRecursive(parentId, component.children, child, position)
+			};
+		}
+		return component;
+	});
+}
+
 
 	#removeComponentRecursive(componentId, currentComponents) {
 		return currentComponents.reduce((acc, component) => {
@@ -186,6 +196,40 @@ class ComponentManager {
 			}
 		}
 		return null;
+	}
+
+	convertJsonToTree(jsonData) {
+	  const nodes = {};
+
+	  // Primero, crea todos los nodos.
+	  for (const [id, value] of Object.entries(jsonData.uiWidgets)) {
+	    const [component_type, _, __] = value;
+	    nodes[id] = {
+	      id,
+	      component_type,
+	      parent_id: null,  // Inicialmente, ponemos el parent_id como null
+	      children: []
+	    };
+	  }
+
+	  // Segundo, añade los hijos a sus respectivos padres y actualiza el parent_id de los hijos.
+	  for (const [id, value] of Object.entries(jsonData.uiWidgets)) {
+	    const [_, __, children] = value;
+
+	    children.forEach((childId) => {
+	      nodes[id].children.push(nodes[childId]);
+	      nodes[childId].parent_id = id;  // Actualiza el parent_id del hijo
+	    });
+	  }
+
+	  // Tercero, encuentra los nodos raíz.
+	  const roots = Object.values(nodes).filter(node => {
+	    return !Object.values(nodes).some(otherNode => 
+	      otherNode.children.some(child => child.id === node.id)
+	    );
+	  });
+
+	  return roots;
 	}
 
 }

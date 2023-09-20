@@ -49,9 +49,17 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
 
   useEffect(() => {
     const handleKeyPress = (e) => {
+
+      console.log('handleKeyPress', e.key);
+
       if (orderableComponent) {
+
+        console.log('orderableComponent')
         const parentId = orderableComponent.parent_id;
         const parentComponent = componentManager.findComponentByIdRecursive(parentId, componentManager.components);
+
+        console.log('parentComponent', parentComponent)
+
 
         if (!parentComponent || !parentComponent.children) {
           return;
@@ -59,6 +67,9 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
 
         const siblings = parentComponent.children;
         let currentIndex = siblings.findIndex(comp => comp.id === orderableComponent.id);
+
+ console.log('Current Index:', currentIndex);
+      console.log('Siblings:', siblings);
 
         if (currentIndex === -1) {
           return;
@@ -138,9 +149,12 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     try {
       if(componentManager.isUpdateRequired()) {
         const componentsData = await getComponentsFromAPI(previewId);
+        console.log("getComponentsFromAPI", componentsData)
+        const convertJsonToTree = componentManager.convertJsonToTree(componentsData)
+        console.log("convertJsonToTree", convertJsonToTree)
         componentManager.saveLastUpdatedTime();
-        componentManager.components = componentsData
-        setComponents(componentsData);
+        componentManager.components = convertJsonToTree
+        setComponents(convertJsonToTree);
       } else {
         setComponents(componentManager.components);
       }
@@ -268,9 +282,15 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
       const componentsData = await duplicateComponentToAPI(compToDuplicate.id);
-      componentManager.saveLastUpdatedTime();
-      componentManager.components = componentsData
-      setComponents(componentsData);
+      const convertJsonToTree = componentManager.convertJsonToTree(componentsData);
+      if (convertJsonToTree, convertJsonToTree.length > 0) {
+        console.log("duplicateComponentToAPI", componentsData)
+        console.log("compToDuplicate", compToDuplicate)
+        console.log("compToDuplicate.position", compToDuplicate.position)
+        componentManager.saveLastUpdatedTime();
+        componentManager.addComponentChild(compToDuplicate.parent_id, convertJsonToTree[0], compToDuplicate.position);
+        setComponents(componentManager.components);
+      }
       showNotification('success', 'Component duplicated successfully.');
     } catch (error) {
       console.error('Error duplicating component:', error);
@@ -280,9 +300,9 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
 
   const getCustomizations = (component_type) => {
     const customizations = {
-      'Header': { class: 'component-type-header', label: 'HEADER', enableDrag: false },
-      'Body': { class: 'component-type-body', label: 'BODY', enableDrag: false },
-      'Footer': { class: 'component-type-footer', label: 'FOOTER', enableDrag: false },
+      'Header': { class: 'component-type-header', label: '', enableDrag: false },
+      'Body': { class: 'component-type-body', label: '', enableDrag: false },
+      'Footer': { class: 'component-type-footer', label: '', enableDrag: false },
       'default': { class: '', label: '', enableDrag: true },
     };
 
@@ -461,7 +481,7 @@ function convertToOldStructure(newJson) {
 
 const renderComponentList = (compArray, parentId = null) => 
   compArray.map(comp => {
-    if (!comp || !comp.property) {
+    if (!comp || !comp.component_type) {
       console.error('Invalid component:', comp);
       return null;
     }
@@ -495,7 +515,7 @@ const renderComponentList = (compArray, parentId = null) =>
               <span className="toggle-btn" onClick={(e) => { e.stopPropagation(); handleToggleExpanded(comp.id); }}>
                 {comp.expanded ?  <i className="bi bi-node-minus"></i> : <i className="bi bi-node-plus-fill"></i>}
               </span>
-              <span>{comp.property ? comp.property.data.component_type : 'N/A'}</span>
+              <span>{comp.component_type ? comp.component_type : 'N/A'}</span>
             </div>
             
           </div>

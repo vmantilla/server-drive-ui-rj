@@ -186,7 +186,7 @@ function ComponentProperties({ selectedComponent, setSelectedComponent, triggerU
 
 		const allowedProperties = propertyComponents.filter(({ title }) => {
 		  const mainComponentType = component.component_type;
-		  const propertyComponentType = component.property.data.component_type;
+		  const propertyComponentType = "" //component.property.data.component_type;
 
 		  let isAllowedForMainComponent = true;
 		  let isAllowedForPropertyComponent = true;
