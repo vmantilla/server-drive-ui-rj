@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../css/Wizard/ProjectWizard.css'; 
 import TemplateWizard from './TemplateWizard';
 import TemplatePreview from './TemplatePreview';
@@ -15,6 +16,7 @@ const stepTitles = [
 ];
 
 const ProjectWizard = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0); // Controla el paso actual del asistente
   const [selectedTemplate, setSelectedTemplate] = useState(null); // Almacena la plantilla seleccionada
   const [modules, setModules] = useState([]);
@@ -23,13 +25,16 @@ const ProjectWizard = () => {
     projectName: 'Mi Proyecto', // Establece el nombre del proyecto predeterminado
   });
 
+  const isFinishDisabled = configuration.selectedPlatform.length === 0 || !configuration.projectName.trim();
+
   useEffect(() => {
     // Realiza la solicitud a la API para obtener los módulos
     fetchTemplates()
       .then((data) => {
         setModules(data);
-        if (data.length > 0) {
-          setSelectedTemplate(data[0]);
+        if (data.length > 0 && data[0].template_views.length > 0) {
+          console.log("setSelectedTemplate", data[0].template_views[0]);
+          setSelectedTemplate(data[0].template_views[0]);
         }
       })
       .catch((error) => {
@@ -54,10 +59,12 @@ const ProjectWizard = () => {
   };
 
   const handleCancel = () => {
-    // Agrega lógica para cancelar el wizard o redirigir a otra página
+    navigate('/dashboard'); 
   };
 
   const handleFinish = async () => {
+
+    console.log("configuration", configuration);
 
     try {
       if (!configuration.projectName.trim()) {
@@ -66,15 +73,15 @@ const ProjectWizard = () => {
 
       const newProjectData = {
         title: configuration.projectName,
-        image_url: null,
+        selected_platforms: configuration.selectedPlatform.map(p => p.name).join(","),
         description: ""
       };
 
-console.log("handleFinish", newProjectData)
       const newProject = await addProjectToAPI(newProjectData); 
+      navigate(`/builder/${newProject.id}`);
       
     } catch (error) {
-      
+      navigate('/dashboard');
     }
   };
 
@@ -120,7 +127,8 @@ console.log("handleFinish", newProjectData)
             <button className="active" onClick={handleNext}>Siguiente</button>
           )}
           {currentStep === steps.length - 1 && (
-            <button className="finish" onClick={handleFinish}>Finalizar</button>
+            <button className={`finish ${isFinishDisabled ? 'button-disabled' : ''}`} 
+             onClick={handleFinish} disabled={isFinishDisabled}>Finalizar</button>
           )}
         </div>
       </div>

@@ -2,33 +2,38 @@ import React, { useState, useEffect } from 'react';
 import '../../css/Wizard/TemplateConfiguration.css';
 
 const TemplateConfiguration = ({ selectedTemplate, configuration, setConfiguration }) => {
-  // Inicializa selectedDeviceTypes con la información de configuration
   const [selectedDeviceTypes, setSelectedDeviceTypes] = useState(() => {
     const initialSelectedDeviceTypes = new Map();
     for (const platform of configuration.selectedPlatform) {
-      initialSelectedDeviceTypes.set(platform, new Set());
+      initialSelectedDeviceTypes.set(platform.name, new Set());
     }
     return initialSelectedDeviceTypes;
   });
 
+  useEffect(() => {
+    const newSelectedDeviceTypes = new Map();
+    for (const platform of configuration.selectedPlatform) {
+      const moduleName = 'Dispositivos';
+      const deviceType = platform.name;
+
+      if (!newSelectedDeviceTypes.has(moduleName)) {
+        newSelectedDeviceTypes.set(moduleName, new Set());
+      }
+      newSelectedDeviceTypes.get(moduleName).add(deviceType);
+    }
+    setSelectedDeviceTypes(newSelectedDeviceTypes);
+  }, [configuration.selectedPlatform]);
+
   const [modules, setModules] = useState([
     {
       title: 'Dispositivos',
-      isMultiple: true, // Permite selección múltiple
+      isMultiple: true,
       items: [
         { name: 'Web', icon: 'laptop' },
         { name: 'iOS', icon: 'apple' },
         { name: 'Android', icon: 'android2' },
-        //{ name: 'Smart TV', icon: 'tv' },
       ],
     },
-    /*{
-      title: 'Servidor',
-      isMultiple: false, 
-      items: [
-        { name: 'Incluir API', icon: 'gear' }
-      ],
-    },*/
   ]);
 
   const handleDeviceTypeToggle = (moduleName, deviceType) => {
@@ -36,14 +41,12 @@ const TemplateConfiguration = ({ selectedTemplate, configuration, setConfigurati
     const module = updatedSelectedDeviceTypes.get(moduleName);
 
     if (!module) {
-      // Crear un nuevo conjunto para este módulo si no existe
       updatedSelectedDeviceTypes.set(moduleName, new Set([deviceType]));
     } else {
       if (module.has(deviceType)) {
         module.delete(deviceType);
       } else {
         if (!modules.find((m) => m.title === moduleName).isMultiple) {
-          // Si no se permite selección múltiple, limpiar el conjunto antes de agregar uno nuevo
           module.clear();
         }
         module.add(deviceType);
@@ -52,11 +55,20 @@ const TemplateConfiguration = ({ selectedTemplate, configuration, setConfigurati
 
     setSelectedDeviceTypes(updatedSelectedDeviceTypes);
 
-    // Actualiza la configuración
+    const selectedPlatformsArray = [];
+    for (const [moduleName, selectedTypes] of updatedSelectedDeviceTypes) {
+      for (const selectedType of selectedTypes) {
+        const platformObject = modules.find(module => module.title === moduleName)?.items.find(item => item.name === selectedType);
+        if (platformObject) {
+          selectedPlatformsArray.push(platformObject);
+        }
+      }
+    }
+
     setConfiguration({
       ...configuration,
-      selectedPlatform: [...updatedSelectedDeviceTypes.keys()], // Cambia 'platform' a 'selectedPlatform'
-      projectName: configuration.projectName, // Mantén el nombre del proyecto
+      selectedPlatform: selectedPlatformsArray,
+      projectName: configuration.projectName,
     });
   };
 

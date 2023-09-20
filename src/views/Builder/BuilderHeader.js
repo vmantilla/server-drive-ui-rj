@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../css/Builder/BuilderHeader.css';
 
 const FloatingMenu = ({ visible, options, onClose, position, handleDragStart, handleDragEnd }) => {
   const menuRef = useRef(null);
-
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -44,7 +45,11 @@ const FloatingMenu = ({ visible, options, onClose, position, handleDragStart, ha
 };
 
 function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, addNewPreview, updatePreview, onDelete, setComponentToAdd, shouldUpdate }) {
+  const navigate = useNavigate();
 
+  const handleExit = () => {
+    navigate('/dashboard'); 
+  };
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [menuOptions, setMenuOptions] = useState([]);
@@ -167,12 +172,13 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
             <i className="bi bi-collection-play-fill"></i>
             Preview
           </button>
-          <button className="builder-button">
+          
+        </div>
+        )}
+        <button className="builder-button" onClick={handleExit}>
             <i className="bi bi-x"></i>
             Salir
           </button>
-        </div>
-        )}
       </div>
     </header>
   );

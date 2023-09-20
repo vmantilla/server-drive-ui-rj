@@ -103,3 +103,9 @@
   transform: translateX(-50%);
 }
 
+/* Estilos para el botón deshabilitado */
+.button-disabled {
+  background-color: #ddd !important;
+  cursor: not-allowed !important;
+}
+
