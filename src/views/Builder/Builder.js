@@ -6,7 +6,6 @@ import BuilderWorkspaces from './BuilderWorkspaces';
 import PreviewWorkspace from './Preview/PreviewWorkspace';
 import ComponentProperties from './Component/ComponentProperties';
 import '../../css/Builder/Builder.css';
-import ComponentManager from './ComponentManager';
 import { batchUpdateComponentsToAPI } from '../api';
 
 function Builder({showNotification}) {
@@ -26,9 +25,6 @@ function Builder({showNotification}) {
   const [shouldUpdate, setShouldUpdate] = useState(false);
   const [orderUpdated, setOrderUpdated] = useState(false);
 
-  let componentManager = new ComponentManager(null);
-  let timerId;
-
   const handleDrag = (e) => {
     e.preventDefault();
     const newHeight = Math.min(Math.max(e.clientY, 0), window.innerHeight);
@@ -40,51 +36,6 @@ function Builder({showNotification}) {
     void document.body.offsetHeight;
     document.body.style.display = '';
   };
-
-  const triggerUpdateComponentProperties = (selectedComponent, newProperties) => {
-    setUpdateComponentProperties({component: selectedComponent, newProperties: newProperties});
-  };
-
-  useEffect(() => {
-    if (updateComponentProperties !== null) {
-      setShouldUpdate(true);
-      setUpdateComponentProperties(null);
-    }
-  }, [updateComponentProperties]);
-
-  useEffect(() => {
-    componentManager.clearUpdateQueue();
-  }, []);
-
-  const checkUpdatesAndSave = async () => { 
-    let componentsToUpdate = componentManager.getUpdateQueue();
-    if (componentsToUpdate.length > 0) {
-      try {
-        await batchUpdateComponentsToAPI(projectId, componentsToUpdate);
-        componentManager.clearUpdateQueue();
-        setShouldUpdate(false);
-      } catch (error) {
-        console.error('Error al actualizar los componentes:', error);
-        showNotification('error', error.message);
-      }
-    }
-    timerId = setTimeout(checkUpdatesAndSave, 6000);
-  };
-
-  useEffect(() => {
-    checkUpdatesAndSave();
-    
-    return () => {
-      clearTimeout(timerId);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (updatePreview !== null) {
-      clearTimeout(timerId);
-      checkUpdatesAndSave();
-    }
-  }, [updatePreview]);
 
   const handleComponentsOrderUpdated = (date) => {
     setOrderUpdated(date);
@@ -129,7 +80,7 @@ function Builder({showNotification}) {
               setSelectedComponent={setSelectedComponent}
               showNotification={showNotification}
               componentToAdd={componentToAdd}
-              updateProperties={updateComponentProperties}
+              updateComponentProperties={updateComponentProperties}
               onOrderUpdated={handleComponentsOrderUpdated}
             />
           )}
@@ -145,7 +96,6 @@ function Builder({showNotification}) {
             forceReflow={forceReflow}
             showNotification={showNotification}
             selectedComponents={selectedComponents}
-            selectedComponent={selectedComponent} 
             setSelectedComponent={setSelectedComponent}
             orderUpdated={orderUpdated}
           />
@@ -153,8 +103,7 @@ function Builder({showNotification}) {
         <aside className={`builder-properties ${selectedComponent ? 'open' : ''}`}>
           <ComponentProperties 
             selectedComponent={selectedComponent} 
-            setSelectedComponent={setSelectedComponent}
-            triggerUpdateProperties={triggerUpdateComponentProperties}  />
+            setSelectedComponent={setSelectedComponent}  />
         </aside>
       </main>
     </div>

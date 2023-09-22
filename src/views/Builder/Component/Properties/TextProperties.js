@@ -3,7 +3,7 @@ import '../../../../css/Builder/Component/Properties/TextProperties.css';
 
 function TextProperties({ property, handlePropertyChange }) {
   
-  const [textValue, setTextValue] = useState(property.text || '');
+  const [textValue, setTextValue] = useState(property.data.text || '');
 
   useEffect(() => {
     handlePropertyChange('text', textValue);

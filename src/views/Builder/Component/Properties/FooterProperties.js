@@ -3,7 +3,7 @@ import '../../../../css/Builder/Component/Properties/FooterProperties.css';
 
 function FooterProperties({ property, handlePropertyChange }) {
   
-  const [footerMode, setFooterMode] = useState(property.footerMode || 'normal');
+  const [footerMode, setFooterMode] = useState(property.data.footerMode || 'normal');
 
   useEffect(() => {
     handlePropertyChange('footerMode', footerMode);

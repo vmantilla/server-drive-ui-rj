@@ -13,7 +13,7 @@ import { getComponentsFromAPI, addComponentToAPI, editComponentToAPI, deleteComp
 
 const MENU_ID = 'blahblah';
 
-function PreviewComponents({ previewId, selectedComponent, setSelectedComponent, showNotification, componentToAdd, updateProperties, onOrderUpdated }) {
+function PreviewComponents({ previewId, selectedComponent, setSelectedComponent, showNotification, componentToAdd, updateComponentProperties, onOrderUpdated }) {
   const [components, setComponents] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [componentToDelete, setComponentToDelete] = useState(null);
@@ -41,11 +41,24 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
   }, [componentToAdd]);
 
   useEffect(() => {
-    if (updateProperties !== null) {
-      componentManager.updateComponentProperties(updateProperties.component.id, updateProperties.newProperties);
-      setComponents([...componentManager.components]);
+    if (updateComponentProperties !== null) {
+      console.log("updateComponentProperties", updateComponentProperties)
+      componentManager.updateComponentInTree(updateComponentProperties);
+      setTimeout(() => {
+        setComponents(componentManager.components);
+      }, 400);
     }
-  }, [updateProperties]);
+  }, [updateComponentProperties]);
+
+  useEffect(() => {
+    console.log("selectedComponent", selectedComponent);
+    if (selectedComponent !== null) {
+      componentManager.updateComponentInTree(selectedComponent);
+      setTimeout(() => {
+        setComponents(componentManager.components);
+      }, 400);
+    }
+  }, [selectedComponent]);
 
   useEffect(() => {
     const handleKeyPress = (e) => {
@@ -68,8 +81,8 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
         const siblings = parentComponent.children;
         let currentIndex = siblings.findIndex(comp => comp.id === orderableComponent.id);
 
- console.log('Current Index:', currentIndex);
-      console.log('Siblings:', siblings);
+        console.log('Current Index:', currentIndex);
+        console.log('Siblings:', siblings);
 
         if (currentIndex === -1) {
           return;
@@ -149,9 +162,7 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     try {
       if(componentManager.isUpdateRequired()) {
         const componentsData = await getComponentsFromAPI(previewId);
-        console.log("getComponentsFromAPI", componentsData)
         const convertJsonToTree = componentManager.convertJsonToTree(componentsData)
-        console.log("convertJsonToTree", convertJsonToTree)
         componentManager.saveLastUpdatedTime();
         componentManager.components = convertJsonToTree
         setComponents(convertJsonToTree);
@@ -180,7 +191,7 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     try {
       await deleteComponentToAPI(componentToDelete.id);
       componentManager.removeComponent(componentToDelete.id);
-      setComponents([...componentManager.components]);
+      setComponents(componentManager.components);
       showNotification('success', 'Componentes eliminado exitosamente.');
       setComponentLoading(null);
     } catch (error) {
@@ -236,13 +247,18 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
         
         await new Promise(resolve => setTimeout(resolve, 500));
         const savedComponent = await addComponentToAPI(previewId, draggingComponent);
-
+        console.log("savedComponent", savedComponent)
         savedComponent.isNew = false;
         setComponentLoading(null);
         setDraggingComponent(null);
         componentManager.removeComponent(draggingComponent.id);
-        componentManager.addComponentChild(parentId, savedComponent);
-        setComponents(componentManager.components);
+        const convertJsonToTree = componentManager.convertJsonToTree(savedComponent, parentId);
+        console.log("addComponentChild", convertJsonToTree)
+        if (convertJsonToTree, convertJsonToTree.length > 0) {
+          componentManager.saveLastUpdatedTime();
+          componentManager.addComponentChild(parentId, convertJsonToTree[0]);
+          setComponents(componentManager.components);
+        }
         showNotification('success', 'Componente agregado exitosamente.');
       } catch (error) {
         setComponentLoading(null);
@@ -282,11 +298,8 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
       const componentsData = await duplicateComponentToAPI(compToDuplicate.id);
-      const convertJsonToTree = componentManager.convertJsonToTree(componentsData);
+      const convertJsonToTree = componentManager.convertJsonToTree(componentsData, compToDuplicate.parent_id);
       if (convertJsonToTree, convertJsonToTree.length > 0) {
-        console.log("duplicateComponentToAPI", componentsData)
-        console.log("compToDuplicate", compToDuplicate)
-        console.log("compToDuplicate.position", compToDuplicate.position)
         componentManager.saveLastUpdatedTime();
         componentManager.addComponentChild(compToDuplicate.parent_id, convertJsonToTree[0], compToDuplicate.position);
         setComponents(componentManager.components);

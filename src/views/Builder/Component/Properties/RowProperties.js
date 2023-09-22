@@ -3,8 +3,8 @@ import '../../../../css/Builder/Component/Properties/RowProperties.css';
 
 function RowProperties({ property, handlePropertyChange }) {
   
-  const [alignment, setAlignment] = useState(property.alignment || 'center');
-  const [spacing, setSpacing] = useState(property.spacing || '0');
+  const [alignment, setAlignment] = useState(property.data.alignment || 'center');
+  const [spacing, setSpacing] = useState(property.data.spacing || '0');
 
   useEffect(() => {
     handlePropertyChange('alignment', alignment);

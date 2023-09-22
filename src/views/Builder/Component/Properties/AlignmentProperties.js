@@ -3,7 +3,7 @@ import '../../../../css/Builder/Component/Properties/AlignmentProperties.css';
 
 function AlignmentProperties({ property, handlePropertyChange }) {
 
-  const [selectedAlignment, setSelectedAlignment] = useState(property.alignment || 'center');
+  const [selectedAlignment, setSelectedAlignment] = useState(property.data.alignment || 'center');
 
   const alignmentOptions = [
     'top-start', 'top-center', 'top-end',

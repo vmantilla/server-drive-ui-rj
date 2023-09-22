@@ -3,7 +3,7 @@ import '../../../../css/Builder/Component/Properties/HeaderProperties.css';
 
 function HeaderProperties({ property, handlePropertyChange }) {
   
-  const [headerMode, setHeaderMode] = useState(property.headerMode || 'solid');
+  const [headerMode, setHeaderMode] = useState(property.data.headerMode || 'solid');
 
   useEffect(() => {
     handlePropertyChange('headerMode', headerMode);

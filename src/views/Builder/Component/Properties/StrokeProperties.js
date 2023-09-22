@@ -3,9 +3,9 @@ import '../../../../css/Builder/Component/Properties/StrokeProperties.css';
 
 function StrokeProperties({ property, handlePropertyChange }) {
 
-  const [colorInput, setColorInput] = useState(property.color || "#000000");
-  const [widthInput, setWidthInput] = useState(property.width || "1");
-  const [borderStyle, setBorderStyle] = useState(property.border_style || "Solid");
+  const [colorInput, setColorInput] = useState(property.data.color || "#000000");
+  const [widthInput, setWidthInput] = useState(property.data.width || "1");
+  const [borderStyle, setBorderStyle] = useState(property.data.border_style || "solid");
 
   useEffect(() => {
     if (isValidHexColor(colorInput)) {
@@ -61,11 +61,11 @@ function StrokeProperties({ property, handlePropertyChange }) {
                   value={borderStyle}
                   onChange={(e) => setBorderStyle(e.target.value)}
                 >
-                  <option value="Solid">Solid</option>
-                  <option value="Dotted">Dotted</option>
-                  <option value="Dashed">Dashed</option>
-                  <option value="Groove">Groove</option>
-                  <option value="Ridge">Ridge</option>
+                  <option value="solid">Solid</option>
+                  <option value="dotted">Dotted</option>
+                  <option value="dashed">Dashed</option>
+                  <option value="groove">Groove</option>
+                  <option value="ridge">Ridge</option>
                 </select>
               </div>
             </div>

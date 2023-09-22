@@ -111,12 +111,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
       component_type: componentType,
       children: [],
       expanded: false,
-      isNew: true,
-      property: {
-        data: {
-          component_type: componentTypeName
-        }
-      },
+      isNew: true
     };
     setComponentToAdd(newComponent);
   };

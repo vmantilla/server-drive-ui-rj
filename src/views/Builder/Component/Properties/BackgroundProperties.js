@@ -3,8 +3,8 @@ import '../../../../css/Builder/Component/Properties/BackgroundProperties.css';
 
 function BackgroundProperties({ property, handlePropertyChange }) {
 
-  const [colorInput, setColorInput] = useState(property.color || "#FFFFFF");
-  const [opacityInput, setOpacityInput] = useState(property.opacity || "1");
+  const [colorInput, setColorInput] = useState(property.data.color || "#FFFFFF");
+  const [opacityInput, setOpacityInput] = useState(property.data.opacity || "1");
 
   useEffect(() => {
     if (isValidHexColor(colorInput)) {

@@ -118,8 +118,8 @@ const DimensionControl = ({ dimension, initialDimension, onDimensionChange }) =>
 
 function FrameProperties({ property, handlePropertyChange }) {
 
-  const [width, setWidth] = useState(property ? property.width || { option: 'auto' } : { option: 'auto' });
-  const [height, setHeight] = useState(property ? property.height || { option: 'auto' } : { option: 'auto' });
+  const [width, setWidth] = useState(property && property.data ? property.data.width || { option: 'auto' } : { option: 'auto' });
+  const [height, setHeight] = useState(property && property.data ? property.data.height || { option: 'auto' } : { option: 'auto' });
 
   const handleDimensionChange = (dimension, updatedValue) => {
     if (dimension === 'width') setWidth(updatedValue);

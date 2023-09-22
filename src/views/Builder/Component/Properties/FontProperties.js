@@ -3,13 +3,13 @@ import '../../../../css/Builder/Component/Properties/FontProperties.css';
 
 function FontProperties({ property, handlePropertyChange }) {
 
-  const [isItalic, setIsItalic] = useState(property ? property.italic || false : false);
-  const [isStrikethrough, setIsStrikethrough] = useState(property ? property.strikethrough || false : false);
-  const [isUnderline, setIsUnderline] = useState(property ? property.underline || false : false);
+  const [isItalic, setIsItalic] = useState(property ? property.data.italic || false : false);
+  const [isStrikethrough, setIsStrikethrough] = useState(property ? property.data.strikethrough || false : false);
+  const [isUnderline, setIsUnderline] = useState(property ? property.data.underline || false : false);
 
-  const [colorInput, setColorInput] = useState(property.color || "#000000");
-  const [opacityInput, setOpacityInput] = useState(property.opacity || "1");
-  const [sizeInput, setSizeInput] = useState(property.size || "16");
+  const [colorInput, setColorInput] = useState(property.data.color || "#000000");
+  const [opacityInput, setOpacityInput] = useState(property.data.opacity || "1");
+  const [sizeInput, setSizeInput] = useState(property.data.size || "16");
 
   useEffect(() => {
     handlePropertyChange('color', colorInput);

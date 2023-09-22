@@ -1,4 +1,4 @@
-const TTL = 6000; 
+const TTL = 10000; 
 
 class ComponentManager {
 	constructor(previewId) {
@@ -102,16 +102,20 @@ class ComponentManager {
 	}
 
 	updateComponentProperties(id, newProperties) {
+
+	  
 	  const component = this.findComponentByIdRecursive(id);
 	  if (!component) {
 	    throw new Error(`No se encontró el componente con ID ${id}`);
 	  }
 
-	  if (!component.property.data) {
-	    throw new Error(`No se encontró el componente con ID ${id}`);
+	  if (!component.properties) {
+	    throw new Error(`No se encontraron las propiedades de ${id}`);
 	  }
 
-	  component.property.data = { ...component.property.data, ...newProperties };
+	  component.properties = newProperties;
+	  console.log("newProperties", newProperties)
+	  
 
 	  const newComponents = this.updateComponentInTree(component);
 	  if (!newComponents) {
@@ -119,8 +123,9 @@ class ComponentManager {
 	  }
 
 	  this.components = newComponents;
-	  this.updateQueue.push({component_id: id, property: newProperties});
-	  this.saveToDB();
+	  setTimeout(() => {
+        this.saveToDB();
+      }, 100);
 	}
 
   //PRIVATE METHODS
@@ -145,27 +150,27 @@ class ComponentManager {
 	}
 
 	#addComponentChildRecursive(parentId, currentComponents, child, position = null) {
-		console.log("addComponentChildRecursive", position);
-	return currentComponents.map(component => {
-		if (component.id === parentId) {
-			const newChildren = [...(component.children || [])];
-			if (position !== null) {
-				newChildren.splice(position, 0, child); // inserta 'child' en la posición específica
-			} else {
-				newChildren.push(child); // añade 'child' al final si no se especifica una posición
+		return currentComponents.map(component => {
+			if (component.id === parentId) {
+				const newChildren = [...(component.children || [])];
+				newChildren.parent_id = parentId;
+				if (position !== null) {
+					newChildren.splice(position, 0, child); 
+				} else {
+					newChildren.push(child); 
+				}
+				return {
+					...component,
+					children: newChildren,
+					expanded: true 
+				};
+			} else if (component.children && component.children.length > 0) {
+				return {
+					...component,
+					children: this.#addComponentChildRecursive(parentId, component.children, child, position)
+				};
 			}
-			return {
-				...component,
-				children: newChildren,
-				expanded: true 
-			};
-		} else if (component.children && component.children.length > 0) {
-			return {
-				...component,
-				children: this.#addComponentChildRecursive(parentId, component.children, child, position)
-			};
-		}
-		return component;
+			return component;
 	});
 }
 
@@ -198,39 +203,50 @@ class ComponentManager {
 		return null;
 	}
 
-	convertJsonToTree(jsonData) {
+	convertJsonToTree(jsonData, parent_id = null) {
 	  const nodes = {};
-
+	  
 	  // Primero, crea todos los nodos.
 	  for (const [id, value] of Object.entries(jsonData.uiWidgets)) {
-	    const [component_type, _, __] = value;
+	    const [component_type, propertiesIds, children] = value;
 	    nodes[id] = {
 	      id,
 	      component_type,
-	      parent_id: null,  // Inicialmente, ponemos el parent_id como null
-	      children: []
+	      parent_id: parent_id, 
+	      children: [],
+	      properties: propertiesIds.map(propId => {
+	        const property = jsonData.uiWidgets_properties[propId];
+	        return {
+	          id: propId,
+	          name: property[0], 
+	          data: property[1], 
+	          platform: property[2],
+	        };
+	      }) || [] 
 	    };
 	  }
 
 	  // Segundo, añade los hijos a sus respectivos padres y actualiza el parent_id de los hijos.
 	  for (const [id, value] of Object.entries(jsonData.uiWidgets)) {
-	    const [_, __, children] = value;
-
+	    const [_, propertiesIds, children] = value;
+	    
 	    children.forEach((childId) => {
 	      nodes[id].children.push(nodes[childId]);
-	      nodes[childId].parent_id = id;  // Actualiza el parent_id del hijo
+	      nodes[childId].parent_id = id; 
 	    });
 	  }
 
 	  // Tercero, encuentra los nodos raíz.
 	  const roots = Object.values(nodes).filter(node => {
-	    return !Object.values(nodes).some(otherNode => 
+	    return !Object.values(nodes).some(otherNode =>
 	      otherNode.children.some(child => child.id === node.id)
 	    );
 	  });
 
 	  return roots;
 	}
+
+
 
 }
 

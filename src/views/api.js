@@ -280,5 +280,62 @@ export const duplicateComponentToAPI = async (componentId) => {
 };
 
 
+// === PROPERTY API Calls ===
+
+const removePropertiesUnpermittedParams = (property) => {
+  const sanitizedProperty = { ...property };
+  
+  delete sanitizedProperty.id;
+  delete sanitizedProperty.error;
+  delete sanitizedProperty.loading;
+  delete sanitizedProperty.action;
+  delete sanitizedProperty.created_at;
+  delete sanitizedProperty.updated_at;
+  delete sanitizedProperty.user_id;
+  delete sanitizedProperty.project_id;
+
+  return sanitizedProperty;
+};
+
+export const getPropertiesFromAPI = async (componentId) => {
+  try {
+    const response = await axios.get(`/components/${componentId}/properties`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener propiedades:', error);
+    throw error;
+  }
+};
+
+export const addPropertyToAPI = async (componentId, propertyData) => {
+  try {
+    const response = await axios.post(`/components/${componentId}/properties`, { property: removePropertiesUnpermittedParams(propertyData) });
+    return response.data;
+  } catch (error) {
+    console.error('Error al agregar propiedad:', error);
+    throw error;
+  }
+};
+
+export const editPropertyInAPI = async (propertyId, updatedPropertyData) => {
+  try {
+    const response = await axios.put(`/properties/${propertyId}`, { property: removePropertiesUnpermittedParams(updatedPropertyData) });
+    return response.data;
+  } catch (error) {
+    console.error('Error al editar propiedad:', error);
+    throw error;
+  }
+};
+
+export const deletePropertyFromAPI = async (propertyId) => {
+  try {
+    await axios.delete(`/properties/${propertyId}`);
+  } catch (error) {
+    console.error('Error al eliminar propiedad:', error);
+    throw error;
+  }
+};
+
+
 
 

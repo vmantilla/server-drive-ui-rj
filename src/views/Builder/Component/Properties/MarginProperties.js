@@ -3,10 +3,10 @@ import '../../../../css/Builder/Component/Properties/MarginProperties.css';
 
 function MarginProperties({ property, handlePropertyChange }) {
   const [marginValues, setMarginValues] = useState({
-    'top': property['top'] || 0,
-    'right': property['right'] || 0,
-    'bottom': property['bottom'] || 0,
-    'left': property['left'] || 0
+    'top': property.data.top || 0,
+    'right': property.data.right || 0,
+    'bottom': property.data.bottom || 0,
+    'left': property.data.left || 0
   });
 
   const handleInputChange = (e, marginName) => {

@@ -3,10 +3,10 @@ import '../../../../css/Builder/Component/Properties/RoundedCornerProperties.css
 
 function RoundedCornerProperties({ property, handlePropertyChange }) {
   const [cornerValues, setCornerValues] = useState({
-    'top_left': property['top_left'] || 0,
-    'top_right': property['top_right'] || 0,
-    'bottom_left': property['bottom_left'] || 0,
-    'bottom_right': property['bottom_right'] || 0
+    'top_left': property.data.top_left || 0,
+    'top_right': property.data.top_right || 0,
+    'bottom_left': property.data.bottom_left || 0,
+    'bottom_right': property.data.bottom_right || 0
   });
 
   const handleInputChange = (e, cornerName) => {

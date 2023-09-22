@@ -8,8 +8,8 @@ import '../../../../css/Builder/Component/Properties/ImageProperties.css';
 const contentModes = ['fill', 'contain', 'cover', 'none', 'scale-down'];
 
 function ImageProperties({ property, handlePropertyChange }) {
-  const [selectedContentMode, setSelectedContentMode] = useState(property.contentMode || 'fill');
-  const [imageUrl, setImageUrl] = useState(property.url || '');
+  const [selectedContentMode, setSelectedContentMode] = useState(property.data.contentMode || 'fill');
+  const [imageUrl, setImageUrl] = useState(property.data.url || '');
   const [uploadedImages, setUploadedImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
