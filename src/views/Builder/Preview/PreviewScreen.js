@@ -5,7 +5,7 @@ import html2canvas from 'html2canvas';
 import '../../../css/Builder/Preview/PreviewScreen.css';
 import ComponentManager from '../ComponentManager';
 
-function PreviewScreen({ previewId, selectedScreen, selectedComponent, initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, setUpdateComponentProperties, orderUpdated }) {
+function PreviewScreen({ previewId, selectedScreen, selectedComponent, propertyWasUpdated, initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, setUpdateComponentProperties, orderUpdated }) {
   const [screenType, setScreenType] = useState('mobile');
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
@@ -13,7 +13,14 @@ function PreviewScreen({ previewId, selectedScreen, selectedComponent, initialTi
   const draggingRef = useRef(false);
   const lastEventRef = useRef(null);
 
+  const [components, setComponents] = useState([]);
+
   let componentManager = new ComponentManager(previewId);
+
+   useEffect(() => {
+    console.log("propertyWasUpdated", propertyWasUpdated)
+    setComponents(componentManager.components);
+  }, [propertyWasUpdated]);
   
   useEffect(() => {
     const globalMouseMove = (e) => {
@@ -174,7 +181,7 @@ useEffect(() => {
 
       </div>
       <div key={orderUpdated} className={`screen-content ${screenType}-${orientation} ${isSelected ? 'selected' : ''}`} onClick={onClick}>
-        <RavitBuilder layoutJson={componentManager.components} selectedComponent={selectedComponent} />
+        <RavitBuilder layoutJson={components} selectedComponent={selectedComponent} />
       </div>
     </div>
   );

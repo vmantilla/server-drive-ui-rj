@@ -4,7 +4,7 @@ import '../../../css/Builder/Component/MiniHeader.css';
 function MiniHeader({ possibleStates, title, states, onAddState, onDeleteState, onChangeState, renderChildren }) {
   const getAvailableStates = (currentState) => {
     return possibleStates.filter(
-      state => !states.some(s => s.state === state) || state === currentState
+      state => !states.some(s => s.platform === state) || state === currentState
     );
   };
 
@@ -18,8 +18,8 @@ function MiniHeader({ possibleStates, title, states, onAddState, onDeleteState, 
       {Array.isArray(states) ? states.map((state, index) => (
           <div className="property-block" key={index}>
             <div className="property-mini-header">
-              <select className="mini-header-dropdown" value={state.state} onChange={(e) => onChangeState(index, 'platform', e.target.value)}>
-                {getAvailableStates(state.state).map((optionState, optionIndex) => (
+              <select className="mini-header-dropdown" value={state.platform} onChange={(e) => onChangeState(index, 'platform', e.target.value)}>
+                {getAvailableStates(state.platform).map((optionState, optionIndex) => (
                   <option key={optionIndex} value={optionState}>{optionState}</option>
                 ))}
               </select>

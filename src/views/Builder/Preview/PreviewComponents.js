@@ -13,7 +13,7 @@ import { getComponentsFromAPI, addComponentToAPI, editComponentToAPI, deleteComp
 
 const MENU_ID = 'blahblah';
 
-function PreviewComponents({ previewId, selectedComponent, setSelectedComponent, showNotification, componentToAdd, updateComponentProperties, onOrderUpdated }) {
+function PreviewComponents({ previewId, selectedComponent, setSelectedComponent, propertyWasUpdated, showNotification, componentToAdd, updateComponentProperties, onOrderUpdated }) {
   const [components, setComponents] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [componentToDelete, setComponentToDelete] = useState(null);
@@ -41,38 +41,12 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
   }, [componentToAdd]);
 
   useEffect(() => {
-    if (updateComponentProperties !== null) {
-      console.log("updateComponentProperties", updateComponentProperties)
-      componentManager.updateComponentInTree(updateComponentProperties);
-      setTimeout(() => {
-        setComponents(componentManager.components);
-      }, 400);
-    }
-  }, [updateComponentProperties]);
-
-  useEffect(() => {
-    console.log("selectedComponent", selectedComponent);
-    if (selectedComponent !== null) {
-      componentManager.updateComponentInTree(selectedComponent);
-      setTimeout(() => {
-        setComponents(componentManager.components);
-      }, 400);
-    }
-  }, [selectedComponent]);
-
-  useEffect(() => {
     const handleKeyPress = (e) => {
-
-      console.log('handleKeyPress', e.key);
 
       if (orderableComponent) {
 
-        console.log('orderableComponent')
         const parentId = orderableComponent.parent_id;
         const parentComponent = componentManager.findComponentByIdRecursive(parentId, componentManager.components);
-
-        console.log('parentComponent', parentComponent)
-
 
         if (!parentComponent || !parentComponent.children) {
           return;
@@ -80,9 +54,6 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
 
         const siblings = parentComponent.children;
         let currentIndex = siblings.findIndex(comp => comp.id === orderableComponent.id);
-
-        console.log('Current Index:', currentIndex);
-        console.log('Siblings:', siblings);
 
         if (currentIndex === -1) {
           return;
@@ -194,10 +165,12 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
       setComponents(componentManager.components);
       showNotification('success', 'Componentes eliminado exitosamente.');
       setComponentLoading(null);
+      setSelectedComponent(null);
     } catch (error) {
       setComponentLoading(null);
       console.error('Error al eliminar el componente:', error);
       showNotification('error', 'Error al eliminar el componente.');
+      setSelectedComponent(null);
     }
   };
 
@@ -247,19 +220,18 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
         
         await new Promise(resolve => setTimeout(resolve, 500));
         const savedComponent = await addComponentToAPI(previewId, draggingComponent);
-        console.log("savedComponent", savedComponent)
         savedComponent.isNew = false;
         setComponentLoading(null);
         setDraggingComponent(null);
         componentManager.removeComponent(draggingComponent.id);
         const convertJsonToTree = componentManager.convertJsonToTree(savedComponent, parentId);
-        console.log("addComponentChild", convertJsonToTree)
         if (convertJsonToTree, convertJsonToTree.length > 0) {
           componentManager.saveLastUpdatedTime();
           componentManager.addComponentChild(parentId, convertJsonToTree[0]);
           setComponents(componentManager.components);
         }
         showNotification('success', 'Componente agregado exitosamente.');
+        setSelectedComponent(convertJsonToTree);
       } catch (error) {
         setComponentLoading(null);
         setDraggingComponent(null);
@@ -267,6 +239,7 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
         showNotification('error', 'Error al agregar el componente.');
         componentManager.removeComponent(draggingComponent.id);
         setComponents(componentManager.components);
+        setSelectedComponent(null);
       }
     } else {
       try {
@@ -278,11 +251,13 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
         setComponentLoading(null);
         setDraggingComponent(null);
         showNotification('success', 'Componente movido exitosamente.');
+        setSelectedComponent(draggingComponent);
       } catch (error) {
         setComponentLoading(null);
         setDraggingComponent(null);
         console.error('Error al mover el componente:', error);
         showNotification('error', error.message);
+        setSelectedComponent(null);
       }
     }
   };

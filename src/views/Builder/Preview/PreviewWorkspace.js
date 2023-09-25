@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 
-function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setAddNewPreview, setUpdatePreview, setOnDelete, forceReflow, showNotification, selectedComponent, setSelectedComponent, setUpdateComponentProperties, setShouldUpdate, orderUpdated }) {
+function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, propertyWasUpdated, setAddNewPreview, setUpdatePreview, setOnDelete, forceReflow, showNotification, selectedComponent, setSelectedComponent, setUpdateComponentProperties, setShouldUpdate, orderUpdated }) {
   const [previews, setPreviews] = useState([]);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -259,7 +259,7 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
                 isSelected={selectedScreen === preview.id}
                 onTitleChange={(newTitle) => handleTitleChange(newTitle, preview.id)}
                 selectedComponent={selectedComponent}
-                setUpdateComponentProperties={setUpdateComponentProperties}
+                propertyWasUpdated={propertyWasUpdated}
                 orderUpdated={orderUpdated}
               >
                 {preview.content}
@@ -278,6 +278,7 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, setA
                 zoomLevel={zoomLevel}
                 isSelected={selectedScreen === preview.id}
                 onTitleChange={(newTitle) => handleTitleChange(newTitle, preview.id)}
+                propertyWasUpdated={propertyWasUpdated}
               >
                 {preview.content}
               </ PreviewThumbnail>

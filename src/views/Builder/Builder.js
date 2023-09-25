@@ -21,7 +21,7 @@ function Builder({showNotification}) {
   const [workspaceHeight, setWorkspaceHeight] = useState('50%');
   const [selectedComponent, setSelectedComponent] = useState(null);
   const [componentToAdd, setComponentToAdd] = useState(null);
-  const [updateComponentProperties, setUpdateComponentProperties] = useState(null);
+  const [propertyWasUpdated, setPropertyWasUpdated] = useState(null);
   const [shouldUpdate, setShouldUpdate] = useState(false);
   const [orderUpdated, setOrderUpdated] = useState(false);
 
@@ -80,7 +80,7 @@ function Builder({showNotification}) {
               setSelectedComponent={setSelectedComponent}
               showNotification={showNotification}
               componentToAdd={componentToAdd}
-              updateComponentProperties={updateComponentProperties}
+              propertyWasUpdated={propertyWasUpdated}
               onOrderUpdated={handleComponentsOrderUpdated}
             />
           )}
@@ -97,13 +97,16 @@ function Builder({showNotification}) {
             showNotification={showNotification}
             selectedComponents={selectedComponents}
             setSelectedComponent={setSelectedComponent}
+            propertyWasUpdated={propertyWasUpdated}
             orderUpdated={orderUpdated}
           />
         </section>
         <aside className={`builder-properties ${selectedComponent ? 'open' : ''}`}>
           <ComponentProperties 
-            selectedComponent={selectedComponent} 
-            setSelectedComponent={setSelectedComponent}  />
+            previewId={selectedScreen}
+            selectedComponentId={selectedComponent ? selectedComponent.id : null} 
+            setSelectedComponent={setSelectedComponent} 
+            setPropertyWasUpdated={setPropertyWasUpdated} />
         </aside>
       </main>
     </div>
