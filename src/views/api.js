@@ -327,9 +327,9 @@ export const editPropertyInAPI = async (propertyId, updatedPropertyData) => {
   }
 };
 
-export const deletePropertyFromAPI = async (propertyId) => {
+export const deletePropertyFromAPI = async (componentId, property) => {
   try {
-    await axios.delete(`/properties/${propertyId}`);
+    await axios.delete(`/properties/${property.id}`);
   } catch (error) {
     console.error('Error al eliminar propiedad:', error);
     throw error;

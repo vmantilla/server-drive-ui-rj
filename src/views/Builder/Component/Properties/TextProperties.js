@@ -1,17 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../../../css/Builder/Component/Properties/TextProperties.css';
 
 function TextProperties({ property, handlePropertyChange }) {
   
   const [textValue, setTextValue] = useState(property.data.text || '');
-  const isFirstRender = useRef(true);
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false; 
-    } else {
-      handlePropertyChange('text', textValue); 
-    }
+    handlePropertyChange('text', textValue);
   }, [textValue]);
 
   return (

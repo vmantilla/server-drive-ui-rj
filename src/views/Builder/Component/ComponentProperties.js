@@ -47,92 +47,133 @@ const MiniHeaderWithProperties = ({ title, states, propertyComponent: PropertyCo
   />
 );
 
-function ComponentProperties({ previewId, selectedComponentId, setSelectedComponent, setPropertyWasUpdated }) {
+function getInitialViewStates() {
+  return {
+    alignment: [],
+    frame: [],
+    font: [],
+    stroke: [],
+    image: [],
+    corner: [],
+    margin: [],
+    background: [],
+    row: [],
+    column: [],
+    text: [],
+    header: [],
+    footer: [],
+  };
+}
 
-	let componentManager = new ComponentManager(previewId);
+function fillViewStates(component) {
+  const newStates = getInitialViewStates();
 
-	const [component, setComponent] = useState(null);
-	const [updateComponentInTree, setUpdateComponentInTree] = useState(null);
-
-	const [viewStates, setViewStates] = useState({
-		alignment: [],
-		frame: [],
-		font: [],
-		stroke: [],
-		image: [],
-		corner: [],
-		margin: [],
-		background: [],
-		row: [],
-		column: [],
-		text: [],
-		header: [],
-		footer: [],
-	});
-
-	useEffect(() => {
-
-	const componentFound = componentManager.findComponentByIdRecursive(selectedComponentId, componentManager.components);
-	setComponent(componentFound);
-
-	}, [selectedComponentId]);
-
-
-useLayoutEffect(() => {
-
-	if (component) {
-    const newStates = {
-      alignment: [],
-      frame: [],
-      font: [],
-      stroke: [],
-      image: [],
-      corner: [],
-      margin: [],
-      background: [],
-      row: [],
-      column: [],
-      text: [],
-      header: [],
-      footer: [],
-    };
-
+  if (component && component.properties) {
     component.properties.forEach(property => {
       if (newStates.hasOwnProperty(property.name)) {
         newStates[property.name].push(property);
       }
     });
-
-    setViewStates(newStates);
   }
-}, [component]);
+
+  return newStates;
+}
 
 
-const sendPropertyToAPI = async (componentId, property, type) => {
+function ComponentProperties({ previewId, selectedComponentId, setSelectedComponent, setPropertyWasUpdated }) {
+
+	let componentManager = new ComponentManager(previewId);
+
+  const [component, setComponent] = useState(null);
+  const [updateComponentInTree, setUpdateComponentInTree] = useState(null);
+
+  const [viewStates, setViewStates] = useState(getInitialViewStates);
+
+  useEffect(() => {
+    const componentFound = componentManager.findComponentByIdRecursive(selectedComponentId, componentManager.components);
+    setComponent(componentFound);
+  }, [selectedComponentId]);
+
+  useLayoutEffect(() => {
+    setViewStates(fillViewStates(component));
+  }, [component]);
+
+const handleError = (type, propertyId, action) => {
+  console.error(`Error en acción ${action}:`);
+  updateViewState(type, propertyId, { error: true, loading: false, action });
+};
+
+const updateViewState = (type, propertyId, updatedProperty) => {
+  setViewStates(prevState => {
+    const updatedStates = prevState[type].map(state =>
+      state.id === propertyId ? updatedProperty : state
+    );
+    return { ...prevState, [type]: updatedStates };
+  });
+}
+
+const handleStateUpdates = (updateCallback) => {
+  setViewStates(prevState => {
+    const newViewState = updateCallback(prevState);
+    componentDidUpdate(newViewState);
+    return newViewState;
+  });
+};
+
+const deleteProperty = (type, propertyId) => {
+  handleStateUpdates(prevState => {
+    const updatedStates = prevState[type].filter(state => state.id !== propertyId);
+    return { ...prevState, [type]: updatedStates };
+  });
+};
+
+const convertViewStatesToPropertiesArray = (viewStates) => {
+  return Object.values(viewStates).flat();
+};
+
+const componentDidUpdate = (newViewState) => {
+  if (component) {
+    component.properties = convertViewStatesToPropertiesArray(newViewState);
+    componentManager.components = componentManager.updateComponentInTree(component);
+    console.log("componentDidUpdate", convertViewStatesToPropertiesArray(newViewState));
+  }
+};
+
+const actionHandlers = {
+  delete: (componentId, property, type) => deletePropertyFromAPIWrapper(componentId, property, type),
+  create: (componentId, property, type) => createPropertyToAPI(componentId, property, type),
+  update: (componentId, property, type) => updateProperty(componentId, property, type),
+};
+
+const handleRetry = (type, index) => {
+  const retriedProperty = { ...viewStates[type][index], loading: true, error: false };
+  updateViewState(type, retriedProperty.id, retriedProperty);
+ 
+  const handler = actionHandlers[retriedProperty.action];
+  if (handler) handler();
+  else console.error(`Acción no reconocida: ${retriedProperty.action}`);
+};
+
+const manageProperty = async (action, apiCall, componentId, property, type, onSuccess) => {
   try {
-    const addedProperty = await addPropertyToAPI(componentId, property);
-    
-    setViewStates(prevState => {
-      const updatedStates = prevState[type].map(state =>
-        state.id === property.id
-          ? { ...addedProperty, error: false, loading: false }
-          : state
-      );
-      const newViewState = { ...prevState, [type]: updatedStates };
-      componentDidUpdate(newViewState);
-      return newViewState;
-    });
+    const result = await apiCall(componentId, property);
+    onSuccess(type, property.id, { ...result, error: false, loading: false });
+    componentDidUpdate(viewStates);
   } catch (error) {
-    console.error('Error al agregar nueva propiedad:', error);
-    setViewStates(prevState => {
-      const updatedStates = prevState[type].map(state =>
-        state.id === property.id
-          ? { ...state, loading: false, error: true, action: "create" }
-          : state
-      );
-      return { ...prevState, [type]: updatedStates };
-    });
+    handleError(type, property.id, action);
   }
+};
+
+const createPropertyToAPI = (componentId, property, type) => {
+  manageProperty('create', addPropertyToAPI, componentId, property, type, updateViewState);
+};
+
+const updateProperty = (componentId, property, type) => {
+  manageProperty('update', editPropertyInAPI, componentId, property, type);
+};
+
+const deletePropertyFromAPIWrapper = (componentId, property, type) => {
+  manageProperty('delete', deletePropertyFromAPI, componentId, property, type, deleteProperty);
 };
 
 const handleAddState = async (type) => {
@@ -150,157 +191,27 @@ const handleAddState = async (type) => {
       action: "create" 
     };
 
-    const newStates = {
-      ...viewStates,
-      [type]: [...viewStates[type], newProperty],
-    };
-    
-    setViewStates(newStates);
-    sendPropertyToAPI(selectedComponentId, newProperty, type);
+    setViewStates(prev => ({ ...prev, [type]: [...prev[type], newProperty] }));
+    createPropertyToAPI(selectedComponentId, newProperty, type);
   }
 };
-
-const deletePropertyFromAPIWrapper = async (componentId, property, type) => {
-  try {
-    console.log('Deleting property with id:', property.id); // Paso 1: Verifica el ID
-    await deletePropertyFromAPI(property.id);
-
-    setViewStates((prevState) => {
-      console.log('Previous States:', prevState[type]); // Paso 2: Revisa el Estado Previo
-      const updatedStates = prevState[type].filter((state) => state.id !== property.id);
-      console.log('Updated States:', updatedStates); // Paso 3: Verifica el Estado Actualizado
-      const newViewState = { ...prevState, [type]: updatedStates };
-      componentDidUpdate(newViewState);
-      return newViewState;
-    });
-  } catch (error) {
-    setViewStates((prevState) => {
-      const updatedStates = prevState[type].map((state) =>
-        state.id === property.id
-          ? { ...state, error: true, loading: false, action: "delete" }
-          : state
-      );
-      return { ...prevState, [type]: updatedStates };
-    });
-  }
-};
-
-
-const updateProperty = async (componentId, property, type)  => {
-  try {
-  	console.log(type)
-  	console.log(componentId)
-  	console.log(property)
-  	const updatedProperty = await editPropertyInAPI(property.id, property);
-  } catch (error) {
-    console.error('Error al editar propiedad:', error);
-    setViewStates(prevState => {
-      const updatedStates = prevState[type].map(state => {
-        if(state.id === property.id) {
-          return { ...state, error: true, loading: false, action: "update" };
-        } else {
-          return state;
-        }
-      });
-      return { ...prevState, [type]: updatedStates };
-    });
-  }
-};
-
-
-
-const componentDidUpdate = (newViewState) => {
-  if (component !== null) {
-    // Usa la función para convertir los viewStates a un array de propiedades
-    const propertiesArray = convertViewStatesToPropertiesArray(newViewState);
-
-    // Actualiza la propiedad 'properties' del componente con el nuevo array
-    component.properties = propertiesArray;
-
-    // Actualiza el componente en el árbol del ComponentManager
-    componentManager.components = componentManager.updateComponentInTree(component);
-    console.log("componentDidUpdate", component)
-
-    const newStates = {
-      alignment: [],
-      frame: [],
-      font: [],
-      stroke: [],
-      image: [],
-      corner: [],
-      margin: [],
-      background: [],
-      row: [],
-      column: [],
-      text: [],
-      header: [],
-      footer: [],
-    };
-
-    component.properties.forEach(property => {
-      if (newStates.hasOwnProperty(property.name)) {
-        newStates[property.name].push(property);
-      }
-    });
-
-    setViewStates(newStates);
-    
-    setPropertyWasUpdated(new Date().getTime());
-  }
-};
-
-
-const convertViewStatesToPropertiesArray = (viewStates2) => {
-    const propertiesArray = [];
-
-    Object.keys(viewStates2).forEach(key => {
-        viewStates2[key].forEach(property => {
-            propertiesArray.push(property);
-        });
-    });
-
-    return propertiesArray;
-}
-
 
 const handleDeleteState = async (type, index) => {
-  setViewStates(prevState => {
-    if (!Array.isArray(prevState[type])) {
-      console.error(`prevState[${type}] is not an array:`, prevState[type]);
-      return prevState; 
-    }
-
-    const updatedStates = prevState[type].map((state, idx) =>
-      idx === index
-        ? { ...state, error: false, loading: false, action: "delete" }
-        : state
-    );
-
-    return { ...prevState, [type]: updatedStates };
-  });
-
-  deletePropertyFromAPIWrapper(selectedComponentId, viewStates[type][index], type);
-};
-
-
-
-const handleRetry = (type, index) => {
-  const retriedProperty = { ...viewStates[type][index], loading: true, error: false };
-  const updatedStates = [...viewStates[type]];
-  updatedStates[index] = retriedProperty;
-  setViewStates({ ...viewStates, [type]: updatedStates });
-  
-  // Verificar el valor de 'action' y llamar a la función correspondiente
-  if (retriedProperty.action === "delete") {
-    deletePropertyFromAPIWrapper(selectedComponentId, retriedProperty, type);
-  } else if (retriedProperty.action === "create") {
-    sendPropertyToAPI(selectedComponentId, retriedProperty, type);
-  } else if (retriedProperty.action === "update") {
-    updateProperty(selectedComponentId, retriedProperty, type);
-  } else {
-    console.error(`Acción no reconocida: ${retriedProperty.action}`);
+  if (!Array.isArray(viewStates[type])) {
+    console.error(`viewStates[${type}] is not an array:`, viewStates[type]);
+    return; 
   }
+  
+  const property = viewStates[type][index];
+  if(!property) return; 
+
+  updateViewState(type, property.id, { ...property, error: false, loading: false, action: "delete" });
+  
+  deletePropertyFromAPIWrapper(selectedComponentId, property, type);
 };
+
+
+/// OLD METHODS
 
 const handleChangeState = debounce((type, index, property, value) => {
   setViewStates((prevState) => {
@@ -310,6 +221,11 @@ const handleChangeState = debounce((type, index, property, value) => {
     }
 
     const currentState = prevState[type][index];
+
+    if (currentState === null) {
+      console.log('currentState, no se pudo determinar.');
+      return prevState;
+    }
     
     // Si la propiedad es 'platform', actualiza 'platform' en lugar de 'data'
     if (property === 'platform') {
@@ -326,13 +242,13 @@ const handleChangeState = debounce((type, index, property, value) => {
       );
 
       const newViewState = { ...prevState, [type]: updatedStates };
-      componentDidUpdate(newViewState);
+      //componentDidUpdate(newViewState);
       updateProperty(selectedComponentId, updatedState, type, index);
       return newViewState;
     }
 
     // Si la propiedad no es 'platform', procede como normalmente
-    const currentDataValue = currentState.data?.[property];
+    const currentDataValue = currentState?.data?.[property];
     if (currentDataValue === value) {
       console.log('Los valores son iguales, no se realiza actualización.');
       return prevState;
@@ -352,17 +268,12 @@ const handleChangeState = debounce((type, index, property, value) => {
     );
 
     const newViewState = { ...prevState, [type]: updatedStates };
-    componentDidUpdate(newViewState);
+    //componentDidUpdate(newViewState);
     updateProperty(selectedComponentId, updatedState, type, index);
 
     return newViewState;
   });
 }, 300);
-
-
-
-
-
 
 	const triggerIfNotEqual = (selectedComponent, oldState, newState) => {
 		return
