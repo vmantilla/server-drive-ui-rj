@@ -293,6 +293,8 @@ const removePropertiesUnpermittedParams = (property) => {
   delete sanitizedProperty.updated_at;
   delete sanitizedProperty.user_id;
   delete sanitizedProperty.project_id;
+  delete sanitizedProperty.component_id;
+  delete sanitizedProperty.preview_id;
 
   return sanitizedProperty;
 };
@@ -317,9 +319,9 @@ export const addPropertyToAPI = async (componentId, propertyData) => {
   }
 };
 
-export const editPropertyInAPI = async (propertyId, updatedPropertyData) => {
+export const editPropertyInAPI = async (componentId, property) => {
   try {
-    const response = await axios.put(`/properties/${propertyId}`, { property: removePropertiesUnpermittedParams(updatedPropertyData) });
+    const response = await axios.put(`/properties/${property.id}`, { property: removePropertiesUnpermittedParams(property) });
     return response.data;
   } catch (error) {
     console.error('Error al editar propiedad:', error);
