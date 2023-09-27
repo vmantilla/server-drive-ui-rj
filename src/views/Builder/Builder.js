@@ -80,7 +80,6 @@ function Builder({showNotification}) {
               setSelectedComponent={setSelectedComponent}
               showNotification={showNotification}
               componentToAdd={componentToAdd}
-              propertyWasUpdated={propertyWasUpdated}
               onOrderUpdated={handleComponentsOrderUpdated}
             />
           )}

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { RavitBuilder } from 'ravit-builder';
 import html2canvas from 'html2canvas';
 
@@ -17,9 +17,31 @@ function PreviewScreen({ previewId, selectedScreen, selectedComponent, propertyW
 
   let componentManager = new ComponentManager(previewId);
 
-   useEffect(() => {
-    console.log("propertyWasUpdated", propertyWasUpdated)
+  useEffect(() => {
+    console.log("useLayoutEffect", previewId)
     setComponents(componentManager.components);
+  }, [previewId]);
+
+
+   const updateComponentInTree = (updatedComponent, currentComponents) => {
+    return currentComponents.map((component2) => {
+      if (component2.id === updatedComponent.id) {
+        return updatedComponent;
+      }
+
+      if (component2.children && component2.children.length > 0) {
+        return { ...component2, children: updateComponentInTree(updatedComponent, component2.children) };
+      }
+
+      return component2;
+    });
+  };
+
+  useEffect(() => {
+    console.log("propertyWasUpdated", propertyWasUpdated)
+    if (propertyWasUpdated) {
+      setComponents(prevComponents => updateComponentInTree(propertyWasUpdated, prevComponents));
+    }
   }, [propertyWasUpdated]);
   
   useEffect(() => {

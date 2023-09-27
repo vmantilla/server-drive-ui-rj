@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../../../css/Builder/Preview/PreviewScreen.css';
 
-function PreviewThumbnail({ previewId, initialTitle, onTitleChange, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange }) {
+function PreviewThumbnail({ previewId, initialTitle, onTitleChange, propertyWasUpdated, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange }) {
   const [screenType, setScreenType] = useState('mobile');
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
