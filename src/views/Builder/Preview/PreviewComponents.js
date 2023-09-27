@@ -7,13 +7,26 @@ import 'react-contexify/ReactContexify.css';
 
 import '../../../css/Builder/Preview/PreviewComponents.css';
 
-import ComponentManager from '../ComponentManager';
 import { getComponentsFromAPI, addComponentToAPI, editComponentToAPI, deleteComponentToAPI, duplicateComponentToAPI } from '../../api';
+import { useBuilder } from '../BuilderContext';
 
+import ComponentManager from '../ComponentManager';
 
 const MENU_ID = 'blahblah';
 
-function PreviewComponents({ previewId, selectedComponent, setSelectedComponent, propertyWasUpdated, showNotification, componentToAdd, updateComponentProperties, onOrderUpdated }) {
+function PreviewComponents({ propertyWasUpdated, showNotification, componentToAdd, updateComponentProperties, onOrderUpdated }) {
+  
+  const { 
+    uiScreens, setUiScreens,
+    uiWidgets, setUiWidgets,
+    uiWidgetsProperties, setUiWidgetsProperties,
+    selectedScreen, setSelectedScreen,
+    selectedComponent, setSelectedComponent,
+    buildTree,
+    recursiveDeleteComponent,
+    addWidgetWithProperties
+  } = useBuilder();
+
   const [components, setComponents] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [componentToDelete, setComponentToDelete] = useState(null);
@@ -23,12 +36,133 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
   const [orderableComponent, setOrderableComponent] = useState(null);
   const [originalIndex, setOriginalIndex] = useState(null);
   const [contextMenuComponentId, setContextMenuComponentId] = useState(null);
+  const [expandedComponents, setExpandedComponents] = useState([]);
   
-  let componentManager = new ComponentManager(previewId);
+  let componentManager = new ComponentManager(selectedScreen);
 
   useEffect(() => {
-    loadComponents();
-  }, [previewId]);
+    loadBuildTree();
+  }, [selectedScreen, uiWidgets, uiWidgetsProperties]);
+
+  const loadBuildTree = (component) => {
+    setComponents(buildTree(selectedScreen));
+  };
+
+  const handleToggleExpanded = (id) => {
+    setExpandedComponents(prev => {
+      if (prev.includes(id)) {
+        return prev.filter(componentId => componentId !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
+  }
+
+  const handleDrop = async (event, parentId) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    draggingComponent["parent_id"] = parentId;
+    setComponentLoading(draggingComponent.id);
+
+    if (draggingComponent.isNew) {
+      addComponent(parentId);
+    } else {
+      moveComponent(parentId);
+    }
+  };
+
+  const handleError = (error, message) => {
+    loadBuildTree();
+    setComponentLoading(null);
+    setDraggingComponent(null);
+    setSelectedComponent(null);
+    console.error(message, error);
+    showNotification('error', message);
+  };
+
+  const addComponent = async (parentId) => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const savedComponent = await addComponentToAPI(selectedScreen, draggingComponent);
+
+      addWidgetWithProperties(savedComponent);
+
+      setComponentLoading(null);
+      setDraggingComponent(null);
+
+      setSelectedComponent(savedComponent);
+
+      showNotification('success', 'Componente agregado exitosamente.');
+    } catch (error) {
+      handleError(error, 'Error al agregar el componente:');
+    }
+  };
+
+  const modifyComponent = async (componentId, params, successMessage) => {
+    try {
+      // Es posible que quieras agregar un delay aquí también
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const updatedComponent = await editComponentToAPI(componentId, params);
+      
+      console.log("modifyComponent", updatedComponent);
+      addWidgetWithProperties(updatedComponent); // Si es necesario
+      setComponentLoading(null);
+      setSelectedComponent(updatedComponent);
+      
+      if (successMessage) {
+        showNotification('success', successMessage);
+      }
+    } catch (error) {
+      console.error('Error al modificar el componente:', error);
+      showNotification('error', error.message);
+      setComponentLoading(null);
+      if (params.position !== undefined) setOrderableComponent(null);
+      if (params.parent_id !== undefined) setDraggingComponent(null);
+    }
+  };
+
+  // Uso de modifyComponent para cambiar parent_id
+  const moveComponent = (parentId) => {
+    const originalParentId = uiWidgets[draggingComponent.id].parent_id;
+    modifyComponent(draggingComponent.id, { parent_id: parentId }, 'Componente movido exitosamente.');
+  };
+
+  // Uso de modifyComponent para cambiar position
+  const handleEditComponentOrder = (newIndex) => {
+    setComponentLoading(orderableComponent.id);
+    setOrderableComponent(null);
+    modifyComponent(orderableComponent.id, { position: newIndex });
+  };
+
+  const deleteComponent = async (compToDelete) => { 
+    if (['Header', 'Body', 'Footer'].includes(compToDelete.component_type)) {
+      return;
+    }
+
+    setShowDeleteModal(false);
+    setComponentToDelete(null);
+    setComponentLoading(compToDelete.id);
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    try {
+      await deleteComponentToAPI(compToDelete.id);
+      recursiveDeleteComponent(compToDelete.id)
+      setComponentLoading(null);
+      setSelectedComponent(null);
+      showNotification('success', 'Componentes eliminado exitosamente.');
+    } catch (error) {
+      setComponentLoading(null);
+      setSelectedComponent(null);
+      console.error('Error al eliminar el componente:', error);
+      showNotification('error', 'Error al eliminar el componente.');
+    }
+  };
+
+  //OLD METHODS
 
   useEffect(() => {
     if (components && components.length > 0) {
@@ -41,80 +175,89 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
   }, [componentToAdd]);
 
   useEffect(() => {
-    const handleKeyPress = (e) => {
+  console.log("useEffect activated!");
 
-      if (orderableComponent) {
+  const findComponentByIdRecursive = (id, components) => {
+    console.log(`Searching for component with id: ${id}`);
+    for (let comp of components) {
+      console.log(`Checking component ${comp.id}`);
+      if (comp.id === id) return comp;
+      if (comp.children) {
+        let found = findComponentByIdRecursive(id, comp.children);
+        if (found) return found;
+      }
+    }
+    console.log("Component not found!");
+    return null;
+  };
+  
+  const updateComponentInTree = (updatedComp, components) => {
+    console.log(`Updating component ${updatedComp.id} in tree.`);
+    return components.map(comp => {
+      if (comp.id === updatedComp.id) return updatedComp;
+      if (comp.children) comp.children = updateComponentInTree(updatedComp, comp.children);
+      return comp;
+    });
+  };
+  
+  const handleKeyPress = (e) => {
+    console.log("Key Pressed: ", e.key);
+    if (orderableComponent) {
+      const parentId = orderableComponent.parent_id;
+      console.log(`Parent ID: ${parentId}`);
+      
+      const parentComponent = findComponentByIdRecursive(parentId, components);
+      console.log("Parent Component: ", parentComponent);
 
-        const parentId = orderableComponent.parent_id;
-        const parentComponent = componentManager.findComponentByIdRecursive(parentId, componentManager.components);
-
-        if (!parentComponent || !parentComponent.children) {
-          return;
-        }
-
-        const siblings = parentComponent.children;
-        let currentIndex = siblings.findIndex(comp => comp.id === orderableComponent.id);
-
-        if (currentIndex === -1) {
-          return;
-        }
-
-        if (e.key === "ArrowUp" && currentIndex > 0) {
+      if (!parentComponent || !parentComponent.children) {
+        console.log("Parent component or children not found!");
+        return;
+      }
+      
+      const siblings = parentComponent.children;
+      let currentIndex = siblings.findIndex(comp => comp.id === orderableComponent.id);
+      console.log("Current Index: ", currentIndex);
+      
+      if (currentIndex === -1) return;
+      
+      if (e.key === "ArrowUp" && currentIndex > 0) {
+        const [moved] = siblings.splice(currentIndex, 1);
+        siblings.splice(currentIndex - 1, 0, moved);
+        console.log("Moved up! New siblings order: ", siblings);
+        onOrderUpdated(new Date().toISOString());
+      } else if (e.key === "ArrowDown" && currentIndex < siblings.length - 1) {
+        const [moved] = siblings.splice(currentIndex, 1);
+        siblings.splice(currentIndex + 1, 0, moved);
+        console.log("Moved down! New siblings order: ", siblings);
+        onOrderUpdated(new Date().toISOString());
+      } else if (e.key === "Enter") {
+        handleEditComponentOrder(currentIndex);
+      } else if (e.key === "Escape") {
+        if (originalIndex !== null) {
           const [moved] = siblings.splice(currentIndex, 1);
-          siblings.splice(currentIndex - 1, 0, moved);
-          onOrderUpdated(new Date().toISOString());
-        } else if (e.key === "ArrowDown" && currentIndex < siblings.length - 1) {
-          const [moved] = siblings.splice(currentIndex, 1);
-          siblings.splice(currentIndex + 1, 0, moved);
-          onOrderUpdated(new Date().toISOString());
-        } else if (e.key === "Enter") {
-          handleEditComponentOrder(currentIndex);
-        } else if (e.key === "Escape") {
-          if (originalIndex !== null) {
-            const parentId = orderableComponent.parent_id;
-            const parentComponent = componentManager.findComponentByIdRecursive(parentId, componentManager.components);
-            if (parentComponent && parentComponent.children) {
-              const currentIndex = parentComponent.children.findIndex(comp => comp.id === orderableComponent.id);
-              const [moved] = parentComponent.children.splice(currentIndex, 1);
-              parentComponent.children.splice(originalIndex, 0, moved);
-              parentComponent.children = siblings;
-              componentManager.components = componentManager.updateComponentInTree(parentComponent);
-              setComponents(componentManager.components);
-            }
-          }
-          setSelectedComponent(orderableComponent);
+          siblings.splice(originalIndex, 0, moved);
+          console.log("Escape pressed! Reverted to original index");
           setOrderableComponent(null);
           setOriginalIndex(null);
         }
-        
-        parentComponent.children = siblings;
-        componentManager.components = componentManager.updateComponentInTree(parentComponent);
-        setComponents(componentManager.components);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [orderableComponent]);
-
-
-  const handleEditComponentOrder = async (newIndex) => {
-      setComponentLoading(orderableComponent.id);
-      setOrderableComponent(null);
-        
-      try {
-        await editComponentToAPI(orderableComponent.id, { position: newIndex });
         setSelectedComponent(orderableComponent);
-        setComponentLoading(null);
-      } catch (error) {
-        setComponentLoading(null);
-        setOrderableComponent(null);
-        console.error('Error al mover el componente:', error);
-        showNotification('error', error.message);
       }
-    };
+
+      parentComponent.children = siblings;
+      const newComponents = updateComponentInTree(parentComponent, components);
+      console.log("Setting new components state: ", newComponents);
+      setComponents(newComponents);
+    }
+  };
+
+  window.addEventListener("keydown", handleKeyPress);
+  return () => {
+    console.log("useEffect cleanup - removing event listener");
+    window.removeEventListener("keydown", handleKeyPress);
+  };
+}, [orderableComponent, components, onOrderUpdated, originalIndex, handleEditComponentOrder, setComponents, setSelectedComponent, setOrderableComponent, setOriginalIndex]);
+
+
 
 
   const makeComponentOrderable = (component) => {
@@ -128,66 +271,6 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     setOrderableComponent(component);
     setSelectedComponent(null);
   };
-
-  const loadComponents = async () => {
-    try {
-      if(componentManager.isUpdateRequired()) {
-        const componentsData = await getComponentsFromAPI(previewId);
-        const convertJsonToTree = componentManager.convertJsonToTree(componentsData)
-        componentManager.saveLastUpdatedTime();
-        componentManager.components = convertJsonToTree
-        setComponents(convertJsonToTree);
-      } else {
-        setComponents(componentManager.components);
-      }
-    } catch (error) {
-      setComponents([]);
-      console.error('Error al cargar componentes:', error);
-      showNotification('error', 'Error al cargar componentes:');
-    }
-  };
-
-  const deleteComponent = async (compToDelete) => { 
-    if (['Header', 'Body', 'Footer'].includes(compToDelete.component_type)) {
-      return;
-    }
-
-    setShowDeleteModal(false);
-
-    setComponentToDelete(compToDelete);
-    setComponentLoading(compToDelete.id);
-    
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    try {
-      await deleteComponentToAPI(componentToDelete.id);
-      componentManager.removeComponent(componentToDelete.id);
-      setComponents(componentManager.components);
-      showNotification('success', 'Componentes eliminado exitosamente.');
-      setComponentLoading(null);
-      setSelectedComponent(null);
-    } catch (error) {
-      setComponentLoading(null);
-      console.error('Error al eliminar el componente:', error);
-      showNotification('error', 'Error al eliminar el componente.');
-      setSelectedComponent(null);
-    }
-  };
-
-  const handleToggleExpanded = (id) => 
-    setComponents(prevComponents => toggleExpanded(id, prevComponents));
-  
-   const toggleExpanded = (targetId, currentComponents) => 
-    currentComponents.map(component => {
-      if (component.id === targetId) {
-        return { ...component, expanded: !component.expanded };
-      }
-      if (component.children && component.children.length > 0) {
-        return { ...component, children: toggleExpanded(targetId, component.children) };
-      }
-      return component;
-    });
-
 
   const handleDragStart = (event, component) => {
       if (['Header', 'Body', 'Footer'].includes(component.component_type)) {
@@ -206,83 +289,22 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
     setDraggingComponentOver(componentId);
   };
 
-  const handleDrop = async (event, parentId) => {
-    event.preventDefault();
-    event.stopPropagation();
 
-    draggingComponent["parent_id"] = parentId;
-    setComponentLoading(draggingComponent.id);
-
-    if (draggingComponent.isNew) {
-      try {
-        componentManager.addComponentChild(parentId, draggingComponent);
-        setComponents(componentManager.components);
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const savedComponent = await addComponentToAPI(previewId, draggingComponent);
-        savedComponent.isNew = false;
-        setComponentLoading(null);
-        setDraggingComponent(null);
-        componentManager.removeComponent(draggingComponent.id);
-        const convertJsonToTree = componentManager.convertJsonToTree(savedComponent, parentId);
-        if (convertJsonToTree, convertJsonToTree.length > 0) {
-          componentManager.saveLastUpdatedTime();
-          componentManager.addComponentChild(parentId, convertJsonToTree[0]);
-          setComponents(componentManager.components);
-        }
-        showNotification('success', 'Componente agregado exitosamente.');
-        setSelectedComponent(convertJsonToTree);
-      } catch (error) {
-        setComponentLoading(null);
-        setDraggingComponent(null);
-        console.error('Error al agregar el componente:', error);
-        showNotification('error', 'Error al agregar el componente.');
-        componentManager.removeComponent(draggingComponent.id);
-        setComponents(componentManager.components);
-        setSelectedComponent(null);
-      }
-    } else {
-      try {
-        componentManager.moveComponent(draggingComponent.id, parentId);
-        setComponents(componentManager.components);
-        await new Promise(resolve => setTimeout(resolve, 500));
-        await editComponentToAPI(draggingComponent.id, { parent_id: parentId });
-        setComponents(componentManager.components);
-        setComponentLoading(null);
-        setDraggingComponent(null);
-        showNotification('success', 'Componente movido exitosamente.');
-        setSelectedComponent(draggingComponent);
-      } catch (error) {
-        setComponentLoading(null);
-        setDraggingComponent(null);
-        console.error('Error al mover el componente:', error);
-        showNotification('error', error.message);
-        setSelectedComponent(null);
-      }
-    }
-  };
-
-  const duplicateComponent = async (compId) => {
-    const compToDuplicate = componentManager.findComponentByIdRecursive(compId, componentManager.components);
-
-    if (!compToDuplicate) {
-      showNotification('error', 'Error duplicating component. Component not found.');
-      return;
-    }
-
+const duplicateComponent = async (compId) => {
     try {
+      // Es posible que quieras agregar un delay aquí también
       await new Promise(resolve => setTimeout(resolve, 500));
-      const componentsData = await duplicateComponentToAPI(compToDuplicate.id);
-      const convertJsonToTree = componentManager.convertJsonToTree(componentsData, compToDuplicate.parent_id);
-      if (convertJsonToTree, convertJsonToTree.length > 0) {
-        componentManager.saveLastUpdatedTime();
-        componentManager.addComponentChild(compToDuplicate.parent_id, convertJsonToTree[0], compToDuplicate.position);
-        setComponents(componentManager.components);
-      }
-      showNotification('success', 'Component duplicated successfully.');
+      
+      const updatedComponent = await duplicateComponentToAPI(compId);
+      
+      console.log("updatedComponent", updatedComponent);
+      addWidgetWithProperties(updatedComponent); 
+      setComponentLoading(null);
+      setSelectedComponent(null);
     } catch (error) {
-      console.error('Error duplicating component:', error);
-      showNotification('error', 'Error duplicating component.');
+      console.error('Error al duplicar el componente:', error);
+      showNotification('error', "Error al duplicar el componente");
+      setComponentLoading(null);
     }
   };
 
@@ -355,6 +377,7 @@ function PreviewComponents({ previewId, selectedComponent, setSelectedComponent,
       case 'move':
         if (selectedComponent && selectedComponent.id !== null) {
           makeComponentOrderable(selectedComponent);
+          setOrderableComponent(selectedComponent);
         }
         break;
       case 'delete':
@@ -501,7 +524,7 @@ const renderComponentList = (compArray, parentId = null) =>
           <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
             <div style={{display: 'flex', alignItems: 'center'}}>
               <span className="toggle-btn" onClick={(e) => { e.stopPropagation(); handleToggleExpanded(comp.id); }}>
-                {comp.expanded ?  <i className="bi bi-node-minus"></i> : <i className="bi bi-node-plus-fill"></i>}
+                {expandedComponents.includes(comp.id) ?  <i className="bi bi-node-minus"></i> : <i className="bi bi-node-plus-fill"></i>}
               </span>
               <span>{comp.component_type ? comp.component_type : 'N/A'}</span>
             </div>
@@ -514,7 +537,7 @@ const renderComponentList = (compArray, parentId = null) =>
             )}
         </div>
 
-        {comp.expanded && comp.children && comp.children.length > 0 && 
+        {expandedComponents.includes(comp.id) && comp.children && comp.children.length > 0 && 
           <div className="component-children">
             {renderComponentList(comp.children, comp.id)}
           </div>

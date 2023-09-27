@@ -5,6 +5,7 @@ import Builder from './views/Builder/Builder';
 import Dashboard from './views/Dashboard/Dashboard';
 import AuthenticatedLayout from './AuthenticatedLayout';
 import ProjectWizard from './views/Wizard/ProjectWizard';
+import { BuilderProvider } from './views/Builder/BuilderContext';
 
 import Notification from './Notification'; 
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -59,7 +60,13 @@ function AppInner() {
         <Route path="/dashboard" element={<AuthenticatedLayout><Dashboard /></AuthenticatedLayout>} />
         <Route
           path="/builder/:projectId"
-          element={<AuthenticatedLayout><Builder showNotification={showNotification} /></AuthenticatedLayout>}
+          element={
+            <AuthenticatedLayout>
+              <BuilderProvider>
+                <Builder showNotification={showNotification} />
+              </BuilderProvider>
+            </AuthenticatedLayout>
+          }
         />
         <Route path="/wizard" element={<AuthenticatedLayout><ProjectWizard /></AuthenticatedLayout>} />
       </Routes>

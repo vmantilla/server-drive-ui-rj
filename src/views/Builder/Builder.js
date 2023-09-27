@@ -8,22 +8,35 @@ import ComponentProperties from './Component/ComponentProperties';
 import '../../css/Builder/Builder.css';
 import { batchUpdateComponentsToAPI } from '../api';
 
+import { useBuilder } from './BuilderContext';
+
 function Builder({showNotification}) {
+
+  const { 
+    previews, setPreviews, 
+    selectedScreen, setSelectedScreen,
+    selectedComponent, setSelectedComponent,
+    resetBuilder
+  } = useBuilder();
+
   const { projectId } = useParams();
   const [isComponentsOpen, setIsComponentsOpen] = useState(true);
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
-  const [selectedScreen, setSelectedScreen] = useState(null);
   const [selectedComponents, setSelectedComponents] = useState([]);
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
   const [addNewPreview, setAddNewPreview] = useState(null);
   const [updatePreview, setUpdatePreview] = useState(null);
   const [onDelete, setOnDelete] = useState(null);
   const [workspaceHeight, setWorkspaceHeight] = useState('50%');
-  const [selectedComponent, setSelectedComponent] = useState(null);
   const [componentToAdd, setComponentToAdd] = useState(null);
   const [propertyWasUpdated, setPropertyWasUpdated] = useState(null);
   const [shouldUpdate, setShouldUpdate] = useState(false);
   const [orderUpdated, setOrderUpdated] = useState(false);
+
+  useEffect(() => {
+    resetBuilder();
+  }, []);
+  
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -75,9 +88,6 @@ function Builder({showNotification}) {
           ></div>
           {selectedScreen && (
             <PreviewComponents 
-              previewId={selectedScreen}
-              selectedComponent={selectedComponent} 
-              setSelectedComponent={setSelectedComponent}
               showNotification={showNotification}
               componentToAdd={componentToAdd}
               onOrderUpdated={handleComponentsOrderUpdated}
@@ -87,15 +97,11 @@ function Builder({showNotification}) {
         <section className="builder-workspace">
           <PreviewWorkspace
             workspaceId={selectedWorkspace?.id}
-            setSelectedScreen={setSelectedScreen}
-            selectedScreen={selectedScreen}
             setAddNewPreview={setAddNewPreview}
             setUpdatePreview={setUpdatePreview}
             setOnDelete={setOnDelete}
             forceReflow={forceReflow}
             showNotification={showNotification}
-            selectedComponents={selectedComponents}
-            setSelectedComponent={setSelectedComponent}
             propertyWasUpdated={propertyWasUpdated}
             orderUpdated={orderUpdated}
           />

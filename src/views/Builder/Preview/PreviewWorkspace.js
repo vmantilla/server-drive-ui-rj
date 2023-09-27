@@ -1,42 +1,50 @@
 // PreviewWorkspace.js
 import React, { useState, useEffect, useRef } from 'react';
-import PreviewScreen from './PreviewScreen';
-import PreviewThumbnail from './PreviewThumbnail';
-
-import '../../../css/Builder/Preview/PreviewWorkspace.css';
-import { getAllPreviewsFromAPI, addPreviewToAPI, deletePreviewFromAPI, editPreviewInAPI, batchUpdatePreviewsToAPI } from '../../api';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import PreviewScreen from './PreviewScreen';
+import PreviewThumbnail from './PreviewThumbnail';
+import '../../../css/Builder/Preview/PreviewWorkspace.css';
 
+import { getAllPreviewsFromAPI, addPreviewToAPI, deletePreviewFromAPI, editPreviewInAPI, batchUpdatePreviewsToAPI } from '../../api';
+import { useBuilder } from '../BuilderContext';
 
-function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, propertyWasUpdated, setAddNewPreview, setUpdatePreview, setOnDelete, forceReflow, showNotification, selectedComponent, setSelectedComponent, setUpdateComponentProperties, setShouldUpdate, orderUpdated }) {
-  const [previews, setPreviews] = useState([]);
+function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, setUpdatePreview, setOnDelete, forceReflow, showNotification, setUpdateComponentProperties, setShouldUpdate, orderUpdated }) {
+
+  const { 
+    uiScreens, setUiScreens,
+    uiWidgets, setUiWidgets,
+    uiWidgetsProperties, setUiWidgetsProperties,
+    selectedScreen, setSelectedScreen,
+    selectedComponent, setSelectedComponent,
+    resetBuilder,
+    verifyDataConsistency
+  } = useBuilder();
+
   const [zoomLevel, setZoomLevel] = useState(1);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [previewToDelete, setPreviewToDelete] = useState(null);
   const [confirmDeleteName, setConfirmDeleteName] = useState('');
 
-  
   const zoomIntervalRef = useRef(null);
   const workspaceSize = Math.max(zoomLevel * 1000, window.innerWidth, window.innerHeight);
 
-  let timerId;
-  // Moved to function to manage pending updates
-  const getPendingUpdates = () => JSON.parse(localStorage.getItem('pendingUpdates')) || [];
-  const setPendingUpdates = (updates) => localStorage.setItem('pendingUpdates', JSON.stringify(updates));
-
   useEffect(() => {
     if (workspaceId) {
-      setPendingUpdates([]);
-    }
-  }, [workspaceId]);
-  
-  useEffect(() => {
-    if (workspaceId) {
+      resetBuilder();
       getAllPreviewsFromAPI(workspaceId)
-      .then((previews) => {
-        setPreviews(previews);
+      .then((response) => {
+        console.log("getAllPreviewsFromAPI", response)
+
+        if (verifyDataConsistency(response.uiScreens, response.uiWidgets, response.uiWidgets_properties)) {
+          setUiScreens(response.uiScreens);
+          setUiWidgets(response.uiWidgets); 
+          setUiWidgetsProperties(response.uiWidgets_properties);
+        } else {
+          resetBuilder()
+        }
+        
         setSelectedScreen(null);
         setSelectedComponent(null);
         forceReflow();
@@ -55,8 +63,12 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, prop
       };
 
       try {
-        const newPreview = await addPreviewToAPI(workspaceId, previewData);
-        setPreviews(prev => [...prev, newPreview]);
+        const response = await addPreviewToAPI(workspaceId, previewData);
+
+        setUiScreens((prev) => ({ ...prev, ...response.uiScreens }));
+        setUiWidgets((prev) => ({ ...prev, ...response.uiWidgets }));
+        setUiWidgetsProperties((prev) => ({ ...prev, ...response.uiWidgets_properties }));
+
       } catch (error) {
         showNotification('error', 'Error al agregar nueva vista previa.');
         console.error('Error al agregar nueva vista previa:', error);
@@ -67,106 +79,91 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, prop
     setOnDelete(() => handleDelete);
   }, [workspaceId, setAddNewPreview]);
 
-
-  const checkUpdatesAndSave = async () => {
-    const pendingUpdates = getPendingUpdates();
-
-    if (pendingUpdates.length > 0 && workspaceId) {
-      try {
-        await batchUpdatePreviewsToAPI(workspaceId, pendingUpdates);
-        setPendingUpdates([]);
-      } catch (error) {
-        showNotification('error', error.message);
-        console.error('Error al actualizar los previews:', error);
-      }
-    }
-
-    timerId = setTimeout(checkUpdatesAndSave, 10000);
-  };
-
-  useEffect(() => {
-    timerId = setTimeout(checkUpdatesAndSave, 10000);
-    return () => {
-      clearTimeout(timerId);
-    };
-  }, []);
-
-  const enqueueUpdate = (newPosition, previewId) => {
-    const pendingUpdates = getPendingUpdates();
-    const existingIndex = pendingUpdates.findIndex((p) => p.preview_id === previewId);
-
-    if (existingIndex !== -1) {
-      pendingUpdates[existingIndex] = {
-        preview_id: previewId,
-        position_x: newPosition.x,
-        position_y: newPosition.y,
-      };
-    } else {
-      pendingUpdates.push({
-        preview_id: previewId,
-        position_x: newPosition.x,
-        position_y: newPosition.y,
-      });
-    }
-
-    setPendingUpdates(pendingUpdates);
-  };
-
   const handlePositionChange = (newPosition, previewId) => {
-  const updatedPreviews = previews.map((p) => {
-    if (p.id === previewId) {
-      return { ...p, position_x: newPosition.x, position_y: newPosition.y };
+    setUiScreens((prevUiScreens) => {
+      const updatedUiScreens = { ...prevUiScreens };
+
+      if (updatedUiScreens[previewId]) {
+        updatedUiScreens[previewId][2] = newPosition.x; // Asumiendo que la posición x está en el índice 2
+        updatedUiScreens[previewId][3] = newPosition.y; // Asumiendo que la posición y está en el índice 3
+      }
+
+      return updatedUiScreens;
+    });
+  };
+
+  const handlePositionSave = (newPosition, previewId) => {
+    const selectedScreen = uiScreens[previewId];
+    if (!selectedScreen) {
+      console.error("No screen with the given ID found");
+      return;
     }
-    return p;
-  });
-
-  enqueueUpdate(newPosition, previewId);
-
-  setPreviews(updatedPreviews);
-};
-
-  useEffect(() => {
-    const updatePreview = async (previewId) => {
-
-      const selectedPreview = previews.find(preview => preview.id === previewId);
-      
-      if (!selectedPreview) {
-        console.error("No preview with the given ID found");
-        return;
-      }
-
-      const updatedData = {
-        title: selectedPreview.title,
-        position_x: selectedPreview.position_x,
-        position_y: selectedPreview.position_y,
-      };
-
-      try {
-        const updatedPreview = await editPreviewInAPI(previewId, updatedData);
-        
-        setPreviews(prevPreviews => {
-          return prevPreviews.map(preview => {
-            if (preview.id === previewId) {
-              return updatedPreview;
-            }
-            return preview;
-          });
-        });
-        showNotification('success', 'Preview updated successfully.');
-      } catch (error) {
-        showNotification('error', 'Error updating preview.');
-        console.error('Error updating preview:', error);
-      }
+    const updatedData = {
+      position_x: newPosition.x,
+      position_y: newPosition.y,
     };
+    updatePreview(previewId, updatedData);
+  };
 
-    setUpdatePreview(() => updatePreview);
-  }, [workspaceId, setUpdatePreview, previews]);
+  const deleteWidgetsAndProperties = (screenId, uiWidgets, uiWidgetsProperties) => {
+    let updatedWidgets = { ...uiWidgets };
+    let updatedProperties = { ...uiWidgetsProperties };
+
+    (uiScreens[screenId]?.[1] || []).forEach(widgetId => {
+      delete updatedWidgets[widgetId];
+      (uiWidgets[widgetId]?.[1] || []).forEach(propertyId => {
+        delete updatedProperties[propertyId];
+      });
+    });
+
+    return [updatedWidgets, updatedProperties];
+  };
+
+  const updateWidgetsAndProperties = (response, selectedScreenId, uiWidgets, uiWidgetsProperties) => {
+    const [updatedWidgets, updatedProperties] = deleteWidgetsAndProperties(selectedScreenId, uiWidgets, uiWidgetsProperties);
+
+    Object.keys(response.uiWidgets).forEach(widgetId => {
+      updatedWidgets[widgetId] = response.uiWidgets[widgetId];
+    });
+
+    Object.keys(response.uiWidgets_properties).forEach(propertyId => {
+      updatedProperties[propertyId] = response.uiWidgets_properties[propertyId];
+    });
+
+    return [updatedWidgets, updatedProperties];
+  };
+
+  const updatePreview = async (previewId, updatedData) => {
+    try {
+      const response = await editPreviewInAPI(previewId, updatedData);
+      const [updatedWidgets, updatedProperties] = updateWidgetsAndProperties(response, previewId, uiWidgets, uiWidgetsProperties);
+
+      setUiWidgets(updatedWidgets);
+      setUiWidgetsProperties(updatedProperties);
+      setUiScreens(prev => ({
+        ...prev,
+        [previewId]: [response.uiScreens[previewId][0], response.uiScreens[previewId][1], updatedData.position_x, updatedData.position_y]
+      }));
+      showNotification('success', 'Preview updated successfully.');
+    } catch (error) {
+      showNotification('error', 'Error updating preview.');
+      console.error('Error updating preview:', error);
+    }
+  };
 
   const confirmDelete = async () => {
-    if (previewToDelete && confirmDeleteName === previews.find(p => p.id === previewToDelete)?.title) {
+    if (previewToDelete && confirmDeleteName === uiScreens[previewToDelete]?.[0]) {
       try {
         await deletePreviewFromAPI(previewToDelete);
-        setPreviews(prev => prev.filter(p => p.id !== previewToDelete));
+        const [updatedWidgets, updatedProperties] = deleteWidgetsAndProperties(previewToDelete, uiWidgets, uiWidgetsProperties);
+
+        setUiWidgets(updatedWidgets);
+        setUiWidgetsProperties(updatedProperties);
+        setUiScreens(prev => {
+          const updated = { ...prev };
+          delete updated[previewToDelete];
+          return updated;
+        });
         setSelectedScreen(null);
       } catch (error) {
         showNotification('error', 'Error al eliminar vista previa.');
@@ -178,6 +175,7 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, prop
       showNotification('error', 'El nombre del preview no concuerda, asegurate de escribir mayusculas y minusculas correctamente.');
     }
   };
+
 
   const handleDeleteModalClose = () => {
     setShowDeleteModal(false);
@@ -225,18 +223,26 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, prop
   };
 
   const handleTitleChange = (newTitle, previewId) => {
-  const updatedPreviews = previews.map((p) => {
-      if (p.id === previewId) {
-        return { ...p, title: newTitle };
-      }
-      return p;
-    });
-    setPreviews(updatedPreviews);
-    setUpdatePreview();
+    const selectedScreen = uiScreens[previewId];
+    if (!selectedScreen) {
+      console.error("No screen with the given ID found");
+      return;
+    }
+    const updatedData = {
+      title: newTitle,
+      position_x: selectedScreen[2],
+      position_y: selectedScreen[3],
+    };
+    setUiScreens((prev) => ({
+      ...prev,
+      [previewId]: [newTitle, ...prev[previewId].slice(1)],
+    }));
+    updatePreview(previewId, updatedData);
   };
 
   const handleClick = (preview) => {
     setSelectedComponent(null);
+    console.log("setSelectedScreen", preview.id)
     setSelectedScreen(preview.id);
   };
 
@@ -244,47 +250,46 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, prop
   return (
   <>
     <div className="workspace-content" style={{ transform: `scale(${zoomLevel})`, width: `${workspaceSize}px`, height: `${workspaceSize}px` }}  onClick={handleWorkspaceClick}>
-      {previews.map((preview) => {
-        if (true) {
-          return (
-            <PreviewScreen
-                key={preview.id}
-                previewId={preview.id}
-                selectedScreen={selectedScreen}
-                initialTitle={preview.title}
-                onClick={() => handleClick(preview)}
-                onPositionChange={(newPosition) => handlePositionChange(newPosition, preview.id)}
-                position={{ x: preview.position_x || 0, y: preview.position_y || 0 }}
-                zoomLevel={zoomLevel}
-                isSelected={selectedScreen === preview.id}
-                onTitleChange={(newTitle) => handleTitleChange(newTitle, preview.id)}
-                selectedComponent={selectedComponent}
-                propertyWasUpdated={propertyWasUpdated}
-                orderUpdated={orderUpdated}
-              >
-                {preview.content}
-              </ PreviewScreen>
+    {Object.entries(uiScreens).map(([previewId, previewData]) => {
+      const [title, , position_x, position_y] = previewData;
+      if (true) {
+        return (
+          <PreviewScreen
+            key={previewId}
+            previewId={previewId}
+            selectedScreen={selectedScreen}
+            initialTitle={title}
+            onClick={() => handleClick({ id: previewId, title, position_x, position_y })}
+            onPositionChange={(newPosition) => handlePositionChange(newPosition, previewId)}
+            handlePositionSave={(newPosition) => handlePositionSave(newPosition, previewId)}
+            position={{ x: position_x || 0, y: position_y || 0 }}
+            zoomLevel={zoomLevel}
+            isSelected={selectedScreen === previewId}
+            onTitleChange={(newTitle) => handleTitleChange(newTitle, previewId)}
+            selectedComponent={selectedComponent}
+            propertyWasUpdated={propertyWasUpdated}
+            orderUpdated={orderUpdated}
+          />
           );
         } else {
           return (
-            <PreviewThumbnail
-                key={preview.id}
-                previewId={preview.id}
-                selectedScreen={selectedScreen}
-                initialTitle={preview.title}
-                onClick={() => handleClick(preview)}
-                onPositionChange={(newPosition) => handlePositionChange(newPosition, preview.id)}
-                position={{ x: preview.position_x || 0, y: preview.position_y || 0 }}
-                zoomLevel={zoomLevel}
-                isSelected={selectedScreen === preview.id}
-                onTitleChange={(newTitle) => handleTitleChange(newTitle, preview.id)}
-                propertyWasUpdated={propertyWasUpdated}
-              >
-                {preview.content}
-              </ PreviewThumbnail>
+          <PreviewThumbnail
+            key={previewId}
+            previewId={previewId}
+            selectedScreen={selectedScreen}
+            initialTitle={title}
+            onClick={() => handleClick({ id: previewId, title, position_x, position_y })}
+            onPositionChange={(newPosition) => handlePositionChange(newPosition, previewId)}
+            position={{ x: position_x || 0, y: position_y || 0 }}
+            zoomLevel={zoomLevel}
+            isSelected={selectedScreen === previewId}
+            onTitleChange={(newTitle) => handleTitleChange(newTitle, previewId)}
+            propertyWasUpdated={propertyWasUpdated}
+          />
           );
         }
       })}
+
     {showDeleteModal && (
     <Modal show={showDeleteModal} onHide={handleDeleteModalClose}>
       <Modal.Header closeButton>
@@ -293,7 +298,7 @@ function PreviewWorkspace({ workspaceId, setSelectedScreen, selectedScreen, prop
       <Modal.Body>
         <p>
           Para confirmar la eliminación, escribe el nombre de la vista previa que deseas eliminar:
-          <strong> "{previews.find(p => p.id === previewToDelete)?.title}"</strong>
+          <strong> "{uiScreens[previewToDelete]?.[0]}"</strong>
         </p>
         <input
           type="text"

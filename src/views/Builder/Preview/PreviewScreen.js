@@ -5,11 +5,12 @@ import html2canvas from 'html2canvas';
 import '../../../css/Builder/Preview/PreviewScreen.css';
 import ComponentManager from '../ComponentManager';
 
-function PreviewScreen({ previewId, selectedScreen, selectedComponent, propertyWasUpdated, initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, setUpdateComponentProperties, orderUpdated }) {
+function PreviewScreen({ previewId, selectedScreen, selectedComponent, propertyWasUpdated, initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, handlePositionSave, setUpdateComponentProperties, orderUpdated }) {
   const [screenType, setScreenType] = useState('mobile');
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
   const [orientation, setOrientation] = useState('portrait');
+  const movedRef = useRef(false);
   const draggingRef = useRef(false);
   const lastEventRef = useRef(null);
 
@@ -45,10 +46,13 @@ function PreviewScreen({ previewId, selectedScreen, selectedComponent, propertyW
   }, [propertyWasUpdated]);
   
   useEffect(() => {
+    
     const globalMouseMove = (e) => {
       if (draggingRef.current && lastEventRef.current) {
         const deltaX = (e.clientX - lastEventRef.current.clientX) / zoomLevel;
         const deltaY = (e.clientY - lastEventRef.current.clientY) / zoomLevel;
+        if (deltaX || deltaY) movedRef.current = true; 
+        
         const newPosition = {
           x: position?.x + deltaX,
           y: position?.y + deltaY
@@ -59,9 +63,18 @@ function PreviewScreen({ previewId, selectedScreen, selectedComponent, propertyW
         lastEventRef.current = e;
       }
     };
+
     const globalMouseUp = () => {
-      draggingRef.current = false;
+      if(draggingRef.current){
+        draggingRef.current = false;
+        if (movedRef.current && handlePositionSave && position) {
+          handlePositionSave(position);
+        }
+        movedRef.current = false; 
+      }
     };
+
+
     document.addEventListener('mousemove', globalMouseMove);
     document.addEventListener('mouseup', globalMouseUp);
     
