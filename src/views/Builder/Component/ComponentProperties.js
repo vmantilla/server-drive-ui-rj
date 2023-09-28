@@ -19,13 +19,16 @@ import ErrorComponent from './Properties/ErrorComponent';
 
 import '../../../css/Builder/Component/ComponentProperties.css';
 import { addPropertyToAPI, editPropertyInAPI, deletePropertyFromAPI } from '../../api';
+
+import { useBuilder } from '../BuilderContext';
+
 import ComponentManager from '../ComponentManager';
 
 const possibleStates = ["default", "iOS", "android", "web"];
 
-const MiniHeaderWithProperties = ({ title, selectedComponentId, states, propertyComponent: PropertyComponent, handleChangeState, handleAddState, handleDeleteState, handleRetry }) => (
+const MiniHeaderWithProperties = ({ title, selectedComponent, states, propertyComponent: PropertyComponent, handleChangeState, handleAddState, handleDeleteState, handleRetry }) => (
 	<MiniHeader
-	key={`${title}${selectedComponentId}`}
+	key={`${title}${selectedComponent.id}`}
 	possibleStates={possibleStates}
 	title={title}
 	states={states}
@@ -39,7 +42,7 @@ const MiniHeaderWithProperties = ({ title, selectedComponentId, states, property
 			<ErrorComponent key={index} onRetry={() => handleRetry(title.toLowerCase(), index)} />
 			) : (
 			<PropertyComponent
-			key={`${title}${selectedComponentId}${state.platform}`}
+			key={`${title}${selectedComponent.id}${state.platform}`}
 			property={state}
 			handlePropertyChange={(property, value) => handleChangeState(title.toLowerCase(), index, property, value)}
 			/>
@@ -66,47 +69,105 @@ function getInitialViewStates() {
 	};
 }
 
-function fillViewStates(component) {
-	const newStates = getInitialViewStates();
 
-	if (component && component.properties) {
-		component.properties.forEach(property => {
-			if (newStates.hasOwnProperty(property.name)) {
-				newStates[property.name].push(property);
-			}
-		});
-	}
-
-	return newStates;
-}
-
-
-function ComponentProperties({ previewId, selectedComponentId, setSelectedComponent, setPropertyWasUpdated }) {
+function ComponentProperties({ selectedComponentId, previewId, setPropertyWasUpdated }) {
 
 	let componentManager = new ComponentManager(previewId);
+
+  const { 
+    uiWidgets, setUiWidgets,
+    uiWidgetsProperties, setUiWidgetsProperties,
+    selectedScreen, setSelectedScreen,
+    selectedComponent, setSelectedComponent,
+    findWidgetPropertiesById,
+    updateSelectedComponentProperties
+  } = useBuilder();
 
 	const [component, setComponent] = useState(null);
 	const [viewStates, setViewStates] = useState(getInitialViewStates);
 
-	useEffect(() => {
-		setViewStates(getInitialViewStates());
-		const componentFound = componentManager.findComponentByIdRecursive(selectedComponentId, componentManager.components);
-		setComponent(componentFound);
-	}, [previewId, selectedComponentId]);
 
-	useLayoutEffect(() => {
-		//console.log("useLayoutEffect", component)
-		setViewStates(fillViewStates(component));
-	}, [component]);
+	function fillViewStates(widgetId) {
+	  const properties = findWidgetPropertiesById(widgetId);
+
+	  if (!properties) return;
+
+	  let newViewStates = { ...getInitialViewStates() };
+	  
+	  Object.entries(properties).forEach(([id, [name, data, platform]]) => {
+	    if (newViewStates[name]) {
+	      newViewStates[name].push({ data: { ...data }, id, name, platform });
+	    } else {
+	      console.warn(`La categoría ${name} no existe en viewStates`);
+	    }
+	  });
+
+	  setViewStates(newViewStates);
+	}
+
+	useEffect(() => {
+	    const updateUiWidgetsProperties = () => {
+	        let updatedUiWidgetsProperties = { ...uiWidgetsProperties };
+	        let updatedPropertyIds = [];
+	        let currentWidgetProperties = [];
+
+	        if (selectedComponent && selectedComponent.id) {
+	          const currentWidgetId = selectedComponent.id;
+	          const currentWidget = uiWidgets[currentWidgetId];
+	          const [, widgetProperties, ] = currentWidget;
+	          currentWidgetProperties = widgetProperties
+	        }
+
+	        Object.values(viewStates).forEach(propertiesArray => {
+	            propertiesArray.forEach(property => {
+	                const { id, name, data, platform } = property;
+	                if (data !== undefined) {
+	                    updatedUiWidgetsProperties[id] = [name, data, platform];
+	                    updatedPropertyIds.push(id);
+	                }
+	            });
+	        });
+	        
+	        currentWidgetProperties.forEach(id => {
+	            if (!updatedPropertyIds.includes(id)) {
+	            		delete updatedUiWidgetsProperties[id];
+	            }
+	        });
+	        
+	        if (selectedComponent && selectedComponent.id) {
+	            const widgetId = selectedComponent.id;
+	            const widget = uiWidgets[widgetId];
+
+	            if (widget) {
+	                const [component_type, , childIds] = widget;
+	                const updatedWidget = [component_type, updatedPropertyIds, childIds];
+
+	                setUiWidgets(prevUiWidgets => ({
+	                    ...prevUiWidgets,
+	                    [widgetId]: updatedWidget
+	                }));
+	            }
+	        }
+	        setUiWidgetsProperties(updatedUiWidgetsProperties);
+	    };
+
+	    updateUiWidgetsProperties();
+	}, [viewStates]);
+
+
+
+
+	useEffect(() => {
+		if (selectedComponent !== null) {
+			fillViewStates(selectedComponent.id);
+		}
+	}, [selectedComponent]);
+
 
 	const handleError = (type, propertyId, action, error ) => {
 		console.error(`Error en acción ${action}: error ${error}`);
 		updateViewState(type, propertyId, { error: true, loading: false, action });
 	};
-
-	useEffect(() => {
-		componentDidUpdate(viewStates);
-	}, [viewStates]);
 
 	const handleStateUpdates = (updateCallback) => {
 		setViewStates(prevState => {
@@ -154,6 +215,7 @@ function ComponentProperties({ previewId, selectedComponentId, setSelectedCompon
 	const manageProperty = async (action, apiCall, componentId, property, type, onSuccess) => {
 		try {
 			const result = await apiCall(componentId, property);
+			console.log(action,result)
 			onSuccess(type, property.id, { ...result, error: false, loading: false });
 		} catch (error) {
 			handleError(type, property.id, action, error);
@@ -188,7 +250,7 @@ function ComponentProperties({ previewId, selectedComponentId, setSelectedCompon
 			};
 
 			setViewStates(prev => ({ ...prev, [type]: [...prev[type], newProperty] }));
-			createPropertyToAPI(selectedComponentId, newProperty, type);
+			createPropertyToAPI(selectedComponent.id, newProperty, type);
 		}
 	};
 
@@ -203,7 +265,7 @@ function ComponentProperties({ previewId, selectedComponentId, setSelectedCompon
 
 		updateViewState(type, property.id, { ...property, error: false, loading: false, action: "delete" });
 
-		deletePropertyFromAPIWrapper(selectedComponentId, property, type);
+		deletePropertyFromAPIWrapper(selectedComponent.id, property, type);
 	};
 
 	const updateViewState = (type, propertyId, updatedProperty) => {
@@ -239,7 +301,7 @@ function ComponentProperties({ previewId, selectedComponentId, setSelectedCompon
 		if (updatedState) {
 			updateViewState(type, currentState.id, updatedState)
 			
-    	//updateProperty(selectedComponentId, updatedState, type, index);
+    	//updateProperty(selectedComponent.id, updatedState, type, index);
 		} else {
 			console.log('No updates needed.');
 		}
@@ -247,6 +309,7 @@ function ComponentProperties({ previewId, selectedComponentId, setSelectedCompon
 
 
 	const showPropertiesBasedOnComponentType = (component) => {
+
 		const propertyComponents = [
 			{title: "Header", component: HeaderProperties},
 			{title: "Footer", component: FooterProperties},
@@ -312,9 +375,9 @@ function ComponentProperties({ previewId, selectedComponentId, setSelectedCompon
 		return allowedProperties.map(({ title, component }) => {
     return (
         <MiniHeaderWithProperties
-            key={`${title}${selectedComponentId}`}
+            key={`${title}${selectedComponent.id}`}
             title={title}
-            selectedComponentId={selectedComponentId}
+            selectedComponent={selectedComponent}
             states={viewStates[title.toLowerCase()]}
             propertyComponent={component}
             handleChangeState={handleChangeState}
@@ -336,7 +399,7 @@ function ComponentProperties({ previewId, selectedComponentId, setSelectedCompon
         </button>
       </div>
       <div className="component-properties-content">
-      	 {component !== null && showPropertiesBasedOnComponentType(component)}
+      	 {selectedComponent !== null && showPropertiesBasedOnComponentType(selectedComponent)}
       </div>
     </div>
   );

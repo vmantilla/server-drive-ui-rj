@@ -61,6 +61,53 @@ const buildTree = (screenId) => {
     return widgetIds.map(widgetId => buildNode(widgetId)).filter(Boolean); 
   };
 
+  const findWidgetPropertiesById = (widgetId) => {
+    const widget = uiWidgets[widgetId];
+    if (!widget) return null;
+
+    const [, propertyIds] = widget;
+    
+    const properties = propertyIds.reduce((acc, id) => {
+      const property = uiWidgetsProperties[id];
+      if (property) acc[id] = property;
+      return acc;
+    }, {});
+
+    return properties;
+  }
+
+  const updateSelectedComponentProperties = (widgetId, propertyIdsArray) => {
+    console.log("uiWidgets antes de actualizar:", uiWidgets);
+    console.log("propertyIdsArray recibido:", propertyIdsArray);
+
+    const widget = uiWidgets[widgetId];
+
+    if (!widget) {
+        console.error("No se encuentra widgetId en uiWidgets, returning");
+        return;
+    }
+
+    const [component_type, , childIds] = widget; // Asumo que la estructura es [component_type, propertyIds, childIds]
+
+    let updatedProperties = [];
+
+    propertyIdsArray.forEach(id => {
+        const property = uiWidgetsProperties[id];
+        if (property) updatedProperties.push(property);
+    });
+
+    console.log("updatedProperties:", updatedProperties);
+
+    const updatedWidget = [component_type, updatedProperties, childIds];
+    
+    let updatedUiWidgets = { ...uiWidgets, [widgetId]: updatedWidget };
+
+    console.log("updatedUiWidgets después de actualizar:", updatedUiWidgets);
+
+    setUiWidgets(updatedUiWidgets);
+}
+
+
 
   const addWidgetWithProperties = (response) => {
     
@@ -143,7 +190,9 @@ const buildTree = (screenId) => {
         recursiveDeleteComponent,
         addWidgetWithProperties,
         resetBuilder,
-        verifyDataConsistency
+        verifyDataConsistency,
+        findWidgetPropertiesById,
+        updateSelectedComponentProperties
       }}
     >
       {children}

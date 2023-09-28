@@ -13,7 +13,6 @@ import { useBuilder } from './BuilderContext';
 function Builder({showNotification}) {
 
   const { 
-    previews, setPreviews, 
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
     resetBuilder
@@ -22,7 +21,6 @@ function Builder({showNotification}) {
   const { projectId } = useParams();
   const [isComponentsOpen, setIsComponentsOpen] = useState(true);
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
-  const [selectedComponents, setSelectedComponents] = useState([]);
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
   const [addNewPreview, setAddNewPreview] = useState(null);
   const [updatePreview, setUpdatePreview] = useState(null);
@@ -109,8 +107,6 @@ function Builder({showNotification}) {
         <aside className={`builder-properties ${selectedComponent ? 'open' : ''}`}>
           <ComponentProperties 
             previewId={selectedScreen}
-            selectedComponentId={selectedComponent ? selectedComponent.id : null} 
-            setSelectedComponent={setSelectedComponent} 
             setPropertyWasUpdated={setPropertyWasUpdated} />
         </aside>
       </main>

@@ -7,17 +7,14 @@ import 'react-contexify/ReactContexify.css';
 
 import '../../../css/Builder/Preview/PreviewComponents.css';
 
-import { getComponentsFromAPI, addComponentToAPI, editComponentToAPI, deleteComponentToAPI, duplicateComponentToAPI } from '../../api';
+import { addComponentToAPI, editComponentToAPI, deleteComponentToAPI, duplicateComponentToAPI } from '../../api';
 import { useBuilder } from '../BuilderContext';
-
-import ComponentManager from '../ComponentManager';
 
 const MENU_ID = 'blahblah';
 
-function PreviewComponents({ propertyWasUpdated, showNotification, componentToAdd, updateComponentProperties, onOrderUpdated }) {
-  
+function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated }) {
+
   const { 
-    uiScreens, setUiScreens,
     uiWidgets, setUiWidgets,
     uiWidgetsProperties, setUiWidgetsProperties,
     selectedScreen, setSelectedScreen,
@@ -37,12 +34,10 @@ function PreviewComponents({ propertyWasUpdated, showNotification, componentToAd
   const [originalIndex, setOriginalIndex] = useState(null);
   const [contextMenuComponentId, setContextMenuComponentId] = useState(null);
   const [expandedComponents, setExpandedComponents] = useState([]);
-  
-  let componentManager = new ComponentManager(selectedScreen);
 
   useEffect(() => {
     loadBuildTree();
-  }, [selectedScreen, uiWidgets, uiWidgetsProperties]);
+  }, [selectedScreen, uiWidgets]);
 
   const loadBuildTree = (component) => {
     setComponents(buildTree(selectedScreen));
@@ -102,81 +97,73 @@ function PreviewComponents({ propertyWasUpdated, showNotification, componentToAd
 
   const modifyComponent = async (componentId, params, successMessage) => {
     try {
-      // Es posible que quieras agregar un delay aquí también
+    // Es posible que quieras agregar un delay aquí también
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       const updatedComponent = await editComponentToAPI(componentId, params);
-      
+
       console.log("modifyComponent", updatedComponent);
-      addWidgetWithProperties(updatedComponent); // Si es necesario
-      setComponentLoading(null);
-      setSelectedComponent(updatedComponent);
-      
-      if (successMessage) {
-        showNotification('success', successMessage);
-      }
-    } catch (error) {
-      console.error('Error al modificar el componente:', error);
-      showNotification('error', error.message);
-      setComponentLoading(null);
-      if (params.position !== undefined) setOrderableComponent(null);
-      if (params.parent_id !== undefined) setDraggingComponent(null);
-    }
-  };
-
-  // Uso de modifyComponent para cambiar parent_id
-  const moveComponent = (parentId) => {
-    const originalParentId = uiWidgets[draggingComponent.id].parent_id;
-    modifyComponent(draggingComponent.id, { parent_id: parentId }, 'Componente movido exitosamente.');
-  };
-
-  // Uso de modifyComponent para cambiar position
-  const handleEditComponentOrder = (newIndex) => {
-    setComponentLoading(orderableComponent.id);
-    setOrderableComponent(null);
-    modifyComponent(orderableComponent.id, { position: newIndex });
-  };
-
-  const deleteComponent = async (compToDelete) => { 
-    if (['Header', 'Body', 'Footer'].includes(compToDelete.component_type)) {
-      return;
-    }
-
-    setShowDeleteModal(false);
-    setComponentToDelete(null);
-    setComponentLoading(compToDelete.id);
+    addWidgetWithProperties(updatedComponent); // Si es necesario
+    setComponentLoading(null);
+    setSelectedComponent(updatedComponent);
     
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    try {
-      await deleteComponentToAPI(compToDelete.id);
-      recursiveDeleteComponent(compToDelete.id)
-      setComponentLoading(null);
-      setSelectedComponent(null);
-      showNotification('success', 'Componentes eliminado exitosamente.');
-    } catch (error) {
-      setComponentLoading(null);
-      setSelectedComponent(null);
-      console.error('Error al eliminar el componente:', error);
-      showNotification('error', 'Error al eliminar el componente.');
+    if (successMessage) {
+      showNotification('success', successMessage);
     }
-  };
+  } catch (error) {
+    console.error('Error al modificar el componente:', error);
+    showNotification('error', error.message);
+    setComponentLoading(null);
+    if (params.position !== undefined) setOrderableComponent(null);
+    if (params.parent_id !== undefined) setDraggingComponent(null);
+  }
+};
 
-  //OLD METHODS
+// Uso de modifyComponent para cambiar parent_id
+const moveComponent = (parentId) => {
+  const originalParentId = uiWidgets[draggingComponent.id].parent_id;
+  modifyComponent(draggingComponent.id, { parent_id: parentId }, 'Componente movido exitosamente.');
+};
 
-  useEffect(() => {
-    if (components && components.length > 0) {
-      componentManager.components = components;
-    }
-  }, [components]);
+// Uso de modifyComponent para cambiar position
+const handleEditComponentOrder = (newIndex) => {
+  setComponentLoading(orderableComponent.id);
+  setOrderableComponent(null);
+  modifyComponent(orderableComponent.id, { position: newIndex });
+};
 
-  useEffect(() => {
-    setDraggingComponent(componentToAdd);
-  }, [componentToAdd]);
+const deleteComponent = async (compToDelete) => { 
+  if (['Header', 'Body', 'Footer'].includes(compToDelete.component_type)) {
+    return;
+  }
 
-  useEffect(() => {
+  setShowDeleteModal(false);
+  setComponentToDelete(null);
+  setComponentLoading(compToDelete.id);
+  
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  try {
+    await deleteComponentToAPI(compToDelete.id);
+    recursiveDeleteComponent(compToDelete.id)
+    setComponentLoading(null);
+    setSelectedComponent(null);
+    showNotification('success', 'Componentes eliminado exitosamente.');
+  } catch (error) {
+    setComponentLoading(null);
+    setSelectedComponent(null);
+    console.error('Error al eliminar el componente:', error);
+    showNotification('error', 'Error al eliminar el componente.');
+  }
+};
+
+
+useEffect(() => {
+  setDraggingComponent(componentToAdd);
+}, [componentToAdd]);
+
+useEffect(() => {
   console.log("useEffect activated!");
-
   const findComponentByIdRecursive = (id, components) => {
     console.log(`Searching for component with id: ${id}`);
     for (let comp of components) {
@@ -190,7 +177,7 @@ function PreviewComponents({ propertyWasUpdated, showNotification, componentToAd
     console.log("Component not found!");
     return null;
   };
-  
+
   const updateComponentInTree = (updatedComp, components) => {
     console.log(`Updating component ${updatedComp.id} in tree.`);
     return components.map(comp => {
@@ -199,36 +186,30 @@ function PreviewComponents({ propertyWasUpdated, showNotification, componentToAd
       return comp;
     });
   };
-  
+
   const handleKeyPress = (e) => {
-    console.log("Key Pressed: ", e.key);
     if (orderableComponent) {
       const parentId = orderableComponent.parent_id;
-      console.log(`Parent ID: ${parentId}`);
-      
+
       const parentComponent = findComponentByIdRecursive(parentId, components);
-      console.log("Parent Component: ", parentComponent);
 
       if (!parentComponent || !parentComponent.children) {
         console.log("Parent component or children not found!");
         return;
       }
-      
+
       const siblings = parentComponent.children;
       let currentIndex = siblings.findIndex(comp => comp.id === orderableComponent.id);
-      console.log("Current Index: ", currentIndex);
-      
+
       if (currentIndex === -1) return;
-      
+
       if (e.key === "ArrowUp" && currentIndex > 0) {
         const [moved] = siblings.splice(currentIndex, 1);
         siblings.splice(currentIndex - 1, 0, moved);
-        console.log("Moved up! New siblings order: ", siblings);
         onOrderUpdated(new Date().toISOString());
       } else if (e.key === "ArrowDown" && currentIndex < siblings.length - 1) {
         const [moved] = siblings.splice(currentIndex, 1);
         siblings.splice(currentIndex + 1, 0, moved);
-        console.log("Moved down! New siblings order: ", siblings);
         onOrderUpdated(new Date().toISOString());
       } else if (e.key === "Enter") {
         handleEditComponentOrder(currentIndex);
@@ -236,7 +217,6 @@ function PreviewComponents({ propertyWasUpdated, showNotification, componentToAd
         if (originalIndex !== null) {
           const [moved] = siblings.splice(currentIndex, 1);
           siblings.splice(originalIndex, 0, moved);
-          console.log("Escape pressed! Reverted to original index");
           setOrderableComponent(null);
           setOriginalIndex(null);
         }
@@ -245,24 +225,33 @@ function PreviewComponents({ propertyWasUpdated, showNotification, componentToAd
 
       parentComponent.children = siblings;
       const newComponents = updateComponentInTree(parentComponent, components);
-      console.log("Setting new components state: ", newComponents);
       setComponents(newComponents);
     }
   };
 
   window.addEventListener("keydown", handleKeyPress);
   return () => {
-    console.log("useEffect cleanup - removing event listener");
     window.removeEventListener("keydown", handleKeyPress);
   };
-}, [orderableComponent, components, onOrderUpdated, originalIndex, handleEditComponentOrder, setComponents, setSelectedComponent, setOrderableComponent, setOriginalIndex]);
+}, [orderableComponent]);
 
 
-
+  const findParentByIdRecursive = (id, components, parent = null) => {
+    console.log(`Searching for parent of component with id: ${id}`);
+    for (let comp of components) {
+      console.log(`Checking component ${comp.id}`);
+      if (comp.id === id) return parent;
+      if (comp.children) {
+        let foundParent = findParentByIdRecursive(id, comp.children, comp);
+        if (foundParent !== null) return foundParent;
+      }
+    }
+    console.log("Parent component not found!");
+    return null;
+  };
 
   const makeComponentOrderable = (component) => {
-    const parentId = component.parent_id;
-    const parentComponent = componentManager.findComponentByIdRecursive(parentId, componentManager.components);
+    const parentComponent = findParentByIdRecursive(component.id, components, null)
     if (parentComponent && parentComponent.children) {
       const index = parentComponent.children.findIndex(comp => comp.id === component.id);
       setOriginalIndex(index);
@@ -272,127 +261,127 @@ function PreviewComponents({ propertyWasUpdated, showNotification, componentToAd
     setSelectedComponent(null);
   };
 
-  const handleDragStart = (event, component) => {
-      if (['Header', 'Body', 'Footer'].includes(component.component_type)) {
-        return;
-      }
-      event.stopPropagation();
-      setDraggingComponent(component);
-    };
+const handleDragStart = (event, component) => {
+  if (['Header', 'Body', 'Footer'].includes(component.component_type)) {
+    return;
+  }
+  event.stopPropagation();
+  setDraggingComponent(component);
+};
 
-  const handleDragEnd = () => {
-    setDraggingComponent(null);
-  };
+const handleDragEnd = () => {
+  setDraggingComponent(null);
+};
 
-  const handleDragEnterLeaveOrOver = (event, componentId) => {
-    event.preventDefault();
-    setDraggingComponentOver(componentId);
-  };
+const handleDragEnterLeaveOrOver = (event, componentId) => {
+  event.preventDefault();
+  setDraggingComponentOver(componentId);
+};
 
 
 const duplicateComponent = async (compId) => {
-    try {
-      // Es posible que quieras agregar un delay aquí también
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const updatedComponent = await duplicateComponentToAPI(compId);
-      
-      console.log("updatedComponent", updatedComponent);
-      addWidgetWithProperties(updatedComponent); 
-      setComponentLoading(null);
-      setSelectedComponent(null);
-    } catch (error) {
-      console.error('Error al duplicar el componente:', error);
-      showNotification('error', "Error al duplicar el componente");
-      setComponentLoading(null);
-    }
+  try {
+    // Es posible que quieras agregar un delay aquí también
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const updatedComponent = await duplicateComponentToAPI(compId);
+    
+    console.log("updatedComponent", updatedComponent);
+    addWidgetWithProperties(updatedComponent); 
+    setComponentLoading(null);
+    setSelectedComponent(null);
+  } catch (error) {
+    console.error('Error al duplicar el componente:', error);
+    showNotification('error', "Error al duplicar el componente");
+    setComponentLoading(null);
+  }
+};
+
+const getCustomizations = (component_type) => {
+  const customizations = {
+    'Header': { class: 'component-type-header', label: '', enableDrag: false },
+    'Body': { class: 'component-type-body', label: '', enableDrag: false },
+    'Footer': { class: 'component-type-footer', label: '', enableDrag: false },
+    'default': { class: '', label: '', enableDrag: true },
   };
 
-  const getCustomizations = (component_type) => {
-    const customizations = {
-      'Header': { class: 'component-type-header', label: '', enableDrag: false },
-      'Body': { class: 'component-type-body', label: '', enableDrag: false },
-      'Footer': { class: 'component-type-footer', label: '', enableDrag: false },
-      'default': { class: '', label: '', enableDrag: true },
-    };
+  return customizations[component_type] || customizations['default'];
+};
 
-    return customizations[component_type] || customizations['default'];
-  };
+const computeClassNames = (comp, draggingComponent, selectedComponent, draggingComponentOver, orderableComponent) => {
+  let classes = "component-item ";
 
-  const computeClassNames = (comp, draggingComponent, selectedComponent, draggingComponentOver, orderableComponent) => {
-    let classes = "component-item ";
+  if (orderableComponent && comp.id === orderableComponent.id) {
+    return "reorder-component-selected";
+  }
 
-    if (orderableComponent && comp.id === orderableComponent.id) {
-      return "reorder-component-selected";
-    }
-
-    if (draggingComponent) {
-      if (comp.id === draggingComponent.id) {
-        classes += "disabled-drop ";
-      } else {
-        classes += "drop-target ";
-      }
-    }
-
-    // Logic for ready-for-drop state
-    if (draggingComponent && draggingComponentOver && comp.id === draggingComponentOver && draggingComponent != comp.id) {
-      classes += "ready-for-drop ";
+  if (draggingComponent) {
+    if (comp.id === draggingComponent.id) {
+      classes += "disabled-drop ";
     } else {
-      // Logic for selected state (applied only if there's no draggingComponentOver)
-      if (selectedComponent && selectedComponent.id === comp.id) {
-        classes += "selected ";
-      }
-    }
-
-    return classes;
-  };
-
-  const { show } = useContextMenu({
-    id: MENU_ID,
-  });
-
-  function handleContextMenu(event, component){
-
-    if (component && ['Header', 'Body', 'Footer'].includes(component.component_type)) {
-      return; 
-    }
-    setContextMenuComponentId(component.id);
-    setSelectedComponent(component)
-    setDraggingComponent(null);
-    setOrderableComponent(null);
-    show({
-      event,
-      props: {
-        key: 'value'
-      }
-    })
-  }
-
-  function handleItemClick(e, itemID) {
-    if (contextMenuComponentId !== null) {
-      switch(itemID) {
-      case 'duplicate':
-        duplicateComponent(contextMenuComponentId);
-        break;
-      case 'move':
-        if (selectedComponent && selectedComponent.id !== null) {
-          makeComponentOrderable(selectedComponent);
-          setOrderableComponent(selectedComponent);
-        }
-        break;
-      case 'delete':
-        if (selectedComponent && selectedComponent.id !== null) {
-          setShowDeleteModal(true);
-          setComponentToDelete(selectedComponent);
-        }
-        break;
-      default:
-        break;
-      }
+      classes += "drop-target ";
     }
   }
 
-  // Exporta el arreglo 'components' como un archivo JSON
+  // Logic for ready-for-drop state
+  if (draggingComponent && draggingComponentOver && comp.id === draggingComponentOver && draggingComponent != comp.id) {
+    classes += "ready-for-drop ";
+  } else {
+    // Logic for selected state (applied only if there's no draggingComponentOver)
+    if (selectedComponent && selectedComponent.id === comp.id) {
+      classes += "selected ";
+    }
+  }
+
+  return classes;
+};
+
+const { show } = useContextMenu({
+  id: MENU_ID,
+});
+
+function handleContextMenu(event, component){
+
+  if (component && ['Header', 'Body', 'Footer'].includes(component.component_type)) {
+    return; 
+  }
+  setContextMenuComponentId(component.id);
+  setSelectedComponent(component)
+  setDraggingComponent(null);
+  setOrderableComponent(null);
+  show({
+    event,
+    props: {
+      key: 'value'
+    }
+  })
+}
+
+function handleItemClick(e, itemID) {
+  if (contextMenuComponentId !== null) {
+    switch(itemID) {
+    case 'duplicate':
+      duplicateComponent(contextMenuComponentId);
+      break;
+    case 'move':
+      if (selectedComponent && selectedComponent.id !== null) {
+        makeComponentOrderable(selectedComponent);
+        setOrderableComponent(selectedComponent);
+      }
+      break;
+    case 'delete':
+      if (selectedComponent && selectedComponent.id !== null) {
+        setShowDeleteModal(true);
+        setComponentToDelete(selectedComponent);
+      }
+      break;
+    default:
+      break;
+    }
+  }
+}
+
+// Exporta el arreglo 'components' como un archivo JSON
 const exportComponents = () => {
   console.log(components)
   const componentsJSON = JSON.stringify(convertToNewStructure(components));
@@ -401,15 +390,15 @@ const exportComponents = () => {
 
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'componentes.json'; // Nombre del archivo JSON
-  a.style.display = 'none';
-  document.body.appendChild(a);
+a.download = 'componentes.json'; // Nombre del archivo JSON
+a.style.display = 'none';
+document.body.appendChild(a);
 
-  a.click();
+a.click();
 
-  // Limpia y revierte los cambios en el DOM
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+// Limpia y revierte los cambios en el DOM
+document.body.removeChild(a);
+URL.revokeObjectURL(url);
 };
 
 // Importa un archivo JSON y lo convierte en el arreglo 'components'
@@ -450,22 +439,22 @@ function convertOldToNew(oldComponent) {
   const newComponent = {
     id: oldComponent.id.toString(),
     widgetType: oldComponent.property?.data?.component_type || oldComponent.component_type,
-    commonStyleIds: [], // Puedes añadir aquí según necesites
-    children: oldComponent.children.map(convertOldToNew)
-  };
+  commonStyleIds: [], // Puedes añadir aquí según necesites
+  children: oldComponent.children.map(convertOldToNew)
+};
 
-  return newComponent;
+return newComponent;
 }
 
 function convertToNewStructure(oldJson) {
   const uiWidgets = oldJson.map(convertOldToNew);
   const newJson = {
     uiWidgets,
-    sharedStyles: {}, // Completar según las necesidades
-    localizedTexts: {} // Completar según las necesidades
-  };
+  sharedStyles: {}, // Completar según las necesidades
+  localizedTexts: {} // Completar según las necesidades
+};
 
-  return newJson;
+return newJson;
 }
 
 // Convierte de la nueva estructura a la primera
@@ -475,12 +464,12 @@ function convertNewToOld(newComponent) {
   const oldComponent = {
     id: parseInt(newComponent.id),
     component_type: newComponent.widgetType,
-    parent_id: null, // Esto tendrás que ajustarlo según tu lógica
-    children: newComponent.children.map(convertNewToOld),
-    property: {} // Completar según las necesidades
-  };
+  parent_id: null, // Esto tendrás que ajustarlo según tu lógica
+  children: newComponent.children.map(convertNewToOld),
+  property: {} // Completar según las necesidades
+};
 
-  return oldComponent;
+return oldComponent;
 }
 
 function convertToOldStructure(newJson) {
