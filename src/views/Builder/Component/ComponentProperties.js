@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useLayoutEffect } from 'react';
 import debounce from 'lodash/debounce';
+import isEqual from 'lodash/isEqual';
 import MiniHeader from './MiniHeader';
 import HeaderProperties from './Properties/HeaderProperties';
 import FooterProperties from './Properties/FooterProperties';
@@ -67,7 +68,7 @@ function getInitialViewStates() {
 	};
 }
 
-function ComponentProperties({ selectedComponentId }) {
+function ComponentProperties() {
 
   const { 
     uiWidgets, setUiWidgets,
@@ -79,19 +80,28 @@ function ComponentProperties({ selectedComponentId }) {
     handleObjectChange
   } = useBuilder();
 
-	const [component, setComponent] = useState(null);
-	const [viewStates, setViewStates] = useState(getInitialViewStates);
+  const [viewStates, setViewStates] = useState(getInitialViewStates);
+	 const [isDisabled, setIsDisabled] = useState(true);
+
+	  useEffect(() => {
+	  	setIsDisabled(true);
+	    const timer = setTimeout(() => {
+	  		setIsDisabled(false);
+	  	}, 2000);
+
+	    return () => clearTimeout(timer);
+	  }, [selectedScreen, selectedComponent]);
 
 
-	function fillViewStates(widgetId) {
-	  const properties = findWidgetPropertiesById(widgetId);
+  function fillViewStates(widgetId) {
+  	const properties = findWidgetPropertiesById(widgetId);
 
-	  if (!properties) return;
+  	if (!properties) return;
 
-	  let newViewStates = { ...getInitialViewStates() };
-	  
-	  Object.entries(properties).forEach(([id, [name, data, platform]]) => {
-	    if (newViewStates[name]) {
+  	let newViewStates = { ...getInitialViewStates() };
+
+  	Object.entries(properties).forEach(([id, [name, data, platform]]) => {
+  		if (newViewStates[name]) {
 	      newViewStates[name].push({ data: { ...data }, id, name, platform });
 	    } else {
 	      console.warn(`La categoría ${name} no existe en viewStates`);
@@ -144,13 +154,12 @@ function ComponentProperties({ selectedComponentId }) {
 	                }));
 	            }
 	        }
+	        
 	        setUiWidgetsProperties(updatedUiWidgetsProperties);
 	    };
 
 	    updateUiWidgetsProperties();
 	}, [viewStates]);
-
-
 
 
 	useEffect(() => {
@@ -185,8 +194,7 @@ function ComponentProperties({ selectedComponentId }) {
 
 	const actionHandlers = {
 		delete: (componentId, property, type) => deletePropertyFromAPIWrapper(componentId, property, type),
-		create: (componentId, property, type) => createPropertyToAPI(componentId, property, type),
-		update: (componentId, property, type) => updateProperty(componentId, property, type),
+		create: (componentId, property, type) => createPropertyToAPI(componentId, property, type)
 	};
 
 	const handleRetry = (type, index) => {
@@ -210,10 +218,6 @@ function ComponentProperties({ selectedComponentId }) {
 
 	const createPropertyToAPI = (componentId, property, type) => {
 		manageProperty('create', addPropertyToAPI, componentId, property, type, updateViewState);
-	};
-
-	const updateProperty = (componentId, property, type) => {
-		manageProperty('update', editPropertyInAPI, componentId, property, type, updateViewState);
 	};
 
 	const deletePropertyFromAPIWrapper = (componentId, property, type) => {
@@ -255,9 +259,13 @@ function ComponentProperties({ selectedComponentId }) {
 	};
 
 	const updateViewState = (type, propertyId, updatedProperty) => {
+
+		const { action, loading, error, ...restOfUpdatedProperty } = updatedProperty;
+
+		console.warn(`updateViewState[${type}] :`, propertyId, restOfUpdatedProperty);
 		setViewStates(prevState => {
 			const updatedStates = prevState[type].map(state => {
-				return state.id === propertyId ? { ...state, ...updatedProperty } : state;
+				return state.id === propertyId ? { ...state, ...restOfUpdatedProperty } : state;
 			});
 			const newState = { ...prevState, [type]: updatedStates };
 			return newState;
@@ -265,6 +273,7 @@ function ComponentProperties({ selectedComponentId }) {
 	}
 
 	const handleChangeState = (type, index, property, value) => {
+
 		//console.log('handleChangeState called with:', type, index, property, value);
 		if (!Array.isArray(viewStates[type])) {
 			console.error(`viewStates[${type}] is not an array:`, viewStates[type]);
@@ -284,15 +293,26 @@ function ComponentProperties({ selectedComponentId }) {
 			updatedState = { ...currentState, data: { ...currentState.data, [property]: value }, error: false, loading: false, action: "update" };
 		}
 
-		if (updatedState) {
+		console.log('currentState:', currentState);
+		console.log('updatedState:', updatedState);
+		if (
+		    currentState.id === updatedState.id &&
+		    currentState.name === updatedState.name &&
+		    currentState.platform === updatedState.platform &&
+		    isEqual(currentState.data, updatedState.data)
+		) {
+		    console.log('Los campos especificados son idénticos en ambos estados. Retornando sin hacer nada.');
+		    return;
+		}
+
+    if (updatedState) {
 			updateViewState(type, currentState.id, updatedState)
+			console.log('logro pasar la vailidadcion de igual.', currentState);
 			handleObjectChange("uiWidgetsProperties", currentState.id);
-    	//updateProperty(selectedComponent.id, updatedState, type, index);
 		} else {
 			console.log('No updates needed.');
 		}
 	};
-
 
 	const showPropertiesBasedOnComponentType = (component) => {
 

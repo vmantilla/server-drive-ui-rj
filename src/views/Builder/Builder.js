@@ -10,7 +10,7 @@ import { batchUpdatesToAPI } from '../api';
 
 import { useBuilder } from './BuilderContext';
 
-const updateInterval = 30000;
+const updateInterval = 10000;
 
 function Builder({showNotification}) {
 
@@ -40,6 +40,7 @@ function Builder({showNotification}) {
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
+    console.warn('resetBuilder:', retryCount);
     resetBuilder();
     setUpdateQueue({
       uiScreens: [],
@@ -71,7 +72,7 @@ function Builder({showNotification}) {
         uiWidgetsProperties: [],
       });
       setShouldUpdate(false);
-        setRetryCount(0); 
+      setRetryCount(0); 
       } catch (error) {
         console.error('Error updating objects:', error);
         setRetryCount((prevCount) => prevCount + 1); 
@@ -82,6 +83,7 @@ function Builder({showNotification}) {
       let intervalId;
       if (projectId && shouldUpdate) {
         if (retryCount >= 10) {
+          console.warn('resetEverything:', retryCount);
           resetEverything();
         } else {
           intervalId = setInterval(() => {
@@ -162,6 +164,7 @@ function Builder({showNotification}) {
         </section>
         <aside className={`builder-properties ${selectedComponent ? 'open' : ''}`}>
           <ComponentProperties 
+            key={`${selectedScreen}${selectedComponent}`}
             previewId={selectedScreen}
             setPropertyWasUpdated={setPropertyWasUpdated} />
         </aside>

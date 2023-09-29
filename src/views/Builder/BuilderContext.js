@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
 const BuilderContext = createContext();
 
@@ -19,6 +19,17 @@ export const BuilderProvider = ({ children }) => {
   const [uiScreens, setUiScreens] = useState([]);
   const [uiWidgets, setUiWidgets] = useState([]);
   const [uiWidgetsProperties, setUiWidgetsProperties] = useState([]);
+
+  const uiScreensRef = useRef({});
+  const uiWidgetsPropertiesRef = useRef({});
+
+  useEffect(() => {
+    uiScreensRef.current = uiScreens;
+  }, [uiScreens]);
+
+  useEffect(() => {
+    uiWidgetsPropertiesRef.current = uiWidgetsProperties;
+  }, [uiWidgetsProperties]);
 
   const resetBuilder = () => {
     setPreviews([]);
@@ -183,10 +194,12 @@ export const BuilderProvider = ({ children }) => {
       return prev;
     });
     setShouldUpdate(true)
-  };const getUpdateObject = () => {
+  };
+
+  function getUpdateObject() {
     return {
         uiScreens: updateQueue.uiScreens.map(id => {
-            const screen = uiScreens[id]; // {"8166ae14-e3ea-4527-9aa9-c8cdd0379531"=>["Chats List", [...], 28, 36]}
+            const screen = uiScreensRef.current[id];
             return {
                 id: id,
                 title: screen[0],
@@ -196,7 +209,7 @@ export const BuilderProvider = ({ children }) => {
         }),
         uiWidgets: [],
         uiWidgetsProperties: updateQueue.uiWidgetsProperties.map(id => {
-            const property = uiWidgetsProperties[id];
+            const property = uiWidgetsPropertiesRef.current[id];
             return {
                 id: id,
                 name: property[0],
