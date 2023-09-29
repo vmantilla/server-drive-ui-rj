@@ -22,8 +22,6 @@ import { addPropertyToAPI, editPropertyInAPI, deletePropertyFromAPI } from '../.
 
 import { useBuilder } from '../BuilderContext';
 
-import ComponentManager from '../ComponentManager';
-
 const possibleStates = ["default", "iOS", "android", "web"];
 
 const MiniHeaderWithProperties = ({ title, selectedComponent, states, propertyComponent: PropertyComponent, handleChangeState, handleAddState, handleDeleteState, handleRetry }) => (
@@ -42,7 +40,7 @@ const MiniHeaderWithProperties = ({ title, selectedComponent, states, propertyCo
 			<ErrorComponent key={index} onRetry={() => handleRetry(title.toLowerCase(), index)} />
 			) : (
 			<PropertyComponent
-			key={`${title}${selectedComponent.id}${state.platform}`}
+			key={`${title}${selectedComponent.id}${state.id}`}
 			property={state}
 			handlePropertyChange={(property, value) => handleChangeState(title.toLowerCase(), index, property, value)}
 			/>
@@ -69,10 +67,7 @@ function getInitialViewStates() {
 	};
 }
 
-
-function ComponentProperties({ selectedComponentId, previewId, setPropertyWasUpdated }) {
-
-	let componentManager = new ComponentManager(previewId);
+function ComponentProperties({ selectedComponentId }) {
 
   const { 
     uiWidgets, setUiWidgets,
@@ -127,7 +122,7 @@ function ComponentProperties({ selectedComponentId, previewId, setPropertyWasUpd
 	                }
 	            });
 	        });
-	        
+
 	        currentWidgetProperties.forEach(id => {
 	            if (!updatedPropertyIds.includes(id)) {
 	            		delete updatedUiWidgetsProperties[id];
@@ -185,16 +180,6 @@ function ComponentProperties({ selectedComponentId, previewId, setPropertyWasUpd
 
 	const convertViewStatesToPropertiesArray = (viewStates) => {
 		return Object.values(viewStates).flat();
-	};
-
-	const componentDidUpdate = (newViewState) => {
-		if (component) {
-			setPropertyWasUpdated(component);
-			const newComponent = component
-			newComponent.properties = convertViewStatesToPropertiesArray(newViewState);
-			
-			componentManager.components = componentManager.updateComponentInTree(newComponent);
-		}
 	};
 
 	const actionHandlers = {

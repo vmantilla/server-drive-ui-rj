@@ -3,9 +3,19 @@ import { RavitBuilder } from 'ravit-builder';
 import html2canvas from 'html2canvas';
 
 import '../../../css/Builder/Preview/PreviewScreen.css';
-import ComponentManager from '../ComponentManager';
 
-function PreviewScreen({ previewId, selectedScreen, selectedComponent, propertyWasUpdated, initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, handlePositionSave, setUpdateComponentProperties, orderUpdated }) {
+import { useBuilder } from '../BuilderContext';
+
+function PreviewScreen({ previewId, propertyWasUpdated, initialTitle, onTitleChange, isSelected, zoomLevel = 1, onClick, position = { x: 0, y: 0 }, onPositionChange, handlePositionSave, setUpdateComponentProperties, orderUpdated }) {
+  
+  const { 
+    uiScreens, setUiScreens,
+    uiWidgets, setUiWidgets,
+    uiWidgetsProperties, setUiWidgetsProperties,
+    selectedScreen, setSelectedScreen,
+    selectedComponent, setSelectedComponent
+  } = useBuilder();
+
   const [screenType, setScreenType] = useState('mobile');
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
@@ -16,34 +26,9 @@ function PreviewScreen({ previewId, selectedScreen, selectedComponent, propertyW
 
   const [components, setComponents] = useState([]);
 
-  let componentManager = new ComponentManager(previewId);
-
   useEffect(() => {
     console.log("useLayoutEffect", previewId)
-    setComponents(componentManager.components);
   }, [previewId]);
-
-
-   const updateComponentInTree = (updatedComponent, currentComponents) => {
-    return currentComponents.map((component2) => {
-      if (component2.id === updatedComponent.id) {
-        return updatedComponent;
-      }
-
-      if (component2.children && component2.children.length > 0) {
-        return { ...component2, children: updateComponentInTree(updatedComponent, component2.children) };
-      }
-
-      return component2;
-    });
-  };
-
-  useEffect(() => {
-    console.log("propertyWasUpdated", propertyWasUpdated)
-    if (propertyWasUpdated) {
-      setComponents(prevComponents => updateComponentInTree(propertyWasUpdated, prevComponents));
-    }
-  }, [propertyWasUpdated]);
   
   useEffect(() => {
     
@@ -216,7 +201,17 @@ useEffect(() => {
 
       </div>
       <div key={orderUpdated} className={`screen-content ${screenType}-${orientation} ${isSelected ? 'selected' : ''}`} onClick={onClick}>
-        <RavitBuilder layoutJson={components} selectedComponent={selectedComponent} />
+        <RavitBuilder 
+          uiScreens={uiScreens} 
+          setUiScreens={setUiScreens}
+          uiWidgets={uiWidgets}
+          setUiWidgets={setUiWidgets}
+          uiWidgetsProperties={uiWidgetsProperties} 
+          setUiWidgetsProperties={setUiWidgetsProperties}
+          selectedScreen={selectedScreen} 
+          setSelectedScreen={setSelectedScreen}
+          selectedComponent={selectedComponent} 
+          setSelectedComponent={setSelectedComponent} />
       </div>
     </div>
   );
