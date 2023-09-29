@@ -154,7 +154,7 @@ function ComponentProperties() {
 	                }));
 	            }
 	        }
-	        
+
 	        setUiWidgetsProperties(updatedUiWidgetsProperties);
 	    };
 
@@ -260,12 +260,9 @@ function ComponentProperties() {
 
 	const updateViewState = (type, propertyId, updatedProperty) => {
 
-		const { action, loading, error, ...restOfUpdatedProperty } = updatedProperty;
-
-		console.warn(`updateViewState[${type}] :`, propertyId, restOfUpdatedProperty);
 		setViewStates(prevState => {
 			const updatedStates = prevState[type].map(state => {
-				return state.id === propertyId ? { ...state, ...restOfUpdatedProperty } : state;
+				return state.id === propertyId ? { ...state, ...updatedProperty } : state;
 			});
 			const newState = { ...prevState, [type]: updatedStates };
 			return newState;

@@ -12,7 +12,7 @@ import { useBuilder } from '../BuilderContext';
 
 const MENU_ID = 'blahblah';
 
-function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated }) {
+function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, updateChanges }) {
 
   const { 
     uiWidgets, setUiWidgets,
