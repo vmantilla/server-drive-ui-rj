@@ -77,6 +77,18 @@ export const deleteProjectFromAPI = async (id) => {
   }
 };
 
+export const batchUpdatesToAPI = async (id, updateObject) => {
+  try {
+    console.log("id", id)
+    console.log("updateChanges", updateObject)
+    const response = await axios.put(`/projects/${id}/batch_update`, { batch_update: updateObject });
+    return response.data;
+  } catch (error) {
+    console.error('Error al editar batch:', error);
+    throw error;
+  }
+};
+
 // === WORKSPACE API Calls ===
 
 export const getWorkspacesFromAPI = async (projectId) => {

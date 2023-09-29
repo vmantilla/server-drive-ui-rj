@@ -75,7 +75,8 @@ function ComponentProperties({ selectedComponentId }) {
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
     findWidgetPropertiesById,
-    updateSelectedComponentProperties
+    updateSelectedComponentProperties,
+    handleObjectChange
   } = useBuilder();
 
 	const [component, setComponent] = useState(null);
@@ -285,7 +286,7 @@ function ComponentProperties({ selectedComponentId }) {
 
 		if (updatedState) {
 			updateViewState(type, currentState.id, updatedState)
-			
+			handleObjectChange("uiWidgetsProperties", currentState.id);
     	//updateProperty(selectedComponent.id, updatedState, type, index);
 		} else {
 			console.log('No updates needed.');

@@ -44,7 +44,7 @@ const FloatingMenu = ({ visible, options, onClose, position, handleDragStart, ha
   );
 };
 
-function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, addNewPreview, updatePreview, onDelete, setComponentToAdd, shouldUpdate }) {
+function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, addNewPreview, onDelete, setComponentToAdd, shouldUpdate, updateChanges }) {
   const navigate = useNavigate();
 
   const handleExit = () => {
@@ -154,7 +154,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
       { selectedScreen !== null && (
         <div className="buttons-container">
           <button className={`builder-button ${shouldUpdate ? 'update-needed' : 'disabled-button'}`}
-           onClick={() => updatePreview(selectedScreen)}
+           onClick={() => updateChanges()}
            disabled={!shouldUpdate}>
             <i className="bi bi-cloud-upload-fill"></i>
             Guardar
@@ -163,13 +163,12 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
             <i className="bi bi-trash"></i>
             Eliminar
           </button>
-          <button className="builder-button">
+        </div>
+        )}
+        <button className="builder-button">
             <i className="bi bi-collection-play-fill"></i>
             Preview
           </button>
-          
-        </div>
-        )}
         <button className="builder-button" onClick={handleExit}>
             <i className="bi bi-x"></i>
             Salir

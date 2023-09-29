@@ -3,6 +3,14 @@ import React, { createContext, useContext, useState } from 'react';
 const BuilderContext = createContext();
 
 export const BuilderProvider = ({ children }) => {
+
+  const [updateQueue, setUpdateQueue] = useState({
+    uiScreens: [],
+    uiWidgetsProperties: [],
+  });
+
+  const [shouldUpdate, setShouldUpdate] = useState(false);
+
   const [previews, setPreviews] = useState([]);
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [components, setComponents] = useState([]);
@@ -23,19 +31,19 @@ export const BuilderProvider = ({ children }) => {
   };
 
   // Función para construir el árbol basado en un id de pantalla.
-const buildTree = (screenId) => {
-  const screen = uiScreens[screenId];
-  if (!screen) return null;
+  const buildTree = (screenId) => {
+    const screen = uiScreens[screenId];
+    if (!screen) return null;
 
-  const [_, widgetIds] = screen;
+    const [_, widgetIds] = screen;
 
-  const buildNode = (widgetId, parentId = null) => {
+    const buildNode = (widgetId, parentId = null) => {
       const widget = uiWidgets[widgetId];
       if (!widget) return null;
 
       const [component_type, propertyIds, childIds] = widget;
       const children = childIds.map(childId => buildNode(childId, widgetId)).filter(Boolean); 
-        
+
       const properties = propertyIds.map(id => {
         const property = uiWidgetsProperties[id];
         if (!property) return null;
@@ -77,14 +85,11 @@ const buildTree = (screenId) => {
   }
 
   const updateSelectedComponentProperties = (widgetId, propertyIdsArray) => {
-    console.log("uiWidgets antes de actualizar:", uiWidgets);
-    console.log("propertyIdsArray recibido:", propertyIdsArray);
-
     const widget = uiWidgets[widgetId];
 
     if (!widget) {
-        console.error("No se encuentra widgetId en uiWidgets, returning");
-        return;
+      console.error("No se encuentra widgetId en uiWidgets, returning");
+      return;
     }
 
     const [component_type, , childIds] = widget; // Asumo que la estructura es [component_type, propertyIds, childIds]
@@ -92,25 +97,20 @@ const buildTree = (screenId) => {
     let updatedProperties = [];
 
     propertyIdsArray.forEach(id => {
-        const property = uiWidgetsProperties[id];
-        if (property) updatedProperties.push(property);
+      const property = uiWidgetsProperties[id];
+      if (property) updatedProperties.push(property);
     });
-
-    console.log("updatedProperties:", updatedProperties);
 
     const updatedWidget = [component_type, updatedProperties, childIds];
     
     let updatedUiWidgets = { ...uiWidgets, [widgetId]: updatedWidget };
 
-    console.log("updatedUiWidgets después de actualizar:", updatedUiWidgets);
-
     setUiWidgets(updatedUiWidgets);
-}
-
+  }
 
 
   const addWidgetWithProperties = (response) => {
-    
+
     const { uiWidgets, uiWidgets_properties } = response;
     setUiWidgets((prev) => {
       const updated = { ...prev, ...response.uiWidgets };
@@ -175,31 +175,66 @@ const buildTree = (screenId) => {
     return isConsistent;
   }
 
+  const handleObjectChange = (type, id) => {
+    setUpdateQueue(prev => {
+      if (!prev[type].includes(id)) {
+        return { ...prev, [type]: [...prev[type], id] }
+      }
+      return prev;
+    });
+    setShouldUpdate(true)
+  };const getUpdateObject = () => {
+    return {
+        uiScreens: updateQueue.uiScreens.map(id => {
+            const screen = uiScreens[id]; // {"8166ae14-e3ea-4527-9aa9-c8cdd0379531"=>["Chats List", [...], 28, 36]}
+            return {
+                id: id,
+                title: screen[0],
+                position_x: screen[2],
+                position_y: screen[3]
+            };
+        }),
+        uiWidgets: [],
+        uiWidgetsProperties: updateQueue.uiWidgetsProperties.map(id => {
+            const property = uiWidgetsProperties[id];
+            return {
+                id: id,
+                name: property[0],
+                data: property[1],
+                platform: property[2]
+            };
+        }),
+    };
+};
+
 
   return (
     <BuilderContext.Provider
-      value={{
-        previews, setPreviews,
-        uiScreens, setUiScreens,
-        uiWidgets, setUiWidgets,
-        uiWidgetsProperties, setUiWidgetsProperties,
-        selectedScreen, setSelectedScreen,
-        components, setComponents,
-        selectedComponent, setSelectedComponent,
-        buildTree,
-        recursiveDeleteComponent,
-        addWidgetWithProperties,
-        resetBuilder,
-        verifyDataConsistency,
-        findWidgetPropertiesById,
-        updateSelectedComponentProperties
-      }}
+    value={{
+      previews, setPreviews,
+      uiScreens, setUiScreens,
+      uiWidgets, setUiWidgets,
+      uiWidgetsProperties, setUiWidgetsProperties,
+      selectedScreen, setSelectedScreen,
+      updateQueue, setUpdateQueue,
+      shouldUpdate, setShouldUpdate,
+      selectedComponent, setSelectedComponent,
+      buildTree,
+      recursiveDeleteComponent,
+      addWidgetWithProperties,
+      resetBuilder,
+      verifyDataConsistency,
+      findWidgetPropertiesById,
+      updateSelectedComponentProperties,
+      getUpdateObject,
+      handleObjectChange
+    }}
     >
-      {children}
+    {children}
     </BuilderContext.Provider>
-  );
-}
+    );
+  }
 
-export const useBuilder = () => {
-  return useContext(BuilderContext);
-}
+  export const useBuilder = () => {
+    return useContext(BuilderContext);
+  }

@@ -23,12 +23,6 @@ function PreviewScreen({ previewId, propertyWasUpdated, initialTitle, onTitleCha
   const movedRef = useRef(false);
   const draggingRef = useRef(false);
   const lastEventRef = useRef(null);
-
-  const [components, setComponents] = useState([]);
-
-  useEffect(() => {
-    console.log("useLayoutEffect", previewId)
-  }, [previewId]);
   
   useEffect(() => {
     
@@ -93,6 +87,9 @@ function PreviewScreen({ previewId, propertyWasUpdated, initialTitle, onTitleCha
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       handleTitleBlur();
+    }
+    if (e.key === 'Escape') {
+      setIsEditing(false);
     }
   };
 
@@ -175,11 +172,12 @@ useEffect(() => {
       }}
       onMouseDown={handleDragStart}
     >
-    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+      {/*
         <button onClick={toggleOrientation}>
           {orientation === 'portrait' ? <i className="bi bi-phone-landscape"></i> : <i className="bi bi-phone"></i>}
         </button>
-      
+      */}
       {isEditing ? (
         <input
           type="text"
@@ -195,13 +193,15 @@ useEffect(() => {
           {title}
         </h4>
       )}
+      {/*
       <button onClick={toggleScreenType}>
         {screenType === 'mobile' ? <i className="bi bi-arrows-fullscreen"></i> : <i className="bi bi-arrows-angle-contract"></i>}
       </button>
-
+      */}
       </div>
       <div key={orderUpdated} className={`screen-content ${screenType}-${orientation} ${isSelected ? 'selected' : ''}`} onClick={onClick}>
         <RavitBuilder 
+          previewId = {previewId}
           uiScreens={uiScreens} 
           setUiScreens={setUiScreens}
           uiWidgets={uiWidgets}

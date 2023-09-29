@@ -6,16 +6,25 @@ import BuilderWorkspaces from './BuilderWorkspaces';
 import PreviewWorkspace from './Preview/PreviewWorkspace';
 import ComponentProperties from './Component/ComponentProperties';
 import '../../css/Builder/Builder.css';
-import { batchUpdateComponentsToAPI } from '../api';
+import { batchUpdatesToAPI } from '../api';
 
 import { useBuilder } from './BuilderContext';
+
+const updateInterval = 30000;
 
 function Builder({showNotification}) {
 
   const { 
+    uiScreens, setUiScreens,
+    uiWidgets, setUiWidgets,
+    uiWidgetsProperties, setUiWidgetsProperties,
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
-    resetBuilder
+    resetBuilder,
+    updateQueue, setUpdateQueue,
+    shouldUpdate, setShouldUpdate,
+    updateSelectedComponentProperties,
+    handleObjectChange, getUpdateObject
   } = useBuilder();
 
   const { projectId } = useParams();
@@ -23,23 +32,72 @@ function Builder({showNotification}) {
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
   const [addNewPreview, setAddNewPreview] = useState(null);
-  const [updatePreview, setUpdatePreview] = useState(null);
   const [onDelete, setOnDelete] = useState(null);
   const [workspaceHeight, setWorkspaceHeight] = useState('50%');
   const [componentToAdd, setComponentToAdd] = useState(null);
   const [propertyWasUpdated, setPropertyWasUpdated] = useState(null);
-  const [shouldUpdate, setShouldUpdate] = useState(false);
   const [orderUpdated, setOrderUpdated] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     resetBuilder();
+    setUpdateQueue({
+      uiScreens: [],
+      uiWidgets: [],
+      uiWidgetsProperties: [],
+    });
   }, []);
-  
 
-  const handleDrag = (e) => {
-    e.preventDefault();
-    const newHeight = Math.min(Math.max(e.clientY, 0), window.innerHeight);
-    setWorkspaceHeight(`${newHeight}px`);
+
+  const resetEverything = () => {
+    console.error('Reached maximum retry attempts. Resetting everything.');
+    resetBuilder();
+    setUpdateQueue({
+      uiScreens: [],
+      uiWidgets: [],
+      uiWidgetsProperties: [],
+    });
+    setShouldUpdate(false);
+    setRetryCount(0); 
+  };
+
+  const updateChanges = async () => {
+    const updateObject = getUpdateObject();
+    try {
+      const updatedObject = await batchUpdatesToAPI(projectId, updateObject);
+      setUpdateQueue({
+        uiScreens: [],
+        uiWidgets: [],
+        uiWidgetsProperties: [],
+      });
+      setShouldUpdate(false);
+        setRetryCount(0); 
+      } catch (error) {
+        console.error('Error updating objects:', error);
+        setRetryCount((prevCount) => prevCount + 1); 
+      }
+    };
+
+    useEffect(() => {
+      let intervalId;
+      if (projectId && shouldUpdate) {
+        if (retryCount >= 10) {
+          resetEverything();
+        } else {
+          intervalId = setInterval(() => {
+            updateChanges();
+          }, updateInterval);
+        }
+      }
+
+      return () => clearInterval(intervalId);
+    }, [projectId, shouldUpdate, retryCount]);
+
+
+    const handleDrag = (e) => {
+      e.preventDefault();
+      const newHeight = Math.min(Math.max(e.clientY, 0), window.innerHeight);
+      setWorkspaceHeight(`${newHeight}px`);
   };
 
   const forceReflow = () => {
@@ -59,10 +117,10 @@ function Builder({showNotification}) {
         setIsComponentsOpen={setIsComponentsOpen}
         selectedScreen={selectedScreen}
         addNewPreview={addNewPreview}
-        updatePreview={updatePreview}
         onDelete={onDelete}
         setComponentToAdd={setComponentToAdd}
         shouldUpdate={shouldUpdate}
+        updateChanges={updateChanges}
       />
       <main className="builder-main">
         <aside className={`builder-components ${isComponentsOpen ? 'open' : 'closed'}`}>
@@ -73,7 +131,6 @@ function Builder({showNotification}) {
             setSelectedWorkspace={setSelectedWorkspace}
             style={{ height: workspaceHeight }}
             className="builder-workspaces"
-            setShouldUpdate={setShouldUpdate}
           />
           <div
             className="resizable-separator"
@@ -96,7 +153,6 @@ function Builder({showNotification}) {
           <PreviewWorkspace
             workspaceId={selectedWorkspace?.id}
             setAddNewPreview={setAddNewPreview}
-            setUpdatePreview={setUpdatePreview}
             setOnDelete={setOnDelete}
             forceReflow={forceReflow}
             showNotification={showNotification}
