@@ -2,7 +2,7 @@ import React, { useState  } from 'react';
 
 import '../../css/Wizard/TemplateWizard.css';
 
-const TemplateWizard = ({ modules, selectedTemplate, setSelectedTemplate }) => {
+const TemplateWizard = ({ modules, selectedTemplate, setSelectedTemplate, setConfiguration }) => {
   
 
   const handleDeviceTypeToggle = (template) => {

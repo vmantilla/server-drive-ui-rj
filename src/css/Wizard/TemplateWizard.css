@@ -3,7 +3,7 @@
 /* Estilos para la cuadrícula de dispositivos */
 .device-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 20px;
   margin-top: 20px;
   text-align: center;
@@ -13,10 +13,10 @@
 .device-item {
   cursor: pointer;
   border: 2px solid #ddd;
-  border-radius: 5px;
+  border-radius: 0px;
   padding: 10px;
   transition: border-color 0.3s ease;
-  width: 100%;
+  width: 200px;
   position: relative; /* Añadido */
   height: 120px; /* Altura de 120px */
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import '../../css/Wizard/TemplatePreview.css';
 import { Carousel } from 'react-bootstrap';
 
-const TemplatePreview = ({ selectedTemplate }) => {
+const TemplatePreview = ({ selectedTemplate, configuration }) => {
   console.log(selectedTemplate);
   const templates = [
     {

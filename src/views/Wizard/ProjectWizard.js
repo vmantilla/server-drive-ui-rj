@@ -17,12 +17,12 @@ const stepTitles = [
 
 const ProjectWizard = () => {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(0); // Controla el paso actual del asistente
-  const [selectedTemplate, setSelectedTemplate] = useState(null); // Almacena la plantilla seleccionada
+  const [currentStep, setCurrentStep] = useState(0); 
+  const [selectedTemplate, setSelectedTemplate] = useState(null); 
   const [modules, setModules] = useState([]);
   const [configuration, setConfiguration] = useState({
-    selectedPlatform: [], // Almacena las plataformas seleccionadas
-    projectName: 'Mi Proyecto', // Establece el nombre del proyecto predeterminado
+    selectedPlatform: [], 
+    projectName: '',
   });
 
   const isFinishDisabled = configuration.selectedPlatform.length === 0 || !configuration.projectName.trim();
@@ -62,6 +62,20 @@ const ProjectWizard = () => {
     navigate('/dashboard'); 
   };
 
+  useEffect(() => {
+    if (selectedTemplate) {
+      setConfiguration({
+        selectedPlatform: [],
+        projectName: selectedTemplate.name,
+      });
+    } else {
+      setConfiguration({
+        selectedPlatform: [],
+        projectName: "New Proyect", 
+      });
+    }
+  }, [selectedTemplate]);
+    
   const handleFinish = async () => {
 
     console.log("configuration", configuration);
@@ -108,8 +122,8 @@ const ProjectWizard = () => {
           modules={modules}
           setSelectedTemplate={setSelectedTemplate}
           selectedTemplate={selectedTemplate}
-          configuration={configuration} // Pasa la configuración completa
-          setConfiguration={setConfiguration} // Función para actualizar la configuración
+          configuration={configuration}
+          setConfiguration={setConfiguration}
         />
       </div>
       <div className="button-container">

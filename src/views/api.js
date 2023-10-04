@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Configura axios para usar "http://localhost:3000" como URL base
-axios.defaults.baseURL = "http://localhost:3002";
+axios.defaults.baseURL = "http://192.168.20.35:3002";
 
 axios.interceptors.request.use(function (config) {
   const token = localStorage.getItem('token');
@@ -12,6 +12,7 @@ axios.interceptors.request.use(function (config) {
 export const setupInterceptors = (navigate) => { 
   axios.interceptors.response.use(
     response => {
+      console.log(response);
       return response;
     },
     error => {
@@ -29,21 +30,29 @@ export const fetchTemplates = async () => {
   try {
     const response = await axios.get('/templates');
     const templates = response.data;
-    console.log(templates);
+    
     return response.data;
   } catch (error) {
-    // Manejar errores aquí.
-    console.error('Error al obtener plantillas:', error);
+     console.error('Error al obtener plantillas:', error);
   }
 }
 
 export const getProjectsFromAPI = async () => {
   try {
     const response = await axios.get('/projects');
-    console.log(response.data)
     return response.data;
   } catch (error) {
     console.error('Error al cargar proyectos:', error);
+    throw error;
+  }
+};
+
+export const getProjectFromAPI = async (id) => {
+  try {
+    const response = await axios.get(`/projects/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al cargar el proyecto:', error);
     throw error;
   }
 };
@@ -79,8 +88,6 @@ export const deleteProjectFromAPI = async (id) => {
 
 export const batchUpdatesToAPI = async (id, updateObject) => {
   try {
-    console.log("id", id)
-    console.log("updateChanges", updateObject)
     const response = await axios.put(`/projects/${id}/batch_update`, { batch_update: updateObject });
     return response.data;
   } catch (error) {
@@ -142,7 +149,6 @@ const removePreviewsUnpermittedParams = (preview) => {
 export const batchUpdatePreviewsToAPI = async (workspaceId, previews) => {
   try {
     const sanitizedPreviews = previews.map(preview => removePreviewsUnpermittedParams(preview));
-    console.log(`/workspaces/${workspaceId}/batch_update`)
     const response = await axios.put(`/workspaces/${workspaceId}/batch_update`, {
       workspace: {
         previews: sanitizedPreviews
@@ -172,7 +178,6 @@ export const getAllPreviewsFromAPI = async (workspaceId) => {
 export const addPreviewToAPI = async (workspaceId, previewData) => {
   try {
     const response = await axios.post(`/workspaces/${workspaceId}/previews`, previewData);
-    console.log("getAllPreviewsFromAPI", response.data);
     return response.data;
   } catch (error) {
     console.error('Error al agregar vista previa:', error);

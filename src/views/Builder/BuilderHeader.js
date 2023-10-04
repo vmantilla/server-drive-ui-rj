@@ -44,7 +44,7 @@ const FloatingMenu = ({ visible, options, onClose, position, handleDragStart, ha
   );
 };
 
-function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, addNewPreview, onDelete, setComponentToAdd, shouldUpdate, updateChanges }) {
+function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, selectedScreen, addNewPreview, onDelete, setComponentToAdd, shouldUpdate, updateChanges }) {
   const navigate = useNavigate();
 
   const handleExit = () => {
@@ -75,6 +75,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
         { iconClass: "bi bi-distribute-vertical", type: "Column", onClick: () => { /* Handle Column */ } },
         { iconClass: "bi bi-stack", type: "Overlay", onClick: () => { /* Handle Overlay */ } },
         { iconClass: "bi bi-card-text", type: "Scroll", onClick: () => { /* Handle Scroll */ } },
+        { iconClass: "bi bi-list-task", type: "List", onClick: () => { /* Handle Button */ } },
         { iconClass: "bi bi-square", type: "Button", onClick: () => { /* Handle Button */ } }
       );
       break;
@@ -134,7 +135,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, selectedScreen, 
           <i className="bi bi-bezier2"></i>
         </button>
 
-        <h1>Workspace</h1>
+        <h1>{projectName}</h1>
       </div>
 
       <div className="icons-container">

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Configura axios
-axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.baseURL = "http://192.168.20.35:3000";
 axios.interceptors.request.use(function (config) {
   const token = localStorage.getItem('token');
   config.headers.Authorization = token ? `Bearer ${token}` : '';

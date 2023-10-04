@@ -5,8 +5,9 @@ import PreviewComponents from './Preview/PreviewComponents';
 import BuilderWorkspaces from './BuilderWorkspaces';
 import PreviewWorkspace from './Preview/PreviewWorkspace';
 import ComponentProperties from './Component/ComponentProperties';
+import { useNavigate } from 'react-router-dom';
 import '../../css/Builder/Builder.css';
-import { batchUpdatesToAPI } from '../api';
+import { batchUpdatesToAPI, getProjectFromAPI } from '../api';
 
 import { useBuilder } from './BuilderContext';
 
@@ -26,8 +27,10 @@ function Builder({showNotification}) {
     updateSelectedComponentProperties,
     handleObjectChange, getUpdateObject
   } = useBuilder();
+  const navigate = useNavigate();
 
   const { projectId } = useParams();
+  const [projectName, setProjectName] = useState(true);
   const [isComponentsOpen, setIsComponentsOpen] = useState(true);
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
@@ -49,6 +52,21 @@ function Builder({showNotification}) {
     });
   }, []);
 
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const hasAccess = await getProjectFromAPI(projectId);
+        setProjectName(hasAccess.title)
+        if (!hasAccess) {
+          navigate('/dashboard'); 
+        }
+      } catch (error) {
+        console.error('Error al verificar el acceso al proyecto:', error);
+      }
+    };
+
+    fetchProject();
+  }, [projectId, navigate]);
 
   const resetEverything = () => {
     console.error('Reached maximum retry attempts. Resetting everything.');
@@ -123,6 +141,7 @@ function Builder({showNotification}) {
         setComponentToAdd={setComponentToAdd}
         shouldUpdate={shouldUpdate}
         updateChanges={updateChanges}
+        projectName={projectName}
       />
       <main className="builder-main">
         <aside className={`builder-components ${isComponentsOpen ? 'open' : 'closed'}`}>
