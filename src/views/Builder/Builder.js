@@ -77,7 +77,8 @@ function Builder({showNotification}) {
       uiWidgetsProperties: [],
     });
     setShouldUpdate(false);
-    setRetryCount(0); 
+    setRetryCount(0);
+    navigate('/dashboard'); 
   };
 
   const updateChanges = async () => {
@@ -101,6 +102,7 @@ function Builder({showNotification}) {
       let intervalId;
       if (projectId && shouldUpdate) {
         if (retryCount >= 10) {
+          showNotification("error", "Properties could not be updated. Maximum retry attempts reached; restoring the interface.")
           console.warn('resetEverything:', retryCount);
           resetEverything();
         } else {

@@ -73,6 +73,19 @@
   width: 100px;
   height: 100px;
   object-fit: contain;
-  border: 1px solid #ccc;
+}
+
+.selected-image {
+  border: 2px solid blue;
   border-radius: 5px;
 }
+
+.disabled-button {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.over-limit {
+  border: 2px solid orange;
+}
+

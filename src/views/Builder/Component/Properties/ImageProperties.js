@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import Tabs from 'react-bootstrap/Tabs';
-import Tab from 'react-bootstrap/Tab';
 import '../../../../css/Builder/Component/Properties/ImageProperties.css';
+
+import { getSignedURLFromAPI } from '../../../api';
 
 const contentModes = ['fill', 'contain', 'cover', 'none', 'scale-down'];
 
@@ -11,36 +11,119 @@ function ImageProperties({ property, handlePropertyChange }) {
   const [selectedContentMode, setSelectedContentMode] = useState(property.data.contentMode || 'fill');
   const [imageUrl, setImageUrl] = useState(property.data.url || '');
   const [uploadedImages, setUploadedImages] = useState([]);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [tempSelectedImage, setTempSelectedImage] = useState(null); 
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [errorAws, setErrorAws] = useState(null);
+  const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); 
 
   useEffect(() => {
     handlePropertyChange('contentMode', selectedContentMode);
-    handlePropertyChange('url', imageUrl);
-  }, [selectedContentMode, imageUrl]);
+    setImageUrl(property.data.url);
+  }, [selectedContentMode, property.data]);
+
+  const getFileExtension = (mimeType) => {
+    switch (mimeType) {
+      case 'image/png':
+        return '.png';
+      case 'image/jpeg':
+        return '.jpeg';
+      case 'application/pdf':
+        return '.pdf';
+      case 'image/svg+xml':
+        return '.svg';
+      default:
+        return null;
+    }
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      setUploadedImages([...uploadedImages, reader.result]);
+      const imgData = reader.result;
+      if (!uploadedImages.includes(imgData)) {
+        setUploadedImages([...uploadedImages, imgData]);
+      }
+      setTempSelectedImage(imgData);
     };
 
-    if (file) {
-      reader.readAsDataURL(file);
+    if (file.size > 2 * 1024 * 1024) {
+      setError("The selected file exceeds 2MB in size.");
+      setSelectedFile(null);
+    } else {
+      setSelectedFile(file);
+      setError(null);
+      if (file) {
+        reader.readAsDataURL(file);
+      }
     }
   };
 
-  const handleSelectImage = () => {
-    setImageUrl(selectedImage);
-    setShowModal(false);
-  };
+  const handleSelectImage = async () => {
+    console.log("handleSelectImage started.");
+  
+    if (selectedFile) {
+        console.log("File selected:", selectedFile.name);
+
+        setIsLoading(true);
+        setShowModal(false);  // Cerrar el modal cuando comienza la carga
+        console.log("Set loading state to true and closed modal.");
+
+        const fileExtension = getFileExtension(selectedFile.type);
+        console.log("Determined file extension:", fileExtension);
+
+        if (!fileExtension) {
+            console.log("Error: Unsupported file type detected.");
+            setErrorAws("Unsupported file type.");
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            console.log("Requesting signed URL from server...");
+            const response = await getSignedURLFromAPI(property, selectedFile.type, fileExtension);
+            console.log("Received signed URL:", response.presigned_url);
+            console.log("Public URL for the image:", response.public_url);
+
+            console.log("Uploading file to storage...");
+            const uploadResponse = await fetch(response.presigned_url, {
+                method: 'PUT',
+                body: selectedFile,
+                headers: {
+                    'Content-Type': selectedFile.type
+                }
+            });
+            if (!uploadResponse.ok) {
+                throw new Error(`Failed to upload file with status ${uploadResponse.status}: ${await uploadResponse.text()}`);
+            }
+
+            setImageUrl(response.public_url); 
+            handlePropertyChange('url', response.public_url); 
+            handlePropertyChange('content_type', selectedFile.type); 
+            console.log("Updated image URL in the state and triggered property change.");
+
+            setIsLoading(false);
+            console.log("Set loading state to false.");
+        } catch (error) {
+            console.log("Error occurred:", error.message);
+            setErrorAws(error.message);
+            setIsLoading(false);
+        }
+    } else {
+        console.log("No file selected.");
+    }
+};
+
 
   return (
     <div className="image-properties">
       <div className="image-preview" onClick={() => setShowModal(true)}>
-        {imageUrl ? (
+        {isLoading ? (
+          <span>Loading...</span>
+        ) : imageUrl ? (
           <img src={imageUrl} alt="Preview" style={{ objectFit: selectedContentMode }} />
         ) : (
           <i className="bi bi-card-image"></i>
@@ -56,27 +139,33 @@ function ImageProperties({ property, handlePropertyChange }) {
         </select>
       </div>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
+      <Modal show={showModal && !isLoading} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Select an Image</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Tabs defaultActiveKey="uploaded">
-            <Tab eventKey="uploaded" title="Uploaded Images">
-              <input type="file" accept="image/*" onChange={handleFileChange} />
-              <div className="image-grid">
-                {uploadedImages.map((img, index) => (
-                  <img key={index} src={img} alt="" onClick={() => setSelectedImage(img)} />
-                ))}
-              </div>
-            </Tab>
-            <Tab eventKey="system" title="System Symbols">
-              <div>System Symbols here</div>
-            </Tab>
-          </Tabs>
+          <input type="file" accept="image/*" onChange={handleFileChange} />
+          <div className="image-grid">
+            {uploadedImages.map((img, index) => (
+              <img 
+                  key={index} 
+                  src={img} 
+                  alt="" 
+                  onClick={() => setTempSelectedImage(img)} 
+                  className={img === tempSelectedImage ? 'selected-image' : ''}
+              />
+            ))}
+          </div>
+          <div style={{ flexGrow: 1, color: 'orange', textAlign: 'left' }}>
+            {error}
+          </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleSelectImage}>
+          <Button 
+            variant={tempSelectedImage ? "primary" : "secondary"} 
+            onClick={handleSelectImage}
+            disabled={!tempSelectedImage || error}
+          >
             Select
           </Button>
           <Button variant="secondary" onClick={() => setShowModal(false)}>

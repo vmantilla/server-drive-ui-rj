@@ -147,7 +147,7 @@
   color: lightgreen;  
 }
 
-.disabled-button {
+.disabled-save-button {
   color: grey; 
   cursor: not-allowed;
 }

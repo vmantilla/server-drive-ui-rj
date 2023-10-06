@@ -154,7 +154,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
       <div className="right-container">
       { selectedScreen !== null && (
         <div className="buttons-container">
-          <button className={`builder-button ${shouldUpdate ? 'update-needed' : 'disabled-button'}`}
+          <button className={`builder-button ${shouldUpdate ? 'update-needed' : 'disabled-save-button'}`}
            onClick={() => updateChanges()}
            disabled={!shouldUpdate}>
             <i className="bi bi-cloud-upload-fill"></i>

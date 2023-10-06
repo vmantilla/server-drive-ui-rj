@@ -12,7 +12,6 @@ axios.interceptors.request.use(function (config) {
 export const setupInterceptors = (navigate) => { 
   axios.interceptors.response.use(
     response => {
-      console.log(response);
       return response;
     },
     error => {
@@ -337,8 +336,33 @@ export const addPropertyToAPI = async (componentId, propertyData) => {
 };
 
 export const editPropertyInAPI = async (componentId, property) => {
+  console(editPropertyInAPI)
   try {
-    const response = await axios.put(`/properties/${property.id}`, { property: removePropertiesUnpermittedParams(property) });
+    let response;
+    const modifiedProperty = removePropertiesUnpermittedParams(property);
+    console(property.name)
+    console(modifiedProperty.data)
+    if (property.name === "image" && modifiedProperty.data.virtual_image) {
+      const formData = new FormData();
+      formData.append('property[virtual_image]', modifiedProperty.data.virtual_image);
+      const specificData = {
+        contentMode: modifiedProperty.data.contentMode,
+        url: modifiedProperty.data.url
+      };
+      formData.append('property[name]', modifiedProperty.name);
+      formData.append('property[platform]', modifiedProperty.platform);
+      formData.append('property[data]', JSON.stringify(specificData));
+      response = await axios.put(`/properties/${property.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    } else {
+      response = await axios.put(`/properties/${property.id}`, {
+        property: modifiedProperty,
+      });
+    }
+
     return response.data;
   } catch (error) {
     console.error('Error al editar propiedad:', error);
@@ -346,11 +370,22 @@ export const editPropertyInAPI = async (componentId, property) => {
   }
 };
 
+
 export const deletePropertyFromAPI = async (componentId, property) => {
   try {
     await axios.delete(`/properties/${property.id}`);
   } catch (error) {
     console.error('Error al eliminar propiedad:', error);
+    throw error;
+  }
+};
+
+export const getSignedURLFromAPI = async (property, content_type, extension) => {
+  try {
+    const response = await axios.get(`/properties/${property.id}/get_signed_url?extension=${extension}&content_type=${content_type}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener la URL prefirmada:', error);
     throw error;
   }
 };

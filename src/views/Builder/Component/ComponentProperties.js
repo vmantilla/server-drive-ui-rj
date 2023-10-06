@@ -19,7 +19,7 @@ import LoadingComponent from './Properties/LoadingComponent';
 import ErrorComponent from './Properties/ErrorComponent';
 
 import '../../../css/Builder/Component/ComponentProperties.css';
-import { addPropertyToAPI, editPropertyInAPI, deletePropertyFromAPI } from '../../api';
+import { addPropertyToAPI, deletePropertyFromAPI } from '../../api';
 
 import { useBuilder } from '../BuilderContext';
 
@@ -76,8 +76,8 @@ function ComponentProperties() {
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
     findWidgetPropertiesById,
-    updateSelectedComponentProperties,
-    handleObjectChange
+    handleObjectChange,
+    shouldUpdate, setShouldUpdate,
   } = useBuilder();
 
   const [viewStates, setViewStates] = useState(getInitialViewStates);

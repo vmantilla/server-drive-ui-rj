@@ -197,28 +197,49 @@ export const BuilderProvider = ({ children }) => {
   };
 
   function getUpdateObject() {
-    return {
-        uiScreens: updateQueue.uiScreens.map(id => {
-            const screen = uiScreensRef.current[id];
-            return {
-                id: id,
-                title: screen[0],
-                position_x: screen[2],
-                position_y: screen[3]
-            };
-        }),
-        uiWidgets: [],
-        uiWidgetsProperties: updateQueue.uiWidgetsProperties.map(id => {
-            const property = uiWidgetsPropertiesRef.current[id];
-            return {
-                id: id,
-                name: property[0],
-                data: property[1],
-                platform: property[2]
-            };
-        }),
-    };
-};
+        return {
+            uiScreens: updateQueue.uiScreens.map(id => {
+                const screen = uiScreensRef.current[id];
+
+                if (!screen) { // Check if screen is undefined or null
+                    return null;
+                }
+
+                return {
+                    id: id,
+                    title: screen[0] || null,
+                    position_x: screen[2] || null,
+                    position_y: screen[3] || null
+                };
+            }).filter(Boolean),
+
+            uiWidgets: [],
+
+            uiWidgetsProperties: updateQueue.uiWidgetsProperties.map(id => {
+                const property = uiWidgetsPropertiesRef.current[id];
+
+                if (!property) { 
+                    return null;
+                }
+
+                let propertyData = property[1];
+                let virtualImage;
+
+                const returnObj = {
+                    id: id,
+                    name: property[0] || null,
+                    data: propertyData,
+                    platform: property[2] || null
+                };
+
+                if (virtualImage) {
+                    returnObj.virtual_image = virtualImage;
+                }
+
+                return returnObj;
+            }).filter(Boolean),  // Filters out any null values
+        };
+    }
 
 
   return (
