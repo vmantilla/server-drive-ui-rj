@@ -15,6 +15,7 @@ import BackgroundProperties from './Properties/BackgroundProperties';
 import RowProperties from './Properties/RowProperties';
 import ColumnProperties from './Properties/ColumnProperties';
 import TextProperties from './Properties/TextProperties';
+import DataSourceProperties from './Properties/DataSourceProperties';
 import LoadingComponent from './Properties/LoadingComponent';
 import ErrorComponent from './Properties/ErrorComponent';
 
@@ -65,6 +66,7 @@ function getInitialViewStates() {
 		text: [],
 		header: [],
 		footer: [],
+		datasource: [],
 	};
 }
 
@@ -327,6 +329,7 @@ function ComponentProperties() {
 			{title: "Alignment", component: AlignmentProperties},
 			{title: "Font", component: FontProperties},
 			{title: "Stroke", component: StrokeProperties},
+			{title: "datasource", component: DataSourceProperties},
 
 			];
 
@@ -337,7 +340,7 @@ function ComponentProperties() {
 		const isNotAllowedForRow = (title) => ['Header', 'Footer','Alignment','Image', 'Font', "Column", "Text"].includes(title);
 		const isNotAllowedForColumn = (title) => ['Header', 'Footer','Alignment','Image', 'Font', "Row", "Text"].includes(title);
 		const isNotAllowedForOverlay = (title) => ['Header', 'Footer','Alignment','Image', 'Font', "Row", "Column", "Text"].includes(title);
-
+		
 		const allowedProperties = propertyComponents.filter(({ title }) => {
 			const mainComponentType = component.component_type;
 

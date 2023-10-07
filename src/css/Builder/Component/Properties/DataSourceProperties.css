@@ -1,0 +1,132 @@
+.datasource-properties {
+  display: flex;
+  flex-direction: column;
+}
+
+.datasource-properties-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  padding: 0px 0px;
+  background-color: #292929;
+  color: white;
+}
+
+.datasource-title {
+  font-family: 'Rubik', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  padding: 0 10px;
+  margin-bottom: 0px;
+}
+
+.add-datasource-button {
+  font-size: 18px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 10px;
+  color: white;
+}
+
+.datasource-properties-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.datasource-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.datasource-mini-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f2f2f2;
+  padding: 2px 8px;
+}
+
+.datasource-mini-header .mini-header-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 8px;
+}
+
+.datasource-mini-header .dropdown-icon {
+  font-size: 8px;
+}
+
+.datasource-mini-header select {
+  border: none;
+  font-size: 10px;
+  padding: 2px 4px;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.datasource-mini-header select:focus {
+  outline: none;
+}
+
+.datasource-properties-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 4px 10px;
+  gap: 6px;
+}
+
+.datasource-property {
+  display: flex;
+  flex-direction: column;
+}
+
+.datasource-property select {
+  font-size: 10px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 2px 4px;
+  color: #292929;
+}
+
+.datasource-property select:focus {
+  outline: none;
+}
+
+.datasource-property label {
+  font-size: 10px;
+  color: #292929;
+}
+
+.input-datasource-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0px 2px;
+  border-radius: 4px;
+  height: 30px;
+}
+
+.input-datasource-wrapper input[type="text"], .input-datasource-wrapper input[type="url"] {
+  width: 150px; /* Adjust based on your preference */
+  height: 24px;
+  font-size: 10px;
+  border: none;
+  padding: 4px;
+}
+
+.delete-datasource-button {
+  font-size: 12px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding-right: 5px;
+  margin: 0;
+  color: #292929;
+}

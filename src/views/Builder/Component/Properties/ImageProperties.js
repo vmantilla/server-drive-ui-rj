@@ -122,7 +122,7 @@ function ImageProperties({ property, handlePropertyChange }) {
     <div className="image-properties">
       <div className="image-preview" onClick={() => setShowModal(true)}>
         {isLoading ? (
-          <span>Loading...</span>
+          <div className="spinner"></div>
         ) : imageUrl ? (
           <img src={imageUrl} alt="Preview" style={{ objectFit: selectedContentMode }} />
         ) : (
