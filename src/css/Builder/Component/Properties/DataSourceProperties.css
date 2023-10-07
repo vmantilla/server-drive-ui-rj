@@ -110,10 +110,9 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0px 2px;
   border-radius: 4px;
-  height: 30px;
 }
 
-.input-datasource-wrapper input[type="text"], .input-datasource-wrapper input[type="url"] {
+.input-datasource-wrapper input[type="text"], .input-datasource-wrapper input[type="url"], .input-datasource-wrapper input[type="textarea"] {
   width: 150px; /* Adjust based on your preference */
   height: 24px;
   font-size: 10px;
