@@ -273,7 +273,6 @@ function ComponentProperties() {
 
 	const handleChangeState = (type, index, property, value) => {
 
-		//console.log('handleChangeState called with:', type, index, property, value);
 		if (!Array.isArray(viewStates[type])) {
 			console.error(`viewStates[${type}] is not an array:`, viewStates[type]);
 			return;
@@ -292,8 +291,6 @@ function ComponentProperties() {
 			updatedState = { ...currentState, data: { ...currentState.data, [property]: value }, error: false, loading: false, action: "update" };
 		}
 
-		console.log('currentState:', currentState);
-		console.log('updatedState:', updatedState);
 		if (
 		    currentState.id === updatedState.id &&
 		    currentState.name === updatedState.name &&
@@ -306,7 +303,6 @@ function ComponentProperties() {
 
     if (updatedState) {
 			updateViewState(type, currentState.id, updatedState)
-			console.log('logro pasar la vailidadcion de igual.', currentState);
 			handleObjectChange("uiWidgetsProperties", currentState.id);
 		} else {
 			console.log('No updates needed.');

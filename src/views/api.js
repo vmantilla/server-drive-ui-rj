@@ -215,6 +215,7 @@ const removeComponentsUnpermittedParams = (component) => {
   delete sanitizedComponent.loading;
   delete sanitizedComponent.created_at;
   delete sanitizedComponent.updated_at;
+  delete sanitizedComponent.selected_option;
   delete sanitizedComponent.user_id;
   delete sanitizedComponent.project_id;
   delete sanitizedComponent.isNew;
@@ -380,12 +381,73 @@ export const deletePropertyFromAPI = async (componentId, property) => {
   }
 };
 
+
+// === AMAZON CALL ===
+
 export const getSignedURLFromAPI = async (property, content_type, extension) => {
   try {
     const response = await axios.get(`/properties/${property.id}/get_signed_url?extension=${extension}&content_type=${content_type}`);
     return response.data;
   } catch (error) {
     console.error('Error al obtener la URL prefirmada:', error);
+    throw error;
+  }
+};
+
+
+// === ACTIONS API CALL ===
+
+
+const removeActionUnpermittedParams = (action) => {
+  const sanitizedAction = { ...action };
+  
+  sanitizedAction.action_type = sanitizedAction.component_type;
+
+  delete sanitizedAction.id;
+  delete sanitizedAction.selected_option;
+  delete sanitizedAction.created_at;
+  delete sanitizedAction.updated_at;
+  delete sanitizedAction.user_id;
+  delete sanitizedAction.project_id;
+  delete sanitizedAction.component_id;
+  delete sanitizedAction.preview_id;
+  delete sanitizedAction.parent_id;
+  delete sanitizedAction.children;
+  delete sanitizedAction.isNew;
+  delete sanitizedAction.expanded;
+  delete sanitizedAction.loading;
+  delete sanitizedAction.component_type;
+
+  return sanitizedAction;
+};
+
+export const addActionToAPI = async (componentId, action) => {
+  try {
+    console.log(addActionToAPI, removeActionUnpermittedParams(action))
+    const response = await axios.post(`/components/${componentId}/component_actions`, { component_action: removeActionUnpermittedParams(action) });
+    return response.data;
+  } catch (error) {
+    console.error('Error al guardar la acción:', error);
+    throw error;
+  }
+};
+
+export const editActionToAPI = async (actionId, action) => {
+  try {
+    const response = await axios.put(`/component_actions/${actionId}`, { component_action:  removeActionUnpermittedParams(action) });
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar acción:', error);
+    throw error;
+  }
+};
+
+export const deleteActionToAPI = async (actionId) => {
+  try {
+    const response = await axios.delete(`/component_actions/${actionId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al eliminar la acción:', error);
     throw error;
   }
 };

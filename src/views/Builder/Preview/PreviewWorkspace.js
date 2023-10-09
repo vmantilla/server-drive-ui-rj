@@ -15,6 +15,7 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
     uiScreens, setUiScreens,
     uiWidgets, setUiWidgets,
     uiWidgetsProperties, setUiWidgetsProperties,
+    uiWidgetsActions, setUiWidgetsActions,
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
     resetBuilder,
@@ -42,6 +43,7 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
           setUiScreens(response.uiScreens);
           setUiWidgets(response.uiWidgets); 
           setUiWidgetsProperties(response.uiWidgets_properties);
+          setUiWidgetsActions(response.uiWidgets_actions);
         } else {
           resetBuilder()
         }

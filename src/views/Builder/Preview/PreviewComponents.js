@@ -7,7 +7,7 @@ import 'react-contexify/ReactContexify.css';
 
 import '../../../css/Builder/Preview/PreviewComponents.css';
 
-import { addComponentToAPI, editComponentToAPI, deleteComponentToAPI, duplicateComponentToAPI } from '../../api';
+import { addComponentToAPI, editComponentToAPI, deleteComponentToAPI, duplicateComponentToAPI, addActionToAPI, editActionToAPI, deleteActionToAPI } from '../../api';
 import { useBuilder } from '../BuilderContext';
 
 const MENU_ID = 'blahblah';
@@ -17,11 +17,13 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
   const { 
     uiWidgets, setUiWidgets,
     uiWidgetsProperties, setUiWidgetsProperties,
+    uiWidgetsActions, setUiWidgetsActions,
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
     buildTree,
     recursiveDeleteComponent,
-    addWidgetWithProperties
+    addWidgetWithProperties,
+    addWidgetWithActions
   } = useBuilder();
 
   const [components, setComponents] = useState([]);
@@ -61,11 +63,20 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
     setComponentLoading(draggingComponent.id);
 
     if (draggingComponent.isNew) {
-      addComponent(parentId);
+      if (draggingComponent.selected_option === "action") {
+        addAction(parentId);
+      } else {
+        addComponent(parentId);
+      }
     } else {
-      moveComponent(parentId);
+      if (draggingComponent.selected_option === "action") {
+        //moveComponentAction(parentId);
+      } else {
+        moveComponent(parentId);
+      }
     }
   };
+
 
   const handleError = (error, message) => {
     loadBuildTree();
@@ -76,12 +87,49 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
     showNotification('error', message);
   };
 
+  const addUiWidgetsAction = (parent_id, action) => {
+    let updatedUiWidgets = { ...uiWidgets };
+    let updatedUiWidgetsActions = { ...uiWidgetsActions };
+    let newActionId = action.id;
+
+    const currentWidget = updatedUiWidgets[parent_id];
+    if (currentWidget) {
+      const [component_type, propertyIds, childIds, actionIds] = currentWidget;
+      console.log(currentWidget)
+      const updatedActionIds = [...actionIds, newActionId];
+      const updatedWidget = [component_type, propertyIds, childIds, updatedActionIds];
+      updatedUiWidgets[parent_id] = updatedWidget;
+      updatedUiWidgetsActions[newActionId] = action;
+      console.log(action)
+
+      setUiWidgets(updatedUiWidgets);
+      console.log(updatedUiWidgets)
+      setUiWidgetsActions(updatedUiWidgetsActions);
+    }
+  };
+
+  const addAction = async (parentId) => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const savedAction = await addActionToAPI(parentId, draggingComponent);
+      addUiWidgetsAction(parentId, savedAction);
+
+      setComponentLoading(null);
+      setDraggingComponent(null);
+      setSelectedComponent(null);
+
+      showNotification('success', 'Accion agregada exitosamente.');
+    } catch (error) {
+      handleError(error, 'Error al agregar la accion:');
+    }
+  };
+
   const addComponent = async (parentId) => {
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const savedComponent = await addComponentToAPI(selectedScreen, draggingComponent);
-
       addWidgetWithProperties(savedComponent);
 
       setComponentLoading(null);

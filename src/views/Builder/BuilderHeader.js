@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../css/Builder/BuilderHeader.css';
 
-const FloatingMenu = ({ visible, options, onClose, position, handleDragStart, handleDragEnd }) => {
+const FloatingMenu = ({ visible, selectedOption, options, onClose, position, handleDragStart, handleDragEnd }) => {
   const menuRef = useRef(null);
   
   useEffect(() => {
@@ -32,7 +32,7 @@ const FloatingMenu = ({ visible, options, onClose, position, handleDragStart, ha
   return (
     <div
       ref={menuRef}
-      className="floating-menu"
+      className={`floating-menu-${selectedOption}`}
       style={{
         top: `${position.y}px`,
         left: `${position.x}px`,
@@ -53,6 +53,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [menuOptions, setMenuOptions] = useState([]);
+  const [selectedOption, setSelectedOption] = useState([]);
 
   const handleButtonPress = (e, componentType) => {
     const options = getOptionsForComponentType(componentType);
@@ -63,35 +64,56 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
     setMenuOptions(options);
     setMenuPosition({ x: x, y: y });
     setMenuVisible(true);
+    setSelectedOption(componentType);
   };
 
   const getOptionsForComponentType = (componentType) => {
   const options = [];
 
   switch (componentType) {
-    case 'container':
+    case 'object':
       options.push(
         { iconClass: "bi bi-distribute-horizontal", type: "Row", onClick: () => { /* Handle Row */ } },
         { iconClass: "bi bi-distribute-vertical", type: "Column", onClick: () => { /* Handle Column */ } },
         { iconClass: "bi bi-stack", type: "Overlay", onClick: () => { /* Handle Overlay */ } },
         { iconClass: "bi bi-card-text", type: "Scroll", onClick: () => { /* Handle Scroll */ } },
         { iconClass: "bi bi-list-task", type: "List", onClick: () => { /* Handle Button */ } },
-        { iconClass: "bi bi-square", type: "Button", onClick: () => { /* Handle Button */ } }
-      );
-      break;
-
-    case 'object':
-      options.push(
+        { iconClass: "bi bi-square", type: "Button", onClick: () => { /* Handle Button */ } },
         { iconClass: "bi bi-card-text", type: "Text", onClick: () => { /* Handle Text */ } },
         { iconClass: "bi bi-image", type: "Image", onClick: () => { /* Handle Image */ } },
         { iconClass: "bi bi-input-cursor", type: "InputText", onClick: () => { /* Handle InputText */ } },
-        { iconClass: "bi bi-list-columns-reverse", type: "TextView", onClick: () => { /* Handle TextView */ } }
+        { iconClass: "bi bi-list-columns-reverse", type: "TextView", onClick: () => { /* Handle TextView */ } },
+        { iconClass: "bi bi-arrows-angle-expand rotate-45", type: "Space", onClick: () => { /* Handle Space */ } }
       );
       break;
 
+    case 'action':
+        options.push(
+            { iconClass: "bi bi-wrench", type: "OnClick", onClick: () => { /* Handle onClick */ } },
+            { iconClass: "bi bi-wrench", type: "OnDoubleClick", onClick: () => { /* Handle onDoubleClick */ } },
+            { iconClass: "bi bi-wrench", type: "OnLongPress", onClick: () => { /* Handle onLongPress */ } },
+            { iconClass: "bi bi-wrench", type: "OnRightClick", onClick: () => { /* Handle onRightClick */ } },
+            { iconClass: "bi bi-wrench", type: "OnHover", onClick: () => { /* Handle onHover */ } },
+            { iconClass: "bi bi-wrench", type: "OnInputChange", onClick: () => { /* Handle onInputChange */ } },
+            { iconClass: "bi bi-wrench", type: "OnInputFocus", onClick: () => { /* Handle onInputFocus */ } },
+            { iconClass: "bi bi-wrench", type: "OnInputBlur", onClick: () => { /* Handle onInputBlur */ } },
+            { iconClass: "bi bi-wrench", type: "OnSubmit", onClick: () => { /* Handle onSubmit */ } },
+            { iconClass: "bi bi-wrench", type: "OnKeyPress", onClick: () => { /* Handle onKeyPress */ } },
+            { iconClass: "bi bi-wrench", type: "OnKeyDown", onClick: () => { /* Handle onKeyDown */ } },
+            { iconClass: "bi bi-wrench", type: "OnKeyUp", onClick: () => { /* Handle onKeyUp */ } },
+            { iconClass: "bi bi-wrench", type: "OnScroll", onClick: () => { /* Handle onScroll */ } },
+            { iconClass: "bi bi-wrench", type: "OnLoad", onClick: () => { /* Handle onLoad */ } },
+            { iconClass: "bi bi-wrench", type: "OnUnload", onClick: () => { /* Handle onUnload */ } },
+            { iconClass: "bi bi-wrench", type: "OnAppear", onClick: () => { /* Handle onAppear */ } },
+            { iconClass: "bi bi-wrench", type: "OnDisappear", onClick: () => { /* Handle onDisappear */ } },
+            { iconClass: "bi bi-wrench", type: "OnSwipe", onClick: () => { /* Handle onSwipe */ } },
+            { iconClass: "bi bi-wrench", type: "OnRefresh", onClick: () => { /* Handle onRefresh */ } },
+        );
+        break;
+
     case 'space':
       options.push(
-        { iconClass: "bi bi-arrows-angle-expand rotate-45", type: "Space", onClick: () => { /* Handle Space */ } }
+        
       );
       break;
 
@@ -110,6 +132,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
     const newComponent = {
       id: uniqueId,
       component_type: componentType,
+      selected_option: selectedOption,
       children: [],
       expanded: false,
       isNew: true
@@ -143,13 +166,12 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
           <button className="icon-button" onClick={addNewPreview}><i className="bi bi-window-plus"></i></button>
         ) : (
           <>
-            <button className="icon-button" onClick={(e) => handleButtonPress(e, 'container')}><i className="bi bi-columns-gap"></i></button>
-            <button className="icon-button" onClick={(e) => handleButtonPress(e, 'object')}><i className="bi bi-box"></i></button>
-            <button className="icon-button" onClick={(e) => handleButtonPress(e, 'space')}><i className="bi bi-arrows-angle-expand rotate-45 "></i></button>
+            <button className="icon-button" onClick={(e) => handleButtonPress(e, 'object')}><i className="bi bi-columns-gap"></i></button>
+            <button className="icon-button" onClick={(e) => handleButtonPress(e, 'action')}><i className="bi bi-wrench "></i></button>
           </>
         )}
       </div>
-      <FloatingMenu visible={menuVisible} onClose={handleClose} position={menuPosition} options={menuOptions} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />
+      <FloatingMenu visible={menuVisible} onClose={handleClose} position={menuPosition} selectedOption={selectedOption} options={menuOptions} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd} />
 
       <div className="right-container">
       { selectedScreen !== null && (

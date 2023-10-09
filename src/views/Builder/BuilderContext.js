@@ -19,6 +19,7 @@ export const BuilderProvider = ({ children }) => {
   const [uiScreens, setUiScreens] = useState([]);
   const [uiWidgets, setUiWidgets] = useState([]);
   const [uiWidgetsProperties, setUiWidgetsProperties] = useState([]);
+  const [uiWidgetsActions, setUiWidgetsActions] = useState([]);
 
   const uiScreensRef = useRef({});
   const uiWidgetsPropertiesRef = useRef({});
@@ -39,46 +40,61 @@ export const BuilderProvider = ({ children }) => {
     setUiScreens([]);
     setUiWidgets([]);
     setUiWidgetsProperties([]);
+    setUiWidgetsActions([]);
   };
 
-  // Función para construir el árbol basado en un id de pantalla.
   const buildTree = (screenId) => {
-    const screen = uiScreens[screenId];
-    if (!screen) return null;
+  const screen = uiScreens[screenId];
+  if (!screen) return null;
 
-    const [_, widgetIds] = screen;
+  const [_, widgetIds] = screen;
 
-    const buildNode = (widgetId, parentId = null) => {
-      const widget = uiWidgets[widgetId];
-      if (!widget) return null;
+  const buildNode = (widgetId, parentId = null) => {
+    const widget = uiWidgets[widgetId];
+    if (!widget) return null;
 
-      const [component_type, propertyIds, childIds] = widget;
-      const children = childIds.map(childId => buildNode(childId, widgetId)).filter(Boolean); 
+    const [component_type, propertyIds, childIds, actionIds] = widget; 
+    const children = childIds.map(childId => buildNode(childId, widgetId)).filter(Boolean);
 
-      const properties = propertyIds.map(id => {
-        const property = uiWidgetsProperties[id];
-        if (!property) return null;
-
-        const [name, data, platform] = property;
-        return {
-          id,
-          name,
-          data,
-          platform
-        }
-      }).filter(Boolean);
-
+    const actions = actionIds ? actionIds.map(actionId => {
+      const action = uiWidgetsActions[actionId];
+      if (!action) return null;
+      const [action_type] = action;
       return {
-        id: widgetId,
-        component_type,
-        children,
-        properties,
-        parent_id: parentId 
+        id: actionId,
+        component_type: action_type,
+        children: [],
+        parent_id: parentId,
       };
-    };
+    }).filter(Boolean) : [];
 
-    return widgetIds.map(widgetId => buildNode(widgetId)).filter(Boolean); 
+    console.log(actions)
+
+    const properties = propertyIds.map(id => {
+      const property = uiWidgetsProperties[id];
+      if (!property) return null;
+
+      const [name, data, platform] = property;
+      return {
+        id,
+        name,
+        data,
+        platform
+      }
+    }).filter(Boolean);
+
+    return {
+      id: widgetId,
+      component_type,
+      children: [...children, ...actions],  // combinar children y actions
+      properties,
+      parent_id: parentId
+    };
   };
+
+  return widgetIds.map(widgetId => buildNode(widgetId)).filter(Boolean);
+};
+
 
   const findWidgetPropertiesById = (widgetId) => {
     const widget = uiWidgets[widgetId];
@@ -130,6 +146,18 @@ export const BuilderProvider = ({ children }) => {
     });
 
     setUiWidgetsProperties((prev) => ({ ...prev, ...uiWidgets_properties }));
+  };
+
+  const addWidgetWithActions = (response) => {
+
+    const { uiWidgets, uiWidgets_actions } = response;
+    setUiWidgets((prev) => {
+      const updated = { ...prev, ...response.uiWidgets };
+      console.log(updated);
+      return updated;
+    });
+
+    setUiWidgetsActions((prev) => ({ ...prev, ...uiWidgets_actions }));
   };
 
   // Recursivamente elimina los hijos y propiedades
@@ -249,12 +277,14 @@ export const BuilderProvider = ({ children }) => {
       uiScreens, setUiScreens,
       uiWidgets, setUiWidgets,
       uiWidgetsProperties, setUiWidgetsProperties,
+      uiWidgetsActions, setUiWidgetsActions,
       selectedScreen, setSelectedScreen,
       updateQueue, setUpdateQueue,
       shouldUpdate, setShouldUpdate,
       selectedComponent, setSelectedComponent,
       buildTree,
       recursiveDeleteComponent,
+      addWidgetWithActions,
       addWidgetWithProperties,
       resetBuilder,
       verifyDataConsistency,
