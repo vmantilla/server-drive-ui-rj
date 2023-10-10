@@ -23,7 +23,8 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
     buildTree,
     recursiveDeleteComponent,
     addWidgetWithProperties,
-    addWidgetWithActions
+    addWidgetWithActions,
+    handleJSONUpdate
   } = useBuilder();
 
   const [components, setComponents] = useState([]);
@@ -359,6 +360,10 @@ const getCustomizations = (component_type) => {
 const computeClassNames = (comp, draggingComponent, selectedComponent, draggingComponentOver, orderableComponent) => {
   let classes = "component-item ";
 
+  if (comp.entityType === 'action') {
+    classes += "action ";
+  }
+
   if (orderableComponent && comp.id === orderableComponent.id) {
     return "reorder-component-selected";
   }
@@ -552,7 +557,7 @@ const renderComponentList = (compArray, parentId = null) =>
           onDrop={(e) => handleDrop(e, comp.id)}
 
           onDragLeave={(e) => handleDragEnterLeaveOrOver(e, null)}
-          className={`component-item ${computeClassNames(comp, draggingComponent, selectedComponent, draggingComponentOver, orderableComponent)}`}
+          className={`${computeClassNames(comp, draggingComponent, selectedComponent, draggingComponentOver, orderableComponent)}`}
           onClick={() => {
             setSelectedComponent(comp);
           }}

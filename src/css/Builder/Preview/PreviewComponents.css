@@ -53,6 +53,11 @@
     background-color: #f2f2f2;
 }
 
+.component-item.action {
+    color: #6A5ACD;
+}
+
+
 .toggle-btn {
     width: 20px;
     display: inline-block;

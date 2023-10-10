@@ -70,6 +70,7 @@ function PreviewScreen({ previewId, propertyWasUpdated, initialTitle, onTitleCha
   };
 
   const handleDoubleClick = () => {
+    setSelectedScreen(previewId)
     setIsEditing(true);
   };
 

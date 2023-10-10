@@ -96,14 +96,15 @@ function ComponentProperties() {
 
 
   function fillViewStates(widgetId) {
-  	const properties = findWidgetPropertiesById(widgetId);
+	  const properties = findWidgetPropertiesById(widgetId);
 
-  	if (!properties) return;
+	  if (!properties) return;
 
-  	let newViewStates = { ...getInitialViewStates() };
+	  let newViewStates = { ...getInitialViewStates() };
 
-  	Object.entries(properties).forEach(([id, [name, data, platform]]) => {
-  		if (newViewStates[name]) {
+	  Object.entries(properties).forEach(([id, propertyObj]) => {
+	    const { name, data, plat: platform } = propertyObj;
+	    if (newViewStates[name]) {
 	      newViewStates[name].push({ data: { ...data }, id, name, platform });
 	    } else {
 	      console.warn(`La categoría ${name} no existe en viewStates`);
@@ -113,55 +114,53 @@ function ComponentProperties() {
 	  setViewStates(newViewStates);
 	}
 
-	useEffect(() => {
-	    const updateUiWidgetsProperties = () => {
-	        let updatedUiWidgetsProperties = { ...uiWidgetsProperties };
-	        let updatedPropertyIds = [];
-	        let currentWidgetProperties = [];
+useEffect(() => {
+    const updateUiWidgetsProperties = () => {
+        let updatedUiWidgetsProperties = { ...uiWidgetsProperties };
+        let updatedPropertyIds = [];
+        let currentWidgetProperties = [];
 
-	        if (selectedComponent && selectedComponent.id) {
-	          const currentWidgetId = selectedComponent.id;
-	          const currentWidget = uiWidgets[currentWidgetId];
-	          const [, widgetProperties, ] = currentWidget;
-	          currentWidgetProperties = widgetProperties
-	        }
+        if (!selectedComponent?.id) return;
 
-	        Object.values(viewStates).forEach(propertiesArray => {
-	            propertiesArray.forEach(property => {
-	                const { id, name, data, platform } = property;
-	                if (data !== undefined) {
-	                    updatedUiWidgetsProperties[id] = [name, data, platform];
-	                    updatedPropertyIds.push(id);
-	                }
-	            });
-	        });
+        const currentWidgetId = selectedComponent.id;
+        const currentWidget = uiWidgets[currentWidgetId];
+        const { props: widgetProperties } = currentWidget;
+        currentWidgetProperties = widgetProperties;
 
-	        currentWidgetProperties.forEach(id => {
-	            if (!updatedPropertyIds.includes(id)) {
-	            		delete updatedUiWidgetsProperties[id];
-	            }
-	        });
-	        
-	        if (selectedComponent && selectedComponent.id) {
-	            const widgetId = selectedComponent.id;
-	            const widget = uiWidgets[widgetId];
+        Object.values(viewStates).forEach(propertiesArray => {
+            propertiesArray.forEach(property => {
+                const { id, name, data, plat: platform } = property;
+                if (data !== undefined) {
+                    updatedUiWidgetsProperties[id] = { name, data, plat: platform };
+                    updatedPropertyIds.push(id);
+                }
+            });
+        });
 
-	            if (widget) {
-	                const [component_type, , childIds] = widget;
-	                const updatedWidget = [component_type, updatedPropertyIds, childIds];
+        currentWidgetProperties.forEach(id => {
+            if (!updatedPropertyIds.includes(id)) {
+                delete updatedUiWidgetsProperties[id];
+            }
+        });
 
-	                setUiWidgets(prevUiWidgets => ({
-	                    ...prevUiWidgets,
-	                    [widgetId]: updatedWidget
-	                }));
-	            }
-	        }
+        const { type: component_type, children: childIds, actions } = currentWidget;
+        const updatedWidget = {
+            type: component_type,
+            props: updatedPropertyIds,
+            children: childIds,
+            actions: actions
+        };
 
-	        setUiWidgetsProperties(updatedUiWidgetsProperties);
-	    };
+        setUiWidgets(prevUiWidgets => ({
+            ...prevUiWidgets,
+            [currentWidgetId]: updatedWidget
+        }));
 
-	    updateUiWidgetsProperties();
-	}, [viewStates]);
+        setUiWidgetsProperties(updatedUiWidgetsProperties);
+    };
+
+    updateUiWidgetsProperties();
+}, [viewStates]);
 
 
 	useEffect(() => {
@@ -227,24 +226,25 @@ function ComponentProperties() {
 	};
 
 	const handleAddState = async (type) => {
-		const availableStates = possibleStates.filter(
-			state => !viewStates[type].some(s => s.platform === state)
-			);
+    const availableStates = possibleStates.filter(
+        state => !viewStates[type].some(s => s.plat === state)
+    );
 
-		if (availableStates.length > 0) {
-			const newProperty = { 
-				id: new Date().getTime(), 
-				platform: availableStates[0], 
-				name: type.toLowerCase(), 
-				error: false, 
-				loading: true, 
-				action: "create" 
-			};
+    if (availableStates.length > 0) {
+        const newProperty = { 
+            id: new Date().getTime().toString(), 
+            plat: availableStates[0], 
+            name: type.toLowerCase(), 
+            error: false, loading: true, action: "create"
+        };
 
-			setViewStates(prev => ({ ...prev, [type]: [...prev[type], newProperty] }));
-			createPropertyToAPI(selectedComponent.id, newProperty, type);
-		}
-	};
+        setViewStates(prev => ({ 
+            ...prev, 
+            [type]: [...prev[type], newProperty] 
+        }));
+        createPropertyToAPI(selectedComponent.id, newProperty, type);
+    }
+};
 
 	const handleDeleteState = async (type, index) => {
 		if (!Array.isArray(viewStates[type])) {

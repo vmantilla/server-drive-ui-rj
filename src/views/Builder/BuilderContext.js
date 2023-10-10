@@ -7,6 +7,7 @@ export const BuilderProvider = ({ children }) => {
   const [updateQueue, setUpdateQueue] = useState({
     uiScreens: [],
     uiWidgetsProperties: [],
+    uiWidgetsActions: [],
   });
 
   const [shouldUpdate, setShouldUpdate] = useState(false);
@@ -23,6 +24,7 @@ export const BuilderProvider = ({ children }) => {
 
   const uiScreensRef = useRef({});
   const uiWidgetsPropertiesRef = useRef({});
+  const uiWidgetsActionsRef = useRef({});
 
   useEffect(() => {
     uiScreensRef.current = uiScreens;
@@ -31,6 +33,10 @@ export const BuilderProvider = ({ children }) => {
   useEffect(() => {
     uiWidgetsPropertiesRef.current = uiWidgetsProperties;
   }, [uiWidgetsProperties]);
+
+  useEffect(() => {
+    uiWidgetsActionsRef.current = uiWidgetsActions;
+  }, [uiWidgetsActions]);
 
   const resetBuilder = () => {
     setPreviews([]);
@@ -43,38 +49,95 @@ export const BuilderProvider = ({ children }) => {
     setUiWidgetsActions([]);
   };
 
-  const buildTree = (screenId) => {
+
+
+  const verifyDataConsistency = () => {
+    let isConsistent = true;
+
+    // Verificar la existencia de uiScreens, uiWidgets, uiWidgetsProperties, uiWidgetsActions en el estado local
+    if (!uiScreens || !uiWidgets || !uiWidgetsProperties || !uiWidgetsActions) {
+        console.error("Faltan algunos campos necesarios en el estado local.");
+        return false;
+    }
+    
+    // Verificar la consistencia de uiScreens
+    Object.values(uiScreens).forEach(([_, widgetIds]) => {
+        widgetIds.forEach(widgetId => {
+            if (!uiWidgets[widgetId]) {
+                console.error(`Inconsistencia encontrada: widgetId ${widgetId} referenciado en uiScreens no existe en uiWidgets.`);
+                isConsistent = false;
+            }
+        });
+    });
+
+    // Verificar la consistencia de uiWidgets
+    Object.values(uiWidgets).forEach(([_, propertyIds, childIds, actionIds]) => {
+        // Verificar propiedades
+        propertyIds.forEach(propertyId => {
+            if (!uiWidgetsProperties[propertyId]) {
+                console.error(`Inconsistencia encontrada: propertyId ${propertyId} referenciado en uiWidgets no existe en uiWidgetsProperties.`);
+                isConsistent = false;
+            }
+        });
+        // Verificar hijos
+        childIds.forEach(childId => {
+            if (!uiWidgets[childId]) {
+                console.error(`Inconsistencia encontrada: childId ${childId} referenciado en uiWidgets no existe en uiWidgets.`);
+                isConsistent = false;
+            }
+        });
+        // Verificar acciones
+        actionIds.forEach(actionId => {
+            if (!uiWidgetsActions[actionId]) {
+                console.error(`Inconsistencia encontrada: actionId ${actionId} referenciado en uiWidgets no existe en uiWidgetsActions.`);
+                isConsistent = false;
+            }
+        });
+    });
+
+    // Verificar la consistencia de uiWidgetsActions
+    Object.values(uiWidgetsActions).forEach(action => {
+        if (!action[0]) {
+            console.error(`Inconsistencia encontrada: una acción en uiWidgetsActions no tiene un tipo definido.`);
+            isConsistent = false;
+        }
+    });
+    
+    return isConsistent;
+}
+
+ const buildTree = (screenId) => {
   const screen = uiScreens[screenId];
   if (!screen) return null;
 
-  const [_, widgetIds] = screen;
+  const { widgets: widgetIds } = screen;
 
   const buildNode = (widgetId, parentId = null) => {
     const widget = uiWidgets[widgetId];
     if (!widget) return null;
 
-    const [component_type, propertyIds, childIds, actionIds] = widget; 
+    const { type: component_type, props: propertyIds, children: childIds, actions: actionIds } = widget; 
+
     const children = childIds.map(childId => buildNode(childId, widgetId)).filter(Boolean);
 
     const actions = actionIds ? actionIds.map(actionId => {
       const action = uiWidgetsActions[actionId];
       if (!action) return null;
-      const [action_type] = action;
+      const { type: action_type } = action;
       return {
         id: actionId,
         component_type: action_type,
         children: [],
         parent_id: parentId,
+        entityType: 'action' // Aquí identificas que es una acción
       };
     }).filter(Boolean) : [];
-
-    console.log(actions)
 
     const properties = propertyIds.map(id => {
       const property = uiWidgetsProperties[id];
       if (!property) return null;
 
-      const [name, data, platform] = property;
+      const { name, data, plat: platform } = property;
       return {
         id,
         name,
@@ -86,9 +149,10 @@ export const BuilderProvider = ({ children }) => {
     return {
       id: widgetId,
       component_type,
-      children: [...children, ...actions],  // combinar children y actions
+      children: [...children, ...actions],
       properties,
-      parent_id: parentId
+      parent_id: parentId,
+      entityType: 'widget' // Aquí identificas que es un widget
     };
   };
 
@@ -96,12 +160,78 @@ export const BuilderProvider = ({ children }) => {
 };
 
 
+  const handleObjectChange = (type, id) => {
+    setUpdateQueue(prev => {
+      if (!prev[type].includes(id)) {
+        return { ...prev, [type]: [...prev[type], id] }
+      }
+      return prev;
+    });
+    console.log("setShouldUpdate")
+    setShouldUpdate(true)
+  };
+
+  function getUpdateObject() {
+    return {
+        uiScreens: (updateQueue.uiScreens || []).map(id => {
+            const screen = uiScreensRef.current[id];
+
+            if (!screen) { // Check if screen is undefined or null
+                return null;
+            }
+
+            const { title, x: position_x, y: position_y } = screen;
+
+            return {
+                id: id,
+                title: title || null,
+                position_x: position_x || null,
+                position_y: position_y || null
+            };
+        }).filter(Boolean),
+
+        uiWidgets: [],
+
+        uiWidgetsProperties: (updateQueue.uiWidgetsProperties || []).map(id => {
+            const property = uiWidgetsPropertiesRef.current[id];
+
+            if (!property) { 
+                return null;
+            }
+
+            const { name, data: propertyData, plat: platform } = property;
+
+            return {
+                id: id,
+                name: name || null,
+                data: propertyData,
+                platform: platform || null
+            };
+        }).filter(Boolean),  // Filters out any null values
+
+        uiWidgetsActions: (updateQueue.uiWidgetsActions || []).map(id => {
+            const action = uiWidgetsActionsRef.current[id];
+
+            if (!action) {
+                return null;
+            }
+
+            const { type: action_type } = action;
+
+            return {
+                id: id,
+                action_type: action_type || null
+            };
+        }).filter(Boolean)
+    };
+}
+
   const findWidgetPropertiesById = (widgetId) => {
     const widget = uiWidgets[widgetId];
     if (!widget) return null;
 
-    const [, propertyIds] = widget;
-    
+    const { props: propertyIds } = widget; 
+      
     const properties = propertyIds.reduce((acc, id) => {
       const property = uiWidgetsProperties[id];
       if (property) acc[id] = property;
@@ -110,6 +240,60 @@ export const BuilderProvider = ({ children }) => {
 
     return properties;
   }
+
+  const handleJSONUpdate = (json) => {
+    const updateOrAddScreen = (screen) => {
+      setUiScreens(prev => {
+        return { ...prev, [screen.id]: screen };
+      });
+    };
+
+    const updateOrAddWidget = (widget) => {
+      setUiWidgets(prev => {
+        return { ...prev, [widget.id]: widget };
+      });
+    };
+
+    const updateOrAddWidgetProperty = (property) => {
+      setUiWidgetsProperties(prev => {
+        return { ...prev, [property.id]: property };
+      });
+    };
+
+    const updateOrAddWidgetAction = (action) => {
+      setUiWidgetsActions(prev => {
+        return { ...prev, [action.id]: action };
+      });
+    };
+
+    if (json.screens) {
+      for (let screenId in json.screens) {
+        updateOrAddScreen(json.screens[screenId]);
+      }
+    }
+
+    if (json.widgets) {
+      for (let widgetId in json.widgets) {
+        updateOrAddWidget(json.widgets[widgetId]);
+      }
+    }
+
+    if (json.props) {
+      for (let propertyId in json.props) {
+        updateOrAddWidgetProperty(json.props[propertyId]);
+      }
+    }
+
+    if (json.actions) {
+      for (let actionId in json.actions) {
+        updateOrAddWidgetAction(json.actions[actionId]);
+      }
+    }
+  };
+
+
+  /* old methods */
+
 
   const updateSelectedComponentProperties = (widgetId, propertyIdsArray) => {
     const widget = uiWidgets[widgetId];
@@ -180,94 +364,7 @@ export const BuilderProvider = ({ children }) => {
     setUiWidgets(updatedUiWidgets);
   };
 
-  const verifyDataConsistency = (uiScreens, uiWidgets, uiWidgetsProperties) => {
-    let isConsistent = true;
-    
-    // Verificar la consistencia de uiScreens
-    Object.values(uiScreens).forEach(([_, widgetIds]) => {
-      widgetIds.forEach(widgetId => {
-        if (!uiWidgets[widgetId]) {
-          console.error(`Inconsistencia encontrada: widgetId ${widgetId} referenciado en uiScreens no existe en uiWidgets.`);
-          isConsistent = false;
-        }
-      });
-    });
 
-    // Verificar la consistencia de uiWidgets
-    Object.values(uiWidgets).forEach(([_, propertyIds, childIds]) => {
-      // Verificar propiedades
-      propertyIds.forEach(propertyId => {
-        if (!uiWidgetsProperties[propertyId]) {
-          console.error(`Inconsistencia encontrada: propertyId ${propertyId} referenciado en uiWidgets no existe en uiWidgetsProperties.`);
-          isConsistent = false;
-        }
-      });
-      // Verificar hijos
-      childIds.forEach(childId => {
-        if (!uiWidgets[childId]) {
-          console.error(`Inconsistencia encontrada: childId ${childId} referenciado en uiWidgets no existe en uiWidgets.`);
-          isConsistent = false;
-        }
-      });
-    });
-    
-    return isConsistent;
-  }
-
-  const handleObjectChange = (type, id) => {
-    setUpdateQueue(prev => {
-      if (!prev[type].includes(id)) {
-        return { ...prev, [type]: [...prev[type], id] }
-      }
-      return prev;
-    });
-    setShouldUpdate(true)
-  };
-
-  function getUpdateObject() {
-        return {
-            uiScreens: updateQueue.uiScreens.map(id => {
-                const screen = uiScreensRef.current[id];
-
-                if (!screen) { // Check if screen is undefined or null
-                    return null;
-                }
-
-                return {
-                    id: id,
-                    title: screen[0] || null,
-                    position_x: screen[2] || null,
-                    position_y: screen[3] || null
-                };
-            }).filter(Boolean),
-
-            uiWidgets: [],
-
-            uiWidgetsProperties: updateQueue.uiWidgetsProperties.map(id => {
-                const property = uiWidgetsPropertiesRef.current[id];
-
-                if (!property) { 
-                    return null;
-                }
-
-                let propertyData = property[1];
-                let virtualImage;
-
-                const returnObj = {
-                    id: id,
-                    name: property[0] || null,
-                    data: propertyData,
-                    platform: property[2] || null
-                };
-
-                if (virtualImage) {
-                    returnObj.virtual_image = virtualImage;
-                }
-
-                return returnObj;
-            }).filter(Boolean),  // Filters out any null values
-        };
-    }
 
 
   return (
@@ -291,7 +388,8 @@ export const BuilderProvider = ({ children }) => {
       findWidgetPropertiesById,
       updateSelectedComponentProperties,
       getUpdateObject,
-      handleObjectChange
+      handleObjectChange,
+      handleJSONUpdate
     }}
     >
     {children}

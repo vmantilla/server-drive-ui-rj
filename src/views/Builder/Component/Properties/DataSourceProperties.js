@@ -10,6 +10,14 @@ function DataSourceProperties({ property, handlePropertyChange }) {
         handlePropertyChange(name, value);
     }
 
+    const handleJsonChange = (name, value) => {
+    try {
+        handleChange(name, JSON.parse(value));
+    } catch (err) {
+        console.error("Failed to parse JSON:", err);
+    }
+}
+
     return (
         <div className="datasource-properties">
             <div className="datasource-properties-body">
@@ -190,13 +198,13 @@ function DataSourceProperties({ property, handlePropertyChange }) {
 					        <div className="datasource-property">
 					            <label>Headers (JSON format):</label>
 					            <div className="input-datasource-wrapper">
-					                <textarea value={JSON.stringify(property?.headers || {})} onChange={(e) => handleChange('headers', JSON.parse(e.target.value))} />
+					                <textarea value={JSON.stringify(property?.headers || {})} onChange={(e) => handleJsonChange('headers', JSON.parse(e.target.value))} />
 					            </div>
 					        </div>
 					        <div className="datasource-property">
 					            <label>Body (JSON format):</label>
 					            <div className="input-datasource-wrapper">
-					                <textarea value={JSON.stringify(property?.body || {})} onChange={(e) => handleChange('body', JSON.parse(e.target.value))} />
+					                <textarea value={JSON.stringify(property?.body || {})} onChange={(e) => handleJsonChange('body', JSON.parse(e.target.value))} />
 					            </div>
 					        </div>
 					    </div>

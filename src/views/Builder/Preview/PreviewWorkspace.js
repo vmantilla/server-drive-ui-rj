@@ -6,7 +6,7 @@ import PreviewScreen from './PreviewScreen';
 import PreviewThumbnail from './PreviewThumbnail';
 import '../../../css/Builder/Preview/PreviewWorkspace.css';
 
-import { getAllPreviewsFromAPI, addPreviewToAPI, deletePreviewFromAPI, editPreviewInAPI } from '../../api';
+import { getAllPreviewsFromAPI, addPreviewToAPI, deletePreviewFromAPI } from '../../api';
 import { useBuilder } from '../BuilderContext';
 
 function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, setOnDelete, forceReflow, showNotification, setUpdateComponentProperties, setShouldUpdate, orderUpdated }) {
@@ -39,18 +39,19 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
       .then((response) => {
         console.log("getAllPreviewsFromAPI", response)
 
-        if (verifyDataConsistency(response.uiScreens, response.uiWidgets, response.uiWidgets_properties)) {
-          setUiScreens(response.uiScreens);
-          setUiWidgets(response.uiWidgets); 
-          setUiWidgetsProperties(response.uiWidgets_properties);
-          setUiWidgetsActions(response.uiWidgets_actions);
+        if (response.screens && response.widgets && response.props && response.actions) {
+          setUiScreens(response.screens);
+          setUiWidgets(response.widgets); 
+          setUiWidgetsProperties(response.props);
+          setUiWidgetsActions(response.actions);
+          setSelectedScreen(null);
+          setSelectedComponent(null);
+          forceReflow();
         } else {
+          showNotification('error', 'Faltan datos en la respuesta.');
           resetBuilder()
         }
         
-        setSelectedScreen(null);
-        setSelectedComponent(null);
-        forceReflow();
       })
       .catch((error) => {
         showNotification('error', 'Error al mostrar el espacio de trabajo.');
@@ -59,6 +60,7 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
     }
   }, [workspaceId]);
 
+
   useEffect(() => {
     const addNewPreview = async () => {
       const previewData = {
@@ -66,11 +68,20 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
       };
 
       try {
-        const response = await addPreviewToAPI(workspaceId, previewData);
+        const response =  await addPreviewToAPI(workspaceId, previewData);
 
-        setUiScreens((prev) => ({ ...prev, ...response.uiScreens }));
-        setUiWidgets((prev) => ({ ...prev, ...response.uiWidgets }));
-        setUiWidgetsProperties((prev) => ({ ...prev, ...response.uiWidgets_properties }));
+        if (response.screens && response.widgets && response.props && response.actions) {
+          setUiScreens((prev) => ({ ...prev, ...response.screens }));
+          setUiWidgets((prev) => ({ ...prev, ...response.widgets }));
+          setUiWidgetsProperties((prev) => ({ ...prev, ...response.props }));
+          setUiWidgetsActions((prev) => ({ ...prev, ...response.actions }));
+          setSelectedScreen(null);
+          setSelectedComponent(null);
+          forceReflow();
+        } else {
+          showNotification('error', 'Faltan datos en la respuesta.');
+          resetBuilder()
+        }
 
       } catch (error) {
         showNotification('error', 'Error al agregar nueva vista previa.');
@@ -83,25 +94,25 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
   }, [workspaceId, setAddNewPreview]);
 
   const handlePositionChange = (newPosition, previewId) => {
-    setUiScreens((prevUiScreens) => {
-      const updatedUiScreens = { ...prevUiScreens };
+  setUiScreens((prevUiScreens) => {
+    const updatedUiScreens = { ...prevUiScreens };
 
-      if (updatedUiScreens[previewId]) {
-        updatedUiScreens[previewId][2] = newPosition.x; // Asumiendo que la posición x está en el índice 2
-        updatedUiScreens[previewId][3] = newPosition.y; // Asumiendo que la posición y está en el índice 3
-      }
+    if (updatedUiScreens[previewId]) {
+      updatedUiScreens[previewId].x = newPosition.x;
+      updatedUiScreens[previewId].y = newPosition.y;
+    }
 
-      return updatedUiScreens;
-    });
-  };
+    return updatedUiScreens;
+  });
+};
 
   const deleteWidgetsAndProperties = (screenId, uiWidgets, uiWidgetsProperties) => {
     let updatedWidgets = { ...uiWidgets };
     let updatedProperties = { ...uiWidgetsProperties };
 
-    (uiScreens[screenId]?.[1] || []).forEach(widgetId => {
+    (uiScreens[screenId]?.widgets || []).forEach(widgetId => {
       delete updatedWidgets[widgetId];
-      (uiWidgets[widgetId]?.[1] || []).forEach(propertyId => {
+      (uiWidgets[widgetId]?.props || []).forEach(propertyId => {
         delete updatedProperties[propertyId];
       });
     });
@@ -109,28 +120,16 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
     return [updatedWidgets, updatedProperties];
   };
 
-  const updateWidgetsAndProperties = (response, selectedScreenId, uiWidgets, uiWidgetsProperties) => {
-    const [updatedWidgets, updatedProperties] = deleteWidgetsAndProperties(selectedScreenId, uiWidgets, uiWidgetsProperties);
-
-    Object.keys(response.uiWidgets).forEach(widgetId => {
-      updatedWidgets[widgetId] = response.uiWidgets[widgetId];
-    });
-
-    Object.keys(response.uiWidgets_properties).forEach(propertyId => {
-      updatedProperties[propertyId] = response.uiWidgets_properties[propertyId];
-    });
-
-    return [updatedWidgets, updatedProperties];
-  };
-
   const confirmDelete = async () => {
-    if (previewToDelete && confirmDeleteName === uiScreens[previewToDelete]?.[0]) {
+    if (previewToDelete && confirmDeleteName === uiScreens[previewToDelete]?.title) {
       try {
-        await deletePreviewFromAPI(previewToDelete);
-        const [updatedWidgets, updatedProperties] = deleteWidgetsAndProperties(previewToDelete, uiWidgets, uiWidgetsProperties);
+        const response = await deletePreviewFromAPI(previewToDelete);
+        console.log(response)
+        const [updatedWidgets, updatedProperties, updatedActions] = deleteWidgetsAndProperties(previewToDelete, uiWidgets, uiWidgetsProperties);
 
         setUiWidgets(updatedWidgets);
         setUiWidgetsProperties(updatedProperties);
+        setUiWidgetsActions(updatedActions);
         setUiScreens(prev => {
           const updated = { ...prev };
           delete updated[previewToDelete];
@@ -194,7 +193,7 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
     }
   };
 
-  const updateUiScreens = (previewId, newArray) => {
+  const updateUiScreens = (previewId, newScreen) => {
     const selectedScreen = uiScreens[previewId];
     if (!selectedScreen) {
       console.error("No screen with the given ID found");
@@ -203,26 +202,35 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
 
     setUiScreens((prev) => ({
       ...prev,
-      [previewId]: newArray
+      [previewId]: newScreen
     }));
-
+    console.log("handleObjectChange", previewId)
     handleObjectChange("uiScreens", previewId);
   }
 
   const handleTitleChange = (newTitle, previewId) => {
     const selectedScreen = uiScreens[previewId];
-    if (!selectedScreen) return; // return early if no selected screen is found
-    
-    const newArray = [newTitle, ...selectedScreen.slice(1)];
-    updateUiScreens(previewId, newArray);
+    if (!selectedScreen) return;
+
+    const updatedScreen = {
+      ...selectedScreen,
+      title: newTitle,
+    };
+    console.log("handleTitleChange", updatedScreen)
+    updateUiScreens(previewId, updatedScreen);
   };
 
   const handlePositionSave = (newPosition, previewId) => {
     const selectedScreen = uiScreens[previewId];
-    if (!selectedScreen) return; // return early if no selected screen is found
-    
-    const newArray = [...selectedScreen.slice(0, 2), newPosition.x, newPosition.y];
-    updateUiScreens(previewId, newArray);
+    if (!selectedScreen) return;
+
+    const updatedScreen = {
+      ...selectedScreen,
+      x: newPosition.x,
+      y: newPosition.y,
+    };
+
+    updateUiScreens(previewId, updatedScreen);
   };
 
   const handleClick = (preview) => {
@@ -236,7 +244,7 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
   <>
     <div className="workspace-content" style={{ transform: `scale(${zoomLevel})`, width: `${workspaceSize}px`, height: `${workspaceSize}px` }}  onClick={handleWorkspaceClick}>
     {Object.entries(uiScreens).map(([previewId, previewData]) => {
-      const [title, , position_x, position_y] = previewData;
+      const { title, widgets, x: position_x, y: position_y } = previewData;
       if (true) {
         return (
           <PreviewScreen
