@@ -22,8 +22,7 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
     selectedComponent, setSelectedComponent,
     buildTree,
     recursiveDeleteComponent,
-    addWidgetWithProperties,
-    addWidgetWithActions,
+    updateWidgetPropertiesAndActions,
     handleJSONUpdate
   } = useBuilder();
 
@@ -88,33 +87,14 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
     showNotification('error', message);
   };
 
-  const addUiWidgetsAction = (parent_id, action) => {
-    let updatedUiWidgets = { ...uiWidgets };
-    let updatedUiWidgetsActions = { ...uiWidgetsActions };
-    let newActionId = action.id;
-
-    const currentWidget = updatedUiWidgets[parent_id];
-    if (currentWidget) {
-      const [component_type, propertyIds, childIds, actionIds] = currentWidget;
-      console.log(currentWidget)
-      const updatedActionIds = [...actionIds, newActionId];
-      const updatedWidget = [component_type, propertyIds, childIds, updatedActionIds];
-      updatedUiWidgets[parent_id] = updatedWidget;
-      updatedUiWidgetsActions[newActionId] = action;
-      console.log(action)
-
-      setUiWidgets(updatedUiWidgets);
-      console.log(updatedUiWidgets)
-      setUiWidgetsActions(updatedUiWidgetsActions);
-    }
-  };
-
+  
   const addAction = async (parentId) => {
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const savedAction = await addActionToAPI(parentId, draggingComponent);
-      addUiWidgetsAction(parentId, savedAction);
+      console.log("addUiWidgetsAction", savedAction)
+      updateWidgetPropertiesAndActions(savedAction);
 
       setComponentLoading(null);
       setDraggingComponent(null);
@@ -131,7 +111,8 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const savedComponent = await addComponentToAPI(selectedScreen, draggingComponent);
-      addWidgetWithProperties(savedComponent);
+      console.log("addWidgetWithProperties", savedComponent)
+      updateWidgetPropertiesAndActions(savedComponent);
 
       setComponentLoading(null);
       setDraggingComponent(null);
@@ -152,7 +133,7 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
       const updatedComponent = await editComponentToAPI(componentId, params);
 
       console.log("modifyComponent", updatedComponent);
-    addWidgetWithProperties(updatedComponent); // Si es necesario
+    updateWidgetPropertiesAndActions(updatedComponent); // Si es necesario
     setComponentLoading(null);
     setSelectedComponent(updatedComponent);
     
@@ -336,7 +317,7 @@ const duplicateComponent = async (compId) => {
     const updatedComponent = await duplicateComponentToAPI(compId);
     
     console.log("updatedComponent", updatedComponent);
-    addWidgetWithProperties(updatedComponent); 
+    updateWidgetPropertiesAndActions(updatedComponent); 
     setComponentLoading(null);
     setSelectedComponent(null);
   } catch (error) {

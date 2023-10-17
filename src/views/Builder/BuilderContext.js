@@ -227,11 +227,12 @@ export const BuilderProvider = ({ children }) => {
 }
 
   const findWidgetPropertiesById = (widgetId) => {
-    const widget = uiWidgets[widgetId];
+    const widget = uiWidgets[widgetId] || uiWidgetsActions[widgetId];
+    
     if (!widget) return null;
 
     const { props: propertyIds } = widget; 
-      
+    
     const properties = propertyIds.reduce((acc, id) => {
       const property = uiWidgetsProperties[id];
       if (property) acc[id] = property;
@@ -291,6 +292,48 @@ export const BuilderProvider = ({ children }) => {
     }
   };
 
+  const recursiveDeleteComponent = (componentId) => {
+    const widget = uiWidgets[componentId];
+    if (!widget) return;
+    
+    const { props: propertyIds, children: childIds } = widget;
+    
+    childIds.forEach(recursiveDeleteComponent);
+
+    let updatedUiWidgetsProperties = { ...uiWidgetsProperties };
+    propertyIds.forEach(id => {
+      delete updatedUiWidgetsProperties[id];
+    });
+    setUiWidgetsProperties(updatedUiWidgetsProperties);
+
+    let updatedUiWidgets = { ...uiWidgets };
+    delete updatedUiWidgets[componentId];
+    setUiWidgets(updatedUiWidgets);
+  };
+
+  const updateWidgetPropertiesAndActions = (response) => {
+    const { widgets, props, actions } = response;
+
+    // Actualizar widgets
+    setUiWidgets((prev) => {
+      const updatedWidgets = { ...prev, ...widgets };
+      console.log(updatedWidgets);
+      return updatedWidgets;
+    });
+
+    // Si hay propiedades en la respuesta, actualizar el estado de propiedades
+    if (props) {
+      setUiWidgetsProperties((prev) => ({ ...prev, ...props }));
+    }
+
+    // Si hay acciones en la respuesta, actualizar el estado de acciones
+    if (actions) {
+      setUiWidgetsActions((prev) => ({ ...prev, ...actions }));
+    }
+  };
+
+
+
 
   /* old methods */
 
@@ -320,50 +363,6 @@ export const BuilderProvider = ({ children }) => {
   }
 
 
-  const addWidgetWithProperties = (response) => {
-
-    const { uiWidgets, uiWidgets_properties } = response;
-    setUiWidgets((prev) => {
-      const updated = { ...prev, ...response.uiWidgets };
-      console.log(updated);
-      return updated;
-    });
-
-    setUiWidgetsProperties((prev) => ({ ...prev, ...uiWidgets_properties }));
-  };
-
-  const addWidgetWithActions = (response) => {
-
-    const { uiWidgets, uiWidgets_actions } = response;
-    setUiWidgets((prev) => {
-      const updated = { ...prev, ...response.uiWidgets };
-      console.log(updated);
-      return updated;
-    });
-
-    setUiWidgetsActions((prev) => ({ ...prev, ...uiWidgets_actions }));
-  };
-
-  // Recursivamente elimina los hijos y propiedades
-  const recursiveDeleteComponent = (componentId) => {
-    const widget = uiWidgets[componentId];
-    if (!widget) return;
-    
-    const [_, propertyIds, childIds] = widget;
-    
-    childIds.forEach(recursiveDeleteComponent);
-
-    let updatedUiWidgetsProperties = { ...uiWidgetsProperties };
-    propertyIds.forEach(id => {
-      delete updatedUiWidgetsProperties[id];
-    });
-    setUiWidgetsProperties(updatedUiWidgetsProperties);
-
-    let updatedUiWidgets = { ...uiWidgets };
-    delete updatedUiWidgets[componentId];
-    setUiWidgets(updatedUiWidgets);
-  };
-
 
 
 
@@ -381,8 +380,7 @@ export const BuilderProvider = ({ children }) => {
       selectedComponent, setSelectedComponent,
       buildTree,
       recursiveDeleteComponent,
-      addWidgetWithActions,
-      addWidgetWithProperties,
+      updateWidgetPropertiesAndActions,
       resetBuilder,
       verifyDataConsistency,
       findWidgetPropertiesById,
