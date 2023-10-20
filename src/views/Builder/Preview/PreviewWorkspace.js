@@ -16,11 +16,13 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
     uiWidgets, setUiWidgets,
     uiWidgetsProperties, setUiWidgetsProperties,
     uiWidgetsActions, setUiWidgetsActions,
+    uiWidgetsActionsInstructions, setUiWidgetsActionsInstructions,
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
     resetBuilder,
     verifyDataConsistency,
-    handleObjectChange
+    handleObjectChange,
+
   } = useBuilder();
 
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -39,11 +41,12 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
       .then((response) => {
         console.log("getAllPreviewsFromAPI", response)
 
-        if (response.screens && response.widgets && response.props && response.actions) {
+        if (response.screens && response.widgets && response.props && response.actions && response.instructions) {
           setUiScreens(response.screens);
           setUiWidgets(response.widgets); 
           setUiWidgetsProperties(response.props);
           setUiWidgetsActions(response.actions);
+          setUiWidgetsActionsInstructions(response.instructions);
           setSelectedScreen(null);
           setSelectedComponent(null);
           forceReflow();

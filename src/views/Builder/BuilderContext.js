@@ -8,6 +8,7 @@ export const BuilderProvider = ({ children }) => {
     uiScreens: [],
     uiWidgetsProperties: [],
     uiWidgetsActions: [],
+    uiWidgetsActionsInstructions: [],
   });
 
   const [shouldUpdate, setShouldUpdate] = useState(false);
@@ -21,10 +22,12 @@ export const BuilderProvider = ({ children }) => {
   const [uiWidgets, setUiWidgets] = useState([]);
   const [uiWidgetsProperties, setUiWidgetsProperties] = useState([]);
   const [uiWidgetsActions, setUiWidgetsActions] = useState([]);
+  const [uiWidgetsActionsInstructions, setUiWidgetsActionsInstructions] = useState([]);
 
   const uiScreensRef = useRef({});
   const uiWidgetsPropertiesRef = useRef({});
   const uiWidgetsActionsRef = useRef({});
+  const uiWidgetsActionsInstructionsRef = useRef({});
 
   useEffect(() => {
     uiScreensRef.current = uiScreens;
@@ -38,6 +41,10 @@ export const BuilderProvider = ({ children }) => {
     uiWidgetsActionsRef.current = uiWidgetsActions;
   }, [uiWidgetsActions]);
 
+  useEffect(() => {
+    uiWidgetsActionsInstructionsRef.current = uiWidgetsActionsInstructions;
+  }, [uiWidgetsActionsInstructions]);
+
   const resetBuilder = () => {
     setPreviews([]);
     setSelectedScreen(null);
@@ -47,15 +54,14 @@ export const BuilderProvider = ({ children }) => {
     setUiWidgets([]);
     setUiWidgetsProperties([]);
     setUiWidgetsActions([]);
+    setUiWidgetsActionsInstructions([]);
   };
-
-
 
   const verifyDataConsistency = () => {
     let isConsistent = true;
 
     // Verificar la existencia de uiScreens, uiWidgets, uiWidgetsProperties, uiWidgetsActions en el estado local
-    if (!uiScreens || !uiWidgets || !uiWidgetsProperties || !uiWidgetsActions) {
+    if (!uiScreens || !uiWidgets || !uiWidgetsProperties || !uiWidgetsActions || !uiWidgetsActionsInstructions) {
         console.error("Faltan algunos campos necesarios en el estado local.");
         return false;
     }
@@ -97,7 +103,7 @@ export const BuilderProvider = ({ children }) => {
 
     // Verificar la consistencia de uiWidgetsActions
     Object.values(uiWidgetsActions).forEach(action => {
-        if (!action[0]) {
+        if (!action.action_type) {
             console.error(`Inconsistencia encontrada: una acción en uiWidgetsActions no tiene un tipo definido.`);
             isConsistent = false;
         }
@@ -112,50 +118,67 @@ export const BuilderProvider = ({ children }) => {
 
   const { widgets: widgetIds } = screen;
 
-  const buildNode = (widgetId, parentId = null) => {
-    const widget = uiWidgets[widgetId];
-    if (!widget) return null;
-
-    const { type: component_type, props: propertyIds, children: childIds, actions: actionIds } = widget; 
-
-    const children = childIds.map(childId => buildNode(childId, widgetId)).filter(Boolean);
-
-    const actions = actionIds ? actionIds.map(actionId => {
-      const action = uiWidgetsActions[actionId];
-      if (!action) return null;
-      const { type: action_type } = action;
-      return {
-        id: actionId,
-        component_type: action_type,
-        children: [],
-        parent_id: parentId,
-        entityType: 'action' // Aquí identificas que es una acción
-      };
-    }).filter(Boolean) : [];
-
-    const properties = propertyIds.map(id => {
-      const property = uiWidgetsProperties[id];
-      if (!property) return null;
-
-      const { name, data, plat: platform } = property;
-      return {
-        id,
-        name,
-        data,
-        platform
-      }
-    }).filter(Boolean);
-
+  const buildNode = (widgetId, parentId = null, entityType = 'widget') => {
+  if (entityType === 'instruction') {
+    console.log("uiWidgetsActionsInstructions", uiWidgetsActionsInstructions[widgetId])
+    const instruction = uiWidgetsActionsInstructions[widgetId];
+    if (!instruction) return null;
+    const { type } = instruction;
     return {
       id: widgetId,
-      component_type,
-      children: [...children, ...actions],
-      properties,
+      component_type: type,
+      children: [],
       parent_id: parentId,
-      entityType: 'widget' // Aquí identificas que es un widget
+      entityType
     };
-  };
+  }
 
+  const widget = uiWidgets[widgetId];
+  if (!widget) return null;
+
+  const { type: component_type, props: propertyIds, children: childIds, actions: actionIds } = widget;
+
+  const children = childIds.map(childId => buildNode(childId, widgetId)).filter(Boolean);
+
+  const actions = actionIds ? actionIds.map(actionId => {
+    const action = uiWidgetsActions[actionId];
+    if (!action) return null;
+    const { type: action_type, instructions } = action;
+
+    const actionChildren = instructions ? instructions.map(instructionId => buildNode(instructionId, actionId, 'instruction')).filter(Boolean) : [];
+    return {
+      id: actionId,
+      component_type: action_type,
+      children: actionChildren,
+      parent_id: widgetId,
+      entityType: 'action'
+    };
+  }).filter(Boolean) : [];
+
+  const properties = propertyIds.map(id => {
+    const property = uiWidgetsProperties[id];
+    if (!property) return null;
+
+    const { name, data, plat: platform } = property;
+    return {
+      id,
+      name,
+      data,
+      platform
+    }
+  }).filter(Boolean);
+
+  return {
+    id: widgetId,
+    component_type,
+    children: [...children, ...actions],
+    properties,
+    parent_id: parentId,
+    entityType
+  };
+};
+
+ console.log(widgetIds.map(widgetId => buildNode(widgetId)).filter(Boolean))
   return widgetIds.map(widgetId => buildNode(widgetId)).filter(Boolean);
 };
 
@@ -227,12 +250,11 @@ export const BuilderProvider = ({ children }) => {
 }
 
   const findWidgetPropertiesById = (widgetId) => {
-    const widget = uiWidgets[widgetId] || uiWidgetsActions[widgetId];
-    
+    const widget = uiWidgets[widgetId];
     if (!widget) return null;
 
     const { props: propertyIds } = widget; 
-    
+      
     const properties = propertyIds.reduce((acc, id) => {
       const property = uiWidgetsProperties[id];
       if (property) acc[id] = property;
@@ -267,6 +289,13 @@ export const BuilderProvider = ({ children }) => {
       });
     };
 
+    const updateOrAddWidgetActionInstructions = (instruction) => {
+      
+      setUiWidgetsActionsInstructions(prev => {
+        return { ...prev, [instruction.id]: instruction };
+      });
+    };
+
     if (json.screens) {
       for (let screenId in json.screens) {
         updateOrAddScreen(json.screens[screenId]);
@@ -290,6 +319,11 @@ export const BuilderProvider = ({ children }) => {
         updateOrAddWidgetAction(json.actions[actionId]);
       }
     }
+    if (json.instructions) {
+      for (let instructionId in json.instructions) {
+        updateOrAddWidgetActionInstructions(json.instructions[instructionId]);
+      }
+    }
   };
 
   const recursiveDeleteComponent = (componentId) => {
@@ -311,13 +345,12 @@ export const BuilderProvider = ({ children }) => {
     setUiWidgets(updatedUiWidgets);
   };
 
-  const updateWidgetPropertiesAndActions = (response) => {
-    const { widgets, props, actions } = response;
+  const updateWidgetPropertiesAndActionsAndInstructions = (response) => {
+    const { widgets, props, actions, instructions } = response;
 
     // Actualizar widgets
     setUiWidgets((prev) => {
       const updatedWidgets = { ...prev, ...widgets };
-      console.log(updatedWidgets);
       return updatedWidgets;
     });
 
@@ -330,9 +363,11 @@ export const BuilderProvider = ({ children }) => {
     if (actions) {
       setUiWidgetsActions((prev) => ({ ...prev, ...actions }));
     }
+
+    if (instructions) {
+      setUiWidgetsActionsInstructions((prev) => ({ ...prev, ...instructions }));
+    }
   };
-
-
 
 
   /* old methods */
@@ -362,10 +397,6 @@ export const BuilderProvider = ({ children }) => {
     setUiWidgets(updatedUiWidgets);
   }
 
-
-
-
-
   return (
     <BuilderContext.Provider
     value={{
@@ -374,13 +405,14 @@ export const BuilderProvider = ({ children }) => {
       uiWidgets, setUiWidgets,
       uiWidgetsProperties, setUiWidgetsProperties,
       uiWidgetsActions, setUiWidgetsActions,
+      uiWidgetsActionsInstructions, setUiWidgetsActionsInstructions,
       selectedScreen, setSelectedScreen,
       updateQueue, setUpdateQueue,
       shouldUpdate, setShouldUpdate,
       selectedComponent, setSelectedComponent,
       buildTree,
       recursiveDeleteComponent,
-      updateWidgetPropertiesAndActions,
+      updateWidgetPropertiesAndActionsAndInstructions,
       resetBuilder,
       verifyDataConsistency,
       findWidgetPropertiesById,

@@ -7,7 +7,11 @@ import 'react-contexify/ReactContexify.css';
 
 import '../../../css/Builder/Preview/PreviewComponents.css';
 
-import { addComponentToAPI, editComponentToAPI, deleteComponentToAPI, duplicateComponentToAPI, addActionToAPI, editActionToAPI, deleteActionToAPI } from '../../api';
+import { 
+  addComponentToAPI, editComponentToAPI, deleteComponentToAPI, duplicateComponentToAPI, 
+  addActionToAPI, editActionToAPI, deleteActionToAPI,
+  addInstructionToAPI, editInstructionToAPI, deleteInstructionToAPI
+ } from '../../api';
 import { useBuilder } from '../BuilderContext';
 
 const MENU_ID = 'blahblah';
@@ -22,7 +26,7 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
     selectedComponent, setSelectedComponent,
     buildTree,
     recursiveDeleteComponent,
-    updateWidgetPropertiesAndActions,
+    updateWidgetPropertiesAndActionsAndInstructions,
     handleJSONUpdate
   } = useBuilder();
 
@@ -62,21 +66,38 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
     draggingComponent["parent_id"] = parentId;
     setComponentLoading(draggingComponent.id);
 
-    if (draggingComponent.isNew) {
-      if (draggingComponent.selected_option === "action") {
-        addAction(parentId);
-      } else {
-        addComponent(parentId);
+    const { isNew, selected_option } = draggingComponent;
+
+    if (isNew) {
+      switch (selected_option) {
+        case 'action':
+          addAction(parentId);
+          break;
+        case 'object':
+          addComponent(parentId);
+          break;
+        case 'instruction':
+          addInstruction(parentId);
+          break;
+        default:
+          console.error('Tipo de componente o acción no soportado:', selected_option);
       }
     } else {
-      if (draggingComponent.selected_option === "action") {
-        //moveComponentAction(parentId);
-      } else {
-        moveComponent(parentId);
+      switch (selected_option) {
+        case 'action':
+          // Lógica para manejar la acción existente
+          //moveComponentAction(parentId);
+          break;
+        case 'object':
+          // Lógica para mover el componenteType1 existente
+          moveComponent(parentId);
+          break;
+        // Agregar más casos según los tipos de componentes que tengas
+        default:
+          console.error('Tipo de componente no soportado:', selected_option);
       }
     }
   };
-
 
   const handleError = (error, message) => {
     loadBuildTree();
@@ -88,13 +109,31 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
   };
 
   
+  const addInstruction = async (parentId) => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const savedInstruction = await addInstructionToAPI(parentId, draggingComponent);
+      console.log("addUiWidgetsAction", savedInstruction)
+      updateWidgetPropertiesAndActionsAndInstructions(savedInstruction);
+
+      setComponentLoading(null);
+      setDraggingComponent(null);
+      setSelectedComponent(null);
+
+      showNotification('success', 'instruction agregada exitosamente.');
+    } catch (error) {
+      handleError(error, 'Error al agregar la instruction:');
+    }
+  };
+
   const addAction = async (parentId) => {
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const savedAction = await addActionToAPI(parentId, draggingComponent);
       console.log("addUiWidgetsAction", savedAction)
-      updateWidgetPropertiesAndActions(savedAction);
+      updateWidgetPropertiesAndActionsAndInstructions(savedAction);
 
       setComponentLoading(null);
       setDraggingComponent(null);
@@ -112,7 +151,7 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
 
       const savedComponent = await addComponentToAPI(selectedScreen, draggingComponent);
       console.log("addWidgetWithProperties", savedComponent)
-      updateWidgetPropertiesAndActions(savedComponent);
+      updateWidgetPropertiesAndActionsAndInstructions(savedComponent);
 
       setComponentLoading(null);
       setDraggingComponent(null);
@@ -133,7 +172,7 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
       const updatedComponent = await editComponentToAPI(componentId, params);
 
       console.log("modifyComponent", updatedComponent);
-    updateWidgetPropertiesAndActions(updatedComponent); // Si es necesario
+    updateWidgetPropertiesAndActionsAndInstructions(updatedComponent); // Si es necesario
     setComponentLoading(null);
     setSelectedComponent(updatedComponent);
     
@@ -317,7 +356,7 @@ const duplicateComponent = async (compId) => {
     const updatedComponent = await duplicateComponentToAPI(compId);
     
     console.log("updatedComponent", updatedComponent);
-    updateWidgetPropertiesAndActions(updatedComponent); 
+    updateWidgetPropertiesAndActionsAndInstructions(updatedComponent); 
     setComponentLoading(null);
     setSelectedComponent(null);
   } catch (error) {
@@ -343,6 +382,10 @@ const computeClassNames = (comp, draggingComponent, selectedComponent, draggingC
 
   if (comp.entityType === 'action') {
     classes += "action ";
+  }
+
+  if (comp.entityType === 'instruction') {
+    classes += "instruction ";
   }
 
   if (orderableComponent && comp.id === orderableComponent.id) {

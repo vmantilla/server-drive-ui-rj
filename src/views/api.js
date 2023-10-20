@@ -453,5 +453,63 @@ export const deleteActionToAPI = async (actionId) => {
 };
 
 
+// Helper function to remove unpermitted parameters
+const removeInstructionUnpermittedParams = (instruction) => {
+  const sanitizedInstruction = { ...instruction };
+  
+  sanitizedInstruction.instruction_type = sanitizedInstruction.component_type;
+
+  delete sanitizedInstruction.id;
+  delete sanitizedInstruction.selected_option;
+  delete sanitizedInstruction.created_at;
+  delete sanitizedInstruction.updated_at;
+  delete sanitizedInstruction.user_id;
+  delete sanitizedInstruction.project_id;
+  delete sanitizedInstruction.component_id;
+  delete sanitizedInstruction.preview_id;
+  delete sanitizedInstruction.parent_id;
+  delete sanitizedInstruction.children;
+  delete sanitizedInstruction.isNew;
+  delete sanitizedInstruction.expanded;
+  delete sanitizedInstruction.loading;
+  delete sanitizedInstruction.component_type;
+  
+  return sanitizedInstruction;
+};
+
+// === COMPONENT ACTION INSTRUCTIONS API CALLS ===
+
+export const addInstructionToAPI = async (componentActionId, instruction) => {
+  try {
+    const response = await axios.post(`/component_actions/${componentActionId}/instructions`, { component_action_instruction: removeInstructionUnpermittedParams(instruction) });
+    return response.data;
+  } catch (error) {
+    console.error('Error al guardar la instrucción:', error);
+    throw error;
+  }
+};
+
+export const editInstructionToAPI = async (instructionId, instruction) => {
+  try {
+    const response = await axios.put(`/component_action_instructions/${instructionId}`, { component_action_instruction: removeInstructionUnpermittedParams(instruction) });
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar instrucción:', error);
+    throw error;
+  }
+};
+
+export const deleteInstructionToAPI = async (instructionId) => {
+  try {
+    const response = await axios.delete(`/component_action_instructions/${instructionId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al eliminar la instrucción:', error);
+    throw error;
+  }
+};
+
+
+
 
 

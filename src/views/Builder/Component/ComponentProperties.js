@@ -124,6 +124,9 @@ useEffect(() => {
 
         const currentWidgetId = selectedComponent.id;
         const currentWidget = uiWidgets[currentWidgetId];
+
+        if (!currentWidget) return;
+        
         const { props: widgetProperties } = currentWidget;
         currentWidgetProperties = widgetProperties;
 

@@ -111,6 +111,18 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
         );
         break;
 
+    case 'instruction':
+        options.push(
+            { iconClass: "bi bi-diagram-3", type: "Conditional", onClick: () => { /* Handle onClick */ } },
+            { iconClass: "bi bi-diagram-3", type: "Loop", onClick: () => { /* Handle onDoubleClick */ } },
+            { iconClass: "bi bi-diagram-3", type: "Sequence", onClick: () => { /* Handle onLongPress */ } },
+            { iconClass: "bi bi-diagram-3", type: "Set_Variable", onClick: () => { /* Handle onRightClick */ } },
+            { iconClass: "bi bi-diagram-3", type: "Switch", onClick: () => { /* Handle onHover */ } },
+            { iconClass: "bi bi-cloud", type: "API_Call", onClick: () => { /* Handle onInputChange */ } },
+            { iconClass: "bi bi-alarm", type: "Timer", onClick: () => { /* Handle onInputFocus */ } }
+        );
+        break;
+
     case 'space':
       options.push(
         
@@ -168,6 +180,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
           <>
             <button className="icon-button" onClick={(e) => handleButtonPress(e, 'object')}><i className="bi bi-columns-gap"></i></button>
             <button className="icon-button" onClick={(e) => handleButtonPress(e, 'action')}><i className="bi bi-wrench "></i></button>
+            <button className="icon-button" onClick={(e) => handleButtonPress(e, 'instruction')}><i className="bi bi-diagram-3"></i></button>
           </>
         )}
       </div>

@@ -54,9 +54,12 @@
 }
 
 .component-item.action {
-    color: #6A5ACD;
+    color: #32C26D;
 }
 
+.component-item.instruction {
+    color: #800080;
+}
 
 .toggle-btn {
     width: 20px;
