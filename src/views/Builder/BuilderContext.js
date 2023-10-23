@@ -92,7 +92,7 @@ export const BuilderProvider = ({ children }) => {
     const widget = uiWidgets[widgetId];
     if (!widget) return null;
 
-    const { name, props: propertyIds, children: childIds, sub_type } = widget;
+    const { name, component_type, props: propertyIds, children: childIds, sub_type } = widget;
 
     // Construyendo nodos hijos recursivamente
     const children = childIds.map((childId, index) => buildNode(childId, widgetId, index)).filter(Boolean);
@@ -111,11 +111,10 @@ export const BuilderProvider = ({ children }) => {
       };
     }).filter(Boolean);
 
-    // Retornando la estructura del widget actual
     return {
       name,
-      component_type: 0, // Asumiendo que el tipo es 0 para todos estos componentes
-      sub_type: Component.sub_types[sub_type], // Asignando el subtipo utilizando el enum
+      component_type: component_type,
+      sub_type: sub_type, 
       user_id: userId,
       project_id: projectId,
       position,
@@ -124,7 +123,6 @@ export const BuilderProvider = ({ children }) => {
     };
   };
 
-  // Iniciar la construcción del árbol desde el ID de la pantalla proporcionado
   return buildNode(screenId);
 };
 
