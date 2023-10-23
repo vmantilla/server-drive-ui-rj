@@ -401,7 +401,7 @@ export const getSignedURLFromAPI = async (property, content_type, extension) => 
 const removeActionUnpermittedParams = (action) => {
   const sanitizedAction = { ...action };
   
-  sanitizedAction.action_type = sanitizedAction.component_type;
+  sanitizedAction.action_type = sanitizedAction.sub_type;
 
   delete sanitizedAction.id;
   delete sanitizedAction.selected_option;
@@ -416,7 +416,7 @@ const removeActionUnpermittedParams = (action) => {
   delete sanitizedAction.isNew;
   delete sanitizedAction.expanded;
   delete sanitizedAction.loading;
-  delete sanitizedAction.component_type;
+  delete sanitizedAction.sub_type;
 
   return sanitizedAction;
 };
@@ -457,7 +457,7 @@ export const deleteActionToAPI = async (actionId) => {
 const removeInstructionUnpermittedParams = (instruction) => {
   const sanitizedInstruction = { ...instruction };
   
-  sanitizedInstruction.instruction_type = sanitizedInstruction.component_type;
+  sanitizedInstruction.instruction_type = sanitizedInstruction.sub_type;
 
   delete sanitizedInstruction.id;
   delete sanitizedInstruction.selected_option;
@@ -472,7 +472,7 @@ const removeInstructionUnpermittedParams = (instruction) => {
   delete sanitizedInstruction.isNew;
   delete sanitizedInstruction.expanded;
   delete sanitizedInstruction.loading;
-  delete sanitizedInstruction.component_type;
+  delete sanitizedInstruction.sub_type;
   
   return sanitizedInstruction;
 };

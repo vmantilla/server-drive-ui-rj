@@ -14,7 +14,7 @@ export const deleteNestedComponent = (components, targetId) => {
       // Crear un nuevo componente con los children actualizados
         const updatedComponent = new SDComponent(
           component.id,
-          component.component_type,
+          component.sub_type,
           component.properties,
         deleteNestedComponent(component.children, targetId), // Elimina los hijos
         component.states,

@@ -164,9 +164,11 @@ useEffect(() => {
             }
         });
 
-        const { type: component_type, children: childIds } = currentcomponent;
+        const { name, component_type, sub_type, children: childIds } = currentcomponent;
         const updatedcomponent = {
-            type: component_type,
+        	name: name,
+        	component_type: component_type,
+            sub_type: sub_type,
             props: updatedPropertyIds,
             children: childIds
         };
@@ -329,7 +331,9 @@ useEffect(() => {
 		} else {
 			console.log('No updates needed.');
 		}
-	};const showPropertiesBasedOnComponentType = (component) => {
+	};
+
+	const showPropertiesBasedOnComponentType = (component) => {
     const propertyComponents = [
         {title: "Header", component: HeaderProperties},
         {title: "Footer", component: FooterProperties},
@@ -350,18 +354,23 @@ useEffect(() => {
     ];
 
     const allowedPropertiesConfig = {
-        Header: ["Background", "Margin", "Corner", "Text"],
-        Body: ["Background", "Margin", "Corner", "Text"],
-        Footer: ["Background", "Margin", "Corner", "Text"],
-        Button: ["Background", "Margin", "Corner", "Text", "Font", "Stroke"],
-        Row: ["Background", "Margin", "Corner"],
-        Column: ["Background", "Margin", "Corner"],
-        Image: ["Background", "Margin", "Corner", "Frame"],
-        Text: ["Background", "Margin", "Corner", "Font", "Stroke"],
-        OnLoad: ["Function_Name", "Function_Returns"],
+        header: ["Background", "Margin", "Corner", "Text"],
+        body: ["Background", "Margin", "Corner", "Text"],
+        footer: ["Background", "Margin", "Corner", "Text"],
+        button: ["Background", "Margin", "Corner", "Text", "Font", "Stroke"],
+        row: ["Background", "Margin", "Corner"],
+        column: ["Background", "Margin", "Corner"],
+        image: ["Background", "Margin", "Corner", "Frame"],
+        text: ["Text","Background", "Margin", "Corner", "Font", "Stroke"],
+        onload: ["Function_Name", "Function_Returns"],
     };
 
-    const mainComponentType = component.component_type;
+    const mainComponentType = component.sub_type;
+
+    if (!allowedPropertiesConfig.hasOwnProperty(mainComponentType)) {
+        return [];
+    }
+
     const allowedTitles = allowedPropertiesConfig[mainComponentType];
 
     const allowedProperties = propertyComponents.filter(({ title }) => allowedTitles.includes(title));

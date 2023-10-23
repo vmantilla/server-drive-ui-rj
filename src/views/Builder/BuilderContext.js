@@ -188,11 +188,11 @@ export const BuilderProvider = ({ children }) => {
     return properties;
   }
 
-  const findEntityById = (component_type, entityId) => {
-    console.log("component_type", component_type)
+  const findEntityById = (sub_type, entityId) => {
+    console.log("sub_type", sub_type)
     console.log("entityId", entityId)
   let entity;
-  switch (component_type) {
+  switch (sub_type) {
     case 'widget':
       entity = uiComponents[entityId];
       break;

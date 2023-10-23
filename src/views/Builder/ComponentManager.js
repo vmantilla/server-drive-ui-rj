@@ -208,10 +208,10 @@ class ComponentManager {
 	  
 	  // Primero, crea todos los nodos.
 	  for (const [id, value] of Object.entries(jsonData.uiComponents)) {
-	    const [component_type, propertiesIds, children] = value;
+	    const [sub_type, propertiesIds, children] = value;
 	    nodes[id] = {
 	      id,
-	      component_type,
+	      sub_type,
 	      parent_id: parent_id, 
 	      children: [],
 	      properties: propertiesIds.map(propId => {

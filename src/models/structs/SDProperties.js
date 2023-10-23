@@ -1,6 +1,6 @@
 class SDProperties {
   constructor({
-    component_type = '',
+    sub_type = '',
     frame = {},
     backgroundColor = '',
     cornerRadius = {},
@@ -33,7 +33,7 @@ class SDProperties {
     lineLimit = '',
     clickProperties = ''
   } = {}) {
-    this.component_type = component_type;
+    this.sub_type = sub_type;
     this.frame = frame;
     this.backgroundColor = backgroundColor;
     this.cornerRadius = cornerRadius;

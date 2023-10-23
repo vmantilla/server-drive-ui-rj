@@ -5,9 +5,9 @@ import SDProperties from './SDProperties';
 import SDComponentType from '../../enums/SDComponentType';
 
 class SDComponent {
-    constructor(id = '', component_type = '', properties  = {}, children = [], states = []) {
+    constructor(id = '', sub_type = '', properties  = {}, children = [], states = []) {
         this.id = id;
-        this.component_type = SDComponentType[component_type];
+        this.sub_type = SDComponentType[sub_type];
         this.properties = properties;
         this.children = children;
         this.states = Array.isArray(states) ? states : [];
@@ -16,7 +16,7 @@ class SDComponent {
     toJSON() {
         return {
             id: this.id,
-            component_type: this.component_type,
+            sub_type: this.sub_type,
             properties: this.properties && typeof this.properties.toJSON === 'function' ? this.properties.toJSON() : null, // Verificación agregada aquí
             children: Array.isArray(this.children) ? this.children.map(child => child ? child.toJSON() : null) : [],
             states: this.states,

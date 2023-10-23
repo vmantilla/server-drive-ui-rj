@@ -8,9 +8,7 @@ import 'react-contexify/ReactContexify.css';
 import '../../../css/Builder/Preview/PreviewComponents.css';
 
 import { 
-  addComponentToAPI, editComponentToAPI, deleteComponentToAPI, duplicateComponentToAPI, 
-  addActionToAPI, editActionToAPI, deleteActionToAPI,
-  addInstructionToAPI, editInstructionToAPI, deleteInstructionToAPI
+  addComponentToAPI, editComponentToAPI, deleteComponentToAPI, duplicateComponentToAPI
  } from '../../api';
 import { useBuilder } from '../BuilderContext';
 
@@ -59,6 +57,7 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
   }
 
   const handleDrop = async (event, parentId) => {
+    console.log("draggingComponent", draggingComponent)
     event.preventDefault();
     event.stopPropagation();
 
@@ -68,33 +67,9 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
     const { isNew, selected_option } = draggingComponent;
 
     if (isNew) {
-      switch (selected_option) {
-        case 'action':
-          addAction(parentId);
-          break;
-        case 'object':
-          addComponent(parentId);
-          break;
-        case 'instruction':
-          addInstruction(parentId);
-          break;
-        default:
-          console.error('Tipo de componente o acción no soportado:', selected_option);
-      }
+      addComponent(parentId);
     } else {
-      switch (selected_option) {
-        case 'action':
-          // Lógica para manejar la acción existente
-          //moveComponentAction(parentId);
-          break;
-        case 'object':
-          // Lógica para mover el componenteType1 existente
-          moveComponent(parentId);
-          break;
-        // Agregar más casos según los tipos de componentes que tengas
-        default:
-          console.error('Tipo de componente no soportado:', selected_option);
-      }
+      moveComponent(parentId);
     }
   };
 
@@ -107,43 +82,6 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
     showNotification('error', message);
   };
 
-  
-  const addInstruction = async (parentId) => {
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      const savedInstruction = await addInstructionToAPI(parentId, draggingComponent);
-      console.log("adduiComponentsAction", savedInstruction)
-      updatecomponentProperties(savedInstruction);
-
-      setComponentLoading(null);
-      setDraggingComponent(null);
-      setSelectedComponent(null);
-
-      showNotification('success', 'instruction agregada exitosamente.');
-    } catch (error) {
-      handleError(error, 'Error al agregar la instruction:');
-    }
-  };
-
-  const addAction = async (parentId) => {
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      const savedAction = await addActionToAPI(parentId, draggingComponent);
-      console.log("adduiComponentsAction", savedAction)
-      updatecomponentProperties(savedAction);
-
-      setComponentLoading(null);
-      setDraggingComponent(null);
-      setSelectedComponent(null);
-
-      showNotification('success', 'Accion agregada exitosamente.');
-    } catch (error) {
-      handleError(error, 'Error al agregar la accion:');
-    }
-  };
-
   const addComponent = async (parentId) => {
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -154,8 +92,7 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
 
       setComponentLoading(null);
       setDraggingComponent(null);
-
-      setSelectedComponent(savedComponent);
+      setSelectedComponent(null);
 
       showNotification('success', 'Componente agregado exitosamente.');
     } catch (error) {
@@ -173,7 +110,7 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
       console.log("modifyComponent", updatedComponent);
     updatecomponentProperties(updatedComponent); // Si es necesario
     setComponentLoading(null);
-    setSelectedComponent(updatedComponent);
+    setSelectedComponent(null);
     
     if (successMessage) {
       showNotification('success', successMessage);
@@ -201,7 +138,7 @@ const handleEditComponentOrder = (newIndex) => {
 };
 
 const deleteComponent = async (compToDelete) => { 
-  if (['header', 'body', 'footer'].includes(compToDelete.component_type)) {
+  if (['header', 'body', 'footer'].includes(compToDelete.sub_type)) {
     return;
   }
 
@@ -330,7 +267,7 @@ useEffect(() => {
   };
 
 const handleDragStart = (event, component) => {
-  if (['header', 'body', 'footer'].includes(component.component_type)) {
+  if (['header', 'body', 'footer'].includes(component.sub_type)) {
     return;
   }
   event.stopPropagation();
@@ -365,7 +302,7 @@ const duplicateComponent = async (compId) => {
   }
 };
 
-const getCustomizations = (component_type) => {
+const getCustomizations = (sub_type) => {
   const customizations = {
     'header': { class: 'component-type-header', label: '', enableDrag: false },
     'body': { class: 'component-type-body', label: '', enableDrag: false },
@@ -373,11 +310,15 @@ const getCustomizations = (component_type) => {
     'default': { class: '', label: '', enableDrag: true },
   };
 
-  return customizations[component_type] || customizations['default'];
+  return customizations[sub_type] || customizations['default'];
 };
 
 const computeClassNames = (comp, draggingComponent, selectedComponent, draggingComponentOver, orderableComponent) => {
   let classes = "component-item ";
+
+  if (comp.component_type === 'component') {
+    classes += "component ";
+  }
 
   if (comp.component_type === 'action') {
     classes += "action ";
@@ -418,7 +359,7 @@ const { show } = useContextMenu({
 
 function handleContextMenu(event, component){
 
-  if (component && ['header', 'body', 'footer'].includes(component.component_type)) {
+  if (component && ['header', 'body', 'footer'].includes(component.sub_type)) {
     return; 
   }
   setContextMenuComponentId(component.id);
@@ -514,7 +455,7 @@ function convertOldToNew(oldComponent) {
 
   const newComponent = {
     id: oldComponent.id.toString(),
-    componentType: oldComponent.property?.data?.component_type || oldComponent.component_type,
+    componentType: oldComponent.property?.data?.sub_type || oldComponent.sub_type,
   commonStyleIds: [], // Puedes añadir aquí según necesites
   children: oldComponent.children.map(convertOldToNew)
 };
@@ -539,7 +480,7 @@ function convertNewToOld(newComponent) {
 
   const oldComponent = {
     id: parseInt(newComponent.id),
-    component_type: newComponent.componentType,
+    sub_type: newComponent.componentType,
   parent_id: null, // Esto tendrás que ajustarlo según tu lógica
   children: newComponent.children.map(convertNewToOld),
   property: {} // Completar según las necesidades
@@ -557,13 +498,14 @@ function convertToOldStructure(newJson) {
 
 const renderComponentList = (compArray, parentId = null) => 
   compArray.map(comp => {
-    if (!comp || !comp.component_type) {
+    if (!comp || !comp.sub_type) {
       console.error('Invalid component:', comp);
       return null;
     }
 
-    const { id, component_type, property } = comp;
-    const { class: customClass, label: customLabel, enableDrag } = getCustomizations(component_type);
+    const { id, sub_type, property } = comp;
+    console.log("getCustomizations", sub_type)
+    const { class: customClass, label: customLabel, enableDrag } = getCustomizations(sub_type);
 
     return (
       <div key={comp.id} className={customClass} 
@@ -591,7 +533,7 @@ const renderComponentList = (compArray, parentId = null) =>
               <span className="toggle-btn" onClick={(e) => { e.stopPropagation(); handleToggleExpanded(comp.id); }}>
                 {expandedComponents.includes(comp.id) ?  <i className="bi bi-node-minus"></i> : <i className="bi bi-node-plus-fill"></i>}
               </span>
-              <span>{comp.component_type ? comp.component_type : 'N/A'}</span>
+              <span>{comp.sub_type ? comp.name : 'N/A'}</span>
             </div>
             
           </div>

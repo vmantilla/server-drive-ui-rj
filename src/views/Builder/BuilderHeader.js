@@ -71,7 +71,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
   const options = [];
 
   switch (componentType) {
-    case 'object':
+    case 'widget':
       options.push(
         { iconClass: "bi bi-distribute-horizontal", type: "Row", onClick: () => { /* Handle Row */ } },
         { iconClass: "bi bi-distribute-vertical", type: "Column", onClick: () => { /* Handle Column */ } },
@@ -143,7 +143,9 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
 
     const newComponent = {
       id: uniqueId,
-      component_type: componentType,
+      name: componentType,
+      component_type: selectedOption,
+      sub_type: componentType.toLowerCase(),
       selected_option: selectedOption,
       children: [],
       expanded: false,
@@ -178,7 +180,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
           <button className="icon-button" onClick={addNewPreview}><i className="bi bi-window-plus"></i></button>
         ) : (
           <>
-            <button className="icon-button" onClick={(e) => handleButtonPress(e, 'object')}><i className="bi bi-columns-gap"></i></button>
+            <button className="icon-button" onClick={(e) => handleButtonPress(e, 'widget')}><i className="bi bi-columns-gap"></i></button>
             <button className="icon-button" onClick={(e) => handleButtonPress(e, 'action')}><i className="bi bi-wrench "></i></button>
             <button className="icon-button" onClick={(e) => handleButtonPress(e, 'instruction')}><i className="bi bi-diagram-3"></i></button>
           </>
