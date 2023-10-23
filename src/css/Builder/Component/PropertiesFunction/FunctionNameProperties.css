@@ -1,0 +1,36 @@
+.function-name-properties {
+  display: flex;
+  flex-direction: column;
+}
+
+.function-name-properties-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+}
+
+.function-name-property {
+  display: flex;
+  flex-direction: column;
+}
+
+.function-name-property label {
+  font-size: 10px;
+  color: #292929;
+}
+
+.function-name-property-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0px 2px;
+  border-radius: 4px;
+  height: 30px;
+}
+
+.function-name-property-input-wrapper input[type="text"] {
+  font-size: 10px;
+  border: none;
+  outline: none;
+}

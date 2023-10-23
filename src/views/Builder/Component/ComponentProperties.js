@@ -19,6 +19,10 @@ import DataSourceProperties from './Properties/DataSourceProperties';
 import LoadingComponent from './Properties/LoadingComponent';
 import ErrorComponent from './Properties/ErrorComponent';
 
+//Propiedades de funciones.
+import FunctionNameProperties from './PropertiesFunction/FunctionNameProperties';
+
+
 import '../../../css/Builder/Component/ComponentProperties.css';
 import { addPropertyToAPI, deletePropertyFromAPI } from '../../api';
 
@@ -66,7 +70,9 @@ function getInitialViewStates() {
 		column: [],
 		text: [],
 		header: [],
-		footer: []
+		footer: [],
+		function_name: [],
+		function_returns: []
 	};
 }
 
@@ -80,6 +86,7 @@ function ComponentProperties() {
     findWidgetPropertiesById,
     handleObjectChange,
     shouldUpdate, setShouldUpdate,
+    findEntityById
   } = useBuilder();
 
   const [viewStates, setViewStates] = useState(getInitialViewStates);
@@ -95,11 +102,22 @@ function ComponentProperties() {
 	  }, [selectedScreen, selectedComponent]);
 
 
-  function fillViewStates(widgetId) {
-	  const properties = findWidgetPropertiesById(widgetId);
+  function fillViewStates(component) {
+  	const entity = findEntityById(component.entityType, component.id)
+  	if (!entity) return;
+
+  	const { props: propertyIds } = entity;
+
+  	if (!propertyIds) return;
+  
+	  const properties = propertyIds.reduce((acc, id) => {
+	    const property = uiWidgetsProperties[id]; // Podrías necesitar generalizar esto también
+	    if (property) acc[id] = property;
+	    return acc;
+	  }, {});
 
 	  if (!properties) return;
-
+	  console.log("properties", properties)
 	  let newViewStates = { ...getInitialViewStates() };
 
 	  Object.entries(properties).forEach(([id, propertyObj]) => {
@@ -110,7 +128,7 @@ function ComponentProperties() {
 	      console.warn(`La categoría ${name} no existe en viewStates`);
 	    }
 	  });
-
+	  console.log("newViewStates", newViewStates)
 	  setViewStates(newViewStates);
 	}
 
@@ -168,7 +186,7 @@ useEffect(() => {
 
 	useEffect(() => {
 		if (selectedComponent !== null) {
-			fillViewStates(selectedComponent.id);
+			fillViewStates(selectedComponent);
 		}
 	}, [selectedComponent]);
 
@@ -229,6 +247,8 @@ useEffect(() => {
 	};
 
 	const handleAddState = async (type) => {
+		console.log("type", type)
+		console.log("viewStates[type]", viewStates[type])
     const availableStates = possibleStates.filter(
         state => !viewStates[type].some(s => s.plat === state)
     );
@@ -310,79 +330,48 @@ useEffect(() => {
 		} else {
 			console.log('No updates needed.');
 		}
-	};
+	};const showPropertiesBasedOnComponentType = (component) => {
+    const propertyComponents = [
+        {title: "Header", component: HeaderProperties},
+        {title: "Footer", component: FooterProperties},
+        {title: "Row", component: RowProperties},
+        {title: "Column", component: ColumnProperties},
+        {title: "Text", component: TextProperties},
+        {title: "datasource", component: DataSourceProperties},
+        {title: "Background", component: BackgroundProperties},
+        {title: "Margin", component: MarginProperties},
+        {title: "Corner", component: RoundedCornerProperties},
+        {title: "Image", component: ImageProperties},
+        {title: "Frame", component: FrameProperties},
+        {title: "Alignment", component: AlignmentProperties},
+        {title: "Font", component: FontProperties},
+        {title: "Stroke", component: StrokeProperties},
+        {title: "Function_Name", component: FunctionNameProperties},
+        {title: "Function_Returns", component: FunctionNameProperties},
+    ];
 
-	const showPropertiesBasedOnComponentType = (component) => {
+    const allowedPropertiesConfig = {
+        Header: ["Background", "Margin", "Corner", "Text"],
+        Body: ["Background", "Margin", "Corner", "Text"],
+        Footer: ["Background", "Margin", "Corner", "Text"],
+        Button: ["Background", "Margin", "Corner", "Text", "Font", "Stroke"],
+        Row: ["Background", "Margin", "Corner"],
+        Column: ["Background", "Margin", "Corner"],
+        Image: ["Background", "Margin", "Corner", "Frame"],
+        Text: ["Background", "Margin", "Corner", "Font", "Stroke"],
+        OnLoad: ["Function_Name", "Function_Returns"],
+    };
 
-		const propertyComponents = [
-			{title: "Header", component: HeaderProperties},
-			{title: "Footer", component: FooterProperties},
-			{title: "Row", component: RowProperties},
-			{title: "Column", component: ColumnProperties},
-			{title: "Text", component: TextProperties},
-			{title: "datasource", component: DataSourceProperties},
-			{title: "Background", component: BackgroundProperties},
-			{title: "Margin", component: MarginProperties},
-			{title: "Corner", component: RoundedCornerProperties},
-			{title: "Image", component: ImageProperties},
-			{title: "Frame", component: FrameProperties},
-			{title: "Alignment", component: AlignmentProperties},
-			{title: "Font", component: FontProperties},
-			{title: "Stroke", component: StrokeProperties},
+    const mainComponentType = component.component_type;
+    const allowedTitles = allowedPropertiesConfig[mainComponentType];
 
-			];
+    const allowedProperties = propertyComponents.filter(({ title }) => allowedTitles.includes(title));
 
-		const isNotAllowedForHeaderBodyFooter = (title) => ['Frame','Alignment', 'Image', 'Font'].includes(title);
-		const isNotAllowedForButton = (title) => ['Header', 'Footer','Alignment','Image', 'Font', "Text", "Row", "Column"].includes(title);
-		const isNotAllowedForText = (title) => ['Header', 'Footer','Alignment','Row', 'Column', 'Image', "Row", "Column"].includes(title);
-		const isNotAllowedForImage = (title) => ['Header', 'Footer','Alignment','Row', 'Column', 'Font', "Text", "Row", "Column"].includes(title);
-		const isNotAllowedForRow = (title) => ['Header', 'Footer','Alignment','Image', 'Font', "Column", "Text"].includes(title);
-		const isNotAllowedForColumn = (title) => ['Header', 'Footer','Alignment','Image', 'Font', "Row", "Text"].includes(title);
-		const isNotAllowedForOverlay = (title) => ['Header', 'Footer','Alignment','Image', 'Font', "Row", "Column", "Text"].includes(title);
-
-		const allowedProperties = propertyComponents.filter(({ title }) => {
-			const mainComponentType = component.component_type;
-
-			let isAllowedForMainComponent = true;
-
-			switch (mainComponentType) {
-			case 'Header':
-			case 'Body':
-			case 'Footer':
-				isAllowedForMainComponent = !isNotAllowedForHeaderBodyFooter(title);
-				break;
-			case 'Button':
-				isAllowedForMainComponent = !isNotAllowedForButton(title);
-				break;
-			case 'Row':
-				isAllowedForMainComponent = !isNotAllowedForRow(title) || (mainComponentType === title);
-				break;
-			case 'Column':
-				isAllowedForMainComponent = !isNotAllowedForColumn(title);
-				break;
-			case 'Overlay':
-				isAllowedForMainComponent = !isNotAllowedForOverlay(title);
-				break;
-			case 'Image':
-				isAllowedForMainComponent = !isNotAllowedForImage(title);
-				break;
-			case 'Text':
-				isAllowedForMainComponent = !isNotAllowedForText(title);
-				break;
-			default:
-				isAllowedForMainComponent = false;
-				break;
-			}
-
-			return isAllowedForMainComponent;
-		});
-
-		return allowedProperties.map(({ title, component }) => {
-    return (
+    return allowedProperties.map(({ title, component }) => (
         <MiniHeaderWithProperties
-            key={`${title}${selectedComponent.id}`}
+            key={`${title}${component.id}`}
             title={title}
-            selectedComponent={selectedComponent}
+            selectedComponent={component}
             states={viewStates[title.toLowerCase()]}
             propertyComponent={component}
             handleChangeState={handleChangeState}
@@ -390,10 +379,9 @@ useEffect(() => {
             handleDeleteState={handleDeleteState}
             handleRetry={handleRetry}
         />
-    );
-});
+    ));
+};
 
-	};
 
   return (
     <div className="component-properties">

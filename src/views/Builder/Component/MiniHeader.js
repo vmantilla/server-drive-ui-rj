@@ -8,10 +8,18 @@ function MiniHeader({ possibleStates, title, states, onAddState, onDeleteState, 
     );
   };
 
+  const processTitle = (rawTitle) => {
+    return rawTitle.split('_')
+      .map((word, index) => index === 0
+        ? word
+        : word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   return (
     <div>
       <header className="properties-header">
-        <span className="properties-title">{title}</span>
+        <span className="properties-title">{processTitle(title)}</span>
         <button className="add-property-button properties-title" onClick={onAddState}>+</button>
       </header>
       <div className="properties-body">

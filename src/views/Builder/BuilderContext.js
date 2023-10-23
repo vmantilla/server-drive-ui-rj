@@ -6,9 +6,7 @@ export const BuilderProvider = ({ children }) => {
 
   const [updateQueue, setUpdateQueue] = useState({
     uiScreens: [],
-    uiWidgetsProperties: [],
-    uiWidgetsActions: [],
-    uiWidgetsActionsInstructions: [],
+    uiWidgetsProperties: []
   });
 
   const [shouldUpdate, setShouldUpdate] = useState(false);
@@ -21,13 +19,9 @@ export const BuilderProvider = ({ children }) => {
   const [uiScreens, setUiScreens] = useState([]);
   const [uiWidgets, setUiWidgets] = useState([]);
   const [uiWidgetsProperties, setUiWidgetsProperties] = useState([]);
-  const [uiWidgetsActions, setUiWidgetsActions] = useState([]);
-  const [uiWidgetsActionsInstructions, setUiWidgetsActionsInstructions] = useState([]);
 
   const uiScreensRef = useRef({});
   const uiWidgetsPropertiesRef = useRef({});
-  const uiWidgetsActionsRef = useRef({});
-  const uiWidgetsActionsInstructionsRef = useRef({});
 
   useEffect(() => {
     uiScreensRef.current = uiScreens;
@@ -37,14 +31,6 @@ export const BuilderProvider = ({ children }) => {
     uiWidgetsPropertiesRef.current = uiWidgetsProperties;
   }, [uiWidgetsProperties]);
 
-  useEffect(() => {
-    uiWidgetsActionsRef.current = uiWidgetsActions;
-  }, [uiWidgetsActions]);
-
-  useEffect(() => {
-    uiWidgetsActionsInstructionsRef.current = uiWidgetsActionsInstructions;
-  }, [uiWidgetsActionsInstructions]);
-
   const resetBuilder = () => {
     setPreviews([]);
     setSelectedScreen(null);
@@ -53,15 +39,13 @@ export const BuilderProvider = ({ children }) => {
     setUiScreens([]);
     setUiWidgets([]);
     setUiWidgetsProperties([]);
-    setUiWidgetsActions([]);
-    setUiWidgetsActionsInstructions([]);
   };
 
   const verifyDataConsistency = () => {
     let isConsistent = true;
 
     // Verificar la existencia de uiScreens, uiWidgets, uiWidgetsProperties, uiWidgetsActions en el estado local
-    if (!uiScreens || !uiWidgets || !uiWidgetsProperties || !uiWidgetsActions || !uiWidgetsActionsInstructions) {
+    if (!uiScreens || !uiWidgets || !uiWidgetsProperties ) {
         console.error("Faltan algunos campos necesarios en el estado local.");
         return false;
     }
@@ -77,7 +61,7 @@ export const BuilderProvider = ({ children }) => {
     });
 
     // Verificar la consistencia de uiWidgets
-    Object.values(uiWidgets).forEach(([_, propertyIds, childIds, actionIds]) => {
+    Object.values(uiWidgets).forEach(([_, propertyIds, childIds]) => {
         // Verificar propiedades
         propertyIds.forEach(propertyId => {
             if (!uiWidgetsProperties[propertyId]) {
@@ -92,91 +76,58 @@ export const BuilderProvider = ({ children }) => {
                 isConsistent = false;
             }
         });
-        // Verificar acciones
-        actionIds.forEach(actionId => {
-            if (!uiWidgetsActions[actionId]) {
-                console.error(`Inconsistencia encontrada: actionId ${actionId} referenciado en uiWidgets no existe en uiWidgetsActions.`);
-                isConsistent = false;
-            }
-        });
     });
 
-    // Verificar la consistencia de uiWidgetsActions
-    Object.values(uiWidgetsActions).forEach(action => {
-        if (!action.action_type) {
-            console.error(`Inconsistencia encontrada: una acción en uiWidgetsActions no tiene un tipo definido.`);
-            isConsistent = false;
-        }
-    });
     
     return isConsistent;
 }
 
- const buildTree = (screenId) => {
+ const buildTree = (screenId, userId, projectId) => {
   const screen = uiScreens[screenId];
   if (!screen) return null;
 
   const { widgets: widgetIds } = screen;
 
-  const buildNode = (widgetId, parentId = null, entityType = 'widget') => {
-  if (entityType === 'instruction') {
-    console.log("uiWidgetsActionsInstructions", uiWidgetsActionsInstructions[widgetId])
-    const instruction = uiWidgetsActionsInstructions[widgetId];
-    if (!instruction) return null;
-    const { type } = instruction;
+  const buildNode = (widgetId, parentId = null, position = 0) => {
+    const widget = uiWidgets[widgetId];
+    if (!widget) return null;
+
+    const { name, props: propertyIds, children: childIds, sub_type } = widget;
+
+    // Construyendo nodos hijos recursivamente
+    const children = childIds.map((childId, index) => buildNode(childId, widgetId, index)).filter(Boolean);
+
+    // Construyendo propiedades de los widgets
+    const properties = propertyIds.map(id => {
+      const property = uiWidgetsProperties[id];
+      if (!property) return null;
+
+      const { name, data, plat: platform } = property;
+      return {
+        id,
+        name,
+        data,
+        platform
+      };
+    }).filter(Boolean);
+
+    // Retornando la estructura del widget actual
     return {
-      id: widgetId,
-      component_type: type,
-      children: [],
-      parent_id: parentId,
-      entityType
-    };
-  }
-
-  const widget = uiWidgets[widgetId];
-  if (!widget) return null;
-
-  const { type: component_type, props: propertyIds, children: childIds, actions: actionIds } = widget;
-
-  const children = childIds.map(childId => buildNode(childId, widgetId)).filter(Boolean);
-
-  const actions = actionIds ? actionIds.map(actionId => {
-    const action = uiWidgetsActions[actionId];
-    if (!action) return null;
-    const { type: action_type, instructions } = action;
-
-    const actionChildren = instructions ? instructions.map(instructionId => buildNode(instructionId, actionId, 'instruction')).filter(Boolean) : [];
-    return {
-      id: actionId,
-      component_type: action_type,
-      children: actionChildren,
-      parent_id: widgetId,
-      entityType: 'action'
-    };
-  }).filter(Boolean) : [];
-
-  const properties = propertyIds.map(id => {
-    const property = uiWidgetsProperties[id];
-    if (!property) return null;
-
-    const { name, data, plat: platform } = property;
-    return {
-      id,
       name,
-      data,
-      platform
-    }
-  }).filter(Boolean);
-
-  return {
-    id: widgetId,
-    component_type,
-    children: [...children, ...actions],
-    properties,
-    parent_id: parentId,
-    entityType
+      component_type: 0, // Asumiendo que el tipo es 0 para todos estos componentes
+      sub_type: Component.sub_types[sub_type], // Asignando el subtipo utilizando el enum
+      user_id: userId,
+      project_id: projectId,
+      position,
+      children,
+      properties,
+    };
   };
+
+  // Iniciar la construcción del árbol desde el ID de la pantalla proporcionado
+  return buildNode(screenId);
 };
+
 
  console.log(widgetIds.map(widgetId => buildNode(widgetId)).filter(Boolean))
   return widgetIds.map(widgetId => buildNode(widgetId)).filter(Boolean);
@@ -263,6 +214,33 @@ export const BuilderProvider = ({ children }) => {
 
     return properties;
   }
+
+  const findEntityById = (entityType, entityId) => {
+    console.log("entityType", entityType)
+    console.log("entityId", entityId)
+  let entity;
+  switch (entityType) {
+    case 'widget':
+      entity = uiWidgets[entityId];
+      break;
+    case 'screen':
+      entity = uiScreens[entityId];
+      break;
+    case 'action':
+      entity = uiWidgetsActions[entityId];
+      break;
+    case 'instruction':
+      entity = uiWidgetsActionsInstructions[entityId];
+      break;
+    default:
+      console.error("Tipo de entidad desconocido");
+      return null;
+  }
+
+  if (!entity) return null;
+  return entity;
+};
+
 
   const handleJSONUpdate = (json) => {
     const updateOrAddScreen = (screen) => {
@@ -419,7 +397,8 @@ export const BuilderProvider = ({ children }) => {
       updateSelectedComponentProperties,
       getUpdateObject,
       handleObjectChange,
-      handleJSONUpdate
+      handleJSONUpdate,
+      findEntityById
     }}
     >
     {children}
