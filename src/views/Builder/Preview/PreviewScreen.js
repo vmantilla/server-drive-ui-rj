@@ -10,8 +10,8 @@ function PreviewScreen({ previewId, propertyWasUpdated, initialTitle, onTitleCha
   
   const { 
     uiScreens, setUiScreens,
-    uiWidgets, setUiWidgets,
-    uiWidgetsProperties, setUiWidgetsProperties,
+    uiComponents, setUiComponents,
+    uiComponentsProperties, setUiComponentsProperties,
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent
   } = useBuilder();
@@ -205,10 +205,10 @@ useEffect(() => {
           previewId = {previewId}
           uiScreens={uiScreens} 
           setUiScreens={setUiScreens}
-          uiWidgets={uiWidgets}
-          setUiWidgets={setUiWidgets}
-          uiWidgetsProperties={uiWidgetsProperties} 
-          setUiWidgetsProperties={setUiWidgetsProperties}
+          uiComponents={uiComponents}
+          setUiComponents={setUiComponents}
+          uiComponentsProperties={uiComponentsProperties} 
+          setUiComponentsProperties={setUiComponentsProperties}
           selectedScreen={selectedScreen} 
           setSelectedScreen={setSelectedScreen}
           selectedComponent={selectedComponent} 

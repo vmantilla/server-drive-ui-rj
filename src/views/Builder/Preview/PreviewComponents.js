@@ -19,14 +19,13 @@ const MENU_ID = 'blahblah';
 function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, updateChanges }) {
 
   const { 
-    uiWidgets, setUiWidgets,
-    uiWidgetsProperties, setUiWidgetsProperties,
-    uiWidgetsActions, setUiWidgetsActions,
+    uiComponents, setUiComponents,
+    uiComponentsProperties, setUiComponentsProperties,
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
     buildTree,
     recursiveDeleteComponent,
-    updateWidgetPropertiesAndActionsAndInstructions,
+    updatecomponentProperties,
     handleJSONUpdate
   } = useBuilder();
 
@@ -43,7 +42,7 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
 
   useEffect(() => {
     loadBuildTree();
-  }, [selectedScreen, uiWidgets]);
+  }, [selectedScreen, uiComponents]);
 
   const loadBuildTree = (component) => {
     setComponents(buildTree(selectedScreen));
@@ -114,8 +113,8 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const savedInstruction = await addInstructionToAPI(parentId, draggingComponent);
-      console.log("addUiWidgetsAction", savedInstruction)
-      updateWidgetPropertiesAndActionsAndInstructions(savedInstruction);
+      console.log("adduiComponentsAction", savedInstruction)
+      updatecomponentProperties(savedInstruction);
 
       setComponentLoading(null);
       setDraggingComponent(null);
@@ -132,8 +131,8 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const savedAction = await addActionToAPI(parentId, draggingComponent);
-      console.log("addUiWidgetsAction", savedAction)
-      updateWidgetPropertiesAndActionsAndInstructions(savedAction);
+      console.log("adduiComponentsAction", savedAction)
+      updatecomponentProperties(savedAction);
 
       setComponentLoading(null);
       setDraggingComponent(null);
@@ -150,8 +149,8 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const savedComponent = await addComponentToAPI(selectedScreen, draggingComponent);
-      console.log("addWidgetWithProperties", savedComponent)
-      updateWidgetPropertiesAndActionsAndInstructions(savedComponent);
+      console.log("addcomponentWithProperties", savedComponent)
+      updatecomponentProperties(savedComponent);
 
       setComponentLoading(null);
       setDraggingComponent(null);
@@ -172,7 +171,7 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
       const updatedComponent = await editComponentToAPI(componentId, params);
 
       console.log("modifyComponent", updatedComponent);
-    updateWidgetPropertiesAndActionsAndInstructions(updatedComponent); // Si es necesario
+    updatecomponentProperties(updatedComponent); // Si es necesario
     setComponentLoading(null);
     setSelectedComponent(updatedComponent);
     
@@ -190,7 +189,7 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
 
 // Uso de modifyComponent para cambiar parent_id
 const moveComponent = (parentId) => {
-  const originalParentId = uiWidgets[draggingComponent.id].parent_id;
+  const originalParentId = uiComponents[draggingComponent.id].parent_id;
   modifyComponent(draggingComponent.id, { parent_id: parentId }, 'Componente movido exitosamente.');
 };
 
@@ -202,7 +201,7 @@ const handleEditComponentOrder = (newIndex) => {
 };
 
 const deleteComponent = async (compToDelete) => { 
-  if (['Header', 'Body', 'Footer'].includes(compToDelete.component_type)) {
+  if (['header', 'body', 'footer'].includes(compToDelete.component_type)) {
     return;
   }
 
@@ -331,7 +330,7 @@ useEffect(() => {
   };
 
 const handleDragStart = (event, component) => {
-  if (['Header', 'Body', 'Footer'].includes(component.component_type)) {
+  if (['header', 'body', 'footer'].includes(component.component_type)) {
     return;
   }
   event.stopPropagation();
@@ -356,7 +355,7 @@ const duplicateComponent = async (compId) => {
     const updatedComponent = await duplicateComponentToAPI(compId);
     
     console.log("updatedComponent", updatedComponent);
-    updateWidgetPropertiesAndActionsAndInstructions(updatedComponent); 
+    updatecomponentProperties(updatedComponent); 
     setComponentLoading(null);
     setSelectedComponent(null);
   } catch (error) {
@@ -368,9 +367,9 @@ const duplicateComponent = async (compId) => {
 
 const getCustomizations = (component_type) => {
   const customizations = {
-    'Header': { class: 'component-type-header', label: '', enableDrag: false },
-    'Body': { class: 'component-type-body', label: '', enableDrag: false },
-    'Footer': { class: 'component-type-footer', label: '', enableDrag: false },
+    'header': { class: 'component-type-header', label: '', enableDrag: false },
+    'body': { class: 'component-type-body', label: '', enableDrag: false },
+    'footer': { class: 'component-type-footer', label: '', enableDrag: false },
     'default': { class: '', label: '', enableDrag: true },
   };
 
@@ -380,11 +379,11 @@ const getCustomizations = (component_type) => {
 const computeClassNames = (comp, draggingComponent, selectedComponent, draggingComponentOver, orderableComponent) => {
   let classes = "component-item ";
 
-  if (comp.entityType === 'action') {
+  if (comp.component_type === 'action') {
     classes += "action ";
   }
 
-  if (comp.entityType === 'instruction') {
+  if (comp.component_type === 'instruction') {
     classes += "instruction ";
   }
 
@@ -419,7 +418,7 @@ const { show } = useContextMenu({
 
 function handleContextMenu(event, component){
 
-  if (component && ['Header', 'Body', 'Footer'].includes(component.component_type)) {
+  if (component && ['header', 'body', 'footer'].includes(component.component_type)) {
     return; 
   }
   setContextMenuComponentId(component.id);
@@ -515,7 +514,7 @@ function convertOldToNew(oldComponent) {
 
   const newComponent = {
     id: oldComponent.id.toString(),
-    widgetType: oldComponent.property?.data?.component_type || oldComponent.component_type,
+    componentType: oldComponent.property?.data?.component_type || oldComponent.component_type,
   commonStyleIds: [], // Puedes añadir aquí según necesites
   children: oldComponent.children.map(convertOldToNew)
 };
@@ -524,9 +523,9 @@ return newComponent;
 }
 
 function convertToNewStructure(oldJson) {
-  const uiWidgets = oldJson.map(convertOldToNew);
+  const uiComponents = oldJson.map(convertOldToNew);
   const newJson = {
-    uiWidgets,
+    uiComponents,
   sharedStyles: {}, // Completar según las necesidades
   localizedTexts: {} // Completar según las necesidades
 };
@@ -540,7 +539,7 @@ function convertNewToOld(newComponent) {
 
   const oldComponent = {
     id: parseInt(newComponent.id),
-    component_type: newComponent.widgetType,
+    component_type: newComponent.componentType,
   parent_id: null, // Esto tendrás que ajustarlo según tu lógica
   children: newComponent.children.map(convertNewToOld),
   property: {} // Completar según las necesidades
@@ -550,7 +549,7 @@ return oldComponent;
 }
 
 function convertToOldStructure(newJson) {
-  const oldComponents = newJson.uiWidgets.map(convertNewToOld);
+  const oldComponents = newJson.uiComponents.map(convertNewToOld);
   return oldComponents;
 }
 

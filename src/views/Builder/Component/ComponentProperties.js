@@ -79,11 +79,11 @@ function getInitialViewStates() {
 function ComponentProperties() {
 
   const { 
-    uiWidgets, setUiWidgets,
-    uiWidgetsProperties, setUiWidgetsProperties,
+    uiComponents, setUiComponents,
+    uiComponentsProperties, setUiComponentsProperties,
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
-    findWidgetPropertiesById,
+    findcomponentPropertiesById,
     handleObjectChange,
     shouldUpdate, setShouldUpdate,
     findEntityById
@@ -111,7 +111,7 @@ function ComponentProperties() {
   	if (!propertyIds) return;
   
 	  const properties = propertyIds.reduce((acc, id) => {
-	    const property = uiWidgetsProperties[id]; // Podrías necesitar generalizar esto también
+	    const property = uiComponentsProperties[id]; // Podrías necesitar generalizar esto también
 	    if (property) acc[id] = property;
 	    return acc;
 	  }, {});
@@ -133,54 +133,53 @@ function ComponentProperties() {
 	}
 
 useEffect(() => {
-    const updateUiWidgetsProperties = () => {
-        let updatedUiWidgetsProperties = { ...uiWidgetsProperties };
+    const updateuiComponentsProperties = () => {
+        let updateduiComponentsProperties = { ...uiComponentsProperties };
         let updatedPropertyIds = [];
-        let currentWidgetProperties = [];
+        let currentcomponentProperties = [];
 
         if (!selectedComponent?.id) return;
 
-        const currentWidgetId = selectedComponent.id;
-        const currentWidget = uiWidgets[currentWidgetId];
+        const currentcomponentId = selectedComponent.id;
+        const currentcomponent = uiComponents[currentcomponentId];
 
-        if (!currentWidget) return;
+        if (!currentcomponent) return;
         
-        const { props: widgetProperties } = currentWidget;
-        currentWidgetProperties = widgetProperties;
+        const { props: componentProperties } = currentcomponent;
+        currentcomponentProperties = componentProperties;
 
         Object.values(viewStates).forEach(propertiesArray => {
             propertiesArray.forEach(property => {
                 const { id, name, data, plat: platform } = property;
                 if (data !== undefined) {
-                    updatedUiWidgetsProperties[id] = { name, data, plat: platform };
+                    updateduiComponentsProperties[id] = { name, data, plat: platform };
                     updatedPropertyIds.push(id);
                 }
             });
         });
 
-        currentWidgetProperties.forEach(id => {
+        currentcomponentProperties.forEach(id => {
             if (!updatedPropertyIds.includes(id)) {
-                delete updatedUiWidgetsProperties[id];
+                delete updateduiComponentsProperties[id];
             }
         });
 
-        const { type: component_type, children: childIds, actions } = currentWidget;
-        const updatedWidget = {
+        const { type: component_type, children: childIds } = currentcomponent;
+        const updatedcomponent = {
             type: component_type,
             props: updatedPropertyIds,
-            children: childIds,
-            actions: actions
+            children: childIds
         };
 
-        setUiWidgets(prevUiWidgets => ({
-            ...prevUiWidgets,
-            [currentWidgetId]: updatedWidget
+        setUiComponents(prevuiComponents => ({
+            ...prevuiComponents,
+            [currentcomponentId]: updatedcomponent
         }));
 
-        setUiWidgetsProperties(updatedUiWidgetsProperties);
+        setUiComponentsProperties(updateduiComponentsProperties);
     };
 
-    updateUiWidgetsProperties();
+    updateuiComponentsProperties();
 }, [viewStates]);
 
 
@@ -326,7 +325,7 @@ useEffect(() => {
 
     if (updatedState) {
 			updateViewState(type, currentState.id, updatedState)
-			handleObjectChange("uiWidgetsProperties", currentState.id);
+			handleObjectChange("uiComponentsProperties", currentState.id);
 		} else {
 			console.log('No updates needed.');
 		}

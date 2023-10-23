@@ -207,7 +207,7 @@ class ComponentManager {
 	  const nodes = {};
 	  
 	  // Primero, crea todos los nodos.
-	  for (const [id, value] of Object.entries(jsonData.uiWidgets)) {
+	  for (const [id, value] of Object.entries(jsonData.uiComponents)) {
 	    const [component_type, propertiesIds, children] = value;
 	    nodes[id] = {
 	      id,
@@ -215,7 +215,7 @@ class ComponentManager {
 	      parent_id: parent_id, 
 	      children: [],
 	      properties: propertiesIds.map(propId => {
-	        const property = jsonData.uiWidgets_properties[propId];
+	        const property = jsonData.uiComponents_properties[propId];
 	        return {
 	          id: propId,
 	          name: property[0], 
@@ -227,7 +227,7 @@ class ComponentManager {
 	  }
 
 	  // Segundo, añade los hijos a sus respectivos padres y actualiza el parent_id de los hijos.
-	  for (const [id, value] of Object.entries(jsonData.uiWidgets)) {
+	  for (const [id, value] of Object.entries(jsonData.uiComponents)) {
 	    const [_, propertiesIds, children] = value;
 	    
 	    children.forEach((childId) => {

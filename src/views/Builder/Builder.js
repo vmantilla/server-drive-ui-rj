@@ -17,8 +17,8 @@ function Builder({showNotification}) {
 
   const { 
     uiScreens, setUiScreens,
-    uiWidgets, setUiWidgets,
-    uiWidgetsProperties, setUiWidgetsProperties,
+    uiComponents, setUiComponents,
+    uiComponentsProperties, setUiComponentsProperties,
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
     resetBuilder,
@@ -47,8 +47,8 @@ function Builder({showNotification}) {
     resetBuilder();
     setUpdateQueue({
       uiScreens: [],
-      uiWidgets: [],
-      uiWidgetsProperties: [],
+      uiComponents: [],
+      uiComponentsProperties: [],
     });
   }, []);
 
@@ -73,8 +73,8 @@ function Builder({showNotification}) {
     resetBuilder();
     setUpdateQueue({
       uiScreens: [],
-      uiWidgets: [],
-      uiWidgetsProperties: [],
+      uiComponents: [],
+      uiComponentsProperties: [],
     });
     setShouldUpdate(false);
     setRetryCount(0);
@@ -87,8 +87,8 @@ function Builder({showNotification}) {
       const updatedObject = await batchUpdatesToAPI(projectId, updateObject);
       setUpdateQueue({
         uiScreens: [],
-        uiWidgets: [],
-        uiWidgetsProperties: [],
+        uiComponents: [],
+        uiComponentsProperties: [],
       });
       setShouldUpdate(false);
       setRetryCount(0); 

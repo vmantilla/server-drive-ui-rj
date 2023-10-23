@@ -13,10 +13,8 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
 
   const { 
     uiScreens, setUiScreens,
-    uiWidgets, setUiWidgets,
-    uiWidgetsProperties, setUiWidgetsProperties,
-    uiWidgetsActions, setUiWidgetsActions,
-    uiWidgetsActionsInstructions, setUiWidgetsActionsInstructions,
+    uiComponents, setUiComponents,
+    uiComponentsProperties, setUiComponentsProperties,
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
     resetBuilder,
@@ -41,12 +39,10 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
       .then((response) => {
         console.log("getAllPreviewsFromAPI", response)
 
-        if (response.screens && response.widgets && response.props && response.actions && response.instructions) {
+        if (response.screens && response.components && response.props) {
           setUiScreens(response.screens);
-          setUiWidgets(response.widgets); 
-          setUiWidgetsProperties(response.props);
-          setUiWidgetsActions(response.actions);
-          setUiWidgetsActionsInstructions(response.instructions);
+          setUiComponents(response.components); 
+          setUiComponentsProperties(response.props);
           setSelectedScreen(null);
           setSelectedComponent(null);
           forceReflow();
@@ -73,11 +69,10 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
       try {
         const response =  await addPreviewToAPI(workspaceId, previewData);
 
-        if (response.screens && response.widgets && response.props && response.actions) {
+        if (response.screens && response.components && response.props) {
           setUiScreens((prev) => ({ ...prev, ...response.screens }));
-          setUiWidgets((prev) => ({ ...prev, ...response.widgets }));
-          setUiWidgetsProperties((prev) => ({ ...prev, ...response.props }));
-          setUiWidgetsActions((prev) => ({ ...prev, ...response.actions }));
+          setUiComponents((prev) => ({ ...prev, ...response.components }));
+          setUiComponentsProperties((prev) => ({ ...prev, ...response.props }));
           setSelectedScreen(null);
           setSelectedComponent(null);
           forceReflow();
@@ -109,18 +104,18 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
   });
 };
 
-  const deleteWidgetsAndProperties = (screenId, uiWidgets, uiWidgetsProperties) => {
-    let updatedWidgets = { ...uiWidgets };
-    let updatedProperties = { ...uiWidgetsProperties };
+  const deletecomponentsAndProperties = (screenId, uiComponents, uiComponentsProperties) => {
+    let updatedcomponents = { ...uiComponents };
+    let updatedProperties = { ...uiComponentsProperties };
 
-    (uiScreens[screenId]?.widgets || []).forEach(widgetId => {
-      delete updatedWidgets[widgetId];
-      (uiWidgets[widgetId]?.props || []).forEach(propertyId => {
+    (uiScreens[screenId]?.components || []).forEach(componentId => {
+      delete updatedcomponents[componentId];
+      (uiComponents[componentId]?.props || []).forEach(propertyId => {
         delete updatedProperties[propertyId];
       });
     });
 
-    return [updatedWidgets, updatedProperties];
+    return [updatedcomponents, updatedProperties];
   };
 
   const confirmDelete = async () => {
@@ -128,11 +123,10 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
       try {
         const response = await deletePreviewFromAPI(previewToDelete);
         console.log(response)
-        const [updatedWidgets, updatedProperties, updatedActions] = deleteWidgetsAndProperties(previewToDelete, uiWidgets, uiWidgetsProperties);
+        const [updatedcomponents, updatedProperties] = deletecomponentsAndProperties(previewToDelete, uiComponents, uiComponentsProperties);
 
-        setUiWidgets(updatedWidgets);
-        setUiWidgetsProperties(updatedProperties);
-        setUiWidgetsActions(updatedActions);
+        setUiComponents(updatedcomponents);
+        setUiComponentsProperties(updatedProperties);
         setUiScreens(prev => {
           const updated = { ...prev };
           delete updated[previewToDelete];
@@ -247,7 +241,7 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
   <>
     <div className="workspace-content" style={{ transform: `scale(${zoomLevel})`, width: `${workspaceSize}px`, height: `${workspaceSize}px` }}  onClick={handleWorkspaceClick}>
     {Object.entries(uiScreens).map(([previewId, previewData]) => {
-      const { title, widgets, x: position_x, y: position_y } = previewData;
+      const { title, components, x: position_x, y: position_y } = previewData;
       if (true) {
         return (
           <PreviewScreen
