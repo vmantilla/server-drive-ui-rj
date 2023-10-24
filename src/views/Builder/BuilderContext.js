@@ -5,8 +5,8 @@ const BuilderContext = createContext();
 export const BuilderProvider = ({ children }) => {
 
   const [updateQueue, setUpdateQueue] = useState({
-    uiScreens: [],
-    uiComponentsProperties: []
+    screens: [],
+    properties: []
   });
 
   const [shouldUpdate, setShouldUpdate] = useState(false);
@@ -99,7 +99,7 @@ export const BuilderProvider = ({ children }) => {
         const property = uiComponentsProperties[id];
         if (!property) return null;
 
-        const { name, data, plat: platform } = property;
+        const { name, data, platform } = property;
         return {
           id,
           name,
@@ -129,13 +129,12 @@ export const BuilderProvider = ({ children }) => {
       }
       return prev;
     });
-    console.log("setShouldUpdate")
     setShouldUpdate(true)
   };
 
   function getUpdateObject() {
     return {
-        uiScreens: (updateQueue.uiScreens || []).map(id => {
+        screens: (updateQueue.screens || []).map(id => {
             const screen = uiScreensRef.current[id];
 
             if (!screen) { // Check if screen is undefined or null
@@ -152,16 +151,16 @@ export const BuilderProvider = ({ children }) => {
             };
         }).filter(Boolean),
 
-        uiComponents: [],
+        components: [],
 
-        uiComponentsProperties: (updateQueue.uiComponentsProperties || []).map(id => {
+        properties: (updateQueue.properties || []).map(id => {
             const property = uiComponentsPropertiesRef.current[id];
 
             if (!property) { 
                 return null;
             }
 
-            const { name, data: propertyData, plat: platform } = property;
+            const { name, data: propertyData, platform } = property;
 
             return {
                 id: id,
@@ -172,42 +171,6 @@ export const BuilderProvider = ({ children }) => {
         }).filter(Boolean),  
     };
 }
-
-  const findcomponentPropertiesById = (componentId) => {
-    const component = uiComponents[componentId];
-    if (!component) return null;
-
-    const { props: propertyIds } = component; 
-      
-    const properties = propertyIds.reduce((acc, id) => {
-      const property = uiComponentsProperties[id];
-      if (property) acc[id] = property;
-      return acc;
-    }, {});
-
-    return properties;
-  }
-
-  const findEntityById = (sub_type, entityId) => {
-    console.log("sub_type", sub_type)
-    console.log("entityId", entityId)
-  let entity;
-  switch (sub_type) {
-    case 'widget':
-      entity = uiComponents[entityId];
-      break;
-    case 'screen':
-      entity = uiScreens[entityId];
-      break;
-    default:
-      console.error("Tipo de entidad desconocido");
-      return null;
-  }
-
-  if (!entity) return null;
-  return entity;
-};
-
 
   const handleJSONUpdate = (json) => {
     const updateOrAddScreen = (screen) => {
@@ -279,9 +242,7 @@ export const BuilderProvider = ({ children }) => {
     if (props) {
       setUiComponentsProperties((prev) => ({ ...prev, ...props }));
     }
-
   };
-
 
   return (
     <BuilderContext.Provider
@@ -299,11 +260,9 @@ export const BuilderProvider = ({ children }) => {
       updatecomponentProperties,
       resetBuilder,
       verifyDataConsistency,
-      findcomponentPropertiesById,
       getUpdateObject,
       handleObjectChange,
-      handleJSONUpdate,
-      findEntityById
+      handleJSONUpdate
     }}
     >
     {children}

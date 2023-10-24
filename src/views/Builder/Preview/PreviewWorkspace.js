@@ -92,17 +92,17 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
   }, [workspaceId, setAddNewPreview]);
 
   const handlePositionChange = (newPosition, previewId) => {
-  setUiScreens((prevUiScreens) => {
-    const updatedUiScreens = { ...prevUiScreens };
+    setUiScreens((prevUiScreens) => {
+      const updatedUiScreens = { ...prevUiScreens };
 
-    if (updatedUiScreens[previewId]) {
-      updatedUiScreens[previewId].x = newPosition.x;
-      updatedUiScreens[previewId].y = newPosition.y;
-    }
+      if (updatedUiScreens[previewId]) {
+        updatedUiScreens[previewId].x = newPosition.x;
+        updatedUiScreens[previewId].y = newPosition.y;
+      }
 
-    return updatedUiScreens;
-  });
-};
+      return updatedUiScreens;
+    });
+  };
 
   const deletecomponentsAndProperties = (screenId, uiComponents, uiComponentsProperties) => {
     let updatedcomponents = { ...uiComponents };
@@ -201,8 +201,7 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
       ...prev,
       [previewId]: newScreen
     }));
-    console.log("handleObjectChange", previewId)
-    handleObjectChange("uiScreens", previewId);
+    handleObjectChange("screens", previewId);
   }
 
   const handleTitleChange = (newTitle, previewId) => {
@@ -232,7 +231,6 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
 
   const handleClick = (preview) => {
     setSelectedComponent(null);
-    console.log("setSelectedScreen", preview.id)
     setSelectedScreen(preview.id);
   };
 
@@ -288,7 +286,7 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
       <Modal.Body>
         <p>
           Para confirmar la eliminación, escribe el nombre de la vista previa que deseas eliminar:
-          <strong> "{uiScreens[previewToDelete]?.[0]}"</strong>
+          <strong> "{uiScreens[previewToDelete]?.title}"</strong>
         </p>
         <input
           type="text"

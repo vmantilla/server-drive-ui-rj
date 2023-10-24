@@ -63,32 +63,19 @@ function ImageProperties({ property, handlePropertyChange }) {
   };
 
   const handleSelectImage = async () => {
-    console.log("handleSelectImage started.");
   
     if (selectedFile) {
-        console.log("File selected:", selectedFile.name);
-
         setIsLoading(true);
         setShowModal(false);  // Cerrar el modal cuando comienza la carga
-        console.log("Set loading state to true and closed modal.");
-
         const fileExtension = getFileExtension(selectedFile.type);
-        console.log("Determined file extension:", fileExtension);
-
         if (!fileExtension) {
-            console.log("Error: Unsupported file type detected.");
             setErrorAws("Unsupported file type.");
             setIsLoading(false);
             return;
         }
 
         try {
-            console.log("Requesting signed URL from server...");
             const response = await getSignedURLFromAPI(property, selectedFile.type, fileExtension);
-            console.log("Received signed URL:", response.presigned_url);
-            console.log("Public URL for the image:", response.public_url);
-
-            console.log("Uploading file to storage...");
             const uploadResponse = await fetch(response.presigned_url, {
                 method: 'PUT',
                 body: selectedFile,
@@ -103,10 +90,7 @@ function ImageProperties({ property, handlePropertyChange }) {
             setImageUrl(response.public_url); 
             handlePropertyChange('url', response.public_url); 
             handlePropertyChange('content_type', selectedFile.type); 
-            console.log("Updated image URL in the state and triggered property change.");
-
             setIsLoading(false);
-            console.log("Set loading state to false.");
         } catch (error) {
             console.log("Error occurred:", error.message);
             setErrorAws(error.message);

@@ -83,10 +83,8 @@ function ComponentProperties() {
     uiComponentsProperties, setUiComponentsProperties,
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
-    findcomponentPropertiesById,
     handleObjectChange,
-    shouldUpdate, setShouldUpdate,
-    findEntityById
+    shouldUpdate, setShouldUpdate
   } = useBuilder();
 
   const [viewStates, setViewStates] = useState(getInitialViewStates);
@@ -102,33 +100,31 @@ function ComponentProperties() {
 	  }, [selectedScreen, selectedComponent]);
 
 
-  function fillViewStates(component) {
-  	const entity = findEntityById(component.entityType, component.id)
-  	if (!entity) return;
+  function fillViewStates(selectedComponent) {
+  	const component = uiComponents[selectedComponent.id]
+  	if (!component) return;
 
-  	const { props: propertyIds } = entity;
+  	const { props: propertyIds } = component;
 
   	if (!propertyIds) return;
   
 	  const properties = propertyIds.reduce((acc, id) => {
-	    const property = uiComponentsProperties[id]; // Podrías necesitar generalizar esto también
+	    const property = uiComponentsProperties[id];
 	    if (property) acc[id] = property;
 	    return acc;
 	  }, {});
 
 	  if (!properties) return;
-	  console.log("properties", properties)
 	  let newViewStates = { ...getInitialViewStates() };
 
 	  Object.entries(properties).forEach(([id, propertyObj]) => {
-	    const { name, data, plat: platform } = propertyObj;
+	    const { name, data, platform } = propertyObj;
 	    if (newViewStates[name]) {
 	      newViewStates[name].push({ data: { ...data }, id, name, platform });
 	    } else {
 	      console.warn(`La categoría ${name} no existe en viewStates`);
 	    }
 	  });
-	  console.log("newViewStates", newViewStates)
 	  setViewStates(newViewStates);
 	}
 
@@ -150,9 +146,9 @@ useEffect(() => {
 
         Object.values(viewStates).forEach(propertiesArray => {
             propertiesArray.forEach(property => {
-                const { id, name, data, plat: platform } = property;
+                const { id, name, data, platform } = property;
                 if (data !== undefined) {
-                    updateduiComponentsProperties[id] = { name, data, plat: platform };
+                    updateduiComponentsProperties[id] = { name, data, platform };
                     updatedPropertyIds.push(id);
                 }
             });
@@ -248,16 +244,14 @@ useEffect(() => {
 	};
 
 	const handleAddState = async (type) => {
-		console.log("type", type)
-		console.log("viewStates[type]", viewStates[type])
-    const availableStates = possibleStates.filter(
-        state => !viewStates[type].some(s => s.plat === state)
+	const availableStates = possibleStates.filter(
+        state => !viewStates[type].some(s => s.platform === state)
     );
 
     if (availableStates.length > 0) {
         const newProperty = { 
             id: new Date().getTime().toString(), 
-            plat: availableStates[0], 
+            platform: availableStates[0], 
             name: type.toLowerCase(), 
             error: false, loading: true, action: "create"
         };
@@ -321,13 +315,12 @@ useEffect(() => {
 		    currentState.platform === updatedState.platform &&
 		    isEqual(currentState.data, updatedState.data)
 		) {
-		    console.log('Los campos especificados son idénticos en ambos estados. Retornando sin hacer nada.');
 		    return;
 		}
 
     if (updatedState) {
 			updateViewState(type, currentState.id, updatedState)
-			handleObjectChange("uiComponentsProperties", currentState.id);
+			handleObjectChange("properties", currentState.id);
 		} else {
 			console.log('No updates needed.');
 		}

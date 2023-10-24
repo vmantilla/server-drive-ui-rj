@@ -33,7 +33,6 @@ const ProjectWizard = () => {
       .then((data) => {
         setModules(data);
         if (data.length > 0 && data[0].template_views.length > 0) {
-          console.log("setSelectedTemplate", data[0].template_views[0]);
           setSelectedTemplate(data[0].template_views[0]);
         }
       })
@@ -77,8 +76,6 @@ const ProjectWizard = () => {
   }, [selectedTemplate]);
     
   const handleFinish = async () => {
-
-    console.log("configuration", configuration);
 
     try {
       if (!configuration.projectName.trim()) {

@@ -46,9 +46,8 @@ function Builder({showNotification}) {
     console.warn('resetBuilder:', retryCount);
     resetBuilder();
     setUpdateQueue({
-      uiScreens: [],
-      uiComponents: [],
-      uiComponentsProperties: [],
+      screens: [],
+      properties: [],
     });
   }, []);
 
@@ -72,9 +71,8 @@ function Builder({showNotification}) {
     console.error('Reached maximum retry attempts. Resetting everything.');
     resetBuilder();
     setUpdateQueue({
-      uiScreens: [],
-      uiComponents: [],
-      uiComponentsProperties: [],
+      screens: [],
+      properties: [],
     });
     setShouldUpdate(false);
     setRetryCount(0);
@@ -86,9 +84,9 @@ function Builder({showNotification}) {
     try {
       const updatedObject = await batchUpdatesToAPI(projectId, updateObject);
       setUpdateQueue({
-        uiScreens: [],
-        uiComponents: [],
-        uiComponentsProperties: [],
+        screens: [],
+        components: [],
+        properties: [],
       });
       setShouldUpdate(false);
       setRetryCount(0); 

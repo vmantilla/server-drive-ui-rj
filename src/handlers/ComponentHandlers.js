@@ -47,7 +47,6 @@ export const handleDeleteComponent = (componentId) => {
 };
 
   const deleteComponent = (componentId) => {
-    console.log("handleDeleteComponent",componentId)
     const nestedComponentToDelete = deleteNestedComponent(droppedComponents, componentId)
     setDroppedComponents(nestedComponentToDelete);
   };

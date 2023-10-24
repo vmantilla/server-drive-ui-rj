@@ -3,10 +3,10 @@ import '../../../../css/Builder/Component/PropertiesFunction/FunctionNamePropert
 
 function FunctionNameProperties({ property, handlePropertyChange }) {
   
-  const [functionName, setFunctionName] = useState(property.data.function_name || '');
+  const [functionName, setFunctionName] = useState(property.data.name || '');
 
   useEffect(() => {
-    handlePropertyChange('function_name', functionName);
+    handlePropertyChange('name', functionName);
   }, [functionName]);
 
   return (

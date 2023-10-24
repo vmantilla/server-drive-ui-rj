@@ -57,7 +57,6 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
   }
 
   const handleDrop = async (event, parentId) => {
-    console.log("draggingComponent", draggingComponent)
     event.preventDefault();
     event.stopPropagation();
 
@@ -87,7 +86,6 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const savedComponent = await addComponentToAPI(selectedScreen, draggingComponent);
-      console.log("addcomponentWithProperties", savedComponent)
       updatecomponentProperties(savedComponent);
 
       setComponentLoading(null);
@@ -107,7 +105,6 @@ function PreviewComponents({ showNotification, componentToAdd, onOrderUpdated, u
 
       const updatedComponent = await editComponentToAPI(componentId, params);
 
-      console.log("modifyComponent", updatedComponent);
     updatecomponentProperties(updatedComponent); // Si es necesario
     setComponentLoading(null);
     setSelectedComponent(null);
@@ -168,18 +165,14 @@ useEffect(() => {
 }, [componentToAdd]);
 
 useEffect(() => {
-  console.log("useEffect activated!");
   const findComponentByIdRecursive = (id, components) => {
-    console.log(`Searching for component with id: ${id}`);
     for (let comp of components) {
-      console.log(`Checking component ${comp.id}`);
       if (comp.id === id) return comp;
       if (comp.children) {
         let found = findComponentByIdRecursive(id, comp.children);
         if (found) return found;
       }
     }
-    console.log("Component not found!");
     return null;
   };
 
@@ -504,7 +497,6 @@ const renderComponentList = (compArray, parentId = null) =>
     }
 
     const { id, sub_type, property } = comp;
-    console.log("getCustomizations", sub_type)
     const { class: customClass, label: customLabel, enableDrag } = getCustomizations(sub_type);
 
     return (

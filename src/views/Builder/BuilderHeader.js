@@ -28,7 +28,6 @@ const FloatingMenu = ({ visible, selectedOption, options, onClose, position, han
     </button>
   ));
 
-
   return (
     <div
       ref={menuRef}
