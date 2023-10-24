@@ -27,6 +27,7 @@ function Builder({showNotification}) {
     updateSelectedComponentProperties,
     handleObjectChange, getUpdateObject
   } = useBuilder();
+  
   const navigate = useNavigate();
 
   const { projectId } = useParams();

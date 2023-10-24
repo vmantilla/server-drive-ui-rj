@@ -3,13 +3,15 @@ import '../../../../css/Builder/Component/Properties/FontProperties.css';
 
 function FontProperties({ property, handlePropertyChange }) {
 
-  const [isItalic, setIsItalic] = useState(property ? property.data.italic || false : false);
-  const [isStrikethrough, setIsStrikethrough] = useState(property ? property.data.strikethrough || false : false);
-  const [isUnderline, setIsUnderline] = useState(property ? property.data.underline || false : false);
+  const [isItalic, setIsItalic] = useState(property.data.italic || false);
+  const [isStrikethrough, setIsStrikethrough] = useState(property.data.strikethrough || false);
+  const [isUnderline, setIsUnderline] = useState(property.data.underline || false);
 
   const [colorInput, setColorInput] = useState(property.data.color || "#000000");
   const [opacityInput, setOpacityInput] = useState(property.data.opacity || "1");
   const [sizeInput, setSizeInput] = useState(property.data.size || "16");
+  const [lineHeightInput, setLineHeightInput] = useState(property.data.lineHeight || "1.5");
+  const [letterSpacingInput, setLetterSpacingInput] = useState(property.data.letterSpacing || "2");
 
   useEffect(() => {
     handlePropertyChange('color', colorInput);
@@ -21,6 +23,21 @@ function FontProperties({ property, handlePropertyChange }) {
       handlePropertyChange('opacity', opacityInput);
     }
   }, [opacityInput]);
+
+  useEffect(() => {
+    const lineHeight = parseFloat(lineHeightInput);
+    if (lineHeight >= 0 && lineHeight <= 1.5) {
+      handlePropertyChange('lineHeight', lineHeightInput);
+    }
+  }, [lineHeightInput]);
+
+
+  useEffect(() => {
+    const letterSpacing = parseFloat(letterSpacingInput);
+    if (letterSpacing >= 0 && letterSpacing <= 1) {
+      handlePropertyChange('letterSpacing', letterSpacingInput);
+    }
+  }, [letterSpacingInput]);
 
   useEffect(() => {
     const size = parseFloat(sizeInput);
@@ -52,7 +69,6 @@ function FontProperties({ property, handlePropertyChange }) {
     handlePropertyChange(styleName, newValue);
   };
 
-
   const fontNames = ["Arial", "Verdana", "Georgia", "Tahoma", "Times New Roman", "Courier New"];
   const fontWeights = ["Normal", "Bold", "Bolder", "Lighter"];
 
@@ -64,7 +80,7 @@ function FontProperties({ property, handlePropertyChange }) {
             <div className="font-property">
               <label>Name:</label>
               <div className="input-wrapper">
-                <select value={property.name || "Arial"} onChange={(e) => handlePropertyChange('name', e.target.value)}>
+                <select value={property.data.name || "Arial"} onChange={(e) => handlePropertyChange('name', e.target.value)}>
                   {fontNames.map((name) => <option key={name} value={name}>{name}</option>)}
                 </select>
               </div>
@@ -72,7 +88,7 @@ function FontProperties({ property, handlePropertyChange }) {
             <div className="font-property">
               <label>Weight:</label>
               <div className="input-wrapper">
-                <select value={property.weight || "normal"} onChange={(e) => handlePropertyChange('weight', e.target.value)}>
+                <select value={property.data.weight || "normal"} onChange={(e) => handlePropertyChange('weight', e.target.value)}>
                   {fontWeights.map((weight) => <option key={weight} value={weight.toLowerCase()}>{weight}</option>)}
                 </select>
               </div>
@@ -93,8 +109,11 @@ function FontProperties({ property, handlePropertyChange }) {
               <div className="input-wrapper">
                 <input
                   type="number"
-                  value={property.lineHeight || "1.5"}
-                  onChange={(e) => handlePropertyChange('lineHeight', e.target.value)}
+                  step="0.1"
+                  min="0"
+                  max="1,5"
+                  value={lineHeightInput || "1.5"}
+                  onChange={(e) => setLineHeightInput(e.target.value)}
                   pattern="\d+(\.\d+)?"
                 />
               </div>
@@ -104,8 +123,11 @@ function FontProperties({ property, handlePropertyChange }) {
               <div className="input-wrapper">
                 <input
                   type="number"
-                  value={property.letterSpacing || "1"}
-                  onChange={(e) => handlePropertyChange('letterSpacing', e.target.value)}
+                  value={letterSpacingInput || "1"}
+                  step="0.1"
+                  min="0"
+                  max="1"
+                  onChange={(e) => setLetterSpacingInput(e.target.value)}
                   pattern="\d+(\.\d+)?"
                 />
               </div>

@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBuilder } from './BuilderContext';
 import '../../css/Builder/BuilderHeader.css';
 
 const FloatingMenu = ({ visible, selectedOption, options, onClose, position, handleDragStart, handleDragEnd }) => {
   const menuRef = useRef(null);
+
   
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -46,9 +48,19 @@ const FloatingMenu = ({ visible, selectedOption, options, onClose, position, han
 function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, selectedScreen, addNewPreview, onDelete, setComponentToAdd, shouldUpdate, updateChanges }) {
   const navigate = useNavigate();
 
+
+  const { 
+    uiScreens, setUiScreens,
+    uiComponents, setUiComponents,
+    uiComponentsProperties, setUiComponentsProperties
+  } = useBuilder();
+
+
   const handleExit = () => {
     navigate('/dashboard'); 
   };
+  
+
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [menuOptions, setMenuOptions] = useState([]);
@@ -161,6 +173,12 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
     setMenuVisible(false);
   };
 
+  const previewUrl = `/preview/${selectedScreen}`;
+
+  function saveToStorage(data) {
+    localStorage.setItem('previewData', JSON.stringify(data));
+  }
+
   return (
     <header className={`builder-header collapsed`}>
       <div className="left-container">
@@ -202,10 +220,12 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
           </button>
         </div>
         )}
+        <a href={previewUrl} className="no-underline" target="_blank" rel="noopener noreferrer" onClick={() => saveToStorage({uiScreens, uiComponents, uiComponentsProperties})}>
         <button className="builder-button">
             <i className="bi bi-collection-play-fill"></i>
             Preview
           </button>
+          </a>
         <button className="builder-button" onClick={handleExit}>
             <i className="bi bi-x"></i>
             Salir

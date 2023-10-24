@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import LoginPage from './views/Login/LoginPage';
 import Builder from './views/Builder/Builder';
+import PreviewDisplay from './views/Builder/Preview/PreviewDisplay';
 import Dashboard from './views/Dashboard/Dashboard';
 import AuthenticatedLayout from './AuthenticatedLayout';
 import ProjectWizard from './views/Wizard/ProjectWizard';
@@ -64,6 +65,16 @@ function AppInner() {
             <AuthenticatedLayout>
               <BuilderProvider>
                 <Builder showNotification={showNotification} />
+              </BuilderProvider>
+            </AuthenticatedLayout>
+          }
+        />
+        <Route
+          path="/preview/:previewId"
+          element={
+            <AuthenticatedLayout>
+              <BuilderProvider>
+                <PreviewDisplay/>
               </BuilderProvider>
             </AuthenticatedLayout>
           }

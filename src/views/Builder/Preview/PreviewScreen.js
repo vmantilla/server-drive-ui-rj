@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { RavitBuilder } from 'ravit-builder';
-import html2canvas from 'html2canvas';
 
 import '../../../css/Builder/Preview/PreviewScreen.css';
 
@@ -93,65 +92,6 @@ function PreviewScreen({ previewId, propertyWasUpdated, initialTitle, onTitleCha
       setIsEditing(false);
     }
   };
-
-  const captureImage = async () => {
-    try {
-      const element = document.querySelector('.screen-content > div:first-child');
-      if (element) {
-        const scale = 3;
-        const canvas = await html2canvas(element, {
-          scale: scale,
-          backgroundColor: null
-        });
-        
-        const ctx = canvas.getContext('2d');
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-          const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-          
-          if (avg < 10) { // Si es cercano a negro
-            data[i] = 204;     // Establecer a #CCC (gris claro)
-            data[i + 1] = 204;
-            data[i + 2] = 204;
-          } else {
-            data[i] = avg;     // De lo contrario, establecer a escala de grises
-            data[i + 1] = avg;
-            data[i + 2] = avg;
-          }
-        }
-
-        ctx.putImageData(imageData, 0, 0);
-
-        const imgData = canvas.toDataURL('image/png');
-        if(isSelected) {
-          localStorage.setItem(`${previewId}-screenshot`, imgData);
-        } else {
-          console.log("previewScreenId es undefined o null");
-        }
-      } else {
-        console.log("Elemento no encontrado");
-      }
-    } catch (e) {
-      console.error("Error al capturar imagen:", e);
-    }
-  };
-
-
-useEffect(() => {
-  let timer;
-  if (isSelected) {
-    timer = setInterval(() => {
-      captureImage();
-    }, 5000);
-  } else {
-    clearInterval(timer);
-  }
-
-  return () => {
-    clearInterval(timer);
-  };
-}, [previewId, isSelected]); 
 
   const toggleOrientation = () => {
     setOrientation(prevOrientation => prevOrientation === 'portrait' ? 'landscape' : 'portrait');

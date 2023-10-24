@@ -350,11 +350,12 @@ useEffect(() => {
         header: ["Background", "Margin", "Corner", "Text"],
         body: ["Background", "Margin", "Corner", "Text"],
         footer: ["Background", "Margin", "Corner", "Text"],
-        button: ["Background", "Margin", "Corner", "Text", "Font", "Stroke"],
-        row: ["Background", "Margin", "Corner"],
-        column: ["Background", "Margin", "Corner"],
-        image: ["Background", "Margin", "Corner", "Frame"],
-        text: ["Text","Background", "Margin", "Corner", "Font", "Stroke"],
+        button: ["Frame", "Background", "Margin", "Corner", "Text", "Font", "Stroke"],
+        row: ["Frame","Background", "Margin", "Corner"],
+        column: ["Frame","Background", "Margin", "Corner"],
+        image: ["Frame","Background", "Margin", "Corner", "Frame"],
+        text: ["Frame","Text","Background", "Margin", "Corner", "Font", "Stroke"],
+        inputtext: ["Frame","Text","Background", "Margin", "Corner", "Font", "Stroke"],
         onload: ["Function_Name", "Function_Returns"],
     };
 
