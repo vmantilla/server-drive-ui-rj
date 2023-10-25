@@ -21,7 +21,7 @@ import ErrorComponent from './Properties/ErrorComponent';
 
 //Propiedades de funciones.
 import FunctionNameProperties from './PropertiesFunction/FunctionNameProperties';
-
+import ConditionalProperties from './PropertiesFunction/ConditionalProperties';
 
 import '../../../css/Builder/Component/ComponentProperties.css';
 import { addPropertyToAPI, deletePropertyFromAPI } from '../../api';
@@ -72,7 +72,8 @@ function getInitialViewStates() {
 		header: [],
 		footer: [],
 		function_name: [],
-		function_returns: []
+		function_returns: [],
+		conditional: []
 	};
 }
 
@@ -344,6 +345,7 @@ useEffect(() => {
         {title: "Stroke", component: StrokeProperties},
         {title: "Function_Name", component: FunctionNameProperties},
         {title: "Function_Returns", component: FunctionNameProperties},
+        {title: "Conditional", component: ConditionalProperties},
     ];
 
     const allowedPropertiesConfig = {
@@ -357,6 +359,7 @@ useEffect(() => {
         text: ["Frame","Text","Background", "Margin", "Corner", "Font", "Stroke"],
         inputtext: ["Frame","Text","Background", "Margin", "Corner", "Font", "Stroke"],
         onload: ["Function_Name", "Function_Returns"],
+        conditional: ["Conditional"],
     };
 
     const mainComponentType = component.sub_type;

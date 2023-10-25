@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { RavitBuilder } from 'ravit-builder';
+import { RavitBuilder } from 'ravit-builder-library';
 
 import '../../../css/Builder/Preview/PreviewScreen.css';
 

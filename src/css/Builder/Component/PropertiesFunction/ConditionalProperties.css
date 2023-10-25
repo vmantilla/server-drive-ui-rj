@@ -1,0 +1,65 @@
+.conditional-properties {
+  display: flex;
+  flex-direction: column;
+}
+
+.conditional-properties-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.conditional-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.conditional-properties-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 4px 10px;
+  gap: 6px;
+}
+
+.conditional-property {
+  display: flex;
+  flex-direction: column;
+}
+
+.conditional-property select,
+.conditional-property input {
+  font-size: 10px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 2px 4px;
+  color: #292929;
+}
+
+.conditional-property select:focus,
+.conditional-property input:focus {
+  outline: none;
+}
+
+.conditional-property label {
+  font-size: 10px;
+  color: #292929;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0px 2px;
+  border-radius: 4px;
+  height: 30px;
+}
+
+.input-wrapper input[type="text"] {
+  width: 100px;
+  height: 24px;
+  font-size: 10px;
+  border: none;
+  padding: 4px;
+}

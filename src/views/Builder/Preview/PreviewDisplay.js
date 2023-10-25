@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { RavitBuilder } from 'ravit-builder';
+import { RavitBuilder } from 'ravit-builder-library';
 import { useBuilder } from '../BuilderContext';
 import { useParams } from 'react-router-dom';
 
