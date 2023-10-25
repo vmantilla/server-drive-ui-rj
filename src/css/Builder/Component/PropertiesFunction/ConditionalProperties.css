@@ -1,65 +1,95 @@
 .conditional-properties {
   display: flex;
   flex-direction: column;
+  font-family: 'Arial', sans-serif;
 }
 
-.conditional-properties-body {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.conditional-properties select,
+.conditional-properties button {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.conditional-block {
-  display: flex;
-  flex-direction: column;
+.conditional-properties select:focus,
+.conditional-properties button:hover {
+  border-color: #999;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.conditional-properties-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  padding: 4px 10px;
-  gap: 6px;
-}
-
-.conditional-property {
-  display: flex;
-  flex-direction: column;
-}
-
-.conditional-property select,
-.conditional-property input {
-  font-size: 10px;
-  border: none;
-  outline: none;
-  background-color: transparent;
-  padding: 2px 4px;
-  color: #292929;
-}
-
-.conditional-property select:focus,
-.conditional-property input:focus {
-  outline: none;
+.conditional-properties select option {
+  padding: 5px;
 }
 
 .conditional-property label {
-  font-size: 10px;
-  color: #292929;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 5px;
 }
 
-.input-wrapper {
+.conditional-input-wrapper {
   display: flex;
   align-items: center;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 0px 2px;
-  border-radius: 4px;
-  height: 30px;
+  padding: 5px;
+  border-radius: 5px;
+  transition: border-color 0.3s ease;
 }
 
-.input-wrapper input[type="text"] {
-  width: 100px;
-  height: 24px;
-  font-size: 10px;
+.conditional-input-wrapper:focus-within {
+  border-color: #999;
+}
+
+.conditional-group {
+  border: 2px solid #eee;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.conditional-button {
+  background-color: #4CAF50;
+  color: #fff;
+  font-size: 12px;
   border: none;
-  padding: 4px;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.conditional-button:hover {
+  background-color: #45a049;
+}
+
+.conditional-property-mini-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f2f2f2;
+}
+
+.conditional-mini-header-dropdown {
+    border: none;
+    font-size: 10px;
+    padding: 0px 4px;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.conditional-mini-header-dropdown:focus {
+    outline: none;
+}
+
+.conditional-delete-property-button {
+    font-size: 12px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0 10px;
+    color: #292929;
 }
