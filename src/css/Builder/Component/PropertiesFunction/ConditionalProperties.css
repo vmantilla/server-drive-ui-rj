@@ -1,95 +1,115 @@
-.conditional-properties {
-  display: flex;
-  flex-direction: column;
-  font-family: 'Arial', sans-serif;
-}
-
-.conditional-properties select,
-.conditional-properties button {
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #fff;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.conditional-properties select:focus,
-.conditional-properties button:hover {
-  border-color: #999;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.conditional-properties select option {
-  padding: 5px;
-}
-
-.conditional-property label {
-  font-size: 12px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.conditional-input-wrapper {
-  display: flex;
-  align-items: center;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 5px;
-  border-radius: 5px;
-  transition: border-color 0.3s ease;
-}
-
-.conditional-input-wrapper:focus-within {
-  border-color: #999;
-}
-
-.conditional-group {
-  border: 2px solid #eee;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.conditional-button {
-  background-color: #4CAF50;
-  color: #fff;
-  font-size: 12px;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.conditional-button:hover {
-  background-color: #45a049;
-}
-
-.conditional-property-mini-header {
+.conditional-properties-header, .conditional-property-mini-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #f2f2f2;
+    font-size: 12px;
+    padding: 0px 8px;
 }
 
-.conditional-mini-header-dropdown {
+.conditional-properties-header {
+    background-color: #292929;
+    color: white;
+}
+
+.conditional-property-mini-header {
+    background-color: #f0f0f0; 
+    margin: 4px;
+}
+
+.conditional-properties-header .title, .conditional-property-mini-header .mini-header-title {
+    font-family: 'Rubik', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+}
+
+.conditional-property-mini-header .mini-header-title {
+    color: #292929; 
+}
+
+.conditional-properties-header button, .conditional-property-mini-header button {
+    font-size: 18px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+
+.conditional-property-mini-header button {
+    color: #292929;
+}
+
+.conditional-properties-body, .conditional-property {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 2px; 
+}
+
+.conditional-properties-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.conditional-input-wrapper, .input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 4px;
+    border-radius: 4px;
+    height: 30px;
+    width: 100%;
+}
+
+.conditional-input-wrapper input[type="text"], .input-wrapper input[type="text"], 
+.conditional-input-wrapper select, .input-wrapper select {
+    border: none;
+    padding: 4px;
+    font-size: 10px;
+    width: 100%; 
+}
+
+.conditional-property label {
+    font-size: 10px;
+    color: #292929;
+}
+
+.conditional-properties select {
     border: none;
     font-size: 10px;
-    padding: 0px 4px;
-    background-color: transparent;
+    padding: 2px 4px;
+    background-color: white;
     cursor: pointer;
 }
 
-.conditional-mini-header-dropdown:focus {
+.conditional-properties select:focus {
     outline: none;
 }
 
-.conditional-delete-property-button {
+.conditional-add-button {
     font-size: 12px;
-    background-color: transparent;
-    border: none;
     cursor: pointer;
-    padding: 0 10px;
-    color: #292929;
+    padding: 5px 10px;
+    margin: 5px 2px;
+    border: none;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+}
+
+.conditional-add-button:hover {
+    background-color: #e0e0e0;
+}
+
+.conditional-delete-property-button {
+  padding: 0px;
+}
+
+.conditional-property-mini-header select {
+    margin-right: 8px; /* Ajusta el valor según tus necesidades */
+}
+
+.conditional-mini-header-dropdown select {
+    width: max-content; /* Asegura que el ancho del select se base en su contenido */
 }

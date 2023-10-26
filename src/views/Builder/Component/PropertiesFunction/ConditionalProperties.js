@@ -20,7 +20,11 @@ function Group({ group, index, handleGroupChange, handleRemoveGroup }) {
     };
 
     const handleAddCondition = () => {
-        setConditions([...conditions, { operator: "==", values: ["", ""] }]);
+        if (conditions.length === 0) {
+            setConditions([{ operator: "AND", conditions: [{ operator: "==", values: ["", ""] }] }]);
+        } else {
+            setConditions([...conditions, { operator: "==", values: ["", ""] }]);
+        }
     };
 
     return (
@@ -40,32 +44,43 @@ function Group({ group, index, handleGroupChange, handleRemoveGroup }) {
 
 function Condition({ condition, index, handleConditionChange, handleRemoveCondition }) {
     return (
-        <div className="conditional-properties-row">
-            <div className="conditional-property">
-                <label>Condition {index + 1}</label>
-                <div className="input-wrapper">
-                    <select value={condition.operator} onChange={(e) => handleConditionChange(index, 'operator', e.target.value)}>
-                        <option value="==">Equal to (==)</option>
-                        <option value="!=">Not equal to (!=)</option>
-                        <option value="!">NOT (!)</option>
-                        {/* Add more operators as needed */}
-                    </select>
-                </div>
-            </div>
-            <div className="conditional-property">
-                <label>Value:</label>
-                <div className="input-wrapper">
-                    <input
-                        type="text"
-                        value={condition.values[0]}
-                        onChange={(e) => handleConditionChange(index, 'values', [e.target.value, condition.values[1]])}
-                    />
-                </div>
-            </div>
-            {condition.operator !== "!" && (
+        <div className="conditional-properties">
+            <div className="conditional-properties-body">
+                
+                {/* Renderizar el campo "Left Value" solo si el operador no es "NOT (!)" */}
+                {condition.operator !== 'NOT' && (
+                    <div className="conditional-property">
+                        <label>Left Value:</label>
+                        <div className="conditional-input-wrapper">
+                            <input
+                                type="text"
+                                value={condition.values[0]}
+                                onChange={(e) => handleConditionChange(index, 'values', [e.target.value, condition.values[1]])}
+                            />
+                        </div>
+                    </div>
+                )}
+
                 <div className="conditional-property">
-                    <label>Value:</label>
-                    <div className="input-wrapper">
+                    <label>Operator:</label>
+                    <div className="conditional-input-wrapper">
+                        <select 
+                            value={condition.operator} 
+                            onChange={(e) => handleConditionChange(index, 'operator', e.target.value)} 
+                        >
+                            <option value="==">Equal to (==)</option>
+                            <option value="!=">Not equal to (!=)</option>
+                            <option value=">">Greater than (&gt;)</option>
+                            <option value="<">Less than (&lt;)</option>
+                            <option value=">=">Greater than or equal to (&gt;=)</option>
+                            <option value="<=">Less than or equal to (&lt;=)</option>
+                            <option value="NOT">NOT (!)</option> {/* Asegúrese de agregar esta opción */}
+                        </select>
+                    </div>
+                </div>
+                <div className="conditional-property">
+                    <label>Right Value:</label>
+                    <div className="conditional-input-wrapper">
                         <input
                             type="text"
                             value={condition.values[1]}
@@ -73,10 +88,11 @@ function Condition({ condition, index, handleConditionChange, handleRemoveCondit
                         />
                     </div>
                 </div>
-            )}
+            </div>
         </div>
     );
 }
+
 
 function ConditionalProperties({ property, handlePropertyChange }) {
     const [conditions, setConditions] = useState(
@@ -114,13 +130,19 @@ function ConditionalProperties({ property, handlePropertyChange }) {
                 <>
                     {index !== 0 && (
                         <div className="conditional-property-mini-header">
-                            <select className="conditional-mini-header-dropdown" onChange={(e) => {/* Tu función de manejo aquí */}}>
+                            <select 
+                                className="conditional-mini-header-dropdown" 
+                                onChange={(e) => {/* Tu función de manejo aquí */}} 
+                            >
                                 <option value="AND">AND</option>
                                 <option value="OR">OR</option>
+                                <option value="AND_NOT">AND NOT (!)</option>
+                                <option value="OR_NOT">OR NOT (!)</option>
                             </select>
                             <button className="conditional-delete-property-button" onClick={() => handleRemoveCondition(index)}>-</button>
                         </div>
                     )}
+
                     {condition.conditions ? (
                         <Group 
                             key={index} 
@@ -140,8 +162,8 @@ function ConditionalProperties({ property, handlePropertyChange }) {
                     )}
                 </>
             )}
-            <button onClick={handleAddCondition}>Add Condition</button>
-            <button onClick={handleAddGroup}>Add Group</button>
+            <button className="conditional-add-button" onClick={handleAddCondition}>Add Condition</button>
+            <button className="conditional-add-button" onClick={handleAddGroup}>Add Group</button>
         </div>
     );
 }
