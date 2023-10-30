@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../../../../css/Builder/Component/PropertiesFunction/ConditionalProperties.css';
 
+
+
 function Group({ group, index, handleGroupChange, handleRemoveGroup }) {
     const [conditions, setConditions] = useState(group.conditions || []);
 
@@ -20,27 +22,55 @@ function Group({ group, index, handleGroupChange, handleRemoveGroup }) {
     };
 
     const handleAddCondition = () => {
-        if (conditions.length === 0) {
-            setConditions([{ operator: "AND", conditions: [{ operator: "==", values: ["", ""] }] }]);
-        } else {
-            setConditions([...conditions, { operator: "==", values: ["", ""] }]);
-        }
+        setConditions([...conditions, { logic: "AND", operator: "==", "left": "", "right": "" }]);
+    };
+
+    const handleAddGroup = () => {
+        setConditions([...conditions, { logic: "AND", conditions: [] }]);
     };
 
     return (
         <div className="conditional-group" style={{ border: '1px solid #000', padding: '10px', marginBottom: '10px' }}>
-            <div className="conditional-group-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            </div>
-            <ConditionalProperties 
-                conditions={conditions} 
-                handleConditionsChange={setConditions} 
-                handleConditionChange={handleConditionChange}
-                handleRemoveCondition={handleRemoveCondition}
-                handleAddCondition={handleAddCondition}
-            />
+            {conditions.map((condition, condIndex) => (
+                <React.Fragment key={condIndex}>
+                    {condIndex !== 0 && condition.logic && (
+                        <div className="conditional-property-mini-header">
+                            <select 
+                                className="conditional-mini-header-dropdown" 
+                                value={condition.logic}
+                                onChange={(e) => handleConditionChange(condIndex, 'logic', e.target.value)}
+                            >
+                                <option value="AND">AND</option>
+                                <option value="OR">OR</option>
+                                <option value="AND_NOT">AND NOT (!)</option>
+                                <option value="OR_NOT">OR NOT (!)</option>
+                            </select>
+                            <button className="conditional-delete-property-button" onClick={() => handleRemoveCondition(condIndex)}>-</button>
+                        </div>
+                    )}
+                    {condition.conditions ? (
+                        <Group 
+                            index={condIndex} 
+                            group={condition} 
+                            handleGroupChange={handleConditionChange} 
+                            handleRemoveGroup={handleRemoveCondition} 
+                        />
+                    ) : (
+                        <Condition 
+                            index={condIndex} 
+                            condition={condition} 
+                            handleConditionChange={handleConditionChange} 
+                            handleRemoveCondition={handleRemoveCondition}
+                        />
+                    )}
+                </React.Fragment>
+            ))}
+            <button className="conditional-add-button" onClick={handleAddCondition}>Add Condition</button>
+            <button className="conditional-add-button" onClick={handleAddGroup}>Add Group</button>
         </div>
     );
 }
+
 
 function Condition({ condition, index, handleConditionChange, handleRemoveCondition }) {
     return (
@@ -54,8 +84,8 @@ function Condition({ condition, index, handleConditionChange, handleRemoveCondit
                         <div className="conditional-input-wrapper">
                             <input
                                 type="text"
-                                value={condition.values[0]}
-                                onChange={(e) => handleConditionChange(index, 'values', [e.target.value, condition.values[1]])}
+                                value={condition.left}
+                                onChange={(e) => handleConditionChange(index, 'values', [e.target.value, condition.right])}
                             />
                         </div>
                     </div>
@@ -83,8 +113,8 @@ function Condition({ condition, index, handleConditionChange, handleRemoveCondit
                     <div className="conditional-input-wrapper">
                         <input
                             type="text"
-                            value={condition.values[1]}
-                            onChange={(e) => handleConditionChange(index, 'values', [condition.values[0], e.target.value])}
+                            value={condition.right}
+                            onChange={(e) => handleConditionChange(index, 'values', [condition.left, e.target.value])}
                         />
                     </div>
                 </div>
@@ -117,22 +147,23 @@ function ConditionalProperties({ property, handlePropertyChange }) {
     };
 
     const handleAddCondition = () => {
-        setConditions([...conditions, { operator: "==", values: ["", ""] }]);
+        setConditions([...conditions, { logic: "AND", operator: "==", "left": "", "right": "" }]);
     };
 
      const handleAddGroup = () => {
-        setConditions([...conditions, { operator: "AND", conditions: [] }]);
+        setConditions([...conditions, { logic: "AND", conditions: [] }]);
     };
 
-    return (
+   return (
         <div className="conditional-properties">
             {conditions.map((condition, index) => 
-                <>
-                    {index !== 0 && (
+                <React.Fragment key={index}> {/* Añadiendo key al fragmento */}
+                    {index !== 0 && condition.logic && (
                         <div className="conditional-property-mini-header">
                             <select 
                                 className="conditional-mini-header-dropdown" 
-                                onChange={(e) => {/* Tu función de manejo aquí */}} 
+                                value={condition.logic} // Asegurarse de que el valor mostrado sea condition.logic
+                                onChange={(e) => handleConditionChange(index, 'logic', e.target.value)} // Actualiza el valor de logic en el estado
                             >
                                 <option value="AND">AND</option>
                                 <option value="OR">OR</option>
@@ -160,7 +191,7 @@ function ConditionalProperties({ property, handlePropertyChange }) {
                             handleRemoveCondition={handleRemoveCondition}
                         />
                     )}
-                </>
+                </React.Fragment>
             )}
             <button className="conditional-add-button" onClick={handleAddCondition}>Add Condition</button>
             <button className="conditional-add-button" onClick={handleAddGroup}>Add Group</button>
