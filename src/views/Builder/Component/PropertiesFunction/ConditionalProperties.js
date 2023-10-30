@@ -161,10 +161,8 @@ function ConditionalProperties({ property, handlePropertyChange }) {
     );
 
     useEffect(() => {
-        if (typeof handlePropertyChange === 'function') {
         handlePropertyChange('conditions', conditions);
-    }
-    }, [conditions, handlePropertyChange]);
+    }, [conditions]);
 
     const handleConditionChange = (index, key, value) => {
         const newConditions = [...conditions];
