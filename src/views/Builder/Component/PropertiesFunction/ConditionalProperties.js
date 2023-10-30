@@ -156,15 +156,15 @@ function Condition({ condition, index, handleConditionChange, handleRemoveCondit
 
 
 function ConditionalProperties({ property, handlePropertyChange }) {
+
+  console.log("ConditionalProperties", property)
     const [conditions, setConditions] = useState(
         property && property.data && property.data.conditions ? property.data.conditions : []
     );
 
     useEffect(() => {
-        if (typeof handlePropertyChange === 'function') {
         handlePropertyChange('conditions', conditions);
-    }
-    }, [conditions, handlePropertyChange]);
+    }, [conditions]);
 
     const handleConditionChange = (index, key, value) => {
         const newConditions = [...conditions];
@@ -195,7 +195,7 @@ function ConditionalProperties({ property, handlePropertyChange }) {
 
     return (
         <div className="conditional-properties">
-            {conditions.map((condition, index) => 
+            {Array.isArray(conditions) && conditions.map((condition, index) => {
                 <ConditionOrGroup 
                     key={index}
                     condition={condition}
@@ -203,7 +203,7 @@ function ConditionalProperties({ property, handlePropertyChange }) {
                     handleConditionChange={handleConditionChange} 
                     handleRemoveCondition={handleRemoveCondition}
                 />
-            )}
+            })}
             <button className="conditional-add-button" onClick={() => handleAddConditionOrGroup(false)}>Add Condition</button>
             <button className="conditional-add-button" onClick={() => handleAddConditionOrGroup(true)}>Add Group</button>
         </div>

@@ -22,6 +22,7 @@ import ErrorComponent from './Properties/ErrorComponent';
 //Propiedades de funciones.
 import FunctionNameProperties from './PropertiesFunction/FunctionNameProperties';
 import ConditionalProperties from './PropertiesFunction/ConditionalProperties';
+import LoopProperties from './PropertiesFunction/LoopProperties';
 
 import '../../../css/Builder/Component/ComponentProperties.css';
 import { addPropertyToAPI, deletePropertyFromAPI } from '../../api';
@@ -73,7 +74,8 @@ function getInitialViewStates() {
 		footer: [],
 		function_name: [],
 		function_returns: [],
-		conditional: []
+		conditional: [],
+		loop: []
 	};
 }
 
@@ -346,6 +348,7 @@ useEffect(() => {
         {title: "Function_Name", component: FunctionNameProperties},
         {title: "Function_Returns", component: FunctionNameProperties},
         {title: "Conditional", component: ConditionalProperties},
+        {title: "Loop", component: LoopProperties},
     ];
 
     const allowedPropertiesConfig = {
@@ -360,6 +363,7 @@ useEffect(() => {
         inputtext: ["Frame","Text","Background", "Margin", "Corner", "Font", "Stroke"],
         onload: ["Function_Name", "Function_Returns"],
         conditional: ["Conditional"],
+        loop: ["Loop"],
     };
 
     const mainComponentType = component.sub_type;
