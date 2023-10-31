@@ -101,8 +101,6 @@ function Group({ group, index, handleGroupChange, handleRemoveGroup }) {
     );
 }
 
-
-
 function Condition({ condition, index, handleConditionChange, handleRemoveCondition }) {
     return (
         <div className="conditional-properties">

@@ -1,0 +1,76 @@
+/* LoopProperties.css */
+
+
+.loop-property,
+.loop-conditions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 0px 8px;
+}
+
+.loop-conditions-header {
+    background-color: #f0f0f0;
+    color: #292929;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 0px 10px;
+}
+
+.loop-property label {
+    font-size: 10px;
+    color: #292929;
+}
+
+.loop-property {
+    display: flex;
+    padding: 0px 10px;
+    flex-direction: column;
+    margin-bottom: 5px;
+    align-items: flex-start; /* Añadido */
+}
+
+.loop-property label {
+    font-size: 10px;
+    color: #292929;
+    text-align: left; /* Añadido para asegurarse de que el texto del label esté alineado a la izquierda */
+}
+
+
+.loop-input-wrapper,
+.loop-conditions-header select {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 4px;
+    border-radius: 4px;
+    height: 30px;
+    width: 100%;
+}
+
+.loop-input-wrapper input[type="text"],
+.loop-input-wrapper select {
+    border: none;
+    padding: 4px;
+    font-size: 10px;
+    width: 100%;
+}
+
+.loop-property select {
+    border: none;
+    font-size: 10px;
+    padding: 2px 4px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.loop-property select:focus {
+    outline: none;
+}
+
+.loop-properties-body {
+    display: flex;
+    flex-direction: column;
+    padding: 2px; 
+}
