@@ -1,0 +1,56 @@
+.case-properties {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 16px;
+}
+
+.case-property {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.case-property label {
+    font-size: 14px;
+    color: #333;
+}
+
+.case-input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.case-input-wrapper input[type="text"],
+.case-input-wrapper select {
+    border: none;
+    padding: 4px 8px;
+    font-size: 14px;
+    border-radius: 4px;
+    flex-grow: 1;
+}
+
+.case-input-wrapper input[type="text"]:focus,
+.case-input-wrapper select:focus {
+    outline: none;
+    border: 1px solid #4a90e2;
+}
+
+.case-input-wrapper input[type="text"]::placeholder {
+    color: #aaa;
+}
+
+.case-input-wrapper select {
+    max-width: 200px;
+    margin-right: 8px;
+}
+
+.case-input-wrapper input[type="text"]:not(:last-child) {
+    margin-right: 8px; /* Ajusta según sea necesario */
+}

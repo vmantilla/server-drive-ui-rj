@@ -129,6 +129,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
             { iconClass: "bi bi-diagram-3", type: "Sequence", onClick: () => { /* Handle onLongPress */ } },
             { iconClass: "bi bi-diagram-3", type: "Set_Variable", onClick: () => { /* Handle onRightClick */ } },
             { iconClass: "bi bi-diagram-3", type: "Switch", onClick: () => { /* Handle onHover */ } },
+            { iconClass: "bi bi-diagram-3", type: "Case", onClick: () => { /* Handle onHover */ } },
             { iconClass: "bi bi-cloud", type: "API_Call", onClick: () => { /* Handle onInputChange */ } },
             { iconClass: "bi bi-alarm", type: "Timer", onClick: () => { /* Handle onInputFocus */ } }
         );

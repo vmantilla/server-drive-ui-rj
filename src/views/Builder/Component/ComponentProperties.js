@@ -23,6 +23,8 @@ import ErrorComponent from './Properties/ErrorComponent';
 import FunctionNameProperties from './PropertiesFunction/FunctionNameProperties';
 import ConditionalProperties from './PropertiesFunction/ConditionalProperties';
 import LoopProperties from './PropertiesFunction/LoopProperties';
+import SwitchCaseProperties from './PropertiesFunction/SwitchCaseProperties';
+import CaseProperties from './PropertiesFunction/CaseProperties';
 
 import '../../../css/Builder/Component/ComponentProperties.css';
 import { addPropertyToAPI, deletePropertyFromAPI } from '../../api';
@@ -75,7 +77,9 @@ function getInitialViewStates() {
 		function_name: [],
 		function_returns: [],
 		conditional: [],
-		loop: []
+		loop: [],
+		switch: [],
+	    case: []
 	};
 }
 
@@ -349,6 +353,8 @@ useEffect(() => {
         {title: "Function_Returns", component: FunctionNameProperties},
         {title: "Conditional", component: ConditionalProperties},
         {title: "Loop", component: LoopProperties},
+        {title: "Switch", component: SwitchCaseProperties},
+        {title: "Case", component: CaseProperties},
     ];
 
     const allowedPropertiesConfig = {
@@ -364,6 +370,8 @@ useEffect(() => {
         onload: ["Function_Name", "Function_Returns"],
         conditional: ["Conditional"],
         loop: ["Loop"],
+        switch: ["Switch"],
+    	case: ["Case"],
     };
 
     const mainComponentType = component.sub_type;
