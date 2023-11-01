@@ -1,0 +1,92 @@
+/* ComponentPropertiesTab.css */
+
+.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding: 5px;
+    background-color: #f7f7f7;
+    font-family: 'Rubik', sans-serif;
+    font-size: 12px;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px;
+    margin: 2px; /* Reducido de 5px a 2px */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.tab.active {
+	font-weight: 600;
+    border-color: #292929;
+    color: #FFFFFF;
+    background-color: #292929;
+}
+
+.tab input {
+    font-size: 12px;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    width: calc(100% - 25px);
+}
+
+.tab button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 5px;
+}
+
+.tab.active button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 5px;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.tab button.close-btn {
+    color: #f44336;
+    font-size: 10px; 
+    padding: 2px 5px; 
+    margin: 0;
+}
+
+.tabs button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.tab-content {
+    padding: 0px;
+    border-top: 1px solid #ccc;
+    background-color: #fff;
+}
+
+.addTabButton {
+	font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #292929 !important;
+    color: #fff !important;
+    border: 1px solid #ccc !important;
+    border-radius: 5px !important;
+    padding: 4px !important;
+    cursor: pointer !important;
+    margin: 2px !important; /* Alineado con el margen de .tab */
+}
+
+
+

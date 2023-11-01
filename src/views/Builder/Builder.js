@@ -4,7 +4,7 @@ import BuilderHeader from './BuilderHeader';
 import PreviewComponents from './Preview/PreviewComponents';
 import BuilderWorkspaces from './BuilderWorkspaces';
 import PreviewWorkspace from './Preview/PreviewWorkspace';
-import ComponentProperties from './Component/ComponentProperties';
+import ComponentPropertiesTab from './Component/ComponentPropertiesTab';
 import { useNavigate } from 'react-router-dom';
 import '../../css/Builder/Builder.css';
 import { batchUpdatesToAPI, getProjectFromAPI } from '../api';
@@ -183,7 +183,7 @@ function Builder({showNotification}) {
           />
         </section>
         <aside className={`builder-properties ${selectedComponent ? 'open' : ''}`}>
-          <ComponentProperties 
+          <ComponentPropertiesTab 
             key={`${selectedScreen}${selectedComponent}`}
             previewId={selectedScreen}
             setPropertyWasUpdated={setPropertyWasUpdated} />
