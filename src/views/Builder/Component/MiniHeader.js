@@ -31,7 +31,7 @@ function MiniHeader({ possibleStates, title, states, onAddState, onDeleteState, 
                   <option key={optionIndex} value={optionState}>{optionState}</option>
                 ))}
               </select>
-              <button className="delete-property-button" onClick={() => onDeleteState(index)}>-</button>
+              <button className="delete-property-button" onClick={() => onDeleteState(index)}><i className="bi bi-x"></i></button>
             </div>
             {renderChildren(index, state)}
           </div>

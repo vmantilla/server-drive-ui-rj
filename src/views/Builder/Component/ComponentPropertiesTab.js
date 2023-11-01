@@ -88,7 +88,7 @@ function ComponentPropertiesTab() {
                         ) : (
                             <>
                                 <span onDoubleClick={() => handleDoubleClick(tab.id, tab.label)}>{tab.label}</span>
-                                {tab.id !== 'default' && <button onClick={() => handleDeleteModalShow(tab.id)}>x</button>}
+                                {tab.id !== 'default' && <button onClick={() => handleDeleteModalShow(tab.id)}><i className="bi bi-x"></i></button>}
                             </>
                         )}
                     </div>

@@ -405,7 +405,7 @@ useEffect(() => {
       <div className="component-properties-header">
         <h2 className="component-properties-title">Propiedades</h2>
         <button className="component-properties-close" onClick={() => setSelectedComponent(null)}>
-          <i className="bi bi-x"></i>
+          Close
         </button>
       </div>
       <div className="component-properties-content">
