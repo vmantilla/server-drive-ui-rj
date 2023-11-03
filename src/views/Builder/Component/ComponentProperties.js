@@ -91,6 +91,7 @@ function ComponentProperties() {
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
     handleObjectChange,
+    selectedState, setSelectedState,
     shouldUpdate, setShouldUpdate
   } = useBuilder();
 
@@ -108,16 +109,18 @@ function ComponentProperties() {
 
 
   function fillViewStates(selectedComponent) {
+
   	const component = uiComponents[selectedComponent.id]
   	if (!component) return;
-
+	console.log("component", component)
+  	
   	const { props: propertyIds } = component;
 
   	if (!propertyIds) return;
   
 	  const properties = propertyIds.reduce((acc, id) => {
 	    const property = uiComponentsProperties[id];
-	    if (property) acc[id] = property;
+	    if (property && property.state === selectedState) acc[id] = property;
 	    return acc;
 	  }, {});
 
@@ -125,9 +128,9 @@ function ComponentProperties() {
 	  let newViewStates = { ...getInitialViewStates() };
 
 	  Object.entries(properties).forEach(([id, propertyObj]) => {
-	    const { name, data, platform } = propertyObj;
+	    const { name, data, platform, state } = propertyObj;
 	    if (newViewStates[name]) {
-	      newViewStates[name].push({ data: { ...data }, id, name, platform });
+	      newViewStates[name].push({ data: { ...data }, id, name, platform, state });
 	    } else {
 	      console.warn(`La categoría ${name} no existe en viewStates`);
 	    }
@@ -137,50 +140,30 @@ function ComponentProperties() {
 
 useEffect(() => {
     const updateuiComponentsProperties = () => {
+        // Inicializa la variable con las propiedades actuales para no mutar el estado directamente
         let updateduiComponentsProperties = { ...uiComponentsProperties };
-        let updatedPropertyIds = [];
-        let currentcomponentProperties = [];
 
         if (!selectedComponent?.id) return;
-
-        const currentcomponentId = selectedComponent.id;
-        const currentcomponent = uiComponents[currentcomponentId];
-
-        if (!currentcomponent) return;
         
-        const { props: componentProperties } = currentcomponent;
-        currentcomponentProperties = componentProperties;
-
+        // Recorre todos los viewStates y actualiza las propiedades basado en el id
         Object.values(viewStates).forEach(propertiesArray => {
             propertiesArray.forEach(property => {
-                const { id, name, data, platform } = property;
-                if (data !== undefined) {
-                    updateduiComponentsProperties[id] = { name, data, platform };
-                    updatedPropertyIds.push(id);
+                const { id, name, data, platform, state } = property;
+                // Comprueba si existe data y si ya existe una propiedad con el mismo id para actualizar
+                if (data !== undefined && updateduiComponentsProperties[id]) {
+                    // Actualiza solamente los campos necesarios
+                    updateduiComponentsProperties[id] = {
+                        ...updateduiComponentsProperties[id], // conserva los datos existentes
+                        name,
+                        data,
+                        platform,
+                        state
+                    };
                 }
             });
         });
 
-        currentcomponentProperties.forEach(id => {
-            if (!updatedPropertyIds.includes(id)) {
-                delete updateduiComponentsProperties[id];
-            }
-        });
-
-        const { name, component_type, sub_type, children: childIds } = currentcomponent;
-        const updatedcomponent = {
-        	name: name,
-        	component_type: component_type,
-            sub_type: sub_type,
-            props: updatedPropertyIds,
-            children: childIds
-        };
-
-        setUiComponents(prevuiComponents => ({
-            ...prevuiComponents,
-            [currentcomponentId]: updatedcomponent
-        }));
-
+        // Actualiza los estados con las nuevas propiedades
         setUiComponentsProperties(updateduiComponentsProperties);
     };
 
@@ -189,10 +172,10 @@ useEffect(() => {
 
 
 	useEffect(() => {
-		if (selectedComponent !== null) {
+		if (selectedComponent !== null && selectedState !== null) {
 			fillViewStates(selectedComponent);
 		}
-	}, [selectedComponent]);
+	}, [selectedComponent, selectedState]);
 
 
 	const handleError = (type, propertyId, action, error ) => {
@@ -259,6 +242,7 @@ useEffect(() => {
         const newProperty = { 
             id: new Date().getTime().toString(), 
             platform: availableStates[0], 
+            preview_state_id: selectedState, 
             name: type.toLowerCase(), 
             error: false, loading: true, action: "create"
         };
@@ -297,7 +281,7 @@ useEffect(() => {
 	}
 
 	const handleChangeState = (type, index, property, value) => {
-
+		console.log('updates needed.');
 		if (!Array.isArray(viewStates[type])) {
 			console.error(`viewStates[${type}] is not an array:`, viewStates[type]);
 			return;
@@ -319,6 +303,7 @@ useEffect(() => {
 		if (
 		    currentState.id === updatedState.id &&
 		    currentState.name === updatedState.name &&
+		    currentState.state === updatedState.state &&
 		    currentState.platform === updatedState.platform &&
 		    isEqual(currentState.data, updatedState.data)
 		) {

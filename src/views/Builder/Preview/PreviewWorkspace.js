@@ -15,6 +15,7 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
     uiScreens, setUiScreens,
     uiComponents, setUiComponents,
     uiComponentsProperties, setUiComponentsProperties,
+    uiStates, setUiStates,
     selectedScreen, setSelectedScreen,
     selectedComponent, setSelectedComponent,
     resetBuilder,
@@ -42,7 +43,9 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
         if (response.screens && response.components && response.props) {
           setUiScreens(response.screens);
           setUiComponents(response.components); 
+          console.log("response.props", response.props)
           setUiComponentsProperties(response.props);
+          setUiStates(response.states);
           setSelectedScreen(null);
           setSelectedComponent(null);
           forceReflow();

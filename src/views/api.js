@@ -393,3 +393,46 @@ export const getSignedURLFromAPI = async (property, content_type, extension) => 
     throw error;
   }
 };
+
+
+// === PREVIEW STATE API Calls ===
+
+export const getPreviewStatesFromAPI = async (previewId) => {
+  try {
+    const response = await axios.get(`/previews/${previewId}/preview_states`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener estados de la vista previa:', error);
+    throw error;
+  }
+};
+
+export const addPreviewStateToAPI = async (previewId, stateData) => {
+  try {
+    const response = await axios.post(`/previews/${previewId}/preview_states`, { preview_state: stateData });
+    return response.data;
+  } catch (error) {
+    console.error('Error al agregar estado a la vista previa:', error);
+    throw error;
+  }
+};
+
+export const editPreviewStateInAPI = async (stateId, stateData) => {
+  try {
+    const response = await axios.put(`/preview_states/${stateId}`, { preview_state: stateData });
+    return response.data;
+  } catch (error) {
+    console.error('Error al editar estado de la vista previa:', error);
+    throw error;
+  }
+};
+
+export const deletePreviewStateFromAPI = async (stateId) => {
+  try {
+    await axios.delete(`/preview_states/${stateId}`);
+  } catch (error) {
+    console.error('Error al eliminar estado de la vista previa:', error);
+    throw error;
+  }
+};
+

@@ -13,12 +13,14 @@ export const BuilderProvider = ({ children }) => {
 
   const [previews, setPreviews] = useState([]);
   const [selectedScreen, setSelectedScreen] = useState(null);
+  const [selectedState, setSelectedState] = useState(null);
   const [components, setComponents] = useState([]);
   const [selectedComponent, setSelectedComponent] = useState(null);
 
   const [uiScreens, setUiScreens] = useState([]);
   const [uiComponents, setUiComponents] = useState([]);
   const [uiComponentsProperties, setUiComponentsProperties] = useState([]);
+  const [uiStates, setUiStates] = useState([]);
 
   const uiScreensRef = useRef({});
   const uiComponentsPropertiesRef = useRef({});
@@ -34,9 +36,11 @@ export const BuilderProvider = ({ children }) => {
   const resetBuilder = () => {
     setPreviews([]);
     setSelectedScreen(null);
+    setSelectedState(null);
     setComponents([]);
     setSelectedComponent(null);
     setUiScreens([]);
+    setUiStates([]);
     setUiComponents([]);
     setUiComponentsProperties([]);
   };
@@ -45,7 +49,7 @@ export const BuilderProvider = ({ children }) => {
     let isConsistent = true;
 
     // Verificar la existencia de uiScreens, uiComponents, uiComponentsProperties
-    if (!uiScreens || !uiComponents || !uiComponentsProperties ) {
+    if (!uiScreens || !uiComponents || !uiComponentsProperties || !uiStates ) {
         console.error("Faltan algunos campos necesarios en el estado local.");
         return false;
     }
@@ -191,6 +195,12 @@ export const BuilderProvider = ({ children }) => {
       });
     };
 
+    const updateStates = (state) => {
+      setUiStates(prev => {
+        return { ...prev, [state.id]: state };
+      });
+    };
+
     if (json.screens) {
       for (let screenId in json.screens) {
         updateOrAddScreen(json.screens[screenId]);
@@ -206,6 +216,12 @@ export const BuilderProvider = ({ children }) => {
     if (json.props) {
       for (let propertyId in json.props) {
         updateOrAddcomponentProperty(json.props[propertyId]);
+      }
+    }
+
+    if (json.states) {
+      for (let stateId in json.states) {
+        updateStates(json.states[stateId]);
       }
     }
   };
@@ -228,22 +244,6 @@ export const BuilderProvider = ({ children }) => {
     delete updateduiComponents[componentId];
     setUiComponents(updateduiComponents);
   };
-
-  const updatecomponentProperties = (response) => {
-    const { components, props } = response;
-
-    // Actualizar components
-    setUiComponents((prev) => {
-      const updatedcomponents = { ...prev, ...components };
-      return updatedcomponents;
-    });
-
-    // Si hay propiedades en la respuesta, actualizar el estado de propiedades
-    if (props) {
-      setUiComponentsProperties((prev) => ({ ...prev, ...props }));
-    }
-  };
-
   return (
     <BuilderContext.Provider
     value={{
@@ -251,13 +251,14 @@ export const BuilderProvider = ({ children }) => {
       uiScreens, setUiScreens,
       uiComponents, setUiComponents,
       uiComponentsProperties, setUiComponentsProperties,
+      uiStates, setUiStates,
       selectedScreen, setSelectedScreen,
+      selectedState, setSelectedState,
       updateQueue, setUpdateQueue,
       shouldUpdate, setShouldUpdate,
       selectedComponent, setSelectedComponent,
       buildTree,
       recursiveDeleteComponent,
-      updatecomponentProperties,
       resetBuilder,
       verifyDataConsistency,
       getUpdateObject,

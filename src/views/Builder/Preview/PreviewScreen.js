@@ -12,7 +12,8 @@ function PreviewScreen({ previewId, propertyWasUpdated, initialTitle, onTitleCha
     uiComponents, setUiComponents,
     uiComponentsProperties, setUiComponentsProperties,
     selectedScreen, setSelectedScreen,
-    selectedComponent, setSelectedComponent
+    selectedComponent, setSelectedComponent,
+    selectedState
   } = useBuilder();
 
   const [screenType, setScreenType] = useState('mobile');
@@ -152,6 +153,7 @@ function PreviewScreen({ previewId, propertyWasUpdated, initialTitle, onTitleCha
           selectedScreen={selectedScreen} 
           setSelectedScreen={setSelectedScreen}
           selectedComponent={selectedComponent} 
+          selectedState={selectedState}
           setSelectedComponent={setSelectedComponent} />
       </div>
     </div>
