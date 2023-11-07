@@ -141,9 +141,16 @@ function ComponentProperties() {
 useEffect(() => {
     const updateuiComponentsProperties = () => {
         // Inicializa la variable con las propiedades actuales para no mutar el estado directamente
+        let updatedPropertyIds = [];
+        let currentcomponentProperties = [];
         let updateduiComponentsProperties = { ...uiComponentsProperties };
 
         if (!selectedComponent?.id) return;
+        const currentcomponent = uiComponents[selectedComponent?.id];
+
+        if (!currentcomponent) return;
+        const { props: componentProperties } = currentcomponent;
+        currentcomponentProperties = componentProperties;
         
         // Recorre todos los viewStates y actualiza las propiedades basado en el id
         Object.values(viewStates).forEach(propertiesArray => {
@@ -159,9 +166,24 @@ useEffect(() => {
                         platform,
                         state
                     };
+                    updatedPropertyIds.push(id);
                 }
             });
         });
+
+        const { name, component_type, sub_type, children: childIds } = currentcomponent;
+        const updatedcomponent = {
+        	name: name,
+        	component_type: component_type,
+            sub_type: sub_type,
+            props: updatedPropertyIds,
+            children: childIds
+        };
+
+        setUiComponents(prevuiComponents => ({
+            ...prevuiComponents,
+            [currentcomponent.id]: updatedcomponent
+        }));
 
         // Actualiza los estados con las nuevas propiedades
         setUiComponentsProperties(updateduiComponentsProperties);

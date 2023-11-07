@@ -12,7 +12,8 @@ function PreviewScreen({ previewId, propertyWasUpdated, initialTitle, onTitleCha
     uiComponents, setUiComponents,
     uiComponentsProperties, setUiComponentsProperties,
     selectedScreen, setSelectedScreen,
-    selectedComponent, setSelectedComponent,
+    selectedComponent, setSelectedComponent, 
+    uiStates,
     selectedState
   } = useBuilder();
 
@@ -146,6 +147,7 @@ function PreviewScreen({ previewId, propertyWasUpdated, initialTitle, onTitleCha
           previewId = {previewId}
           uiScreens={uiScreens} 
           setUiScreens={setUiScreens}
+          uiStates={uiStates}
           uiComponents={uiComponents}
           setUiComponents={setUiComponents}
           uiComponentsProperties={uiComponentsProperties} 
