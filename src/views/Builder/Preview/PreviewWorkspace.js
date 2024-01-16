@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import PreviewScreen from './PreviewScreen';
-import PreviewThumbnail from './PreviewThumbnail';
 import '../../../css/Builder/Preview/PreviewWorkspace.css';
 
 import { getAllPreviewsFromAPI, addPreviewToAPI, deletePreviewFromAPI } from '../../api';
@@ -243,7 +242,6 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
     <div className="workspace-content" style={{ transform: `scale(${zoomLevel})`, width: `${workspaceSize}px`, height: `${workspaceSize}px` }}  onClick={handleWorkspaceClick}>
     {Object.entries(uiScreens).map(([previewId, previewData]) => {
       const { title, components, x: position_x, y: position_y } = previewData;
-      if (true) {
         return (
           <PreviewScreen
             key={previewId}
@@ -262,23 +260,6 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
             orderUpdated={orderUpdated}
           />
           );
-        } else {
-          return (
-          <PreviewThumbnail
-            key={previewId}
-            previewId={previewId}
-            selectedScreen={selectedScreen}
-            initialTitle={title}
-            onClick={() => handleClick({ id: previewId, title, position_x, position_y })}
-            onPositionChange={(newPosition) => handlePositionChange(newPosition, previewId)}
-            position={{ x: position_x || 0, y: position_y || 0 }}
-            zoomLevel={zoomLevel}
-            isSelected={selectedScreen === previewId}
-            onTitleChange={(newTitle) => handleTitleChange(newTitle, previewId)}
-            propertyWasUpdated={propertyWasUpdated}
-          />
-          );
-        }
       })}
 
     {showDeleteModal && (

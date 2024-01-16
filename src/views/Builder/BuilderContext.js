@@ -226,6 +226,21 @@ export const BuilderProvider = ({ children }) => {
     }
   };
 
+  const updatecomponentProperties = (response) => {
+    const { components, props } = response;
+
+    // Actualizar components
+    setUiComponents((prev) => {
+      const updatedcomponents = { ...prev, ...components };
+      return updatedcomponents;
+    });
+
+    // Si hay propiedades en la respuesta, actualizar el estado de propiedades
+    if (props) {
+      setUiComponentsProperties((prev) => ({ ...prev, ...props }));
+    }
+  };
+
   const recursiveDeleteComponent = (componentId) => {
     const component = uiComponents[componentId];
     if (!component) return;
@@ -244,6 +259,7 @@ export const BuilderProvider = ({ children }) => {
     delete updateduiComponents[componentId];
     setUiComponents(updateduiComponents);
   };
+  
   return (
     <BuilderContext.Provider
     value={{
@@ -263,7 +279,8 @@ export const BuilderProvider = ({ children }) => {
       verifyDataConsistency,
       getUpdateObject,
       handleObjectChange,
-      handleJSONUpdate
+      handleJSONUpdate,
+      updatecomponentProperties
     }}
     >
     {children}

@@ -142,6 +142,7 @@ function PreviewScreen({ previewId, propertyWasUpdated, initialTitle, onTitleCha
       </button>
       */}
       </div>
+      
       <div key={orderUpdated} className={`screen-content ${screenType}-${orientation} ${isSelected ? 'selected' : ''}`} onClick={onClick}>
         <RavitBuilder 
           previewId = {previewId}
