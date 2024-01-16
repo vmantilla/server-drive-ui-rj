@@ -52,7 +52,8 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
   const { 
     uiScreens, setUiScreens,
     uiComponents, setUiComponents,
-    uiComponentsProperties, setUiComponentsProperties
+    uiComponentsProperties, setUiComponentsProperties,
+    uiStates, setUiStates
   } = useBuilder();
 
 
@@ -180,6 +181,11 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
     localStorage.setItem('previewData', JSON.stringify(data));
   }
 
+  async function handlePreviewClick(previewUrl, data) {
+    await saveToStorage(data); // Espera a que se complete la operación de almacenamiento
+    window.open(previewUrl, '_blank', 'noopener noreferrer');
+  }
+
   return (
     <header className={`builder-header collapsed`}>
       <div className="left-container">
@@ -221,7 +227,7 @@ function BuilderHeader({ isComponentsOpen, setIsComponentsOpen, projectName, sel
           </button>
         </div>
         )}
-        <a href={previewUrl} className="no-underline" target="_blank" rel="noopener noreferrer" onClick={() => saveToStorage({uiScreens, uiComponents, uiComponentsProperties})}>
+        <a className="no-underline" target="_blank" rel="noopener noreferrer" onClick={() => handlePreviewClick(previewUrl, {uiScreens, uiComponents, uiComponentsProperties, uiStates})}>
         <button className="builder-button">
             <i className="bi bi-collection-play-fill"></i>
             Preview
