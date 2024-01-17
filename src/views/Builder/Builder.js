@@ -4,7 +4,7 @@ import BuilderHeader from './BuilderHeader';
 import PreviewComponents from './Preview/PreviewComponents';
 import BuilderWorkspaces from './BuilderWorkspaces';
 import PreviewWorkspace from './Preview/PreviewWorkspace';
-import PreviewStatesTabs from './Component/PreviewStatesTabs';
+import PreviewStatesTabs from './Component/ComponentProperties/PreviewStatesTabs';
 import { useNavigate } from 'react-router-dom';
 import '../../css/Builder/Builder.css';
 import { batchUpdatesToAPI, getProjectFromAPI } from '../api';

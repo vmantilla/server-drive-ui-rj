@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import '../../../css/Builder/Component/PreviewStatesTabs.css';
+import '../../../../css/Builder/Component/PreviewStatesTabs.css';
 
 import ComponentProperties from './ComponentProperties';
-import { useBuilder } from '../BuilderContext';
+import { useBuilder } from '../../BuilderContext';
 import {
   getPreviewStatesFromAPI,
   addPreviewStateToAPI,
   editPreviewStateInAPI,
   deletePreviewStateFromAPI,
-} from '../../api';
+} from '../../../api';
 
 function PreviewStatesTabs() {
 
