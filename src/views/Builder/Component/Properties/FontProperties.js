@@ -3,9 +3,9 @@ import '../../../../css/Builder/Component/Properties/FontProperties.css';
 
 function FontProperties({ property, handlePropertyChange }) {
 
-  const [isItalic, setIsItalic] = useState(property.data.italic || false);
-  const [isStrikethrough, setIsStrikethrough] = useState(property.data.strikethrough || false);
-  const [isUnderline, setIsUnderline] = useState(property.data.underline || false);
+  const [isItalic, setIsItalic] = useState(JSON.parse(property.data.italic) || false);
+  const [isStrikethrough, setIsStrikethrough] = useState(JSON.parse(property.data.strikethrough) || false);
+  const [isUnderline, setIsUnderline] = useState(JSON.parse(property.data.underline) || false);
 
   const [colorInput, setColorInput] = useState(property.data.color || "#000000");
   const [opacityInput, setOpacityInput] = useState(property.data.opacity || "1");

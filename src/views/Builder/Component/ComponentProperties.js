@@ -79,123 +79,162 @@ function getInitialViewStates() {
 		conditional: [],
 		loop: [],
 		switch: [],
-	    case: []
+	case: []
 	};
 }
 
 function ComponentProperties() {
 
-  const { 
-    uiComponents, setUiComponents,
-    uiComponentsProperties, setUiComponentsProperties,
-    selectedScreen, setSelectedScreen,
-    selectedComponent, setSelectedComponent,
-    handleObjectChange,
-    selectedState, setSelectedState,
-    shouldUpdate, setShouldUpdate
-  } = useBuilder();
+	const { 
+		uiComponents, setUiComponents,
+		uiComponentsProperties, setUiComponentsProperties,
+		selectedScreen, setSelectedScreen,
+		selectedComponent, setSelectedComponent,
+		handleObjectChange,
+		selectedState, setSelectedState,
+		shouldUpdate, setShouldUpdate
+	} = useBuilder();
 
-  const [viewStates, setViewStates] = useState(getInitialViewStates);
-	 const [isDisabled, setIsDisabled] = useState(true);
+	const [viewStates, setViewStates] = useState(getInitialViewStates);
+	const [isDisabled, setIsDisabled] = useState(true);
 
-	  useEffect(() => {
-	  	setIsDisabled(true);
-	    const timer = setTimeout(() => {
-	  		setIsDisabled(false);
-	  	}, 2000);
+	useEffect(() => {
+		setIsDisabled(true);
+		const timer = setTimeout(() => {
+			setIsDisabled(false);
+		}, 2000);
 
-	    return () => clearTimeout(timer);
-	  }, [selectedScreen, selectedComponent]);
+		return () => clearTimeout(timer);
+	}, [selectedScreen, selectedComponent]);
 
 
-  function fillViewStates(selectedComponent) {
+	function fillViewStates(selectedComponent, selectedState) {
 
-  	const component = uiComponents[selectedComponent.id]
-  	if (!component) return;
-	console.log("component", component)
-  	
-  	const { props: propertyIds } = component;
+		const component = uiComponents[selectedComponent.id]
 
-  	if (!propertyIds) return;
-  
-	  const properties = propertyIds.reduce((acc, id) => {
-	    const property = uiComponentsProperties[id];
-	    if (property && property.state === selectedState) acc[id] = property;
-	    return acc;
-	  }, {});
+		console.log("component:", component);
 
-	  if (!properties) return;
-	  let newViewStates = { ...getInitialViewStates() };
+		if (!component) return;
 
-	  Object.entries(properties).forEach(([id, propertyObj]) => {
-	    const { name, data, platform, state } = propertyObj;
-	    if (newViewStates[name]) {
-	      newViewStates[name].push({ data: { ...data }, id, name, platform, state });
-	    } else {
-	      console.warn(`La categoría ${name} no existe en viewStates`);
-	    }
-	  });
-	  setViewStates(newViewStates);
+		const { props: propertyIds } = component;
+
+		if (!propertyIds) return;
+
+		console.log("propertyIds:", propertyIds);
+
+		const properties = propertyIds.reduce((acc, id) => {
+			const property = uiComponentsProperties[id];
+			console.log("uiComponentsProperties[id]:", uiComponentsProperties[id]);
+			console.log("selectedState:", selectedState);
+			console.log("property.state === selectedState:", property.state === selectedState);
+			if (property && property.state === selectedState) acc[id] = property;
+			return acc;
+		}, {});
+
+		console.log("properties:", properties);
+		
+		if (!properties) return;
+		let newViewStates = { ...getInitialViewStates() };
+
+		Object.entries(properties).forEach(([id, propertyObj]) => {
+			const { name, data, platform, state } = propertyObj;
+			if (newViewStates[name]) {
+				newViewStates[name].push({ data: { ...data }, id, name, platform, state });
+			} else {
+				console.warn(`La categoría ${name} no existe en viewStates`);
+			}
+		});
+		setViewStates(newViewStates);
 	}
 
-useEffect(() => {
-    const updateuiComponentsProperties = () => {
+	useEffect(() => {
+		const updateComponentsProperties = () => {
         // Inicializa la variable con las propiedades actuales para no mutar el estado directamente
-        let updatedPropertyIds = [];
-        let currentcomponentProperties = [];
-        let updateduiComponentsProperties = { ...uiComponentsProperties };
+			let updatedPropertyIds = [];
+			let currentcomponentProperties = [];
+			let updateUiComponentsProperties = { ...uiComponentsProperties };
 
-        if (!selectedComponent?.id) return;
-        const currentcomponent = uiComponents[selectedComponent?.id];
+			if (!selectedComponent?.id) return;
+			const currentcomponent = uiComponents[selectedComponent?.id];
 
-        if (!currentcomponent) return;
-        const { props: componentProperties } = currentcomponent;
-        currentcomponentProperties = componentProperties;
+			if (!currentcomponent) return;
+			const { props: componentProperties } = currentcomponent;
+			currentcomponentProperties = componentProperties;
+
+        	Object.values(viewStates).forEach(propertiesArray => {
+				propertiesArray.forEach(property => {
+					const { id, name, data, platform, state } = property;
+    				if (data !== undefined) {
+						if (updateUiComponentsProperties[id]) {
+							updateUiComponentsProperties[id] = {
+				          ...updateUiComponentsProperties[id],
+				          name,
+				          data,
+				          platform,
+				          state
+					      };
+					  } else {
+					  	updateUiComponentsProperties[id] = {
+					  		id,
+					  		name,
+					  		data,
+					  		platform,
+					  		state
+					  	};
+					  }
+					  updatedPropertyIds.push(id);
+					}
+				});
+			});
+
+			//console.log("updatedPropertyIds:", updatedPropertyIds);
+
+
+
+			const { name, component_type, sub_type, children: childIds } = currentcomponent;
+			const updatedcomponent = {
+				name: name,
+				component_type: component_type,
+				sub_type: sub_type,
+				props: updatedPropertyIds,
+				children: childIds
+			};
+
+			const updateComponentsProperties2 = async (updatedcomponent, updateUiComponentsProperties) => {
         
-        // Recorre todos los viewStates y actualiza las propiedades basado en el id
-        Object.values(viewStates).forEach(propertiesArray => {
-            propertiesArray.forEach(property => {
-                const { id, name, data, platform, state } = property;
-                // Comprueba si existe data y si ya existe una propiedad con el mismo id para actualizar
-                if (data !== undefined && updateduiComponentsProperties[id]) {
-                    // Actualiza solamente los campos necesarios
-                    updateduiComponentsProperties[id] = {
-                        ...updateduiComponentsProperties[id], // conserva los datos existentes
-                        name,
-                        data,
-                        platform,
-                        state
-                    };
-                    updatedPropertyIds.push(id);
-                }
-            });
-        });
+				setUiComponentsProperties(updateUiComponentsProperties);
 
-        const { name, component_type, sub_type, children: childIds } = currentcomponent;
-        const updatedcomponent = {
-        	name: name,
-        	component_type: component_type,
-            sub_type: sub_type,
-            props: updatedPropertyIds,
-            children: childIds
-        };
+				
+        		setUiComponents((prevuiComponents) => ({
+					...prevuiComponents,
+					[selectedComponent.id]: updatedcomponent,
+				}));
 
-        setUiComponents(prevuiComponents => ({
-            ...prevuiComponents,
-            [currentcomponent.id]: updatedcomponent
-        }));
+				//console.log("uiComponents:", uiComponents);
+			};
 
-        // Actualiza los estados con las nuevas propiedades
-        setUiComponentsProperties(updateduiComponentsProperties);
-    };
+			updateComponentsProperties2(updatedcomponent, updateUiComponentsProperties);
 
-    updateuiComponentsProperties();
-}, [viewStates]);
+			/*console.log("uiComponents:", uiComponents);
+			console.log("uiComponentsProperties:", uiComponentsProperties);
+			console.log("updateUiComponentsProperties:", updateUiComponentsProperties);
+			console.log("selectedScreen:", selectedScreen);
+			console.log("selectedComponent:", selectedComponent);
+			console.log("handleObjectChange:", handleObjectChange);
+			console.log("selectedState:", selectedState);
+			console.log("shouldUpdate:", shouldUpdate);*/
+
+
+		};
+
+		updateComponentsProperties();
+	}, [viewStates]);
+
 
 
 	useEffect(() => {
 		if (selectedComponent !== null && selectedState !== null) {
-			fillViewStates(selectedComponent);
+			fillViewStates(selectedComponent, selectedState);
 		}
 	}, [selectedComponent, selectedState]);
 
@@ -217,7 +256,15 @@ useEffect(() => {
 			const updatedStates = prevState[type].filter(state => state.id !== propertyId);
 			return { ...prevState, [type]: updatedStates };
 		});
+
+	  // Elimina la propiedad de uiComponentsProperties
+		setUiComponentsProperties(prevUiComponentsProperties => {
+			const updatedProperties = { ...prevUiComponentsProperties };
+			delete updatedProperties[propertyId];
+			return updatedProperties;
+		});
 	};
+
 
 	const convertViewStatesToPropertiesArray = (viewStates) => {
 		return Object.values(viewStates).flat();
@@ -240,7 +287,6 @@ useEffect(() => {
 	const manageProperty = async (action, apiCall, componentId, property, type, onSuccess) => {
 		try {
 			const result = await apiCall(componentId, property);
-			console.log(action,result)
 			onSuccess(type, property.id, { ...result, error: false, loading: false });
 		} catch (error) {
 			handleError(type, property.id, action, error);
@@ -256,26 +302,50 @@ useEffect(() => {
 	};
 
 	const handleAddState = async (type) => {
-	const availableStates = possibleStates.filter(
-        state => !viewStates[type].some(s => s.platform === state)
-    );
+		const availableStates = possibleStates.filter(
+			state => !viewStates[type].some(s => s.platform === state)
+			);
 
-    if (availableStates.length > 0) {
-        const newProperty = { 
-            id: new Date().getTime().toString(), 
-            platform: availableStates[0], 
-            preview_state_id: selectedState, 
-            name: type.toLowerCase(), 
-            error: false, loading: true, action: "create"
-        };
+		if (availableStates.length > 0) {
+			const newProperty = { 
+				id: new Date().getTime().toString(), 
+				platform: availableStates[0], 
+				preview_state_id: selectedState, 
+				name: type.toLowerCase(), 
+				error: false, loading: true, action: "create"
+			};
 
-        setViewStates(prev => ({ 
-            ...prev, 
-            [type]: [...prev[type], newProperty] 
-        }));
-        createPropertyToAPI(selectedComponent.id, newProperty, type);
-    }
-};
+			setViewStates(prev => ({ 
+				...prev, 
+				[type]: [...prev[type], newProperty] 
+			}));
+			createPropertyToAPI(selectedComponent.id, newProperty, type);
+		}
+	};
+
+	const addProperty = (type, propertyId, newProperty) => {
+  // Check if the type exists in viewStates and uiComponentsProperties
+		if (viewStates.hasOwnProperty(type) && uiComponentsProperties.hasOwnProperty(newProperty.id)) {
+    // Property with the same ID already exists, handle it as needed
+			console.error(`Property with ID ${newProperty.id} already exists.`);
+			return;
+		}
+
+  // Add the new property to viewStates
+		setViewStates(prevState => ({
+			...prevState,
+			[type]: [...(prevState[type] || []), newProperty],
+		}));
+
+  // Add the new property to uiComponentsProperties
+		setUiComponentsProperties(prevProperties => ({
+			...prevProperties,
+			[newProperty.id]: newProperty,
+		}));
+
+  // Perform any additional actions here, like making an API call
+  // createPropertyToAPI(selectedComponent.id, newProperty, type);
+	};
 
 	const handleDeleteState = async (type, index) => {
 		if (!Array.isArray(viewStates[type])) {
@@ -303,7 +373,6 @@ useEffect(() => {
 	}
 
 	const handleChangeState = (type, index, property, value) => {
-		console.log('updates needed.');
 		if (!Array.isArray(viewStates[type])) {
 			console.error(`viewStates[${type}] is not an array:`, viewStates[type]);
 			return;
@@ -323,103 +392,104 @@ useEffect(() => {
 		}
 
 		if (
-		    currentState.id === updatedState.id &&
-		    currentState.name === updatedState.name &&
-		    currentState.state === updatedState.state &&
-		    currentState.platform === updatedState.platform &&
-		    isEqual(currentState.data, updatedState.data)
-		) {
-		    return;
-		}
+			currentState.id === updatedState.id &&
+			currentState.name === updatedState.name &&
+			currentState.state === updatedState.state &&
+			currentState.platform === updatedState.platform &&
+			isEqual(currentState.data, updatedState.data)
+			) {
+			console.error(`is isEqual ${currentState.id} / ${updatedState.id}`);
+		return;
+	}
 
-    if (updatedState) {
-			updateViewState(type, currentState.id, updatedState)
-			handleObjectChange("properties", currentState.id);
-		} else {
-			console.log('No updates needed.');
-		}
+	if (updatedState) {
+		updateViewState(type, currentState.id, updatedState)
+		handleObjectChange("properties", currentState.id);
+	} else {
+		console.log('No updates needed.');
+	}
+};
+
+const showPropertiesBasedOnComponentType = (component) => {
+	const propertyComponents = [
+		{title: "Header", component: HeaderProperties},
+		{title: "Footer", component: FooterProperties},
+		{title: "Row", component: RowProperties},
+		{title: "Column", component: ColumnProperties},
+		{title: "Text", component: TextProperties},
+		{title: "datasource", component: DataSourceProperties},
+		{title: "Background", component: BackgroundProperties},
+		{title: "Margin", component: MarginProperties},
+		{title: "Corner", component: RoundedCornerProperties},
+		{title: "Image", component: ImageProperties},
+		{title: "Frame", component: FrameProperties},
+		{title: "Alignment", component: AlignmentProperties},
+		{title: "Font", component: FontProperties},
+		{title: "Stroke", component: StrokeProperties},
+		{title: "Function_Name", component: FunctionNameProperties},
+		{title: "Function_Returns", component: FunctionNameProperties},
+		{title: "Conditional", component: ConditionalProperties},
+		{title: "Loop", component: LoopProperties},
+		{title: "Switch", component: SwitchCaseProperties},
+		{title: "Case", component: CaseProperties},
+		];
+
+	const allowedPropertiesConfig = {
+		header: ["Background", "Margin", "Corner", "Text"],
+		body: ["Background", "Margin", "Corner", "Text"],
+		footer: ["Background", "Margin", "Corner", "Text"],
+		button: ["Frame", "Background", "Margin", "Corner", "Text", "Font", "Stroke"],
+		row: ["Frame","Background", "Margin", "Corner"],
+		column: ["Frame","Background", "Margin", "Corner"],
+		image: ["Frame","Background", "Margin", "Corner", "Frame"],
+		text: ["Frame","Text","Background", "Margin", "Corner", "Font", "Stroke"],
+		inputtext: ["Frame","Text","Background", "Margin", "Corner", "Font", "Stroke"],
+		onload: ["Function_Name", "Function_Returns"],
+		conditional: ["Conditional"],
+		loop: ["Loop"],
+		switch: ["Switch"],
+	case: ["Case"],
 	};
 
-	const showPropertiesBasedOnComponentType = (component) => {
-    const propertyComponents = [
-        {title: "Header", component: HeaderProperties},
-        {title: "Footer", component: FooterProperties},
-        {title: "Row", component: RowProperties},
-        {title: "Column", component: ColumnProperties},
-        {title: "Text", component: TextProperties},
-        {title: "datasource", component: DataSourceProperties},
-        {title: "Background", component: BackgroundProperties},
-        {title: "Margin", component: MarginProperties},
-        {title: "Corner", component: RoundedCornerProperties},
-        {title: "Image", component: ImageProperties},
-        {title: "Frame", component: FrameProperties},
-        {title: "Alignment", component: AlignmentProperties},
-        {title: "Font", component: FontProperties},
-        {title: "Stroke", component: StrokeProperties},
-        {title: "Function_Name", component: FunctionNameProperties},
-        {title: "Function_Returns", component: FunctionNameProperties},
-        {title: "Conditional", component: ConditionalProperties},
-        {title: "Loop", component: LoopProperties},
-        {title: "Switch", component: SwitchCaseProperties},
-        {title: "Case", component: CaseProperties},
-    ];
+	const mainComponentType = component.sub_type;
 
-    const allowedPropertiesConfig = {
-        header: ["Background", "Margin", "Corner", "Text"],
-        body: ["Background", "Margin", "Corner", "Text"],
-        footer: ["Background", "Margin", "Corner", "Text"],
-        button: ["Frame", "Background", "Margin", "Corner", "Text", "Font", "Stroke"],
-        row: ["Frame","Background", "Margin", "Corner"],
-        column: ["Frame","Background", "Margin", "Corner"],
-        image: ["Frame","Background", "Margin", "Corner", "Frame"],
-        text: ["Frame","Text","Background", "Margin", "Corner", "Font", "Stroke"],
-        inputtext: ["Frame","Text","Background", "Margin", "Corner", "Font", "Stroke"],
-        onload: ["Function_Name", "Function_Returns"],
-        conditional: ["Conditional"],
-        loop: ["Loop"],
-        switch: ["Switch"],
-    	case: ["Case"],
-    };
+	if (!allowedPropertiesConfig.hasOwnProperty(mainComponentType)) {
+		return [];
+	}
 
-    const mainComponentType = component.sub_type;
+	const allowedTitles = allowedPropertiesConfig[mainComponentType];
 
-    if (!allowedPropertiesConfig.hasOwnProperty(mainComponentType)) {
-        return [];
-    }
+	const allowedProperties = propertyComponents.filter(({ title }) => allowedTitles.includes(title));
 
-    const allowedTitles = allowedPropertiesConfig[mainComponentType];
-
-    const allowedProperties = propertyComponents.filter(({ title }) => allowedTitles.includes(title));
-
-    return allowedProperties.map(({ title, component }) => (
-        <MiniHeaderWithProperties
-            key={`${title}${component.id}`}
-            title={title}
-            selectedComponent={component}
-            states={viewStates[title.toLowerCase()]}
-            propertyComponent={component}
-            handleChangeState={handleChangeState}
-            handleAddState={handleAddState}
-            handleDeleteState={handleDeleteState}
-            handleRetry={handleRetry}
-        />
-    ));
+	return allowedProperties.map(({ title, component }) => (
+		<MiniHeaderWithProperties
+		key={`${title}${component.id}`}
+		title={title}
+		selectedComponent={component}
+		states={viewStates[title.toLowerCase()]}
+		propertyComponent={component}
+		handleChangeState={handleChangeState}
+		handleAddState={handleAddState}
+		handleDeleteState={handleDeleteState}
+		handleRetry={handleRetry}
+		/>
+		));
 };
 
 
-  return (
-    <div className="component-properties">
-      <div className="component-properties-header">
-        <h2 className="component-properties-title">Propiedades</h2>
-        <button className="component-properties-close" onClick={() => setSelectedComponent(null)}>
-          Close
-        </button>
-      </div>
-      <div className="component-properties-content">
-      	 {selectedComponent !== null && showPropertiesBasedOnComponentType(selectedComponent)}
-      </div>
-    </div>
-  );
+return (
+	<div className="component-properties">
+	<div className="component-properties-header">
+	<h2 className="component-properties-title">Propiedades</h2>
+	<button className="component-properties-close" onClick={() => setSelectedComponent(null)}>
+	Close
+	</button>
+	</div>
+	<div className="component-properties-content">
+	{selectedComponent !== null && showPropertiesBasedOnComponentType(selectedComponent)}
+	</div>
+	</div>
+	);
 }
 
 export default ComponentProperties;
