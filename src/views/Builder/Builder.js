@@ -5,6 +5,7 @@ import PreviewComponents from './Preview/PreviewComponents';
 import BuilderWorkspaces from './BuilderWorkspaces';
 import PreviewWorkspace from './Preview/PreviewWorkspace';
 import PreviewStatesTabs from './Component/ComponentProperties/PreviewStatesTabs';
+import ChatAI from './AI/ChatAI/ChatAI';
 import { useNavigate } from 'react-router-dom';
 import '../../css/Builder/Builder.css';
 import { batchUpdatesToAPI, getProjectFromAPI } from '../api';
@@ -42,6 +43,7 @@ function Builder({showNotification}) {
   const [propertyWasUpdated, setPropertyWasUpdated] = useState(null);
   const [orderUpdated, setOrderUpdated] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const isChatAdjacentToTabs = selectedComponent !== null;
 
   useEffect(() => {
     console.warn('resetBuilder:', retryCount);
@@ -182,6 +184,7 @@ function Builder({showNotification}) {
             orderUpdated={orderUpdated}
           />
         </section>
+        <ChatAI className={isChatAdjacentToTabs ? 'adjacent-to-tabs' : ''} />
         <aside className={`builder-properties ${selectedComponent ? 'open' : ''}`}>
           <PreviewStatesTabs 
             key={`${selectedScreen}${selectedComponent}`}

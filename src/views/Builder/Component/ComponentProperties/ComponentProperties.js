@@ -4,7 +4,6 @@ import isEqual from 'lodash/isEqual';
 
 import '../../../../css/Builder/Component/ComponentProperties.css';
 import PropertyConfigurator from  './PropertyConfigurator.js';
-import { getInitialViewStates, fillViewStates } from './PropertyUtils';
 
 import { useBuilder } from '../../BuilderContext';
 import { addPropertyToAPI, deletePropertyFromAPI } from '../../../api';
@@ -38,6 +37,31 @@ function ComponentProperties() {
 	    return () => clearTimeout(timer);
 	  }, [selectedScreen, selectedComponent]);
 
+
+ function getInitialViewStates() {
+	return {
+		alignment: [],
+		frame: [],
+		font: [],
+		datasource: [],
+		stroke: [],
+		image: [],
+		corner: [],
+		margin: [],
+		background: [],
+		row: [],
+		column: [],
+		text: [],
+		header: [],
+		footer: [],
+		function_name: [],
+		function_returns: [],
+		conditional: [],
+		loop: [],
+		switch: [],
+	    case: []
+	};
+}
 
   function fillViewStates(selectedComponent) {
 
