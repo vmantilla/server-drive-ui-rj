@@ -184,7 +184,7 @@ function Builder({showNotification}) {
             orderUpdated={orderUpdated}
           />
         </section>
-        <ChatAI className={isChatAdjacentToTabs ? 'adjacent-to-tabs' : ''} />
+        <ChatAI projectId={projectId} className={isChatAdjacentToTabs ? 'adjacent-to-tabs' : ''} />
         <aside className={`builder-properties ${selectedComponent ? 'open' : ''}`}>
           <PreviewStatesTabs 
             key={`${selectedScreen}${selectedComponent}`}

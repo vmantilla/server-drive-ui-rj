@@ -100,3 +100,13 @@
   overflow: hidden; /* Oculta el scrollbar */
   box-sizing: border-box; /* Asegura que el padding no afecte el ancho */
 }
+
+.audio-toggle-button {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}

@@ -2,7 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import chatAILogo from '../../../../assets/images/chatAILogo.png';
 import '../../../../css/Builder/AI/ChatAI/ChatAI.css';
 
-function ChatAI({ className }) {
+import {
+  sendMessageToAiChat
+} from '../../../api';
+
+function ChatAI({ projectId, className }) {
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isMinimized, setIsMinimized] = useState(false);
@@ -42,13 +47,18 @@ function ChatAI({ className }) {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const toggleAudio = () => {
+    setIsAudioEnabled(!isAudioEnabled);
+  };
+
   useEffect(() => {
     if (!isMinimized) {
       inputRef.current?.focus();
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [isMinimized]);
 
-  const handleUserInput = (event) => {
+  const handleUserInput = async (event) => {
   const input = event.target.value;
   if (event.key === 'Enter' && input.trim() !== '') {
     // Agrega el mensaje del usuario a los mensajes
@@ -59,7 +69,7 @@ function ChatAI({ className }) {
     setLastSentMessage(input);
 
     // Genera una respuesta de la AI
-    const aiResponse = mockAIResponse(input);
+    const aiResponse = await sendMessageToAiChat(projectId, input);
     setMessages(messages => [...messages, aiResponse]);
 
     // Habla la respuesta de la AI
@@ -114,8 +124,10 @@ const resetTextAreaHeight = () => {
   };
 
   const speak = (text) => {
-    speechSynthesisUtterance.text = text;
-    window.speechSynthesis.speak(speechSynthesisUtterance);
+    if (isAudioEnabled) {
+      speechSynthesisUtterance.text = text;
+      window.speechSynthesis.speak(speechSynthesisUtterance);
+    }
   };
 
   const mockAIResponse = (input) => {
@@ -168,7 +180,14 @@ const resetTextAreaHeight = () => {
   ) : (
     <div className={`chat-ai ${className}`}>
       <div className="chat-header">
+      <button onClick={toggleAudio} className="audio-toggle-button">
+          {isAudioEnabled 
+            ? <i className="bi bi-volume-up"></i>  // Ícono de audio activado
+            : <i className="bi bi-volume-mute"></i> // Ícono de audio desactivado
+          }
+        </button>
         <img src={chatAILogo} alt="Chat AI logo" className="robot-icon" />
+        &nbsp;
         Chat AI
         <button className="minimize-button" onClick={() => setIsMinimized(true)}>–</button>
       </div>
