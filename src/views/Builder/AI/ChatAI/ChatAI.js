@@ -17,6 +17,7 @@ function ChatAI({ projectId, className }) {
   const speechSynthesisUtterance = new window.SpeechSynthesisUtterance();
   const recognition = useRef(null); 
  const [lastSentMessage, setLastSentMessage] = useState(""); // Estado para almacenar el último mensaje enviado
+const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
 
 
   useEffect(() => {
@@ -48,8 +49,17 @@ function ChatAI({ projectId, className }) {
   }, [messages]);
 
   const toggleAudio = () => {
-    setIsAudioEnabled(!isAudioEnabled);
-  };
+  if (!isAudioEnabled) {
+    setIsAudioEnabled(true);
+  } else {
+    // Si el sonido está activado y la síntesis de voz está hablando, detiene la síntesis de voz
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
+    setIsAudioEnabled(false);
+  }
+};
+
 
   useEffect(() => {
     if (!isMinimized) {
@@ -59,35 +69,54 @@ function ChatAI({ projectId, className }) {
   }, [isMinimized]);
 
   const handleUserInput = async (event) => {
-  const input = event.target.value;
-  if (event.key === 'Enter' && input.trim() !== '') {
-    // Agrega el mensaje del usuario a los mensajes
-    const userMessage = { type: 'user', text: input };
-    setMessages(messages => [...messages, userMessage]);
+      const input = event.target.value;
+      if (event.key === 'Enter' && input.trim() !== '') {
+        // Agrega el mensaje del usuario a los mensajes
+        const userMessage = { type: 'user', text: input };
+        setMessages(messages => [...messages, userMessage]);
 
-    // Actualiza el último mensaje enviado
-    setLastSentMessage(input);
+        // Agrega un mensaje temporal de "enviando..."
+        const sendingMessage = { type: 'ai', text: '...' };
+        setMessages(messages => [...messages, sendingMessage]);
 
-    // Genera una respuesta de la AI
-    const aiResponse = await sendMessageToAiChat(projectId, input);
-    setMessages(messages => [...messages, aiResponse]);
+        // Limpia el input y resetea la altura del textarea
+        setInputValue('');
+        resetTextAreaHeight();
+        setIsWaitingForResponse(true);  
 
-    // Habla la respuesta de la AI
-    speak(aiResponse.text);
+        try {
+          // Envía el mensaje al servidor y obtiene la respuesta
+          const aiResponse = await sendMessageToAiChat(projectId, input);
 
-    // Detiene el reconocimiento de voz si está activo
-    if (isListening && recognition.current) {
-      recognition.current.stop();
-      setIsListening(false);
-    }
+          // Reemplaza el mensaje de "enviando..." con la respuesta de la AI
+          setMessages(messages => {
+            const newMessages = [...messages];
+            newMessages[newMessages.length - 1] = aiResponse;
+            return newMessages;
+          });
 
-    // Limpia el input después de un breve retraso
-    setTimeout(() => {
-      setInputValue('');
-      resetTextAreaHeight();
-    }, 500);
-  }
-};
+          // Habla la respuesta de la AI
+          if (isAudioEnabled) {
+            speak(aiResponse.text);
+          }
+        } catch (error) {
+          console.error("Error al enviar mensaje: ", error);
+          // Manejo de error, por ejemplo, reemplazar el mensaje de "enviando..." con un mensaje de error
+        } finally {
+          setIsWaitingForResponse(false); // Vuelve a habilitar el input después de recibir la respuesta
+        }
+
+        // Actualiza el último mensaje enviado
+        setLastSentMessage(input);
+
+        // Detiene el reconocimiento de voz si está activo
+        if (isListening && recognition.current) {
+          recognition.current.stop();
+          setIsListening(false);
+        }
+      }
+    };
+
 
 
 const adjustTextAreaHeight = (event) => {
@@ -154,6 +183,8 @@ const resetTextAreaHeight = () => {
   // Renderiza el contenido del mensaje basado en el tipo
   const renderMessageContent = (message) => {
     switch (message.type) {
+      case 'sending':
+        return <span>...</span>;
       case 'ai-selection':
         // Renderiza un mensaje con opciones de selección
         return (
@@ -201,13 +232,15 @@ const resetTextAreaHeight = () => {
       </div>
       <div className="chat-input">
         <textarea
-    ref={inputRef}
-    className="chat-input-area"
-    value={inputValue}
-    onChange={(e) => setInputValue(e.target.value)}
-    onKeyDown={handleUserInput}
-    onInput={adjustTextAreaHeight}
-  />
+          ref={inputRef}
+          className="chat-input-area"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleUserInput}
+          onInput={adjustTextAreaHeight}
+          disabled={isWaitingForResponse}  // Deshabilita el textarea si se está esperando respuesta
+        />
+
     <button className="voice-button" onClick={handleVoiceButtonClick}>
       {isListening ? 'Stop' : '🎤'}
     </button>
