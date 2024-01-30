@@ -440,9 +440,9 @@ export const deletePreviewStateFromAPI = async (stateId) => {
 // === AI CHAT API Calls ===
 
 
-export const sendMessageToAiChat = async (project_id, message) => {
+export const sendMessageToAiChat = async (workspaceId, message) => {
   try {
-    const response = await axios.post(`/projects/${project_id}/ai_chat`, { message });
+    const response = await axios.post(`/workspaces/${workspaceId}/ai_chat`, { message });
     return response.data;
   } catch (error) {
     console.error('Error al enviar mensaje al chat:', error);

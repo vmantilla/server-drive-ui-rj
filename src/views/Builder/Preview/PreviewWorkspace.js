@@ -8,7 +8,7 @@ import '../../../css/Builder/Preview/PreviewWorkspace.css';
 import { getAllPreviewsFromAPI, addPreviewToAPI, deletePreviewFromAPI } from '../../api';
 import { useBuilder } from '../BuilderContext';
 
-function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, setOnDelete, forceReflow, showNotification, setUpdateComponentProperties, setShouldUpdate, orderUpdated }) {
+function PreviewWorkspace({ selectedWorkspace, propertyWasUpdated, setAddNewPreview, setOnDelete, forceReflow, showNotification, setUpdateComponentProperties, setShouldUpdate, orderUpdated }) {
 
   const { 
     uiScreens, setUiScreens,
@@ -33,9 +33,9 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
   const workspaceSize = Math.max(zoomLevel * 1000, window.innerWidth, window.innerHeight);
 
   useEffect(() => {
-    if (workspaceId) {
+    if (selectedWorkspace) {
       resetBuilder();
-      getAllPreviewsFromAPI(workspaceId)
+      getAllPreviewsFromAPI(selectedWorkspace.id)
       .then((response) => {
         console.log("getAllPreviewsFromAPI", response)
 
@@ -59,7 +59,7 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
         console.error('Error al mostrar el espacio de trabajo:', error);
       });
     }
-  }, [workspaceId]);
+  }, [selectedWorkspace]);
 
 
   useEffect(() => {
@@ -69,7 +69,7 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
       };
 
       try {
-        const response =  await addPreviewToAPI(workspaceId, previewData);
+        const response =  await addPreviewToAPI(selectedWorkspace.id, previewData);
 
         if (response.screens && response.components && response.props) {
           setUiScreens((prev) => ({ ...prev, ...response.screens }));
@@ -91,7 +91,7 @@ function PreviewWorkspace({ workspaceId, propertyWasUpdated, setAddNewPreview, s
 
     setAddNewPreview(() => addNewPreview);
     setOnDelete(() => handleDelete);
-  }, [workspaceId, setAddNewPreview]);
+  }, [selectedWorkspace, setAddNewPreview]);
 
   const handlePositionChange = (newPosition, previewId) => {
     setUiScreens((prevUiScreens) => {

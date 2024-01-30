@@ -6,7 +6,7 @@ import {
   sendMessageToAiChat
 } from '../../../api';
 
-function ChatAI({ projectId, className }) {
+function ChatAI({ selectedWorkspace, className, setForceWorkspaceUpdate }) {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -18,6 +18,8 @@ function ChatAI({ projectId, className }) {
   const recognition = useRef(null); 
  const [lastSentMessage, setLastSentMessage] = useState(""); // Estado para almacenar el último mensaje enviado
 const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
+const [showCode, setShowCode] = useState(false); // Estado para mostrar/ocultar el código JSON
+  const [jsonCode, setJsonCode] = useState(null);
 
 
   useEffect(() => {
@@ -69,54 +71,88 @@ const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   }, [isMinimized]);
 
   const handleUserInput = async (event) => {
-      const input = event.target.value;
-      if (event.key === 'Enter' && input.trim() !== '') {
-        // Agrega el mensaje del usuario a los mensajes
-        const userMessage = { type: 'user', text: input };
-        setMessages(messages => [...messages, userMessage]);
+  const input = event.target.value;
+  if (event.key === 'Enter' && input.trim() !== '') {
+    // Agrega el mensaje del usuario a los mensajes
+    const userMessage = { type: 'user', text: input };
+    setMessages(messages => [...messages, userMessage]);
 
-        // Agrega un mensaje temporal de "enviando..."
-        const sendingMessage = { type: 'ai', text: '...' };
-        setMessages(messages => [...messages, sendingMessage]);
+    // Agrega un mensaje temporal de "enviando..."
+    const sendingMessage = { type: 'ai', text: '...' };
+    setMessages(messages => [...messages, sendingMessage]);
 
-        // Limpia el input y resetea la altura del textarea
-        setInputValue('');
-        resetTextAreaHeight();
-        setIsWaitingForResponse(true);  
+    // Limpia el input y resetea la altura del textarea
+    setInputValue('');
+    resetTextAreaHeight();
+    setIsWaitingForResponse(true);
 
+    try {
+      // Envía el mensaje al servidor y obtiene la respuesta
+      const aiResponse = await sendMessageToAiChat(selectedWorkspace.id, input);
+
+      // Imprime en consola la respuesta completa para depuración
+      console.log("Respuesta completa de AI:", aiResponse);
+
+      // Reemplaza el mensaje de "enviando..." con la respuesta de la AI
+      setMessages(messages => {
+        const newMessages = [...messages];
+        newMessages.splice(-1, 1);
+
+
+        // Intenta parsear el JSON dentro de la respuesta
         try {
-          // Envía el mensaje al servidor y obtiene la respuesta
-          const aiResponse = await sendMessageToAiChat(projectId, input);
+           
 
-          // Reemplaza el mensaje de "enviando..." con la respuesta de la AI
-          setMessages(messages => {
-            const newMessages = [...messages];
-            newMessages[newMessages.length - 1] = aiResponse;
-            return newMessages;
-          });
-
-          // Habla la respuesta de la AI
-          if (isAudioEnabled) {
-            speak(aiResponse.text);
+          // Añade explicaciones como mensajes individuales
+          if (aiResponse.response && aiResponse.response.explanation) {
+            aiResponse.response.explanation.forEach(exp => {
+              newMessages.push({ type: 'ai', text: exp });
+            });
           }
-        } catch (error) {
-          console.error("Error al enviar mensaje: ", error);
-          // Manejo de error, por ejemplo, reemplazar el mensaje de "enviando..." con un mensaje de error
-        } finally {
-          setIsWaitingForResponse(false); // Vuelve a habilitar el input después de recibir la respuesta
+
+          // Añade las preguntas como mensajes individuales
+          if (aiResponse.response && aiResponse.response.questions) {
+            aiResponse.response.questions.forEach(qst => {
+              newMessages.push({ type: 'ai', text: qst });
+            });
+          }
+
+          // 'code.instructions' no se utiliza, por lo que se ignora
+
+          return newMessages;
+
+        } catch (jsonParseError) {
+          console.error("Error al parsear la respuesta JSON: ", jsonParseError);
+          newMessages.push({ type: 'ai', text: "Error al procesar la respuesta" });
         }
 
-        // Actualiza el último mensaje enviado
-        setLastSentMessage(input);
+        return newMessages;
+      });
 
-        // Detiene el reconocimiento de voz si está activo
-        if (isListening && recognition.current) {
-          recognition.current.stop();
-          setIsListening(false);
-        }
+      // Habla la respuesta de la AI
+      if (isAudioEnabled) {
+        //speak(aiResponse.text);
       }
-    };
 
+      setForceWorkspaceUpdate(prev => prev + 1);
+    } catch (error) {
+      console.error("Error al enviar mensaje: ", error);
+      // Manejo de error
+      setMessages(messages => [...messages, { type: 'ai', text: 'Error al enviar mensaje.' }]);
+    } finally {
+      setIsWaitingForResponse(false); // Vuelve a habilitar el input después de recibir la respuesta
+    }
+
+    // Actualiza el último mensaje enviado
+    setLastSentMessage(input);
+
+    // Detiene el reconocimiento de voz si está activo
+    if (isListening && recognition.current) {
+      recognition.current.stop();
+      setIsListening(false);
+    }
+  }
+};
 
 
 const adjustTextAreaHeight = (event) => {
@@ -180,28 +216,24 @@ const resetTextAreaHeight = () => {
 };
 
 
-  // Renderiza el contenido del mensaje basado en el tipo
   const renderMessageContent = (message) => {
+    let messageClass = '';
     switch (message.type) {
-      case 'sending':
-        return <span>...</span>;
-      case 'ai-selection':
-        // Renderiza un mensaje con opciones de selección
-        return (
-          <div>
-            {message.text}
-            {message.options.map((option, idx) => (
-              <button key={idx}>{option}</button>
-            ))}
-          </div>
-        );
       case 'ai':
-        // Renderiza un mensaje normal de la AI
         return <span>{message.text}</span>;
-      default:
-        // Renderiza un mensaje del usuario
-        return <span>{message.text}</span>;
+      case 'ai-code':
+        return showCode ? <pre>{JSON.stringify(message.json, null, 2)}</pre> : <button onClick={() => setShowCode(true)}>Mostrar Código</button>;
+      case 'user':
+        messageClass = 'user-message';  // Clase para mensajes del usuario
+        break;
+      // ... otros casos
     }
+
+    return (
+      <div className={`message-content ${messageClass}`}>
+        <span>{message.text}</span>
+      </div>
+    );
   };
 
   return isMinimized ? (
@@ -228,6 +260,19 @@ const resetTextAreaHeight = () => {
             {renderMessageContent(msg)}
           </div>
         ))}
+        {/* Botón y visualización del código JSON */}
+        {jsonCode && (
+          <>
+            <button onClick={() => setShowCode(!showCode)}>
+              {showCode ? 'Ocultar Código' : 'Mostrar Código'}
+            </button>
+            {showCode && (
+              <div className="message ai-code">
+                <pre>{JSON.stringify(jsonCode, null, 2)}</pre>
+              </div>
+            )}
+          </>
+        )}
         <div ref={chatEndRef} />
       </div>
       <div className="chat-input">

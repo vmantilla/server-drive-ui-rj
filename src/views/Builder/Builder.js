@@ -44,6 +44,7 @@ function Builder({showNotification}) {
   const [orderUpdated, setOrderUpdated] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const isChatAdjacentToTabs = selectedComponent !== null;
+  const [forceWorkspaceUpdate, setForceWorkspaceUpdate] = useState(0);
 
   useEffect(() => {
     console.warn('resetBuilder:', retryCount);
@@ -175,7 +176,8 @@ function Builder({showNotification}) {
         </aside>
         <section className="builder-workspace">
           <PreviewWorkspace
-            workspaceId={selectedWorkspace?.id}
+            key={forceWorkspaceUpdate}
+            selectedWorkspace={selectedWorkspace}
             setAddNewPreview={setAddNewPreview}
             setOnDelete={setOnDelete}
             forceReflow={forceReflow}
@@ -184,7 +186,7 @@ function Builder({showNotification}) {
             orderUpdated={orderUpdated}
           />
         </section>
-        <ChatAI projectId={projectId} className={isChatAdjacentToTabs ? 'adjacent-to-tabs' : ''} />
+        <ChatAI selectedWorkspace={selectedWorkspace} setForceWorkspaceUpdate={setForceWorkspaceUpdate} className={isChatAdjacentToTabs ? 'adjacent-to-tabs' : ''} />
         <aside className={`builder-properties ${selectedComponent ? 'open' : ''}`}>
           <PreviewStatesTabs 
             key={`${selectedScreen}${selectedComponent}`}
