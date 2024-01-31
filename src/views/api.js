@@ -450,3 +450,45 @@ export const sendMessageToAiChat = async (workspaceId, message) => {
   }
 };
 
+// === USE CASE API Calls ===
+
+export const getUseCasesFromAPI = async (previewId) => {
+  try {
+    const response = await axios.get(`/previews/${previewId}/use_cases`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener casos de uso:', error);
+    throw error;
+  }
+};
+
+export const addUseCaseToAPI = async (previewId, useCaseData) => {
+  try {
+    const response = await axios.post(`/previews/${previewId}/use_cases`, { use_case: useCaseData });
+    return response.data;
+  } catch (error) {
+    console.error('Error al agregar caso de uso:', error);
+    throw error;
+  }
+};
+
+export const editUseCaseInAPI = async (previewId, useCaseId, updatedUseCaseData) => {
+  try {
+    const response = await axios.put(`/previews/${previewId}/use_cases/${useCaseId}`, { use_case: updatedUseCaseData });
+    return response.data;
+  } catch (error) {
+    console.error('Error al editar caso de uso:', error);
+    throw error;
+  }
+};
+
+export const deleteUseCaseFromAPI = async (previewId, useCaseId) => {
+  try {
+    await axios.delete(`/previews/${previewId}/use_cases/${useCaseId}`);
+  } catch (error) {
+    console.error('Error al eliminar caso de uso:', error);
+    throw error;
+  }
+};
+
+

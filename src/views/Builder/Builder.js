@@ -198,7 +198,7 @@ function Builder({showNotification}) {
           />
         </section>
         <ChatAI selectedWorkspace={selectedWorkspace} setForceWorkspaceUpdate={setForceWorkspaceUpdate} className={isChatAdjacentToTabs ? 'adjacent-to-tabs' : ''} />
-        {showPreviewExperience && (
+        {showPreviewExperience && selectedScreen && (
           <aside className={`builder-properties ${showPreviewExperience ? 'open' : ''}`}>
             <PreviewExperience selectedPreview={selectedScreen} />
           </aside>
