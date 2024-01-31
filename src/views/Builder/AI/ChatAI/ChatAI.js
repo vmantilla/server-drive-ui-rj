@@ -68,7 +68,7 @@ const [showCode, setShowCode] = useState(false); // Estado para mostrar/ocultar 
       inputRef.current?.focus();
       chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [isMinimized]);
+  }, [isMinimized, messages]);
 
   const handleUserInput = async (event) => {
   const input = event.target.value;

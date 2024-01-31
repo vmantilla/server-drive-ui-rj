@@ -4,6 +4,7 @@ import BuilderHeader from './BuilderHeader';
 import PreviewComponents from './Preview/PreviewComponents';
 import BuilderWorkspaces from './BuilderWorkspaces';
 import PreviewWorkspace from './Preview/PreviewWorkspace';
+import PreviewExperience from './Preview/PreviewExperience';
 import PreviewStatesTabs from './Component/ComponentProperties/PreviewStatesTabs';
 import ChatAI from './AI/ChatAI/ChatAI';
 import { useNavigate } from 'react-router-dom';
@@ -43,8 +44,10 @@ function Builder({showNotification}) {
   const [propertyWasUpdated, setPropertyWasUpdated] = useState(null);
   const [orderUpdated, setOrderUpdated] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
-  const isChatAdjacentToTabs = selectedComponent !== null;
+  const isChatAdjacentToTabs = selectedComponent !== null || selectedScreen !== null;
   const [forceWorkspaceUpdate, setForceWorkspaceUpdate] = useState(0);
+  const [showPreviewExperience, setShowPreviewExperience] = useState(false);
+
 
   useEffect(() => {
     console.warn('resetBuilder:', retryCount);
@@ -54,6 +57,14 @@ function Builder({showNotification}) {
       properties: [],
     });
   }, []);
+
+  useEffect(() => {
+  if (selectedScreen) {
+    setShowPreviewExperience(true);
+  } else {
+    setShowPreviewExperience(false);
+  }
+}, [selectedScreen]);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -187,6 +198,12 @@ function Builder({showNotification}) {
           />
         </section>
         <ChatAI selectedWorkspace={selectedWorkspace} setForceWorkspaceUpdate={setForceWorkspaceUpdate} className={isChatAdjacentToTabs ? 'adjacent-to-tabs' : ''} />
+        {showPreviewExperience && (
+          <aside className={`builder-properties ${showPreviewExperience ? 'open' : ''}`}>
+            <PreviewExperience selectedPreview={selectedScreen} />
+          </aside>
+        )}
+
         <aside className={`builder-properties ${selectedComponent ? 'open' : ''}`}>
           <PreviewStatesTabs 
             key={`${selectedScreen}${selectedComponent}`}

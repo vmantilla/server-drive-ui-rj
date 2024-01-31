@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap');
+
+.preview-experience {
+  font-family: 'Rubik', sans-serif;
+  color: #333;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+}
+
+.preview-experience h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.preview-experience ul {
+  list-style: none;
+  padding: 0;
+}
+
+.preview-experience li {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.preview-experience li:hover {
+  background-color: #f7f7f7;
+}
+
+.preview-experience .suggestion-content {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.preview-experience .suggestion-content p {
+  margin: 0;
+  max-width: 100%;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.preview-experience textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: 'Rubik', sans-serif;
+  font-size: 12px;
+  min-height: 40px;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.preview-experience .workspace-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.preview-experience .workspace-actions i {
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 5px;
+}
