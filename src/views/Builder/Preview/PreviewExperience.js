@@ -17,6 +17,8 @@ const PreviewExperience = ({ selectedPreview }) => {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [useCaseToDelete, setUseCaseToDelete] = useState(null);
 
+  const actorsList = ['design', 'user', 'system'];
+
   useEffect(() => {
     getUseCasesFromAPI(selectedPreview).then((data) => {
       const grouped = data.reduce((acc, curr) => {
@@ -84,15 +86,15 @@ const PreviewExperience = ({ selectedPreview }) => {
      <div className="preview-experience-container">
       <h2 className="preview-experience-container-title">Características de la Pantalla</h2>
       <div className="preview-experience">
-      {Object.entries(groupedUseCases).map(([actor, useCases]) => (
-        <div key={actor}>
-          <header className="preview-experience-header">
-            <span className="preview-experience-title">{actor.charAt(0).toUpperCase() + actor.slice(1)} Actions</span>
-            <button className="add-use-case-button" onClick={() => handleModalShow(actor)}>+</button>
-          </header>
-          <ul>
-            {useCases.map((useCase) => (
-              <li key={useCase.id} className="use-case-item">
+      {actorsList.map(actor => (
+          <div key={actor}>
+            <header className="preview-experience-header">
+              <span className="preview-experience-title">{actor.charAt(0).toUpperCase() + actor.slice(1)} Actions</span>
+              <button className="add-use-case-button" onClick={() => handleModalShow(actor)}>+</button>
+            </header>
+            <ul>
+              {groupedUseCases[actor]?.map(useCase => (
+                <li key={useCase.id} className="use-case-item">
                 <div onClick={() => handleModalShow(actor, useCase)}>
                   {useCase.description}
                 </div>
