@@ -78,7 +78,7 @@ const [showCode, setShowCode] = useState(false); // Estado para mostrar/ocultar 
     setMessages(messages => [...messages, userMessage]);
 
     // Agrega un mensaje temporal de "enviando..."
-    const sendingMessage = { type: 'ai', text: '...' };
+    const sendingMessage = { type: 'ai', text: '...', loading: true };
     setMessages(messages => [...messages, sendingMessage]);
 
     // Limpia el input y resetea la altura del textarea
@@ -195,31 +195,14 @@ const resetTextAreaHeight = () => {
     }
   };
 
-  const mockAIResponse = (input) => {
-  // Supongamos que la AI puede responder de manera diferente según algunas palabras clave
-  if (input.toLowerCase().includes("hola")) {
-    return { type: 'ai', text: '¡Hola! ¿Cómo puedo ayudarte hoy?' };
-  } else if (input.toLowerCase().includes("ayuda")) {
-    return { type: 'ai', text: 'Claro, dime en qué puedo asistirte.' };
-  } else if (input.toLowerCase().includes("opciones")) {
-    return { 
-      type: 'ai-selection', 
-      text: 'Puedes elegir entre estas opciones:', 
-      options: ['Opción 1', 'Opción 2', 'Opción 3'] 
-    };
-  } else if (input.toLowerCase().includes("despedida")) {
-    return { type: 'ai', text: 'Ha sido un placer ayudarte. ¡Hasta luego!' };
-  } else {
-    // Respuesta por defecto para entradas no reconocidas
-    return { type: 'ai', text: 'Lo siento, no entendí eso. ¿Puedes ser más específico?' };
-  }
-};
-
-
   const renderMessageContent = (message) => {
     let messageClass = '';
     switch (message.type) {
       case 'ai':
+        if (message.loading) {
+          // Renderiza el mensaje con la animación de cargando
+          return <span className="loading-animation"></span>;
+        }
         return <span>{message.text}</span>;
       case 'ai-code':
         return showCode ? <pre>{JSON.stringify(message.json, null, 2)}</pre> : <button onClick={() => setShowCode(true)}>Mostrar Código</button>;
