@@ -32,32 +32,62 @@ function PreviewWorkspace({ selectedWorkspace, propertyWasUpdated, setAddNewPrev
   const zoomIntervalRef = useRef(null);
   const workspaceSize = Math.max(zoomLevel * 1000, window.innerWidth, window.innerHeight);
 
-  useEffect(() => {
+  const loadWorkspaceData = (
+    selectedWorkspace,
+    resetBuilder,
+    getAllPreviewsFromAPI,
+    setUiScreens,
+    setUiComponents,
+    setUiComponentsProperties,
+    setUiStates,
+    setSelectedScreen,
+    setSelectedComponent,
+    forceReflow,
+    showNotification
+  ) => {
     if (selectedWorkspace) {
       resetBuilder();
       getAllPreviewsFromAPI(selectedWorkspace.id)
-      .then((response) => {
-        console.log("getAllPreviewsFromAPI", response)
+        .then((response) => {
+          console.log("getAllPreviewsFromAPI", response)
 
-        if (response.screens && response.components && response.props) {
-          setUiScreens(response.screens);
-          setUiComponents(response.components); 
-          console.log("response.props", response.props)
-          setUiComponentsProperties(response.props);
-          setUiStates(response.states);
-          setSelectedScreen(null);
-          setSelectedComponent(null);
-          forceReflow();
-        } else {
-          showNotification('error', 'Faltan datos en la respuesta.');
-          resetBuilder()
-        }
-        
-      })
-      .catch((error) => {
-        showNotification('error', 'Error al mostrar el espacio de trabajo.');
-        console.error('Error al mostrar el espacio de trabajo:', error);
-      });
+          if (response.screens && response.components && response.props) {
+            setUiScreens(response.screens);
+            setUiComponents(response.components);
+            console.log("response.props", response.props)
+            setUiComponentsProperties(response.props);
+            setUiStates(response.states);
+            //setSelectedScreen(null);
+            setSelectedComponent(null);
+            forceReflow();
+          } else {
+            showNotification('error', 'Faltan datos en la respuesta.');
+            resetBuilder()
+          }
+
+        })
+        .catch((error) => {
+          showNotification('error', 'Error al mostrar el espacio de trabajo.');
+          console.error('Error al mostrar el espacio de trabajo:', error);
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (selectedWorkspace) {
+      loadWorkspaceData(
+        selectedWorkspace,
+        resetBuilder,
+        getAllPreviewsFromAPI,
+        setUiScreens,
+        setUiComponents,
+        setUiComponentsProperties,
+        setUiStates,
+        setSelectedScreen,
+        setSelectedComponent,
+        forceReflow,
+        showNotification
+      );
     }
   }, [selectedWorkspace]);
 
@@ -71,11 +101,12 @@ function PreviewWorkspace({ selectedWorkspace, propertyWasUpdated, setAddNewPrev
       try {
         const response =  await addPreviewToAPI(selectedWorkspace.id, previewData);
 
-        if (response.screens && response.components && response.props) {
+        if (response.screens && response.components && response.props && response.states) {
           setUiScreens((prev) => ({ ...prev, ...response.screens }));
           setUiComponents((prev) => ({ ...prev, ...response.components }));
           setUiComponentsProperties((prev) => ({ ...prev, ...response.props }));
-          setSelectedScreen(null);
+          setUiStates((prev) => ({ ...prev, ...response.states }));
+          //setSelectedScreen(null);
           setSelectedComponent(null);
           forceReflow();
         } else {
@@ -134,7 +165,7 @@ function PreviewWorkspace({ selectedWorkspace, propertyWasUpdated, setAddNewPrev
           delete updated[previewToDelete];
           return updated;
         });
-        setSelectedScreen(null);
+        //setSelectedScreen(null);
       } catch (error) {
         showNotification('error', 'Error al eliminar vista previa.');
         console.error('Error al eliminar vista previa:', error);

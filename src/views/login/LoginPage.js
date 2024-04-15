@@ -3,6 +3,7 @@ import { Form, Button } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import '../../css/Login/Login.css';
 import logo from '../../assets/images/logo.png';
+import { loginUser } from '../api';
 
 
 const LoginPage = () => {
@@ -26,23 +27,8 @@ const LoginPage = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch("http://192.168.20.35:3002/sessions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        setError("Credenciales inválidas");
-        return;
-      }
-
-      const data = await response.json();
-      const token = data.token;
-
-      localStorage.setItem('token', token);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await loginUser(email, password);
       navigate("/dashboard");
     } catch (error) {
       console.error("Error:", error);

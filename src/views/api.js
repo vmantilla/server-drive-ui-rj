@@ -1,7 +1,12 @@
 import axios from 'axios';
 
 // Configura axios para usar "http://localhost:3000" como URL base
-axios.defaults.baseURL = "http://192.168.20.35:3002";
+//const apiUrl = process.env.REACT_APP_API_URL_LOCAL;
+
+const apiUrl = process.env.REACT_APP_API_URL_LOCAL;
+axios.defaults.baseURL = apiUrl
+
+console.log(process.env.REACT_APP_API_URL_LOCAL);
 
 axios.interceptors.request.use(function (config) {
   const token = localStorage.getItem('token');
@@ -21,6 +26,29 @@ export const setupInterceptors = (navigate) => {
       return Promise.reject(error);
     }
   );
+};
+
+
+// === Authentication API Calls ===
+
+export const loginUser = async (email, password) => {
+  try {
+    const response = await axios.post('/sessions', { email, password });
+    console.log(response);
+
+    if (!response.data.token) {
+      throw new Error('Credenciales inválidas');
+    }
+
+    const data = response.data;
+    const token = data.token;
+
+    localStorage.setItem('token', token);
+    return true;
+  } catch (error) {
+    console.error('Error:', error);
+    throw new Error('Hubo un error en el inicio de sesión');
+  }
 };
 
 // === PROJECT API Calls ===

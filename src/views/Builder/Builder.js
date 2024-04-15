@@ -10,6 +10,7 @@ import ChatAI from './AI/ChatAI/ChatAI';
 import { useNavigate } from 'react-router-dom';
 import '../../css/Builder/Builder.css';
 import { batchUpdatesToAPI, getProjectFromAPI } from '../api';
+import { subscribeToPreviewChannel } from '../actionCable';
 
 import { useBuilder } from './BuilderContext';
 
@@ -47,6 +48,19 @@ function Builder({showNotification}) {
   const isChatAdjacentToTabs = selectedComponent !== null || selectedScreen !== null;
   const [forceWorkspaceUpdate, setForceWorkspaceUpdate] = useState(0);
   const [showPreviewExperience, setShowPreviewExperience] = useState(false);
+
+
+  useEffect(() => {
+    if (selectedWorkspace) {
+    const unsubscribe = subscribeToPreviewChannel(selectedWorkspace.id, (response) => {
+      console.log(response)
+       setForceWorkspaceUpdate(prev => prev + 1);
+    });
+
+    return () => unsubscribe();
+    }
+}, [selectedWorkspace]);
+
 
 
   useEffect(() => {

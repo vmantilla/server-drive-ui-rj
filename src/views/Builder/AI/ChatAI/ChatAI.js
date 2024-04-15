@@ -5,6 +5,7 @@ import '../../../../css/Builder/AI/ChatAI/ChatAI.css';
 import {
   sendMessageToAiChat
 } from '../../../api';
+import { subscribeToChatChannel } from '../../../actionCable';
 
 function ChatAI({ selectedWorkspace, className, setForceWorkspaceUpdate }) {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -16,11 +17,48 @@ function ChatAI({ selectedWorkspace, className, setForceWorkspaceUpdate }) {
   const chatEndRef = useRef(null);
   const speechSynthesisUtterance = new window.SpeechSynthesisUtterance();
   const recognition = useRef(null); 
- const [lastSentMessage, setLastSentMessage] = useState(""); // Estado para almacenar el último mensaje enviado
-const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
-const [showCode, setShowCode] = useState(false); // Estado para mostrar/ocultar el código JSON
+  const [lastSentMessage, setLastSentMessage] = useState(""); // Estado para almacenar el último mensaje enviado
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
+  const [showCode, setShowCode] = useState(false); // Estado para mostrar/ocultar el código JSON
   const [jsonCode, setJsonCode] = useState(null);
 
+
+  const handleMessageReceived = (data) => {
+    // Assume data contains { type: 'ai', text: 'Response text from AI' }
+    setMessages(messages => {
+        const newMessages = [...messages];
+
+        // Check if the last message is a loading message
+        if (newMessages.length && newMessages[newMessages.length - 1].loading && data.text !== '...') {
+            newMessages.pop(); // Remove the 'loading...' message
+        }
+
+        // Determine if the incoming message is a 'loading' message
+        const isLoading = data.message === '...';
+
+        // Prevent adding the incoming message if it's identical to the last message in the array
+        if (newMessages.length && newMessages[newMessages.length - 1].text === data.message) {
+            return newMessages; // Simply return the current messages without adding the new one
+        }
+
+        newMessages.push({ type: 'ai', text: data.message, loading: isLoading });
+        return newMessages;
+    });
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+}
+
+
+    useEffect(() => {
+        let unsubscribe = () => {};
+
+        if (selectedWorkspace) {
+            unsubscribe = subscribeToChatChannel(selectedWorkspace.id, handleMessageReceived);
+        }
+
+        return () => {
+            unsubscribe();
+        };
+    }, [selectedWorkspace]);
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window) {
@@ -73,86 +111,49 @@ const [showCode, setShowCode] = useState(false); // Estado para mostrar/ocultar 
   const handleUserInput = async (event) => {
   const input = event.target.value;
   if (event.key === 'Enter' && input.trim() !== '') {
-    // Agrega el mensaje del usuario a los mensajes
+    // Add the user's message to the messages display
     const userMessage = { type: 'user', text: input };
     setMessages(messages => [...messages, userMessage]);
 
-    // Agrega un mensaje temporal de "enviando..."
-    const sendingMessage = { type: 'ai', text: '...', loading: true };
-    setMessages(messages => [...messages, sendingMessage]);
-
-    // Limpia el input y resetea la altura del textarea
+    // Clear input and reset textarea height
     setInputValue('');
     resetTextAreaHeight();
-    setIsWaitingForResponse(true);
 
     try {
-      // Envía el mensaje al servidor y obtiene la respuesta
-      const aiResponse = await sendMessageToAiChat(selectedWorkspace.id, input);
+      // Send the message to the server without waiting for a direct response
+      await sendMessageToAiChat(selectedWorkspace.id, input);
+      // Assume sendMessageToAiChat handles the logic of sending messages and dealing with errors
 
-      // Imprime en consola la respuesta completa para depuración
-      console.log("Respuesta completa de AI:", aiResponse);
+      // Add a temporary "sending..." message that will be replaced by the socket response
+      setMessages(messages => [...messages, { type: 'ai', text: 'Enviando...', loading: true }]);
 
-      // Reemplaza el mensaje de "enviando..." con la respuesta de la AI
-      setMessages(messages => {
-        const newMessages = [...messages];
-        newMessages.splice(-1, 1);
-
-
-        // Intenta parsear el JSON dentro de la respuesta
-        try {
-           
-
-          // Añade explicaciones como mensajes individuales
-          if (aiResponse.response && aiResponse.response.explanation) {
-            aiResponse.response.explanation.forEach(exp => {
-              newMessages.push({ type: 'ai', text: exp });
-            });
-          }
-
-          // Añade las preguntas como mensajes individuales
-          if (aiResponse.response && aiResponse.response.questions) {
-            aiResponse.response.questions.forEach(qst => {
-              newMessages.push({ type: 'ai', text: qst });
-            });
-          }
-
-          // 'code.instructions' no se utiliza, por lo que se ignora
-
-          return newMessages;
-
-        } catch (jsonParseError) {
-          console.error("Error al parsear la respuesta JSON: ", jsonParseError);
-          newMessages.push({ type: 'ai', text: "Error al procesar la respuesta" });
-        }
-
-        return newMessages;
-      });
-
-      // Habla la respuesta de la AI
-      if (isAudioEnabled) {
-        //speak(aiResponse.text);
-      }
-
-      setForceWorkspaceUpdate(prev => prev + 1);
+      // Debugging: log message sent to console
+      console.log("Mensaje enviado:", input);
     } catch (error) {
       console.error("Error al enviar mensaje: ", error);
-      // Manejo de error
-      setMessages(messages => [...messages, { type: 'ai', text: 'Error al enviar mensaje.' }]);
-    } finally {
-      setIsWaitingForResponse(false); // Vuelve a habilitar el input después de recibir la respuesta
+
+      // Depending on the error status code, provide a user-friendly error message
+      if (error.response && error.response.status === 422) {
+        // For 422 errors, you might not want to display any error message at all
+        // or you might want to log these silently without alerting the user
+        console.log("Validation error: ", error.response.data);
+      } else {
+        // For other types of errors, provide a generic error message
+        setMessages(messages => [...messages, { type: 'ai', text: 'Error al procesar su mensaje.' }]);
+      }
     }
 
-    // Actualiza el último mensaje enviado
+    // Update the last message sent
     setLastSentMessage(input);
 
-    // Detiene el reconocimiento de voz si está activo
+    // Stop voice recognition if active
     if (isListening && recognition.current) {
       recognition.current.stop();
       setIsListening(false);
     }
   }
 };
+
 
 
 const adjustTextAreaHeight = (event) => {
