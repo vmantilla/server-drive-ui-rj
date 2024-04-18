@@ -59,6 +59,12 @@
   text-align: left;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+  gap: 10px; /* Añade un espacio entre los elementos del header */
+}
+
+
+.text-gap {
+    margin-left: 10px; /* Controla el espacio entre la imagen y el texto */
 }
 
 .chat-float-container {
@@ -104,11 +110,3 @@
   animation: blinker 1.5s linear infinite;
 }
 
-.message.typing {
-    animation: typing 2s steps(40, end) infinite;
-}
-
-@keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
-}
