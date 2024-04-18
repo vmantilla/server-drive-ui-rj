@@ -13,6 +13,7 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [inputDisabled, setInputDisabled] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const timeoutRef = useRef(null);
   const endOfMessagesRef = useRef(null); 
   const userId = getUserId();
@@ -31,26 +32,73 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
     };
 
     const handleReceivedMessage = (data) => {
-      const message = JSON.parse(data.message);
-      const messageType = message.user_id === 0 ? 'received' : 'sent';
-      const receivedMessage = {
-          id: message.id,
-          text: message.body,
-          type: messageType
-      };
+    const messageData = JSON.parse(data.message);
+    const messageType = messageData.user_id === 0 ? 'received' : 'sent';
 
-      // Remove "..." and disable effects when new message received
-      if (receivedMessage.text === "...") {
-        setInputDisabled(true);
-        clearTimeout(timeoutRef.current);  // Clear any existing timer
-        timeoutRef.current = setTimeout(() => setInputDisabled(false), 60000);  // Set new timer
-      } else {
-        setInputDisabled(false);  // Re-enable input if new message is not "..."
-        clearTimeout(timeoutRef.current);  // Clear timer as new valid message received
-      }
+    // Clear any ongoing typing effects and enable input when a new message is received
+    if (messageType === 'received') {
+        setInputDisabled(false);
+        clearTimeout(timeoutRef.current);
 
-      setMessages(prevMessages => [...prevMessages.filter(msg => msg.text !== "..."), receivedMessage]);
+        if (messageData.body === "...") {
+            // Update or add the '...' message with blinking effect
+            setMessages(prevMessages => {
+                const otherMessages = prevMessages.filter(msg => msg.text !== "...");
+                otherMessages.push({ id: messageData.id, text: messageData.body, type: messageType, loading: true });
+                return otherMessages;
+            });
+            setInputDisabled(true);
+            timeoutRef.current = setTimeout(() => setInputDisabled(false), 60000);
+        } else {
+            // Apply typing effect only for non-"..." received messages and remove any "..."
+            simulateTypingEffect(messageData.body, messageData.user_id);
+        }
+    } else {
+        // For sent messages, add them directly without typing effect
+        setMessages(prevMessages => [
+            ...prevMessages.filter(msg => msg.text !== "..."),
+            { id: messageData.id, text: messageData.body, type: messageType, loading: false }
+        ]);
+    }
+};
+const simulateTypingEffect = (fullText, userId) => {
+    let i = 0;
+    const typingSpeed = 5;  // Adjust this value to change the typing speed
+
+    const message = {
+        id: Math.random().toString(36).substr(2, 9),  // Generate a pseudo-random ID
+        text: '',
+        type: 'received',
+        loading: true
     };
+
+    // Ensure old "..." messages are removed when starting to type
+    setMessages(prevMessages => [...prevMessages.filter(msg => msg.text !== "..."), message]);
+
+    const typingInterval = setInterval(() => {
+        if (i < fullText.length) {
+            setMessages(prevMessages => {
+                const newMessages = [...prevMessages];
+                const index = newMessages.findIndex(msg => msg.id === message.id);
+                newMessages[index].text = fullText.slice(0, i + 1);
+                return newMessages;
+            });
+            i++;
+        } else {
+            clearInterval(typingInterval);
+            setMessages(prevMessages => {
+                const newMessages = [...prevMessages];
+                const index = newMessages.findIndex(msg => msg.id === message.id);
+                if (index !== -1) {
+                    newMessages[index].loading = false;  // Typing done
+                }
+                return newMessages;
+            });
+        }
+    }, typingSpeed);
+};
+
+
 
     const unsubscribe = subscribeToChatChannel(chatId, handleReceivedMessage, handleConnected, handleDisconnected);
     return () => {
@@ -61,7 +109,8 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
 
   const scrollToBottom = useCallback(() => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+}, []);
+
 
   const sendMessage = async (e) => {
     e.preventDefault();
