@@ -5,7 +5,7 @@ import Modal from 'react-bootstrap/Modal';
 import PreviewScreen from './PreviewScreen';
 import '../../../css/Builder/Preview/PreviewWorkspace.css';
 
-import { getAllPreviewsFromAPI, addPreviewToAPI, deletePreviewFromAPI } from '../../api';
+import { getAllPreviewsFromAPI, addPreviewToAPI, deletePreviewFromAPI } from '../../../services/api';
 import { useBuilder } from '../BuilderContext';
 
 function PreviewWorkspace({ selectedWorkspace, propertyWasUpdated, setAddNewPreview, setOnDelete, forceReflow, showNotification, setUpdateComponentProperties, setShouldUpdate, orderUpdated }) {

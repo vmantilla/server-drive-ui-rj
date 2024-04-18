@@ -9,7 +9,7 @@ import '../../../css/Builder/Preview/PreviewComponents.css';
 
 import { 
   addComponentToAPI, editComponentToAPI, deleteComponentToAPI, duplicateComponentToAPI
- } from '../../api';
+ } from '../../../services/api';
 import { useBuilder } from '../BuilderContext';
 
 const MENU_ID = 'blahblah';

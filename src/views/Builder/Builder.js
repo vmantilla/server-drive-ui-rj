@@ -7,10 +7,11 @@ import PreviewWorkspace from './Preview/PreviewWorkspace';
 import PreviewExperience from './Preview/PreviewExperience';
 import PreviewStatesTabs from './Component/ComponentProperties/PreviewStatesTabs';
 import ChatAI from './AI/ChatAI/ChatAI';
+import ChatComponent from '../Chat/ChatComponent';
 import { useNavigate } from 'react-router-dom';
 import '../../css/Builder/Builder.css';
-import { batchUpdatesToAPI, getProjectFromAPI } from '../api';
-import { subscribeToPreviewChannel } from '../actionCable';
+import { batchUpdatesToAPI, getProjectFromAPI } from '../../services/api';
+import { subscribeToPreviewChannel } from '../../services/actionCable';
 
 import { useBuilder } from './BuilderContext';
 
@@ -211,7 +212,10 @@ function Builder({showNotification}) {
             orderUpdated={orderUpdated}
           />
         </section>
-        <ChatAI selectedWorkspace={selectedWorkspace} setForceWorkspaceUpdate={setForceWorkspaceUpdate} className={isChatAdjacentToTabs ? 'adjacent-to-tabs' : ''} />
+        {selectedWorkspace && (
+          <ChatComponent chatId={selectedWorkspace.id} canWrite={true} onSendMessage={(message) => console.log(message)} />
+         )}
+
         {showPreviewExperience && selectedScreen && (
           <aside className={`builder-properties ${showPreviewExperience ? 'open' : ''}`}>
             <PreviewExperience selectedPreview={selectedScreen} />

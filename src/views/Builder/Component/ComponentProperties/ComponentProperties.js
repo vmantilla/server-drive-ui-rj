@@ -6,7 +6,7 @@ import '../../../../css/Builder/Component/ComponentProperties.css';
 import PropertyConfigurator from  './PropertyConfigurator.js';
 
 import { useBuilder } from '../../BuilderContext';
-import { addPropertyToAPI, deletePropertyFromAPI } from '../../../api';
+import { addPropertyToAPI, deletePropertyFromAPI } from '../../../../services/api';
 
 const possibleStates = ["default", "iOS", "android", "web"];
 

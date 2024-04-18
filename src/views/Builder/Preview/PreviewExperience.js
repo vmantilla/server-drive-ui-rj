@@ -8,7 +8,7 @@ import {
   addUseCaseToAPI, 
   editUseCaseInAPI, 
   deleteUseCaseFromAPI 
-} from '../../api';
+} from '../../../services/api';
 
 const PreviewExperience = ({ selectedPreview }) => {
   const [groupedUseCases, setGroupedUseCases] = useState({});

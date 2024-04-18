@@ -3,7 +3,7 @@ import { Form, Button } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import '../../css/Login/Login.css';
 import logo from '../../assets/images/logo.png';
-import { loginUser } from '../api';
+import { loginUser } from '../../services/api';
 
 
 const LoginPage = () => {

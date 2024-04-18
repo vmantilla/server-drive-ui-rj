@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getWorkspacesFromAPI, addWorkspaceToAPI, deleteWorkspaceFromAPI, editWorkspaceInAPI } from '../api';
+import { getWorkspacesFromAPI, addWorkspaceToAPI, deleteWorkspaceFromAPI, editWorkspaceInAPI } from '../../services/api';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import '../../css/Builder/BuilderWorkspaces.css';

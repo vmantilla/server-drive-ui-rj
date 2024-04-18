@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import '../../../../css/Builder/Component/Properties/ImageProperties.css';
 
-import { getSignedURLFromAPI } from '../../../api';
+import { getSignedURLFromAPI } from '../../../../services/api';
 
 const contentModes = ['fill', 'contain', 'cover', 'none', 'scale-down'];
 

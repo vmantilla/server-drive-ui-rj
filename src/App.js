@@ -10,7 +10,7 @@ import { BuilderProvider } from './views/Builder/BuilderContext';
 
 import Notification from './Notification'; 
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { setupInterceptors } from './views/api';
+import { setupInterceptors } from './services/api';
 
 function App() {
   return (

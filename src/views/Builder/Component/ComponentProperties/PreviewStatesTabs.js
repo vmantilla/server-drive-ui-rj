@@ -10,7 +10,7 @@ import {
   addPreviewStateToAPI,
   editPreviewStateInAPI,
   deletePreviewStateFromAPI,
-} from '../../../api';
+} from '../../../../services/api';
 
 function PreviewStatesTabs() {
 

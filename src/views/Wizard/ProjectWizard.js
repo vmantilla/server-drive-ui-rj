@@ -4,7 +4,7 @@ import '../../css/Wizard/ProjectWizard.css';
 import TemplateWizard from './TemplateWizard';
 import TemplatePreview from './TemplatePreview';
 import TemplateConfiguration from './TemplateConfiguration';
-import { fetchTemplates, addProjectToAPI } from '../api.js'; 
+import { fetchTemplates, addProjectToAPI } from '../../services/api.js'; 
 
 const steps = [TemplateWizard, TemplatePreview, TemplateConfiguration];
 
