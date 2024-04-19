@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Form, Button, ListGroup, InputGroup } from 'react-bootstrap';
+import { Form, Button, ListGroup, InputGroup, FormControl, FormGroup, FormLabel, FormCheck } from 'react-bootstrap';
 import '../../css/Chat/ChatComponent.css';
 import { sendMessageToChat } from '../../services/api';
 import { subscribeToChatChannel } from '../../services/actionCable';
@@ -15,29 +15,46 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
     const [inputDisabled, setInputDisabled] = useState(false);
     const messageEndRef = useRef(null);
 
+    const parseMessage = (messageBody) => {
+        try {
+            const parsedBody = JSON.parse(messageBody);
+            return parsedBody;
+        } catch (error) {
+            console.error('Failed to parse message:', error);
+            return null; // Return null or handle errors appropriately
+        }
+    };
+
     useEffect(() => {
         const handleConnected = () => setIsConnected(true);
         const handleDisconnected = () => {
             setIsConnected(false);
-            setMessages(prevMessages => [...prevMessages, { text: "Conecting...", type: "received" }]);
+            setMessages(prevMessages => [...prevMessages, { text: "Connecting...", type: "system" }]);
         };
 
         const handleReceivedMessage = (data) => {
-            const messageData = JSON.parse(data.message);
-            const messageType = messageData.user_id === 0 ? 'received' : 'sent';
-            if (messageType === 'received') {
-                setInputDisabled(false);
-                clearTimeout(inputDisabled);
-                if (messageData.body === "...") {
-                    setMessages(prevMessages => [...prevMessages, { id: messageData.id, text: messageData.body, type: messageType, loading: true }]);
-                    setInputDisabled(true);
-                    setTimeout(() => setInputDisabled(false), 60000);
-                } else {
-                    setMessages(prevMessages => [...prevMessages.filter(msg => msg.text !== "...")]);
-                    simulateTypingEffect(messageData.body, messageData.user_id);
-                }
-            } else {
-                setMessages(prevMessages => [...prevMessages, { id: messageData.id, text: messageData.body, type: messageType, loading: false }]);
+            const receivedMessage = JSON.parse(data.message)
+            const parsedBody = parseMessage(receivedMessage.body);
+            console.log(parsedBody);
+            console.log(parsedBody.type);
+            
+            
+            const messageType = receivedMessage.user_id === 0 ? 'received' : 'sent';
+
+            switch (parsedBody.type) {
+                case 'text':
+                case 'error':
+                case 'retry':
+                    processSimpleMessage(parsedBody, messageType);
+                    break;
+                case 'form':
+                    processForm(parsedBody);
+                    break;
+                case 'options':
+                    processOptions(parsedBody);
+                    break;
+                default:
+                    console.error('Unknown message type received');
             }
         };
 
@@ -52,39 +69,26 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
         messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    const simulateTypingEffect = (fullText, userId) => {
-        let i = 0;
-        const typingSpeed = 50;
-        const message = {
-            id: Math.random().toString(36).substr(2, 9),
-            text: '',
-            type: 'received',
-            loading: true
-        };
+    const processSimpleMessage = (data, messageType) => {
+        setMessages(prevMessages => [...prevMessages, { text: data.response, type: messageType }]);
+    };
 
-        setMessages(prevMessages => [...prevMessages, message]);
+    const processForm = (data) => {
+        setMessages(prevMessages => [
+            ...prevMessages,
+            { type: 'form', content: data.additional_info.fields.map(field => ({
+                label: field.label,
+                type: field.field_type,
+                placeholder: field.placeholder
+            }))}
+        ]);
+    };
 
-        const typingInterval = setInterval(() => {
-            if (i < fullText.length) {
-                setMessages(prevMessages => {
-                    const newMessages = [...prevMessages];
-                    const index = newMessages.findIndex(msg => msg.id === message.id);
-                    newMessages[index].text = fullText.slice(0, i + 1);
-                    return newMessages;
-                });
-                i++;
-            } else {
-                clearInterval(typingInterval);
-                setMessages(prevMessages => {
-                    const newMessages = [...prevMessages];
-                    const index = newMessages.findIndex(msg => msg.id === message.id);
-                    if (index !== -1) {
-                        newMessages[index].loading = false;
-                    }
-                    return newMessages;
-                });
-            }
-        }, typingSpeed);
+    const processOptions = (data) => {
+        setMessages(prevMessages => [
+            ...prevMessages,
+            { type: 'options', content: data.additional_info.options, select_type: data.additional_info.select_type }
+        ]);
     };
 
     const sendMessage = async (e) => {
@@ -117,7 +121,7 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
                     <ListGroup className="message-list">
                         {messages.map((msg, index) => (
                             <ListGroup.Item key={index} className={`message ${msg.type} ${msg.text === "..." && msg.type === 'received' && msg.loading ? 'blinking' : ''}`}>
-                                {msg.text}
+                                {msg.text || (msg.type === 'form' ? renderForm(msg.content) : msg.type === 'options' ? renderOptions(msg.content, msg.select_type) : msg.content)}
                             </ListGroup.Item>
                         ))}
                         <div ref={messageEndRef} />
@@ -126,7 +130,7 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
                         <InputGroup>
                             <Form.Control
                                 type="text"
-                                placeholder={(canWrite && isConnected && !inputDisabled) ? "Builder Chat" : "Processingg..."}
+                                placeholder={(canWrite && isConnected && !inputDisabled) ? "Builder Chat" : "Processing..."}
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 disabled={!canWrite || !isConnected || inputDisabled}
@@ -139,5 +143,27 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
         </div>
     );
 };
+
+const renderForm = (fields) => (
+    <FormGroup>
+        {fields.map((field, idx) => (
+            <FormControl key={idx} placeholder={field.placeholder} />
+        ))}
+    </FormGroup>
+);
+
+const renderOptions = (options, select_type) => (
+    <FormGroup>
+        {options.map((option, idx) => (
+            <FormCheck
+                key={idx}
+                type={select_type === 'multiple' ? 'checkbox' : 'radio'}
+                label={option.label}
+                name="optionGroup"
+                id={`option-${idx}`}
+            />
+        ))}
+    </FormGroup>
+);
 
 export default ChatComponent;
