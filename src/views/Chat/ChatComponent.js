@@ -44,10 +44,16 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
                     processSimpleMessage(parsedBody, messageType);
                     break;
                 case 'form':
+                    processSimpleMessage(parsedBody, messageType);
                     processForm(parsedBody);
                     break;
                 case 'options':
+                    processSimpleMessage(parsedBody, messageType);
                     processOptions(parsedBody);
+                    break;
+                case 'enumerated_text':
+                    processSimpleMessage(parsedBody, messageType);
+                    processEnumerateText(parsedBody);
                     break;
                 default:
                     console.error('Unknown message type received');
@@ -80,6 +86,13 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
         setMessages(prevMessages => [
             ...prevMessages,
             { id: Math.random(), type: 'options', content: data.additional_info.options, select_type: data.additional_info.select_type }
+        ]);
+    };
+
+    const processEnumerateText = (data) => {
+        setMessages(prevMessages => [
+            ...prevMessages,
+            { id: Math.random(), type: 'enumerated_text', content: data.additional_info.options }
         ]);
     };
 
@@ -122,7 +135,10 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
                     />
                 </div>
             ))}
-            <Button onClick={() => submitForm(msg.id, selectedOptions[msg.id])}>Submit</Button>
+            <Button className="submit-btn"  onClick={(e) => {
+                submitForm(msg.id, selectedOptions[msg.id]); 
+                e.currentTarget.style.display = 'none';} 
+            }>Submit</Button>
         </FormGroup>
     );
 
@@ -135,11 +151,26 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
                     label={option.label}
                     name={msg.select_type === 'multiple' ? `optionGroup-${msg.id}` : 'optionGroup'}
                     id={`option-${msg.id}-${idx}`}
-                    onChange={() => handleOptionChange(msg.id, option.value)}
+                    onChange={() => handleOptionChange(msg.id, option.label)}
                 />
             ))}
-            <Button onClick={() => submitForm(msg.id)}>Submit</Button>
+
+            <Button className="submit-btn"  onClick={(e) => {
+                submitForm(msg.id); 
+                e.currentTarget.style.display = 'none';} 
+            }>Submit</Button>
         </FormGroup>
+    );
+
+    const renderEnumeratedText = (msg) => (
+        <div className="enumerated-text-container">
+            {msg.content ? msg.content.map((option, idx) => (
+                <div key={idx} className="enumerated-text-item">
+                    <p className="enumerated-text-title">{option.label}</p>
+                    <p className="enumerated-text-value">{option.value}</p>
+                </div>
+            )) : <p>No data available</p>}
+        </div>
     );
 
     return (
@@ -160,6 +191,7 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
                             <ListGroup.Item key={msg.id} className={`message ${msg.type}`}>
                                 {msg.type === 'form' ? renderForm(msg) :
                                  msg.type === 'options' ? renderOptions(msg) :
+                                 msg.type === 'enumerated_text' ? renderEnumeratedText(msg) :
                                  msg.text}
                             </ListGroup.Item>
                         ))}
