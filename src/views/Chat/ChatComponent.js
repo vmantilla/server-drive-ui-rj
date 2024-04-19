@@ -10,6 +10,7 @@ const getUserId = () => localStorage.getItem('user_id');
 const ChatComponent = ({ chatId, canWrite = false }) => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
+    const [selectedOptions, setSelectedOptions] = useState({});
     const [isMinimized, setIsMinimized] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [inputDisabled, setInputDisabled] = useState(false);
@@ -17,11 +18,10 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
 
     const parseMessage = (messageBody) => {
         try {
-            const parsedBody = JSON.parse(messageBody);
-            return parsedBody;
+            return JSON.parse(messageBody);
         } catch (error) {
             console.error('Failed to parse message:', error);
-            return null; // Return null or handle errors appropriately
+            return {}; // Return an empty object or handle errors appropriately
         }
     };
 
@@ -33,12 +33,8 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
         };
 
         const handleReceivedMessage = (data) => {
-            const receivedMessage = JSON.parse(data.message)
+            const receivedMessage = JSON.parse(data.message);
             const parsedBody = parseMessage(receivedMessage.body);
-            console.log(parsedBody);
-            console.log(parsedBody.type);
-            
-            
             const messageType = receivedMessage.user_id === 0 ? 'received' : 'sent';
 
             switch (parsedBody.type) {
@@ -70,25 +66,34 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
     }, [messages]);
 
     const processSimpleMessage = (data, messageType) => {
-        setMessages(prevMessages => [...prevMessages, { text: data.response, type: messageType }]);
+        setMessages(prevMessages => [...prevMessages, { id: Math.random(), text: data.response, type: messageType }]);
     };
 
     const processForm = (data) => {
         setMessages(prevMessages => [
             ...prevMessages,
-            { type: 'form', content: data.additional_info.fields.map(field => ({
-                label: field.label,
-                type: field.field_type,
-                placeholder: field.placeholder
-            }))}
+            { id: Math.random(), type: 'form', content: data.additional_info.fields }
         ]);
     };
 
     const processOptions = (data) => {
         setMessages(prevMessages => [
             ...prevMessages,
-            { type: 'options', content: data.additional_info.options, select_type: data.additional_info.select_type }
+            { id: Math.random(), type: 'options', content: data.additional_info.options, select_type: data.additional_info.select_type }
         ]);
+    };
+
+    const handleOptionChange = (id, value) => {
+        setSelectedOptions(prev => ({ ...prev, [id]: value }));
+    };
+
+    const submitForm = async (msgId, formData) => {
+        const messageToSend = formData ? JSON.stringify(formData) : selectedOptions[msgId];
+        try {
+            await sendMessageToChat(chatId, messageToSend);
+        } catch (error) {
+            console.error("Error sending message:", error);
+        }
     };
 
     const sendMessage = async (e) => {
@@ -105,6 +110,38 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
 
     const toggleChat = () => setIsMinimized(!isMinimized);
 
+    const renderForm = (msg) => (
+        <FormGroup>
+            {msg.content.map((field, idx) => (
+                <div key={idx}>
+                    <FormLabel>{field.label}</FormLabel>
+                    <FormControl
+                        type={field.field_type}
+                        placeholder={field.placeholder}
+                        onChange={e => handleOptionChange(msg.id, { ...selectedOptions[msg.id], [field.label]: e.target.value })}
+                    />
+                </div>
+            ))}
+            <Button onClick={() => submitForm(msg.id, selectedOptions[msg.id])}>Submit</Button>
+        </FormGroup>
+    );
+
+    const renderOptions = (msg) => (
+        <FormGroup>
+            {msg.content.map((option, idx) => (
+                <FormCheck
+                    key={idx}
+                    type={msg.select_type === 'multiple' ? 'checkbox' : 'radio'}
+                    label={option.label}
+                    name={msg.select_type === 'multiple' ? `optionGroup-${msg.id}` : 'optionGroup'}
+                    id={`option-${msg.id}-${idx}`}
+                    onChange={() => handleOptionChange(msg.id, option.value)}
+                />
+            ))}
+            <Button onClick={() => submitForm(msg.id)}>Submit</Button>
+        </FormGroup>
+    );
+
     return (
         <div className="chat-container">
             <div className="chat-header" onClick={toggleChat}>
@@ -119,16 +156,18 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
             {!isMinimized && (
                 <>
                     <ListGroup className="message-list">
-                        {messages.map((msg, index) => (
-                            <ListGroup.Item key={index} className={`message ${msg.type} ${msg.text === "..." && msg.type === 'received' && msg.loading ? 'blinking' : ''}`}>
-                                {msg.text || (msg.type === 'form' ? renderForm(msg.content) : msg.type === 'options' ? renderOptions(msg.content, msg.select_type) : msg.content)}
+                        {messages.map((msg) => (
+                            <ListGroup.Item key={msg.id} className={`message ${msg.type}`}>
+                                {msg.type === 'form' ? renderForm(msg) :
+                                 msg.type === 'options' ? renderOptions(msg) :
+                                 msg.text}
                             </ListGroup.Item>
                         ))}
                         <div ref={messageEndRef} />
                     </ListGroup>
                     <Form onSubmit={sendMessage} className="message-form">
                         <InputGroup>
-                            <Form.Control
+                            <FormControl
                                 type="text"
                                 placeholder={(canWrite && isConnected && !inputDisabled) ? "Builder Chat" : "Processing..."}
                                 value={message}
@@ -143,27 +182,5 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
         </div>
     );
 };
-
-const renderForm = (fields) => (
-    <FormGroup>
-        {fields.map((field, idx) => (
-            <FormControl key={idx} placeholder={field.placeholder} />
-        ))}
-    </FormGroup>
-);
-
-const renderOptions = (options, select_type) => (
-    <FormGroup>
-        {options.map((option, idx) => (
-            <FormCheck
-                key={idx}
-                type={select_type === 'multiple' ? 'checkbox' : 'radio'}
-                label={option.label}
-                name="optionGroup"
-                id={`option-${idx}`}
-            />
-        ))}
-    </FormGroup>
-);
 
 export default ChatComponent;
