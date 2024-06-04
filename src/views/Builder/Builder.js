@@ -5,6 +5,7 @@ import PreviewComponents from './Preview/PreviewComponents';
 import BuilderWorkspaces from './BuilderWorkspaces';
 import PreviewWorkspace from './Preview/PreviewWorkspace';
 import PreviewExperience from './Preview/PreviewExperience';
+import PreviewChat from './Preview/PreviewChat';
 import PreviewStatesTabs from './Component/ComponentProperties/PreviewStatesTabs';
 import ChatAI from './AI/ChatAI/ChatAI';
 import ChatComponent from '../Chat/ChatComponent';
@@ -49,6 +50,7 @@ function Builder({showNotification}) {
   const isChatAdjacentToTabs = selectedComponent !== null || selectedScreen !== null;
   const [forceWorkspaceUpdate, setForceWorkspaceUpdate] = useState(0);
   const [showPreviewExperience, setShowPreviewExperience] = useState(false);
+  const [previewData, setPreviewData] = useState(false);
 
 
   useEffect(() => {
@@ -62,6 +64,10 @@ function Builder({showNotification}) {
     }
 }, [selectedWorkspace]);
 
+
+ useEffect(() => {
+    console.warn('previewData:', previewData);
+  }, [previewData]);
 
 
   useEffect(() => {
@@ -85,10 +91,10 @@ function Builder({showNotification}) {
     const fetchProject = async () => {
       try {
         const hasAccess = await getProjectFromAPI(projectId);
-        setProjectName(hasAccess.title)
         if (!hasAccess) {
           navigate('/dashboard'); 
         }
+        setProjectName(hasAccess.title)
       } catch (error) {
         console.error('Error al verificar el acceso al proyecto:', error);
       }
@@ -212,13 +218,19 @@ function Builder({showNotification}) {
             orderUpdated={orderUpdated}
           />
         </section>
-        {selectedWorkspace && (
-          <ChatComponent chatId={selectedWorkspace.id} canWrite={true} onSendMessage={(message) => console.log(message)} />
+        {selectedWorkspace && 2==1 && (
+          <ChatComponent chatId={selectedWorkspace.id} canWrite={true} setPreviewData={setPreviewData} onSendMessage={(message) => console.log(message)} />
          )}
 
-        {showPreviewExperience && selectedScreen && (
+        {showPreviewExperience && selectedScreen && 2==1  && (
           <aside className={`builder-properties ${showPreviewExperience ? 'open' : ''}`}>
             <PreviewExperience selectedPreview={selectedScreen} />
+          </aside>
+        )}
+
+        {previewData && 2==1 && (
+          <aside className={`${previewData ? 'open' : ''}`}>
+            <PreviewChat jsonData={previewData} />
           </aside>
         )}
 

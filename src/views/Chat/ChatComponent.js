@@ -7,7 +7,7 @@ import chatAILogo from '../../assets/images/chatAILogo.png';
 
 const getUserId = () => localStorage.getItem('user_id');
 
-const ChatComponent = ({ chatId, canWrite = false }) => {
+const ChatComponent = ({ chatId, canWrite = false, setPreviewData }) => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState({});
@@ -34,6 +34,8 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
 
         const handleReceivedMessage = (data) => {
             const receivedMessage = JSON.parse(data.message);
+
+            console.log(receivedMessage);
             const parsedBody = parseMessage(receivedMessage.body);
             const messageType = receivedMessage.user_id === 0 ? 'received' : 'sent';
 
@@ -55,6 +57,10 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
                     processSimpleMessage(parsedBody, messageType);
                     processEnumerateText(parsedBody);
                     break;
+                case 'preview':
+                    console.log("preview");
+                    processSimpleMessage(parsedBody, messageType);
+                    processPreview(parsedBody);
                 default:
                     console.error('Unknown message type received');
             }
@@ -80,6 +86,10 @@ const ChatComponent = ({ chatId, canWrite = false }) => {
             ...prevMessages,
             { id: Math.random(), type: 'form', content: data.additional_info.fields }
         ]);
+    };
+
+    const processPreview = (data) => {
+        setPreviewData({ id: Math.random(), content: data.additional_info.preview });
     };
 
     const processOptions = (data) => {
